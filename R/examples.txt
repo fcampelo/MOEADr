@@ -1,0 +1,49 @@
+# Example runs
+
+library(devtools)
+library(mco)
+library(testthat)
+library(assertthat)
+load_all()
+
+probpars <- list(name = "mco_zdt", prob.number = 3, nobj = 2,
+                 xmin = rep(0, 30), xmax = rep(1, 30))
+decopars <- list(name = "Das", H = 199, neighbors = 20)
+scalpars <- list(name = "wt")
+chngpars <- list(sbx     = list(eta = 20, pc = 1, eps = 1e-16),
+                 polymut = list(eta = 20, pm = 0.1))
+updtpars <- list(method = "standard")
+showpars <- list(show.iters = "numbers", showevery = 25)
+stopcrit <- list(names = "stop_maxiter",
+                 maxiter = 300)
+seed <- 1
+OUT <- moead(probpars, decopars, scalpars, chngpars, updtpars, showpars, stopcrit, seed = seed)
+with(OUT, plot(Y[, 1], Y[, 2], pch=20))
+
+scalpars <- list(name = "ipbi", theta = 0.5, normalize.obj = TRUE)
+OUT <- moead(probpars, decopars, scalpars,
+             chngpars, updtpars, showpars,
+             stopcrit)
+with(OUT, plot(Y[, 1], Y[, 2], pch=20))
+
+
+scalpars <- list(name = "wt", normalize.obj = TRUE)
+OUT <- moead(probpars, decopars, scalpars,
+             chngpars, updtpars, showpars,
+             stopcrit)
+with(OUT, plot(Y[, 1], Y[, 2], pch=20))
+
+
+scalpars <- list(name = "wt", normalize.obj = FALSE)
+probpars <- probpars <- list(name = "mco_zdt", prob.number = 3, nobj = 2,
+                 xmin = rep(0, 30), xmax = rep(1, 30))
+chngpars <- list(DEops   = list(delta = 0.9, CR = 1, F = 0.5),
+                 polymut = list(eta = 20, pm = 1/30))
+decopars <- list(name = "Das", H = 99, neighbors = 30)
+stopcrit <- list(names = "stop_maxiter",
+                 maxiter = 200)
+updtpars <- list(method = "moead-de", nr = 2)
+OUT <- moead(probpars, decopars, scalpars,
+              chngpars, updtpars, showpars,
+              stopcrit)
+with(OUT, plot(Y[, 1], Y[, 2], pch=20))

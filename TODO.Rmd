@@ -1,0 +1,16 @@
+---
+title: "TODO"
+author: "Felipe Campelo"
+date: "September 09, 2015"
+output: html_document
+---
+
+TODO list:
+
+- Finish documentation
+    - FNN is imported for its efficient implementation of the knn algorithm.
+    - assertthat is imported for better error messages 
+- Write wrapper function for MOEA/D
+- Consolidate documentation in Vignette and export only the main method.
+- Write plot / analysis routines
+- Interface with packages that calculate quality indicators.
