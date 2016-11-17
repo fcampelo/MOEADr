@@ -60,22 +60,22 @@ decompose_problem <- function(decopars,
 {
   # ========== Error catching and default value definitions
   valid.methods <- c("Das", "Uniform", "Li")
-  assert_that(
+  assertthat::assert_that(
     any(decopars$name == valid.methods),
-    is.count(m))
+    assertthat::is.count(m))
 
   # ========== Generate vectors
   if (decopars$name == "Das"){ # Generate according to Das & Dennis (1998)
     nvecs <- choose(decopars$H + m - 1, m - 1)
-    assert_that(
-      has_name(decopars, "H"),
-      has_name(decopars, "neighbors"),
-      is.count(decopars$H),
+    assertthat::assert_that(
+      assertthat::has_name(decopars, "H"),
+      assertthat::has_name(decopars, "neighbors"),
+      assertthat::is.count(decopars$H),
       decopars$neighbors <= nvecs)
 
     # Generate decomposition vectors: first (m - 1) columns
     W <- do.call(expand.grid,
-                 args = lapply(X = 1:(m - 1),
+                 args = lapply(X   = 1:(m - 1),
                                FUN = function(X){
                                  seq(0,
                                      decopars$H) / decopars$H}))
@@ -87,9 +87,9 @@ decompose_problem <- function(decopars,
   }
 
   if (decopars$name == "Li"){ # Generate according to Li et al. (2014)
-    tmp <- assert_that(
-      has_name(decopars, "H"),
-      has_name(decopars, "tau"))
+    assertthat::assert_that(
+      assertthat::has_name(decopars, "H"),
+      assertthat::has_name(decopars, "tau"))
 
     decopars2       <- decopars
     decopars2$name  <- "Das"
@@ -98,7 +98,7 @@ decompose_problem <- function(decopars,
     W <- decompose_problem(decopars2, m)
 
     if (m > 6){
-      tmp <- assert_that(length(decopars$H) == 2)
+      assertthat::assert_that(length(decopars$H) == 2)
       decopars2$H <- decopars$H[2]
       W <- rbind(W,
                  decompose_problem(decopars2, m) * decopars$tau +
@@ -110,16 +110,16 @@ decompose_problem <- function(decopars,
   }
 
   if (decopars$name == "Uniform"){ # Generate randomly
-    tmp <- assert_that(
-      has_name(decopars, "nvecs"),
-      is.count(decopars$nvecs))
+    assertthat::assert_that(
+      assertthat::has_name(decopars, "nvecs"),
+      assertthat::is.count(decopars$nvecs))
 
-    W <- matrix(runif(decopars$nvecs*m),
+    W <- matrix(runif(decopars$nvecs * m),
                 ncol = m)
 
     W <- t(apply(W,
                  MARGIN = 1,
-                 FUN = function(x) x/sum(x)))
+                 FUN    = function(x) x / sum(x)))
     return(W)
   }
 }

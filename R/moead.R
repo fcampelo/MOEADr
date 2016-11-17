@@ -130,7 +130,7 @@ moead <- function(probpars,    # Info about the MObj problem
                   updtpars,    # Info about the update method
                   showpars,    # Info about the function output
                   stopcrit,    # Info about the stop criteria
-                  seed = NULL) # Random seed
+                  seed = NULL) # Seed for PRNG
 {
 
   # ========== Error catching and default value definitions
@@ -138,9 +138,9 @@ moead <- function(probpars,    # Info about the MObj problem
   # Check chngpars
   # (The error checking for each specific variation operator is performed by
   # its corresponding function)
-  assert_that(all(names(chngpars) %in% c("sbx",
-                                         "polymut",
-                                         "DEops")))
+  assertthat::assert_that(all(names(chngpars) %in% c("sbx",
+                                                     "polymut",
+                                                     "DEops")))
 
   # probpars is checked within routine "create_population()"
   # decopars is checked within routine "decompose_problem()"
@@ -151,7 +151,7 @@ moead <- function(probpars,    # Info about the MObj problem
   if (is.null(seed)) {
     seed <- as.integer(Sys.time())
   } else {
-    assert_that(is.count(seed))
+    assertthat::assert_that(assertthat::is.count(seed))
   }
   # ========== Initial setup
   # Setup PRNG
@@ -163,8 +163,8 @@ moead <- function(probpars,    # Info about the MObj problem
 
   # Define closest neighbors
   N <- cbind(1:nrow(W),
-             FNN::get.knn(data      = W,
-                    k         = decopars$neighbors - 1)$nn.index)
+             FNN::get.knn(data = W,
+                          k    = decopars$neighbors - 1)$nn.index)
 
   # Generate initial population
   X <- create_population(popsize  = nrow(W),

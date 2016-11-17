@@ -1,11 +1,13 @@
 ---
 title: "TODO"
 author: "Felipe Campelo"
-date: "September 09, 2015"
+date: "September 09, 2016"
 output: html_document
 ---
 
 TODO list:
+- Review package for compatibility with Lucas' modular structure;
+- Full review of documentation - particularly the main function (in file moead.R)
 
 - Finish documentation
     - FNN is imported for its efficient implementation of the knn algorithm.
