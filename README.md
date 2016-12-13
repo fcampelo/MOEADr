@@ -1,5 +1,5 @@
 ## MOEADr package
-Felipe Campelo ([fcampelo@ufmg.br](mailto:fcampelo@ufmg.br)) and Lucas Batista
+[Felipe Campelo](mailto:fcampelo@ufmg.br) and Lucas Batista  
 Operations Research and Complex Systems Laboratory - ORCS Lab  
 Universidade Federal de Minas Gerais  
 Belo Horizonte, Brazil
