@@ -1,23 +1,34 @@
 Package: MOEADr
 Type: Package
-Title: Multiobjective Evolutionary Algorithms with Decomposition
-Version: 0.0.0.9000
-Date: 2015-08-18
-Imports:  FNN,
-          assertthat
-Suggests: mco,
-          testthat,
-          knitr
-Depends: R (>= 3.2.1)
+Title: Component-Wise MOEA/D Implementation
+Version: 0.0.0.9025
+Date: 2016-12-12
+Imports:
+    FNN,
+    assertthat
+Suggests:
+    smoof,
+    testthat,
+    knitr,
+    mco
+Depends:
+    R (>= 3.3.1)
 Author: c(person("Felipe", "Campelo",
-                      email = "fcampelo@ufmg.br",
-                      role = c("aut", "cre")),
-                person("Lucas", "Batista",
-                      email = "lusoba@ufmg.br",
-                      role = "aut"))
+            email   = "fcampelo@ufmg.br",
+            role    = c("aut", "cre"),
+            comment = "Original concept, organization and coding"),
+          person("Lucas", "Batista",
+            email   = "lusoba@ufmg.br",
+            role    = "com",
+            comment = "Literature review and initial formalization of operators"),
+          person("Claus", "Aranha",
+            email   = "caranha@cs.tsukuba.ac.jp",
+            role    = "aut",
+            comment = "Coding and testing"))
 Maintainer: Felipe Campelo <fcampelo@ufmg.br>
 Description: Modular implementation of MOEA/D approaches for multiobjective
-                optimization.
+    optimization.
 License: GPL-2
 LazyData: TRUE
-VignetteBuilder: knitr
+Encoding: UTF-8
+RoxygenNote: 5.0.1

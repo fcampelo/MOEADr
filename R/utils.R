@@ -1,44 +1,50 @@
-# Generate a matrix of uniformly distributed values in the interval (0,1) with
+# Generate an matrix of uniformly distributed values in the interval (0,1) with
 # the same dimension as M
 randM <- function(M) {
-  if(is.matrix(M)) R <- matrix(runif(prod(dim(M))),
-                               ncol = ncol(M))
-  else if (is.vector(M)) R <- matrix(runif(length(M)),
-                                     nrow = 1)
-  else stop("M must be either a matrix or a vector")
-  return(R)
+  matrix(stats::runif(prod(dim(M))),
+         ncol = ncol(M))
 }
 
+
+
 # Denormalize population
-denormalize_population <- function(probpars, Pop){
+# X is a matrix of row vectors
+denormalize_population <- function(X, problem){
   # Denormalize population
-  LL <- matrix(rep(probpars$xmin, nrow(Pop)),
-               ncol = ncol(Pop),
+  LL <- matrix(rep(problem$xmin, nrow(X)),
+               ncol  = ncol(X),
                byrow = TRUE)
-  UL <- matrix(rep(probpars$xmax, nrow(Pop)),
-               ncol = ncol(Pop),
+  UL <- matrix(rep(problem$xmax, nrow(X)),
+               ncol  = ncol(X),
                byrow = TRUE)
-  return(LL + Pop*(UL-LL))
+  return(LL + X * (UL - LL))
 }
+
+
+
+# Check if a numeric value is within certain bounds
+is_within <- function(x, xmin = 0, xmax = 1, strict = c(FALSE, FALSE)){
+  if(length(strict) == 1) strict <- rep(strict, 2)
+  out <- is.numeric(x) &
+    ifelse(strict[1],
+           all(x >  xmin),
+           all(x >= xmin)) &
+    ifelse(strict[2],
+           all(x <  xmax),
+           all(x <= xmax))
+  return(out)
+}
+
+
 
 # Get estimate of 'ideal' point (minP)
 getminP <- function(X){
   apply(X, MARGIN = 2, FUN = min, na.rm = TRUE)
 }
 
+
+
 # Get estimate of 'nadir' point (maxP)
 getmaxP <- function(X){
   apply(X, MARGIN = 2, FUN = max, na.rm = TRUE)
-}
-
-# Create a counter
-# Function based on the simple counter by Hadley Wickham:
-# http://adv-r.had.co.nz/Functional-programming.html
-new_counter <- function(n0 = 0) {
-  i <- n0
-  function(n = 1) {
-    force(n)
-    i <<- i + n
-    invisible(i)
-  }
 }

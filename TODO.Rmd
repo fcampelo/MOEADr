@@ -1,18 +1,22 @@
 ---
 title: "TODO"
 author: "Felipe Campelo"
-date: "September 09, 2016"
+date: "12/12/2016"
 output: html_document
 ---
 
-TODO list:
-- Review package for compatibility with Lucas' modular structure;
-- Full review of documentation - particularly the main function (in file moead.R)
+## For the package itself
+- Verify inverted PBI (check equations, there's something fishy there)
+- decomposition_msld()
+- decomposition_uniform()
+- scalarize_mwt()
+- implement other alternatives for objective scaling (as in the manuscript)
+- implement other update strategies (as in the manuscript)
+- local search operators (at least one)?
+- implement other variation operators (as in the manuscript - at least the MOEA/D-DE ones)
 
-- Finish documentation
-    - FNN is imported for its efficient implementation of the knn algorithm.
-    - assertthat is imported for better error messages 
-- Write wrapper function for MOEA/D
-- Consolidate documentation in Vignette and export only the main method.
-- Write plot / analysis routines
-- Interface with packages that calculate quality indicators.
+## For the paper:
+- Finish thinking the experiments.
+- Perform and document experiments.
+- Finish documenting the modules.
+

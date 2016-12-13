@@ -2,219 +2,222 @@
 #'
 #' MOEA/D implementation in R
 #'
-#' MOEA/D implementation in R
+#' Component-wise implementation of the Multiobjective Evolutionary Algorithm
+#' based on decomposition - MOEA/D.
 #'
 #' @section Problem Description:
-#' The \code{probpars} parameter consists of a list with all necessary
+#' The \code{problem} parameter consists of a list with all necessary
 #' definitions for the multiobjective optimization problem to be solved.
-#' \code{probpars} must contain at least the following fields:
+#' \code{problem} must contain at least the following fields:
 #' \itemize{
 #'    \item \code{$name} - name of the problem instance function, that is, a
-#'          routine that calculates y = f(x);
+#'          routine that calculates Y = f(X);
 #'    \item \code{$xmin} - vector of lower bounds of each variable
 #'    \item \code{$xmax} - vector of upper bounds of each variable
-#'    \item \code{$nobj} - integer containing the number of objectives
+#'    \item \code{$m}    - integer containing the number of objectives
 #' }
 #'
-#' The function indicated in \code{probpars$name} must be able to receive a
+#' The function indicated in \code{problem$name} must be able to receive a
 #' matrix with each row representing one candidate solution, and return a matrix
-#' with each row representing the objective values for that solution.
+#' with each row representing the objective values for that solution. The name
+#' of the input argument that receives the population matrix must be either
+#' \code{X} or \code{x}.
+#'
 #'
 #' @section Decomposition Methods:
-#' The \code{decopars} parameter defines the method to be used for the
-#' generation of the decomposition vectors. \code{decopars} must have
-#' at least the \code{$name} parameter. Currently implemented methods are:
+#' The \code{decomp} parameter defines the method to be used for the
+#' generation of the weight vectors. \code{decomp} must have
+#' at least the \code{$name} parameter. Currently implemented methods can be
+#' verified using \code{get_decomposition_methods()}. Check
+#' \code{\link{generate_weights}} and the information provided by
+#' \code{get_decomposition_methods()} for more details.
 #'
+#' @section Neighborhood Strategies:
+#' The \code{neighbors} parameter defines the method for defining the
+#' neighborhood relations among subproblems. \code{neighbors} must have
+#' at least three parameters: \code{neighbors$name}, \code{neighbors$T}, and
+#' \code{neighbors$delta.p}.
+#' \code{neighbors$name} defines the strategy used to define the neighborhoods.
+#' Currently available methods are:
 #' \itemize{
-#'    \item \code{$name = "Das"}      - Das and Dennis (1998);
-#'    \item \code{$name = "Li"}       - Li et al. (2014);
-#'    \item \code{$name = "Uniform"}  - Uniformly distributed vectors;
+#'    \item \code{$name = "lambda"}: uses the distances between
+#'    weight vectors. The calculation is performed only once for the entire run,
+#'    since the weight vectors are assumed static.
+#'    \item \code{$name = "x"}: uses the distances between the
+#'    incumbent solutions associated with each subproblem. In this case the
+#'    calculation is performed at each iteration, since incumbent solutions may
+#'    change.
 #' }
 #'
-#' Check \code{\link{decompose_problem}} for details.
+#' \code{neighbors$T} defines the neighborhood size. This parameter must receive
+#' a value smaller than the number of subproblems defined for the MOEA/D.
 #'
-#' @section Scalarization Methods:
-#' The \code{scalpars} parameter defines the method to be used for the
-#' scalarization of the multiobjective function. \code{scalpars} must have
-#' at least the \code{$name} parameter. Currently implemented methods are:
-#' \itemize{
-#'    \item \code{$name = "ws"}  - Weighted Sum;
-#'    \item \code{$name = "wt"}  - Weighted Tchebycheff;
-#'    \item \code{$name = "pbi"} - Penalty-based Boundary Intersection;
-#'    \item \code{$name = "mwt"} - Modified Weighted Tchebycheff;
-#' }
+#' Finally, \code{neightbors$delta.p} is the parameter that defines the
+#' probability of sampling from the neighborhood when performing variation.
 #'
-#' See \code{\link{scalarize_values}} for details.
+#' Check \code{\link{define_neighborhood}} for more details.
+#'
 #'
 #' @section Variation Operators:
-#' TODO: Write a description of the \code{chngpars} structure.
+#' TODO
+#'
+#' @section Scalar Aggregation Functions:
+#' TODO
+#'
+#' @section Update Methods:
+#' TODO
+#'
+#' @section Objective Scaling:
+#' TODO
 #'
 #' @section Stop Criteria:
-#' TODO: Write a description of the \code{stopcrit} structure.
+#' TODO
+#'
+#' @section Echoing Options:
+#' TODO
 #'
 #' @section References:
-#' Q. Zhang and H. Li, "MOEA/D: A Multiobjective Evolutionary Algorithm
-#   Based on Decomposition", IEEE Trans. Evol. Comp. 11(6): 712-731, 2007.
+#' F. Campelo, L.S. Batista, C. Aranha:
+#' "A Component-Wise Perspective on Multiobjective Evolutionary Algorithms
+#' based on Decomposition". In preparation, 2016.
 #
-#' @param probpars List of problem parameters.
+#' @param problem List containing the problem parameters.
 #'    See \code{Problem Description} for details.
-#' @param decopars List of decomposition method parameters
+#' @param decomp List containing the decomposition method parameters
 #'    See \code{Decomposition methods} for details.
-#' @param scalpars List of scalarization method parameters
+#' @param aggfun List containing the aggregation function parameters
 #'    See \code{Scalarization methods} for details.
-#' @param chngpars List of variation operator parameters
+#' @param neighbors List containing the decomposition method parameters
+#'    See \code{Neighborhood strategies} for details.
+#' @param variation List containing the variation operator parameters
 #'    See \code{Variation operators} for details.
-#' @param stopcrit list of stop criteria parameters. See
-#'    \code{Stop criteria} for details.
+#' @param update List containing the population update parameters
+#'    See \code{Update strategies} for details.
+#' @param scaling List containing the objective scaling parameters
+#'    See \code{Objective scaling} for details.
+#' @param stopcrit list containing the stop criteria parameters.
+#'    See \code{Stop criteria} for details.
+#' @param showpars list containing the echoing behavior parameters.
+#'    Use \code{?print_progress} for details.
+#' @param seed seed for the pseudorandom number generator. Defaults to NULL,
+#'    in which case \code{as.integer(Sys.time())} is used for the definition.
 #'
 #' @export
 #'
 #' @examples
 #'
 #' # MOEA/D as in Zhang and Li (2007) (sec. V-E, p.721-722)
-#' library(mco) # For the test problems
-#' probpars <- list(name = "mco_zdt", prob.number = 1, nobj = 2,
-#'                  xmin = rep(0, 30), xmax = rep(1, 30))
-#' decopars <- list(name = "Das", H = 99, neighbors = 20)
-#' scalpars <- list(name = "wt")
-#' chngpars <- list(sbx     = list(eta = 20, pc = 1, eps = 1e-16),
-#'                  polymut = list(eta = 20, pm = 0.1))
-#' updtpars <- list(method = "standard")
-#' showpars <- list(show.iters = "numbers", showevery = 1)
-#' stopcrit <- list(names = "stop_maxiter",
-#'                  maxiter = 500)
-#' seed     <- NULL
-#' OUT1     <- moead(probpars, decopars, scalpars,
-#'                   chngpars, updtpars, showpars,
-#'                   stopcrit, seed)
-#' with(OUT1, plot(Y[, 1], Y[, 2], pch=20))
+#' require(mco) # For the test problems
+#' problem   <- list(name       = "mco_zdt", prob.number = 1, m = 2,
+#'                   xmin       = rep(0, 30),
+#'                   xmax       = rep(1, 30))
+#' decomp    <- list(name       = "SLD", H = 99)
+#' neighbors <- list(name       = "lambda",
+#'                   T          = 20,
+#'                   delta.p    = 1)
+#' aggfun    <- list(name       = "wt")
+#' variation <- list(list(name  = "sbx",
+#'                        etax  = 20, pc = 1),
+#'                   list(name  = "polymut",
+#'                        etam  = 20, pm = 0.1))
+#' update    <- list(name       = "standard")
+#' scaling   <- list(name       = "none")
+#' stopcrit  <- list(list(name  = "maxiter",
+#'                     maxiter  = 500))
+#' showpars  <- list(show.iters = "numbers",
+#'                   showevery  = 10)
 #'
-#' # MOEA/D as in Zhang and Li (2007) (using PBI, sec. V-F, p. 724)
-#' scalpars <- list(name = "pbi", theta = 5)
-#' OUT2 <- moead(probpars, decopars, scalpars,
-#'               chngpars, updtpars, showpars,
-#'               stopcrit, seed)
-#' with(OUT2, plot(Y[, 1], Y[, 2], pch=20))
+#' out <- moead(problem, decomp, aggfun,
+#'              neighbors, variation, update,
+#'              scaling, stopcrit,showpars)
 #'
-#' # MOEA/D as in Zhang and Li (2007) (with obj normalization, sec. V-F, p. 724)
-#' scalpars <- list(name = "wt", normalize.obj = FALSE)
-#' probpars <- probpars <- list(name = "mco_zdt", prob.number = 2, nobj = 2,
-#'                  xmin = rep(0, 30), xmax = rep(1, 30))
-#' chngpars <- list(sbx     = list(eta = 20, pc = 1, eps = 1e-16),
-#'                  polymut = list(eta = 20, pm = 1/30))
-#' decopars <- list(name = "Das", H = 149, neighbors = 20)
-#' OUT3 <- moead(probpars, decopars, scalpars,
-#'               chngpars, updtpars, showpars,
-#'               stopcrit, seed)
-#' with(OUT3, plot(Y[, 1], Y[, 2], pch=20))
-#'
-#' #' # MOEA/D-DE as in Zhang and Li (2009)
-#' scalpars <- list(name = "wt", normalize.obj = FALSE)
-#' probpars <- probpars <- list(name = "mco_zdt", prob.number = 1, nobj = 2,
-#'                  xmin = rep(0, 30), xmax = rep(1, 30))
-#' chngpars <- list(DEops   = list(delta = 0.9, CR = 1, F = 0.5),
-#'                  polymut = list(eta = 20, pm = 1/30))
-#' decopars <- list(name = "Das", H = 99, neighbors = 20)
-#' stopcrit <- list(names = "stop_maxiter",
-#'                  maxiter = 200)
-#' updtpars <- list(method = "moead-de", nr = 2)
-#' OUT4 <- moead(probpars, decopars, scalpars,
-#'               chngpars, updtpars, showpars,
-#'               stopcrit, seed)
-#' with(OUT4, plot(Y[, 1], Y[, 2], pch=20))
-#'
-moead <- function(probpars,    # Info about the MObj problem
-                  decopars,    # Info about the decomposition method
-                  scalpars,    # Info about the scalarization method
-                  chngpars,    # Info about the variation operators
-                  updtpars,    # Info about the update method
-                  showpars,    # Info about the function output
-                  stopcrit,    # Info about the stop criteria
-                  seed = NULL) # Seed for PRNG
+#' plot(out$Y[,1], out$Y[,2], type = "p", pch = 20)
+
+moead <- function(problem,      # List:  MObj problem
+                  decomp,       # List:  decomposition strategy
+                  aggfun,       # List:  scalar aggregation function
+                  neighbors,    # List:  neighborhood assignment strategy
+                  variation,    # List:  variation operators
+                  update,       # List:  update method
+                  scaling,      # List:  objective scaling strategy
+                  stopcrit,     # List:  stop criteria
+                  showpars,     # List:  echoing behavior
+                  seed = NULL)  # Seed for PRNG
 {
 
-  # ========== Error catching and default value definitions
+    # ========== Error catching and default value definitions
+    # "problem"     checked in "create_population(...)"
+    # "decomp"      checked in "decompose_problem(...)"
+    # "aggfun"      checked in "scalarize_values(...)"
+    # "neighbors"   checked in "define_neighborhood(...)"
+    # "variation"   checked in "perform_variation(...)"
+    # "update"      checked in "update_population(...)"
+    # "scaling"     checked in
+    # "stopcrit"    checked in
+    # "showpars"    checked in
 
-  # Check chngpars
-  # (The error checking for each specific variation operator is performed by
-  # its corresponding function)
-  assertthat::assert_that(all(names(chngpars) %in% c("sbx",
-                                                     "polymut",
-                                                     "DEops")))
+    # Check seed
+    if (is.null(seed)) {
+        seed <- as.integer(Sys.time())
+    } else {
+        assertthat::assert_that(assertthat::is.count(seed))
+    }
+    # ==========
 
-  # probpars is checked within routine "create_population()"
-  # decopars is checked within routine "decompose_problem()"
-  # scalpars is checked within routine "scalarize_values()"
-  # updtpars is checked within routine "update_population()"
+    # ========== Initial setup
+    set.seed(seed)  # set PRNG seed
+    nfe <- 0        # set counter for function evaluations
 
-  # Check seed
-  if (is.null(seed)) {
-    seed <- as.integer(Sys.time())
-  } else {
-    assertthat::assert_that(assertthat::is.count(seed))
-  }
-  # ========== Initial setup
-  # Setup PRNG
-  set.seed(seed)
+    # Generate weigth vectors
+    W <- generate_weights(m = problem$m)
 
-  # Generate weigth vectors
-  W <- decompose_problem(decopars = decopars,
-                         m        = probpars$nobj)
+    # Generate initial population
+    X <- create_population(nrow(W))
 
-  # Define closest neighbors
-  N <- cbind(1:nrow(W),
-             FNN::get.knn(data = W,
-                          k    = decopars$neighbors - 1)$nn.index)
+    # Evaluate population on objectives
+    Y <- evaluate_population(X)
 
-  # Generate initial population
-  X <- create_population(popsize  = nrow(W),
-                         probpars = probpars)
+    # ========== Iterative cycle
+    keep.running  <- TRUE      # stop criteria flag
+    iter          <- 0         # counter: iterations
 
-  # Evaluate population on objectives
-  Y <- evaluate_population(X        = X,
-                           probpars = probpars)
+    while(keep.running){
+        # Update iteration counter
+        iter <- iter + 1
 
+        # Define/update neighborhood probability matrix
+        BP <- define_neighborhood()
+        B  <- BP$B
+        P  <- BP$P
 
-  # ========== Iterative cycle
-  keep.running  <- TRUE      # stop criteria flag
-  iters         <- 0         # counter: iterations
-  nfe           <- nrow(X)   # counter: function evaluations
+        # Store current population
+        Xt <- X
+        Yt <- Y
 
-  while(keep.running){
-    # Update iteration counter
-    iters <- iters + 1
+        # Perform variation
+        X <- perform_variation()
 
-    # Store current population
-    Xt <- X
-    Yt <- Y
+        # Evaluate offspring population on objectives
+        Y <- evaluate_population()
 
-    # Perform variation
-    for (opname in names(chngpars)){
-      X <- do.call(opname,
-                   args = list())
+        # Update population
+        update_population()
+
+        # Echo whatever is demanded
+        print_progress()
+
+        # Verify stop criteria
+        check_stop_criteria()
     }
 
-    # Evaluate offspring population on objectives
-    Y <- evaluate_population(X        = X,
-                             probpars = probpars)
+    # Prepare output
+    X <- denormalize_population(X, problem)
 
-    # Update function evaluations counter
-    nfe <- nfe + nrow(X)
-
-    # Update population
-    update_population()
-
-    # Echo whatever is demanded
-    print_progress()
-
-    # Verify stop criteria
-    check_stop_criteria()
-  }
-
-  # Output
-  return(list(X     = X,
-              Y     = Y,
-              W     = W,
-              nfe   = nfe,
-              iters = iters))
+    # Output
+    return(list(X      = X,
+                Y      = Y,
+                W      = W,
+                nfe    = nfe,
+                n.iter = iter,
+                seed   = seed))
 }

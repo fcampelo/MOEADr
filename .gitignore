@@ -1,0 +1,10 @@
+*.Rhistory
+*.Rdata
+*.Rproj*
+*.Rproj.user
+
+.Rproj.user/C171D2DC/pcs/workbench-pane.pper
+
+.Rproj.user/C171D2DC/sdb/prop/INDEX
+
+.Rproj.user/shared/notebooks/paths

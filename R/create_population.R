@@ -1,30 +1,44 @@
 #' Create population
 #'
-#' Create new population for MOEA/D
+#' Create a population for the MOEADr package
 #'
-#' The detailed description comes here...
+#' This routine creates a population matrix for the MOEA/D. Currently only a
+#' multivariate uniform distribution is implemented. The points are created
+#' within the space 0 <= x_i <= 1, i = 1,...,n_v.
 #'
-#' @param popsize population size
-#' @param probpars list of named problem parameters (see \code{\link{moead}}).
+#' @param N population size
+#' @param problem list of named problem parameters. See \code{\link{moead}} for
+#' details. If NULL the function searches for \code{problem} in the calling
+#' environment.
 #'
-#' @return A matrix containing the population for the MOEA/D
+#' @return A population matrix X for the MOEA/D.
+#'
+#' @export
 
-create_population <- function(popsize,      # population size
-                              probpars)     # list of named problem parameters
+create_population <- function(N,              # population size
+                              problem = NULL) # list of named problem parameters
 {
-  #Generate population of individuals within the standardized space x \in (0,1)
+    # Capture calling environment
+    call.env <- parent.frame()
 
-  # ========== Error catching and default value definitions
-  assert_that(
-    all(has_name(probpars, c("xmax", "xmin", "nobj", "name"))),
-    all(probpars$xmin < probpars$xmax),
-    identical(length(probpars$xmax), length(probpars$xmin)),
-    is.count(popsize),
-    is.count(probpars$nobj))
+    # Capture "problem" from calling environment if needed
+    if (is.null(problem)) {
+        assertthat::assert_that(assertthat::has_name(call.env, "problem"))
+        problem <- call.env$problem
+    }
 
-  # get problem dimension
-  prob.dim <- length(probpars$xmax)
+    # ========== Error catching and default value definitions
+    assertthat::assert_that(
+        all(assertthat::has_name(problem, c("xmax", "xmin", "m", "name"))),
+        all(problem$xmin < problem$xmax),
+        identical(length(problem$xmax), length(problem$xmin)),
+        assertthat::is.count(N),
+        assertthat::is.count(problem$m))
 
-  return (matrix(runif(popsize * prob.dim),
-                 nrow = popsize))
+
+    # get problem dimension
+    prob.dim <- length(problem$xmax)
+
+    return (matrix(stats::runif(N * prob.dim),
+                   nrow = N))
 }
