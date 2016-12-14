@@ -7,13 +7,15 @@
 #' Multi-layered Simplex-lattice Design.
 #'
 #' @param decomp TODO
+#' @param ... other parameters (unused, included for compatibility with
+#' generic call)
 #'
 #' @section References:
 #' K. Li et al. (2014), "An Evolutionary Many-Objective Optimization
 #' Algorithm Based on Dominance and Decomposition",
 #' IEEE Trans. Evol. Comp. 19(5):694-716, 2015. DOI: 10.1109/TEVC.2014.2373386
 
-decomposition_msld <- function(decomp){
+decomposition_msld <- function(decomp, ...){
 
     # assertthat::assert_that(
     #     assertthat::has_name(decopars, "H"),

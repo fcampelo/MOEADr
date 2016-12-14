@@ -9,9 +9,8 @@
 #' @param Y matrix of objective function values
 #' @param W matrix of weights.
 #' @param minP numeric vector containing estimated ideal point
-#' @param aggf list containing parameters for the aggregation function (same as
-#' the \code{aggfun} input variable of the \code{moead(...)} routine. Must
-#' contain the non-negative numeric constant \code{aggf$theta}.
+#' @param aggfun list containing parameters for the aggregation function. Must
+#' contain the non-negative numeric constant \code{aggfun$theta}.
 #' @param eps tolerance value for avoiding divisions by zero.
 #' @param ... other parameters (unused, included for compatibility with
 #' generic call)
@@ -28,13 +27,13 @@
 #'
 #' @export
 
-scalarization_pbi <- function(Y, W, minP, aggf, eps = 1e-16, ...){
+scalarization_pbi <- function(Y, W, minP, aggfun, eps = 1e-16, ...){
 
   # ========== Error catching and default value definitions
   assertthat::assert_that(
     is.matrix(Y) && is.matrix(W),
     identical(dim(W), dim(Y)),
-    assertthat::has_name(aggf, "theta"),
+    assertthat::has_name(aggfun, "theta"),
     length(minP) == ncol(Y))
   # ==========
 
@@ -58,6 +57,6 @@ scalarization_pbi <- function(Y, W, minP, aggf, eps = 1e-16, ...){
 
   D2 <- sqrt(rowSums((Y - minP - D1 * W) ^ 2))
 
-  return(as.numeric(D1[, 1] + aggf$theta * D2))
+  return(as.numeric(D1[, 1] + aggfun$theta * D2))
 
 }

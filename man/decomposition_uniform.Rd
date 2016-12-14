@@ -4,10 +4,13 @@
 \alias{decomposition_uniform}
 \title{Problem Decomposition using Uniform Design}
 \usage{
-decomposition_uniform(decomp)
+decomposition_uniform(decomp, ...)
 }
 \arguments{
 \item{decomp}{TODO}
+
+\item{...}{other parameters (unused, included for compatibility with
+generic call)}
 }
 \description{
 Problem Decomposition using Uniform Design for MOEADr

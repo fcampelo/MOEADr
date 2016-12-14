@@ -9,9 +9,8 @@
 #' @param Y matrix of objective function values
 #' @param W matrix of weights.
 #' @param maxP numeric vector containing estimated ideal point
-#' @param aggf list containing parameters for the aggregation function (same as
-#' the \code{aggfun} input variable of the \code{moead(...)} routine. Must
-#' contain the non-negative numeric constant \code{aggf$theta}.
+#' @param aggfun list containing parameters for the aggregation function. Must
+#' contain the non-negative numeric constant \code{aggfun$theta}.
 #' @param eps tolerance value for avoiding divisions by zero.
 #' @param ... other parameters (unused, included for compatibility with
 #' generic call)
@@ -27,13 +26,13 @@
 #'
 #' @export
 
-scalarization_ipbi <- function(Y, W, maxP, aggf, eps = 1e-16, ...){
+scalarization_ipbi <- function(Y, W, maxP, aggfun, eps = 1e-16, ...){
 
   # ========== Error catching and default value definitions
   assertthat::assert_that(
     is.matrix(Y) && is.matrix(W),
     identical(dim(W), dim(Y)),
-    assertthat::has_name(aggf, "theta"),
+    assertthat::has_name(aggfun, "theta"),
     length(maxP) == ncol(Y))
   # ==========
 
@@ -50,13 +49,13 @@ scalarization_ipbi <- function(Y, W, maxP, aggf, eps = 1e-16, ...){
                   byrow = FALSE)
 
   # Calculate D1 and D2
-  D1 <- matrix(rowSums((maxP - Y - eps) * W / NormW),
+  D1 <- matrix(abs(rowSums((Y - maxP - eps) * W)) / NormW,
                nrow = nrow(W),
                ncol = ncol(W),
                byrow = FALSE)
 
-  D2 <- sqrt(rowSums((maxP - Y - D1 * W) ^ 2))
+  D2 <- sqrt(rowSums((Y - maxP + D1 * W / NormW) ^ 2))
 
-  return(aggf$theta * D2 - as.numeric(D1[, 1]))
+  return(-(as.numeric(D1[, 1]) - aggfun$theta * D2))
 
 }

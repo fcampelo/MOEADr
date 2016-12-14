@@ -21,12 +21,14 @@
 #'
 #'
 #' @param decomp TODO
+#' @param ... other parameters (unused, included for compatibility with
+#' generic call)
 #'
 #' @section References:
 #' I. Das, J. Dennis (1998), "Normal Boundary Intersection - A New Method
 #' for Generating the Pareto Surface in Nonlinear Multicriteria Optimization
 #' Problems", SIAM J. Optim., 8(3), 631-657. DOI: 10.1137/S1052623496307510
-decomposition_sld <- function(decomp){
+decomposition_sld <- function(decomp, ...){
 
     # Error checking
     assertthat::assert_that(

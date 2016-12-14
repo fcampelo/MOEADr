@@ -4,10 +4,13 @@
 \alias{decomposition_msld}
 \title{Problem Decomposition using Multi-layered Simplex-lattice Design}
 \usage{
-decomposition_msld(decomp)
+decomposition_msld(decomp, ...)
 }
 \arguments{
 \item{decomp}{TODO}
+
+\item{...}{other parameters (unused, included for compatibility with
+generic call)}
 }
 \description{
 Problem Decomposition using Multi-layered Simplex-lattice Design for MOEADr

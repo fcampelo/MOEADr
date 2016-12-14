@@ -64,7 +64,7 @@ scalarize_values <- function(moead.env, normYs){
   bigZ[1:ncol(moead.env$B), ] <- matrix(do.call(function_name,
                                            args = list(Y    = bigY,
                                                        W    = bigW,
-                                                       aggf = moead.env$aggfun,
+                                                       aggfun = moead.env$aggfun,
                                                        minP = normYs$minP,
                                                        maxP = normYs$maxP)),
                                         ncol  = nrow(moead.env$W),
@@ -74,7 +74,7 @@ scalarize_values <- function(moead.env, normYs){
   bigZ[nrow(bigZ), ] <- do.call(function_name,
                                 args = list(Y    = normYs$Yt,
                                             W    = moead.env$W,
-                                            aggf = moead.env$aggfun,
+                                            aggfun = moead.env$aggfun,
                                             minP = normYs$minP,
                                             maxP = normYs$maxP))
 

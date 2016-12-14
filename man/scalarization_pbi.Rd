@@ -4,7 +4,7 @@
 \alias{scalarization_pbi}
 \title{Penalty-based Boundary Intersection Scalarization}
 \usage{
-scalarization_pbi(Y, W, minP, aggf, eps = 1e-16, ...)
+scalarization_pbi(Y, W, minP, aggfun, eps = 1e-16, ...)
 }
 \arguments{
 \item{Y}{matrix of objective function values}
@@ -13,9 +13,8 @@ scalarization_pbi(Y, W, minP, aggf, eps = 1e-16, ...)
 
 \item{minP}{numeric vector containing estimated ideal point}
 
-\item{aggf}{list containing parameters for the aggregation function (same as
-the \code{aggfun} input variable of the \code{moead(...)} routine. Must
-contain the non-negative numeric constant \code{aggf$theta}.}
+\item{aggfun}{list containing parameters for the aggregation function. Must
+contain the non-negative numeric constant \code{aggfun$theta}.}
 
 \item{eps}{tolerance value for avoiding divisions by zero.}
 

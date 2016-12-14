@@ -4,10 +4,13 @@
 \alias{decomposition_sld}
 \title{Problem Decomposition using Simplex-lattice Design}
 \usage{
-decomposition_sld(decomp)
+decomposition_sld(decomp, ...)
 }
 \arguments{
 \item{decomp}{TODO}
+
+\item{...}{other parameters (unused, included for compatibility with
+generic call)}
 }
 \description{
 Problem Decomposition using Simplex-lattice Design for MOEADr package
