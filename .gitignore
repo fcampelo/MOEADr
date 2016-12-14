@@ -1,10 +1,29 @@
-*.Rhistory
-*.Rdata
-*.Rproj*
-*.Rproj.user
+# History files
+.Rhistory
+.Rapp.history
 
-.Rproj.user/C171D2DC/pcs/workbench-pane.pper
+# Session Data files
+.RData
 
-.Rproj.user/C171D2DC/sdb/prop/INDEX
+# Example code in package build process
+*-Ex.R
 
-.Rproj.user/shared/notebooks/paths
+# Output files from R CMD build
+/*.tar.gz
+
+# Output files from R CMD check
+/*.Rcheck/
+
+# RStudio files
+.Rproj.user/
+
+# OAuth2 tokens
+.httr-oauth
+
+# knitr and R markdown default cache directories
+/*_cache/
+/cache/
+
+# Temporary files created by R markdown
+*.utf8.md
+*.knit.md
