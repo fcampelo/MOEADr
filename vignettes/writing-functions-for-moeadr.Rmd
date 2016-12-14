@@ -28,7 +28,7 @@ This document describes how to write functions implementing new variants for any
 # General guidelines
 ## Nomenclature
 - Functions should be preferably defined in the form *verb_object* (e.g., *generate_weights* or *evaluate_population*)
-- Please try to follow the policy *one function, one file, same name* (very short functions for general use are allowed and should be placed in the _utils.R_ file.
+- Please try to follow the policy *one function, one file, same name* (very short functions for general use can be exceptions - in this case they should be placed in the _utils.R_ file.
 - It is considered kosher to access (and even modify) variables in the  environment defined by the main _moead()_ function from within other functions, by taking advantage of, e.g., `parent.frame`. However, this should be used with caution. Remember, with great power comes a great ability to generate impossibly hidden bugs.
 - Documentation should be complete. Please use `roxygen2`-style documentation in all functions. 
 - Also, please make liberal use of in-code comments to clarify any non-trivial operation.
