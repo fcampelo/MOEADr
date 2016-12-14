@@ -29,6 +29,7 @@
 #'
 #' @return Matrix \code{X}' containing the mutated population
 #'
+#' @export
 
 variation_polymut <- function(X, etam, pm, ...){
 

@@ -14,6 +14,8 @@
 #' K. Li et al. (2014), "An Evolutionary Many-Objective Optimization
 #' Algorithm Based on Dominance and Decomposition",
 #' IEEE Trans. Evol. Comp. 19(5):694-716, 2015. DOI: 10.1109/TEVC.2014.2373386
+#'
+#' @export
 
 decomposition_msld <- function(decomp, ...){
 

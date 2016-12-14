@@ -18,6 +18,8 @@
 #' @param etax spread constant
 #' @param pc variable-wise probability of recombination
 #' @param eps smallest difference considered for recombination
+#' @param ... other parameters (unused, included for compatibility with
+#' generic call)
 #'
 #' @section References:
 #' Deb, K. and Agrawal, R. B. (1995) Simulated binary crossover for continuous
@@ -29,7 +31,9 @@
 #'
 #' @return Matrix \code{X}' containing the recombined population
 #'
-variation_sbx <- function(X, P, etax, pc = 1, eps = 1e-6){
+#' @export
+
+variation_sbx <- function(X, P, etax, pc = 1, eps = 1e-6, ...){
 
   # ========== Error catching and default value definitions
   assertthat::assert_that(

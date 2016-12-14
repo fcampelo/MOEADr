@@ -48,14 +48,19 @@ scalarization_ipbi <- function(Y, W, maxP, aggfun, eps = 1e-16, ...){
                   ncol  = ncol(W),
                   byrow = FALSE)
 
-  # Calculate D1 and D2
-  D1 <- matrix(abs(rowSums((Y - maxP - eps) * W)) / NormW,
+  # Calculate D1
+  # Returns N x m numeric matrix with all columns equal, for convenience in the
+  # calculation of D2.
+  D1 <- matrix(abs(rowSums((Y - maxP) * W)) / NormW[, 1],
                nrow = nrow(W),
                ncol = ncol(W),
                byrow = FALSE)
 
-  D2 <- sqrt(rowSums((Y - maxP + D1 * W / NormW) ^ 2))
+  # Calculate D2 (returns numeric vector with N elements)
+  D2 <- sqrt(rowSums((Y - (maxP - D1 * W / NormW)) ^ 2))
 
-  return(-(as.numeric(D1[, 1]) - aggfun$theta * D2))
-
+  # Return G = -(D1[, 1] - theta*D2) = theta*D2 - D1[, 1]
+  # The multiplication by -1 is required since the iPBI is defined as
+  # maximization instead of minimization.
+  return(aggfun$theta * as.numeric(D2) - as.numeric(D1[, 1]))
 }
