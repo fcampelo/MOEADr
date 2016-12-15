@@ -16,6 +16,8 @@
 
 # RStudio files
 .Rproj.user/
+.Rproj.user
+.Rproj*
 
 # OAuth2 tokens
 .httr-oauth
