@@ -6,7 +6,19 @@
 #' This routine calculates the weight vectors for the MOEA/D using the
 #' Multi-layered Simplex-lattice Design.
 #'
-#' @param decomp TODO
+#' @param decomp list containing the relevant decomposition parameters.
+#' For the Multi-layered Simplex-lattice design, the following key-value
+#' pairs must be members of decomp:
+#'
+#' #' \tabular{ccc}{
+#' \code{key}\tab \code{type}\tab \code{contents}\cr
+#'
+#' ".nobj" \tab Integer > 0 \tab Number of Objectives\cr
+#' "H"    \tab Numeric Array \tab User parameter, h_i > 0\cr
+#' "tau"    \tab Numeric Array \tab User parameter, |tau| = |H| and each tau_i must be unique\cr
+#'}
+#'
+#'
 #' @param ... other parameters (unused, included for compatibility with
 #' generic call)
 #'
@@ -18,6 +30,22 @@
 #' @export
 
 decomposition_msld <- function(decomp, ...){
+
+  # Validating parameters
+  assertthat::assert_that(
+    assertthat::has_name(decomp,"H"),
+    all(sapply(decomp$H,assertthat::is.count)), ## there must be a cleaner way (all elements of H are count)
+    assertthat::has_name(decomp,"tau"),
+    all(decomp$tau >= 0 & decomp$tau < 1),
+    assertthat::are_equal(decomp$tau,unique(decomp$tau)),
+    assertthat::are_equal(length(decomp$H),length(decomp$tau)),
+    assertthat::has_name(decomp,".nobj"),
+    assertthat::is.count(decomp$.nobj),
+    decomp$.nobj >= 2)
+
+
+    W=1
+    return(W)
 
     # assertthat::assert_that(
     #     assertthat::has_name(decopars, "H"),
@@ -39,5 +67,4 @@ decomposition_msld <- function(decomp, ...){
     #     warning("Value of decopar$H[2] dropped.")
     # }
     # return (W)
-
 }
