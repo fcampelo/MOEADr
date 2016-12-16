@@ -29,6 +29,11 @@
 #'
 #' @export
 
+# QUESTIONS:
+# - I am requiring that length of H is greater than 1. OK?
+# - the scaling operation (line 57) destroys zeroes. Is it ok?
+# - the rbind destroys row indexes, I'm fixing that. Is it ok?
+
 decomposition_msld <- function(decomp, ...){
 
   # Validating parameters
@@ -39,23 +44,24 @@ decomposition_msld <- function(decomp, ...){
     all(decomp$tau >= 0 & decomp$tau < 1),
     assertthat::are_equal(decomp$tau,unique(decomp$tau)),
     assertthat::are_equal(length(decomp$H),length(decomp$tau)),
+    length(decomp$H) > 1,
     assertthat::has_name(decomp,".nobj"),
     assertthat::is.count(decomp$.nobj),
     decomp$.nobj >= 2)
 
   # Calling SLD on each (h,tau) pair
-  tmp = mapply(decomp$H,decomp$tau,MoreArgs=list(decomp$.nobj),
+  W = mapply(decomp$H,decomp$tau,MoreArgs=list(decomp$.nobj),
              FUN = function(h,t,nobj) {
                 # building parameter list for decomposition_sld
                 x = list(H=h,.nobj=nobj)
                 l = decomposition_sld(x)
-                # scaling down vectors (QUESTION: This destroys zeroes, is it ok?)
+                # scaling down vectors
                 l = l*t + (1-t)/nobj
                 return(l)
              })
 
   # putting the results together and fixing funky rownames
-  W <- do.call(rbind,tmp)
+  if (is.list(W)) {W <- do.call(rbind,W)}
   rownames(W) <- NULL
   return(W)
 }
