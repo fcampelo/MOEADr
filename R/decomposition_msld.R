@@ -43,28 +43,19 @@ decomposition_msld <- function(decomp, ...){
     assertthat::is.count(decomp$.nobj),
     decomp$.nobj >= 2)
 
+  # Calling SLD on each (h,tau) pair
+  tmp = mapply(decomp$H,decomp$tau,MoreArgs=list(decomp$.nobj),
+             FUN = function(h,t,nobj) {
+                # building parameter list for decomposition_sld
+                x = list(H=h,.nobj=nobj)
+                l = decomposition_sld(x)
+                # scaling down vectors (QUESTION: This destroys zeroes, is it ok?)
+                l = l*t + (1-t)/nobj
+                return(l)
+             })
 
-    W=1
-    return(W)
-
-    # assertthat::assert_that(
-    #     assertthat::has_name(decopars, "H"),
-    #     assertthat::has_name(decopars, "tau"))
-    #
-    # decopars2       <- decopars
-    # decopars2$name  <- "Das"
-    # decopars2$H     <- decopars2$H[1]
-    #
-    # W <- decompose_problem(decopars2, m)
-    #
-    # if (m > 6){
-    #     assertthat::assert_that(length(decopars$H) == 2)
-    #     decopars2$H <- decopars$H[2]
-    #     W <- rbind(W,
-    #                decompose_problem(decopars2, m) * decopars$tau +
-    #                    (1 - decopars$tau) / m)
-    # } else if (length(decopars$H) == 2){
-    #     warning("Value of decopar$H[2] dropped.")
-    # }
-    # return (W)
+  # putting the results together and fixing funky rownames
+  W <- do.call(rbind,tmp)
+  rownames(W) <- NULL
+  return(W)
 }
