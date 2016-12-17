@@ -8,17 +8,19 @@
 #'
 #' @param decomp list containing the relevant decomposition parameters.
 #' For the Multi-layered Simplex-lattice design, the following key-value
-#' pairs must be members of decomp:
+#' pairs must be elements of \code{decomp}:
 #'
-#' #' \tabular{ccc}{
-#' \code{key}\tab \code{type}\tab \code{contents}\cr
-#'
-#' ".nobj" \tab Integer > 0 \tab Number of Objectives\cr
-#' "H"    \tab Numeric Array \tab User parameter, h_i > 0\cr
-#' "tau"    \tab Numeric Array \tab User parameter, |tau| = |H| and each tau_i must be unique\cr
-#'}
-#'
-#'
+#' \itemize{
+#'   \item \code{decomp$H}: array of positive integers representing the
+#'                          \code{H} values to be used by the SLD decomposition
+#'                          at each layer (see \code{\link{decomposition_sld}}
+#'                          for details).
+#'   \item \code{decomp$tau}: array of scale multipliers for each layer,
+#'         \eqn{0 < \tau_i \le 1}, \eqn{\tau_i != \tau_j} for all \eqn{i != j}.
+#'         Must have the same lenght as \code{decomp$H}.
+#'   \item \code{decomp$.nobj}: integer value, \code{decomp$.nobj > 1}. Number of
+#'         objectives of the problem.
+#' }
 #' @param ... other parameters (unused, included for compatibility with
 #' generic call)
 #'

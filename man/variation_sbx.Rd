@@ -4,7 +4,7 @@
 \alias{variation_sbx}
 \title{Simulated binary crossover}
 \usage{
-variation_sbx(X, P, etax, pc = 1, eps = 1e-06)
+variation_sbx(X, P, etax, pc = 1, eps = 1e-06, ...)
 }
 \arguments{
 \item{X}{Population matrix}
@@ -17,6 +17,9 @@ variation_sbx(X, P, etax, pc = 1, eps = 1e-06)
 \item{pc}{variable-wise probability of recombination}
 
 \item{eps}{smallest difference considered for recombination}
+
+\item{...}{other parameters (unused, included for compatibility with
+generic call)}
 }
 \value{
 Matrix \code{X}' containing the recombined population
