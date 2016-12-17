@@ -39,29 +39,36 @@ decomposition_msld <- function(decomp, ...){
   # Validating parameters
   assertthat::assert_that(
     assertthat::has_name(decomp,"H"),
+    length(decomp$H) > 1,
     all(sapply(decomp$H,assertthat::is.count)), ## there must be a cleaner way (all elements of H are count)
+    #
+    # ^^^^^ I think it's fine. If you want an alternative (more verbose though):
+    # is.integer(decomp$H) || all(decomp$H == as.integer(decomp$H)),
+    # all(decomp$H > 0),
+    #
     assertthat::has_name(decomp,"tau"),
-    all(decomp$tau >= 0 & decomp$tau < 1),
+    is_within(decomp$tau, strict = c(TRUE, FALSE)), # is_within from utils.R
     assertthat::are_equal(decomp$tau,unique(decomp$tau)),
     assertthat::are_equal(length(decomp$H),length(decomp$tau)),
-    length(decomp$H) > 1,
     assertthat::has_name(decomp,".nobj"),
     assertthat::is.count(decomp$.nobj),
     decomp$.nobj >= 2)
 
   # Calling SLD on each (h,tau) pair
-  W = mapply(decomp$H,decomp$tau,MoreArgs=list(decomp$.nobj),
-             FUN = function(h,t,nobj) {
+  W = mapply(decomp$H,
+             decomp$tau,
+             MoreArgs = list(decomp$.nobj),
+             FUN = function(h, t, nobj) {
                 # building parameter list for decomposition_sld
-                x = list(H=h,.nobj=nobj)
+                x = list(H = h, .nobj = nobj)
                 l = decomposition_sld(x)
                 # scaling down vectors
-                l = l*t + (1-t)/nobj
+                l = l * t + (1 - t) / nobj
                 return(l)
              })
 
   # putting the results together and fixing funky rownames
-  if (is.list(W)) {W <- do.call(rbind,W)}
+  if (is.list(W)) {W <- do.call(rbind, W)}
   rownames(W) <- NULL
   return(W)
 }
