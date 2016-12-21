@@ -54,7 +54,7 @@ To discover the available decomposition strategies, use `MOEADr::get_decompositi
     - If any other external information is needed, use `parent.frame(n = 2)` to access it directly from the `moead` environment.
 
 - OUTPUTS: 
-    - the function must output a _N x m_ matrix of weights, with _N_ the population size and _m_ the number of objectives.
+    - the function must output a _N x m_ matrix of weights, with _N_ the number of subproblems and _m_ the number of objectives.
 
 ### Other guidelines and requirements:  
 - The name of the function (and of the file) must have the format *decomposition_XYZ*, with *XYZ* being the moniker for the contributed method (which is going to be passed as _decomp$name_).
