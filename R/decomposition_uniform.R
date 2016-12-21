@@ -18,26 +18,57 @@
 
 decomposition_uniform <- function(decomp, ...){
 
-  # Uniform requires that the number of objectives is at least 3
+  # nobj - number of objectives (problem defined)
+  # N - number of subproblems (user defined)
   assertthat::assert_that(
+    assertthat::has_name(decomp, "N"),
+    assertthat::is.count(decomp$N),
     assertthat::has_name(decomp, ".nobj"),
     assertthat::is.count(decomp$.nobj),
-    decomp$.nobj >= 3)
+    decomp$N >= 3)
 
-  N <- decomp$.nobj
+  N <- decomp$N
+  nf <- decomp$.nobj
 
   # 1. Calculate the non-factors of N
   div <- seq_len(N);
   div <- div[N %% div != 0]
 
-  # 2. Generates a matrix of size |N-1| subsets of div
-  H <- t(sapply(seq_len(length(div)),
-                function(x) {return(div[seq_len(length(div)) != x])}
-        ))
-
-  # QUESTION: Do I need the permutation of these subsets as well, or just the subsets?
+  # 2. Generates H, matrix of all |nf-1| size subsets of div
+  # Question: Are the permutations of the rows of H needed?
+  H <- t(combn(div, nf-1))
 
   # 3. Generate matrixes U_N(h), and find one with lowest CD
+  construct_un <- function(h, N) {
+    U <- t(sapply(seq_len(N), function(x) {h * x %% N}))
+  }
 
-  # 4. Generate weights from U_N(h) with lowest CD
+  cd2 <- function(U) {
+    # L2 discrepancy of U (equation 7)
+    magic <- (13 / 12) ^ ncol(U)
+    S1 <- (2 / nrow(U)) *
+          sum(apply((1 + (abs(U - 0.5) - abs(U - 0.5) ^ 2) / 2), 1, prod))
+    S2 <- (1 / nrow(U) ^ 2) *
+          sum(apply(expand.grid(1:nrow(U), 1:nrow(U), 1:ncol(U)),
+                                1,
+                                function(x) { 1 +
+                                              abs(U[x[1], x[3]] - 0.5) / 2 +
+                                              abs(U[x[2], x[3]] - 0.5) / 2 -
+                                              abs(U[x[1], x[3]] - U[x[2], x[3]]) / 2
+          }))
+    return (magic - S1 + S2)
+  }
+
+  min_h <- H[which.min(apply(H, 1, function(x) {cd2(construct_un(x, N))})), ]
+  Un <- (construct_un(minh, N) - 0.5) / N
+
+  # 4. Generate weights from U_N(h)
+
+  U_pow <- t(t(Un)^sapply(seq_len(nf-1),function(x) {(nf-x)^-1}))
+  pow_prod <- t(apply(Upow,1,function(x) {sapply(seq_len(length(x)),function(y) {prod(x[seq_len(y-1)])})}))
+
+  W <- 1-U_pow*pow_prod
+
+  # WRONG RESULT! (negative weights, NaNs, Oh My!)
+  # Not calculating the final column yet
 }
