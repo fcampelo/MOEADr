@@ -55,15 +55,34 @@ decomposition_uniform <- function(decomp, ...){
     S1 <- (2 / nrow(U)) *
           sum(apply((1 + (abs(U - 0.5) - abs(U - 0.5) ^ 2) / 2), 1, prod))
 
-    # FIXME: This line looks cool, but it is too slow. Replace with an ugly 3-loop
-    S2 <- (1 / nrow(U) ^ 2) *
-          sum(apply(expand.grid(1:nrow(U), 1:nrow(U), 1:ncol(U)),
-                                1,
-                                function(x) { 1 +
-                                              abs(U[x[1], x[3]] - 0.5) / 2 +
-                                              abs(U[x[2], x[3]] - 0.5) / 2 -
-                                              abs(U[x[1], x[3]] - U[x[2], x[3]]) / 2
-          }))
+    # Slower versions of the calculation of S2 -- Blog about this:
+    # Version 1: 15s.
+    # S2 <- (1 / nrow(U) ^ 2) *
+    #       sum(apply(expand.grid(1:nrow(U), 1:nrow(U), 1:ncol(U)),
+    #                             1,
+    #                             function(x) { 1 +
+    #                                           abs(U[x[1], x[3]] - 0.5) / 2 +
+    #                                           abs(U[x[2], x[3]] - 0.5) / 2 -
+    #                                           abs(U[x[1], x[3]] - U[x[2], x[3]]) / 2
+    #       }))
+    #
+    # Version 2: 5s
+    # S2 <- 0
+    # for (i in 1:nrow(U)) {
+    #   for (j in 1:nrow(U)) {
+    #     for (k in 1:ncol(U)) {
+    #       S2 <- S2 + (1 + (abs(U[i,k] - 0.5) + abs(U[j,k] - 0.5) - abs(U[i,k] - U[j,k])) / 2)
+    #     }
+    #   }
+    # }
+    # S2 <- S2*(1 / nrow(U) ^ 2)
+    #
+    # Version 3: 0.28s
+    S2 <- (1/nrow(U) ^ 2) * (
+      (nrow(U) * nrow(U) * ncol(U))   +                               # 1 in the 3-sum
+      sum(abs(U - 0.5) / 2) * nrow(U) * 2 -                               # i-0.5, j-0.5
+      sum(sapply(1:nrow(U), function(y){ sum(abs(t(U) - U[y, ])) })) / 2 )  # i-j
+
     return (magic - S1 + S2)
   }
 
