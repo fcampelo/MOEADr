@@ -35,7 +35,7 @@ decomposition_uniform <- function(decomp, ...){
   # div <- div[N %% div != 0]
 
   div <- seq_len(N)
-  div <- div[sapply(div,is_coprime,N)]
+  div <- div[sapply(div, is_coprime, N)]
 
   # 2. Generates H, matrix of all |nf-1| size subsets of div
   # Question: Are the permutations of the rows of H needed?
@@ -54,6 +54,8 @@ decomposition_uniform <- function(decomp, ...){
     magic <- (13 / 12) ^ ncol(U)
     S1 <- (2 / nrow(U)) *
           sum(apply((1 + (abs(U - 0.5) - abs(U - 0.5) ^ 2) / 2), 1, prod))
+
+    # FIXME: This line looks cool, but it is too slow. Replace with an ugly 3-loop
     S2 <- (1 / nrow(U) ^ 2) *
           sum(apply(expand.grid(1:nrow(U), 1:nrow(U), 1:ncol(U)),
                                 1,
@@ -70,13 +72,16 @@ decomposition_uniform <- function(decomp, ...){
 
   # 4. Generate weights from U_N(h)
 
-  U_pow <- t(t(Un)^sapply(seq_len(nf-1),function(x) {(nf-x)^-1}))
-  pow_prod <- t(apply(U_pow,1,function(x) {sapply(seq_len(length(x)),function(y) {prod(x[seq_len(y-1)])})}))
+  U_pow <- t(t(Un) ^ sapply(seq_len(nf - 1), function(x) {(nf - x) ^ -1}))
+  pow_prod <- t(apply(U_pow, 1,
+                      function(x) {sapply(seq_len(length(x)),
+                                          function(y) { prod(x[seq_len(y-1)]) }
+                )}))
 
-  W <- (1-U_pow)*pow_prod
-  colnames(W) <- paste("Var",1:ncol(W),sep="")
+  W <- (1 - U_pow) * pow_prod
+  colnames(W) <- paste("Var", 1:ncol(W), sep="")
 
   # Adding the final Column
-  W <- cbind(W,VarLast = apply(U_pow,1,prod))
+  W <- cbind(W, VarLast = apply(U_pow, 1, prod))
 
 }
