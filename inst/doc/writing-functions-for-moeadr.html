@@ -12,7 +12,7 @@
 
 <meta name="author" content="Felipe Campelo" />
 
-<meta name="date" content="2016-12-13" />
+<meta name="date" content="2016-12-20" />
 
 <title>Writing Functions for the MOEADr Package</title>
 
@@ -32,7 +32,7 @@
 
 <h1 class="title toc-ignore">Writing Functions for the MOEADr Package</h1>
 <h4 class="author"><em>Felipe Campelo</em></h4>
-<h4 class="date"><em>2016-12-13</em></h4>
+<h4 class="date"><em>2016-12-20</em></h4>
 
 
 
@@ -92,7 +92,7 @@
 </ul></li>
 <li>OUTPUTS:
 <ul>
-<li>the function must output a <em>N x m</em> matrix of weights, with <em>N</em> the population size and <em>m</em> the number of objectives.</li>
+<li>the function must output a <em>N x m</em> matrix of weights, with <em>N</em> the number of subproblems and <em>m</em> the number of objectives.</li>
 </ul></li>
 </ul>
 <div id="other-guidelines-and-requirements" class="section level3">
@@ -132,6 +132,65 @@
 </ul>
 </div>
 <div id="example-file-1" class="section level3">
+<h3>Example file</h3>
+<p>Check <em>scalarize_pbi.R</em> for a good example of decomposition routine (e.g., to use as a template).</p>
+</div>
+</div>
+<div id="neighborhood-assignment-options" class="section level2">
+<h2>Neighborhood assignment options</h2>
+<p>The strategy for defining the neighborhood structure in the MOEADr package is essentially the same (use Euclidean distances and use the <code>neighbors$T</code> nearest subproblems as a neighborhood). The only difference is the space in which the distances are calculated, which has implications in the need for re-calculating the neighborhood structure. The neighborhoods are defined using an efficient C implementation of the k-nearest-neighbors algorithm available in function <code>FNN::get.knn</code>, which is the only reason why package <code>MOEADr</code> lists <code>FNN</code> in its <em>Imports</em> field (see <em>DESCRIPTION</em>).</p>
+<p>The neighborhood assignment function is <code>define_neighborhood</code>, which is called directly from the main function <code>moead</code>.</p>
+<ul>
+<li>INPUTS: <code>define_neighborhood</code> can receive two parameters:
+<ul>
+<li>neighbors: list object containing the specifications and variables necessary for defining the neighborhood assignment strategy. Use <code>?moead</code> and <code>?define_neighborhood</code> to get details on the structure of <em>neighbor</em>.</li>
+<li>v.matrix: matrix of row vectors to be used in the calculation of the Euclidean distances for defining the neighborhoods.</li>
+</ul></li>
+</ul>
+<p>Both input arguments can be ommitted, in which case they are captured directly from the parent environment (i.e., from the calling function <code>moead</code>). The <code>v.matrix</code> argument is filled with the weight matrix <strong>W</strong> if <code>neighbors$name == &quot;lambda&quot;</code>, or with the population matrix <strong>X</strong> if <code>neighbors$name == &quot;x&quot;</code> (in which case the neighborhood structure is also recalculated at each iteration.</p>
+<ul>
+<li>OUTPUTS: the function must output a list object containing two matrices:
+<ul>
+<li><strong>B</strong>: each row represents the neighborhood of a subproblem as indices (first element is the subproblem index, and the following <code>neighbors$T - 1</code> elements are the neighbor indices). This is a <em>N x T</em> matrix.</li>
+<li><strong>P</strong>: matrix of probabilities of selection to be used in the sampling of solutions for variation operators. Each element  represents the probability of using the solution associated with the <em>j</em>-th subproblem when performing a variation operator (e.g., recombination) for the <em>i</em>-th subproblem. This is a <em>N x N</em> matrix.</li>
+</ul></li>
+</ul>
+<div id="other-guidelines-and-requirements-2" class="section level3">
+<h3>Other guidelines and requirements:</h3>
+<ul>
+<li>Unlike the previous modules, the neighborhood assignment strategies are defined as options passed to a single function <code>define_neighborhood</code>. Other possibilities (e.g., to deal with adaptive weights, which would require periodic recalculation) can, at least in principle, use the same strategy. However, if an alternative assignment method becomes too different from the one currently implemented, it may be better to break the options and use the <em>one function, one file, same name</em> policy. In this case, the current options should be moved to independent functions starting with a common preffix (as is the case with other modules, e.g., decomposition).</li>
+</ul>
+</div>
+<div id="example-file-2" class="section level3">
+<h3>Example file</h3>
+<p>Check <em>define_neighborhood.R</em> for the current neighborhood assignment alternatives (e.g., to use as a template).</p>
+</div>
+</div>
+<div id="variation-operators" class="section level2">
+<h2>Variation operators</h2>
+<p>To discover the available variation operators, use <code>MOEADr::get_variation_operators()</code>. Scalarization functions are called from within <code>scalarize_values</code>, which in turn is called within a <code>updt_XYZ</code> routine invoked by <code>update_population</code>.</p>
+<ul>
+<li>INPUTS: the function receives the following parameters when called within <code>scalarize_values</code>:
+<ul>
+<li>Y: matrix of objective function values</li>
+<li>W: matrix of weights</li>
+<li>aggfun: list object containing the specifications and variables necessary for defining the scalar aggregation strategy. Use <code>?moead</code> and <code>?scalarization_pbi</code> to get details on the structure of <em>aggfun</em>.</li>
+<li>minP: numeric vector with <em>m</em> elements, containing an estimate of the “ideal point”.</li>
+<li>maxP: numeric vector with <em>m</em> elements, containing an estimate of the “nadir point”.</li>
+</ul></li>
+</ul>
+<p>Note that the function does not need to have all these parameters defined as formal arguments: use <code>...</code> to avoid declaring useless arguments.</p>
+<ul>
+<li>OUTPUTS: the function must output a numeric vector of size <em>N</em>, containing the scalarized values.</li>
+</ul>
+<div id="other-guidelines-and-requirements-3" class="section level3">
+<h3>Other guidelines and requirements:</h3>
+<ul>
+<li>The name of the function (and of the file) must have the format <em>scalarization_XYZ</em>, with <em>XYZ</em> being the moniker for the contributed method (which is going to be passed as <em>aggfun$name</em>).</li>
+<li>Please follow the <em>one function, one file, same name</em> policy strictly (otherwise <code>get_scalarization_methods()</code> won’t be able to correctly list the method.</li>
+</ul>
+</div>
+<div id="example-file-3" class="section level3">
 <h3>Example file</h3>
 <p>Check <em>scalarize_pbi.R</em> for a good example of decomposition routine (e.g., to use as a template).</p>
 </div>
