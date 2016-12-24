@@ -31,8 +31,11 @@ decomposition_uniform <- function(decomp, ...){
   nf <- decomp$.nobj
 
   # 1. Calculate the non-factors of N
-  div <- seq_len(N);
-  div <- div[N %% div != 0]
+  # div <- seq_len(N);
+  # div <- div[N %% div != 0]
+
+  div <- seq_len(N)
+  div <- div[sapply(div,is_coprime,N)]
 
   # 2. Generates H, matrix of all |nf-1| size subsets of div
   # Question: Are the permutations of the rows of H needed?
@@ -40,7 +43,10 @@ decomposition_uniform <- function(decomp, ...){
 
   # 3. Generate matrixes U_N(h), and find one with lowest CD
   construct_un <- function(h, N) {
-    U <- t(sapply(seq_len(N), function(x) {h * x %% N}))
+    U <- t(sapply(seq_len(N), function(x) {(h * x)%% N}))
+
+    # Authors redefine modulus as going from 1 to N
+    U <- U + N * (1 - sign(U))
   }
 
   cd2 <- function(U) {
@@ -60,15 +66,17 @@ decomposition_uniform <- function(decomp, ...){
   }
 
   min_h <- H[which.min(apply(H, 1, function(x) {cd2(construct_un(x, N))})), ]
-  Un <- (construct_un(minh, N) - 0.5) / N
+  Un <- (construct_un(min_h, N) - 0.5) / N
 
   # 4. Generate weights from U_N(h)
 
   U_pow <- t(t(Un)^sapply(seq_len(nf-1),function(x) {(nf-x)^-1}))
-  pow_prod <- t(apply(Upow,1,function(x) {sapply(seq_len(length(x)),function(y) {prod(x[seq_len(y-1)])})}))
+  pow_prod <- t(apply(U_pow,1,function(x) {sapply(seq_len(length(x)),function(y) {prod(x[seq_len(y-1)])})}))
 
-  W <- 1-U_pow*pow_prod
+  W <- (1-U_pow)*pow_prod
+  colnames(W) <- paste("Var",1:ncol(W),sep="")
 
-  # WRONG RESULT! (negative weights, NaNs, Oh My!)
-  # Not calculating the final column yet
+  # Adding the final Column
+  W <- cbind(W,VarLast = apply(U_pow,1,prod))
+
 }

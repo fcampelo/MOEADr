@@ -35,7 +35,19 @@ is_within <- function(x, xmin = 0, xmax = 1, strict = c(FALSE, FALSE)){
   return(out)
 }
 
-
+# Check if two numeric values are coprime
+is_coprime <- function(x, y){
+  a <- x
+  b <- y
+  while (b != 0) {
+    if (a == 1 || b == 1)
+      return(TRUE)
+    t <- b
+    b <- a %% b
+    a <- t
+  }
+  return(FALSE)
+}
 
 # Get estimate of 'ideal' point (minP)
 getminP <- function(X){
