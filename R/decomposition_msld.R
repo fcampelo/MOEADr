@@ -42,12 +42,7 @@ decomposition_msld <- function(decomp, ...){
   assertthat::assert_that(
     assertthat::has_name(decomp,"H"),
     length(decomp$H) > 1,
-    all(sapply(decomp$H,assertthat::is.count)), ## there must be a cleaner way (all elements of H are count)
-    #
-    # ^^^^^ I think it's fine. If you want an alternative (more verbose though):
-    # is.integer(decomp$H) || all(decomp$H == as.integer(decomp$H)),
-    # all(decomp$H > 0),
-    #
+    all(sapply(decomp$H,assertthat::is.count)),
     assertthat::has_name(decomp,"tau"),
     is_within(decomp$tau, strict = c(TRUE, FALSE)), # is_within from utils.R
     assertthat::are_equal(decomp$tau,unique(decomp$tau)),
@@ -72,5 +67,6 @@ decomposition_msld <- function(decomp, ...){
   # putting the results together and fixing funky rownames
   if (is.list(W)) {W <- do.call(rbind, W)}
   rownames(W) <- NULL
+
   return(W)
 }

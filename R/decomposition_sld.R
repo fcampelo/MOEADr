@@ -57,7 +57,12 @@ decomposition_sld <- function(decomp, ...){
     # Generate m-th column
     W$VarLast <- 1 - rowSums(W)
 
-    # Remove invalid vectors and return weight matrix W
-    return(as.matrix(subset(W, W$VarLast >= 0)))
+    # Remove invalid vectors
+    W <- as.matrix(subset(W, W$VarLast >= 0))
+
+    # Tidy up row numbers
+    rownames(W) <- NULL
+
+    return(W)
 
 }

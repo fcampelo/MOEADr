@@ -28,3 +28,6 @@
 *.utf8.md
 *.knit.md
 .Rproj.user
+
+# Rprof temporary files
+Rprof.out
