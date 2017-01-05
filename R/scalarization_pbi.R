@@ -55,7 +55,7 @@ scalarization_pbi <- function(Y, W, minP, aggfun, eps = 1e-16, ...){
                ncol = ncol(W),
                byrow = FALSE)
 
-  D2 <- sqrt(rowSums((Y - minP - D1 * W) ^ 2))
+  D2 <- sqrt(rowSums((Y - minP - D1 * W / NormW) ^ 2))
 
   return(as.numeric(D1[, 1] + aggfun$theta * D2))
 

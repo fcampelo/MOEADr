@@ -40,7 +40,7 @@ scalarization_ws <- function(Y, W, minP, eps = 1e-16, ...){
                  ncol = ncol(Y),
                  byrow = TRUE)
 
-  Z <- apply(W * Y,
+  Z <- apply(W * (Y - minP),
              MARGIN = 1,
              FUN    = sum)
 
