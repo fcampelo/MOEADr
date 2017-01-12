@@ -61,7 +61,7 @@ evaluate_population <- function(X       = NULL,
   # Input "problem" is assumed to have been already verified in
   # create_population(), and will not be re-checked here.
 
-  assertthat::assert_that(is_within(X, 0, 1, strict = FALSE))
+  assertthat::assert_that(is_within(X, 0, 1, strict = c(FALSE, FALSE)))
 
   # ==========
 

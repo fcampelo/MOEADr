@@ -39,7 +39,7 @@ decomposition_uniform <- function(decomp, ...){
 
   # 2. Generates H, matrix of all |nf-1| size subsets of div
   # Question: Are the permutations of the rows of H needed?
-  H <- t(combn(div, nf-1))
+  H <- t(utils::combn(div, nf-1))
 
   # 3. Generate matrixes U_N(h), and find one with lowest CD
   construct_un <- function(h, N) {

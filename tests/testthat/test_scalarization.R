@@ -1,15 +1,14 @@
-# Test decomposition methods
+# Test scalarization methods
 context("Scalarization methods")
 
 # Test setup
-set.seed(4321)
-f <- matrix(sample.int(100, 6) * runif(6), ncol = 3)
+f <- matrix(c(1,2,4,3,5,6), ncol = 3)
 w <- matrix(c(1:3,3:1)/6, ncol = 3, byrow = TRUE)
 z <- apply(f, 2, min)
 
 # ========== Expected solutions, calculated the long way
 
-# PBI:  g_i       = d_i^1 + \theta*d_i^2
+# PBI:  g_i       = d_i^1 + theta * d_i^2
 #       d_i^1 = |(f_i - z)' * w| / ||w||
 #       d_i^2 = || f_i - [z + d_i^1 * (w / ||w||)] ||
 #
@@ -18,17 +17,20 @@ res1    <- numeric(nrow(f))
 for (i in 1:nrow(f)){
   wn     <- norm(w[i, ], "2")
   d1     <- as.numeric(abs(t(f[i, ] - z) %*% w[i, ]) / wn)
-  d2     <- norm(f[i, ] - (z + d1 * w[i, ]), "2")
+  d2     <- norm(f[i, ] - (z + d1 * w[i, ] / wn), "2")
   res1[i] <- d1 + aggfun1$theta * d2
 }
 
 
-# WEIGHTED SUM: g_i = \sum_{j=1}^{m}w_{ij}f_{ij}
+# WEIGHTED SUM: g_i = \sum_{j = 1}^{m} w_{i,j} * f_{i,j}
 #
-res2    <- rowSums(f * w)
+res2    <- numeric(nrow(f))
+for (i in 1:nrow(f)){
+  res2[i] <- sum(w[i, ] * (f[i, ] - z))
+}
 
 
-# WEIGHTED TCHEBYCHEFF: g_i = \max_{j}(w_{ij} * |f_{ij} - z_j|)
+# WEIGHTED TCHEBYCHEFF: g_i = \max_{j}(w_{i,j} * |f_{i,j} - z_j|)
 #
 res3      <- numeric(nrow(f))
 

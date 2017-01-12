@@ -141,10 +141,16 @@ based on Decomposition". In preparation, 2016.
 \examples{
 
 # MOEA/D as in Zhang and Li (2007) (sec. V-E, p.721-722)
-require(mco) # For the test problems
-problem   <- list(name       = "mco_zdt", prob.number = 1, m = 2,
+## 1: prepare test problem
+library(smoof)
+UF3 <- make_vectorized_smoof(prob.name  = "ZDT1",
+                             dimensions = 30)
+
+## 2: set input parameters
+problem   <- list(name       = "UF3",
                   xmin       = rep(0, 30),
-                  xmax       = rep(1, 30))
+                  xmax       = rep(1, 30),
+                  m          = 2)
 decomp    <- list(name       = "SLD", H = 99)
 neighbors <- list(name       = "lambda",
                   T          = 20,
@@ -161,10 +167,12 @@ stopcrit  <- list(list(name  = "maxiter",
 showpars  <- list(show.iters = "numbers",
                   showevery  = 10)
 
+## 3: run MOEA/D
 out <- moead(problem, decomp, aggfun,
              neighbors, variation, update,
              scaling, stopcrit,showpars)
 
+# 4: Plot output
 plot(out$Y[,1], out$Y[,2], type = "p", pch = 20)
 }
 
