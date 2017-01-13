@@ -1,6 +1,2 @@
 language: r
-r:
-  - oldrel
-  - release
-  - devel
 cache: packages
