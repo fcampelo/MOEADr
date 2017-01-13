@@ -42,7 +42,7 @@ scalarization_awt <- function(Y, W, minP, eps = 1e-16, ...){
                  byrow = TRUE)
 
   # Calculating "normalized inverses"
-  Rho <- W^-1/rowSums(W^-1)
+  Rho <- (W+eps)^-1/rowSums((W+eps)^-1)
 
   Z <- apply(Rho * (Y - minP + eps),
              MARGIN = 1,
