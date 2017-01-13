@@ -1,4 +1,6 @@
 ## MOEADr package
+[![Build Status](https://travis-ci.org/fcampelo/MOEADr.png)](https://travis-ci.org/fcampelo/MOEADr)  
+***
 [Felipe Campelo](mailto:fcampelo@ufmg.br) and Lucas Batista  
 Operations Research and Complex Systems Laboratory - ORCS Lab  
 Universidade Federal de Minas Gerais  
@@ -11,6 +13,7 @@ Faculty of Engineering, Information and Systems
 University of Tsukuba  
 Tsukuba, Japan
 ***
+
 
 Modular implementation of the Multiobjective Evolutionary Algorithm with Decomposition (MOEA/D) framework, including several decomposition and scalarization strategies, as well as variation and selection operators.
 
