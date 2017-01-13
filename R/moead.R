@@ -129,7 +129,7 @@
 #' update    <- list(name       = "standard")
 #' scaling   <- list(name       = "none")
 #' stopcrit  <- list(list(name  = "maxiter",
-#'                     maxiter  = 500))
+#'                     maxiter  = 200))
 #' showpars  <- list(show.iters = "numbers",
 #'                   showevery  = 10)
 #'

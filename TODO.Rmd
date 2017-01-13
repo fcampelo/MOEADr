@@ -1,22 +1,18 @@
 ---
 title: "TODO"
 author: "Felipe Campelo"
-date: "12/12/2016"
+date: "13/01/2016"
 output: html_document
 ---
 
 ## For the package itself
 - Verify inverted PBI (check equations, there's something fishy there)
-- decomposition_msld()
-- decomposition_uniform()
-- scalarize_mwt()
-- implement other alternatives for objective scaling (as in the manuscript)
-- implement other update strategies (as in the manuscript)
+- implement other alternatives for objective scaling
+- implement other update strategies
 - local search operators (at least one)?
-- implement other variation operators (as in the manuscript - at least the MOEA/D-DE ones)
+- implement more variation operators
 
 ## For the paper:
 - Finish thinking the experiments.
 - Perform and document experiments.
 - Finish documenting the modules.
-
