@@ -38,6 +38,16 @@ for (i in 1:nrow(f)){
   res3[i] <- max(w[i, ] * abs(f[i, ] - z))
 }
 
+# ADJUSTED WEIGTED TCHEBYCHEFF
+# (I think there would be a better test. Aren't there any properties that this
+#  matrix should obey?)
+
+res4      <- numeric(nrow(f))
+
+for (i in 1:nrow(f)){
+  r <- w^-1/rowSums(w^-1)
+  res4[i] <- max(r[i, ] * abs(f[i, ] - z))
+}
 
 # INVERTED PBI
 #
@@ -50,4 +60,5 @@ testthat::test_that("Scalarization returns correct values", {
   testthat::expect_equal(scalarization_pbi(f, w, z, aggfun1), res1)
   testthat::expect_equal(scalarization_ws(f, w, z), res2)
   testthat::expect_equal(scalarization_wt(f, w, z), res3)
+  testthat::expect_equal(scalarization_awt(f, w, z), res4)
 })
