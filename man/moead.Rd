@@ -143,11 +143,11 @@ based on Decomposition". In preparation, 2016.
 # MOEA/D as in Zhang and Li (2007) (sec. V-E, p.721-722)
 ## 1: prepare test problem
 library(smoof)
-UF3 <- make_vectorized_smoof(prob.name  = "ZDT1",
-                             dimensions = 30)
+ZDT1 <- make_vectorized_smoof(prob.name  = "ZDT1",
+                              dimensions = 30)
 
 ## 2: set input parameters
-problem   <- list(name       = "UF3",
+problem   <- list(name       = "ZDT1",
                   xmin       = rep(0, 30),
                   xmax       = rep(1, 30),
                   m          = 2)
