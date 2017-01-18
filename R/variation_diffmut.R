@@ -31,7 +31,7 @@
 #'
 #' @export
 
-variation_differential <- function(X, P, phi = NULL, basis = 'random', ...){
+variation_diffmut <- function(X = NULL, P = NULL, B = NULL, phi = NULL, basis = 'random', ...){
 
   # ========== Error catching and default value definitions
   assertthat::assert_that(
@@ -39,6 +39,8 @@ variation_differential <- function(X, P, phi = NULL, basis = 'random', ...){
     is.numeric(P) && is.matrix(P) && is_within(P, 0, 1, strict = FALSE),
     identical(nrow(X), nrow(P)),
     nrow(P) == ncol(P),
+    is.numeric(B) && is.matrix(B),
+    nrow(B) == nrow(X),
     is.null(phi) || (is.numeric(phi) && phi != 0),
     is.element(basis,c('random', 'mean', 'weighted')))
   # ==========

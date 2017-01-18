@@ -1,16 +1,16 @@
 ---
 title: "TODO"
 author: "Felipe Campelo"
-date: "12/12/2016"
+date: "13/01/2016"
 output: html_document
 ---
 
 ## For the package itself
 - Verify inverted PBI (check equations, there's something fishy there)
-- implement other alternatives for objective scaling (as in the manuscript)
-- implement other update strategies (as in the manuscript)
+- implement other alternatives for objective scaling
+- implement other update strategies
 - local search operators (at least one)?
-- Implement basis variations on the variation_differential operator
+- implement more variation operators
 
 ## For the paper:
 - Finish thinking the experiments.
