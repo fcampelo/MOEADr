@@ -7,13 +7,10 @@ output: html_document
 
 ## For the package itself
 - Verify inverted PBI (check equations, there's something fishy there)
-- decomposition_msld()
-- decomposition_uniform()
-- scalarize_mwt()
 - implement other alternatives for objective scaling (as in the manuscript)
 - implement other update strategies (as in the manuscript)
 - local search operators (at least one)?
-- implement other variation operators (as in the manuscript - at least the MOEA/D-DE ones)
+- Implement basis variations on the variation_differential operator
 
 ## For the paper:
 - Finish thinking the experiments.

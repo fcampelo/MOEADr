@@ -47,6 +47,8 @@ variation_differential <- function(X, P, phi = NULL, basis = 'random', ...){
   # (Basis is recreated if 'mean' or 'random')
   R <- t(sapply(1:nrow(X), FUN = function(i) { sample.int(nrow(X), size = 3, replace = FALSE, prob = P[,i]) }))
 
+  # TODO: Variations on the basis vector (R[1,]), as in the manuscript
+
   if (is.null(phi)) {
     phi <- runif(1)
   }
