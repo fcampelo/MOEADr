@@ -49,13 +49,17 @@ variation_diffmut <- function(X = NULL, P = NULL, B = NULL, phi = NULL, basis = 
   # (Basis is recreated if 'mean' or 'random')
   R <- t(sapply(1:nrow(X), FUN = function(i) { sample.int(nrow(X), size = 3, replace = FALSE, prob = P[,i]) }))
 
-  # TODO: Variations on the basis vector (R[1,]), as in the manuscript
-
   if (is.null(phi)) {
     phi <- runif(1)
   }
 
-  Xn <- X[R[, 1], ] + phi*(X[R[, 2], ] - X[R[, 3], ])
+  Xb <- switch(basis,
+               random = X[R[, 1], ],
+               mean = t(sapply(1:nrow(X), FUN = function(i) { apply(X[B[i, ], ], 2, mean) }))
+               # TODO -- weighted mean variation
+               )
+
+  Xn <- Xb + phi*(X[R[, 2], ] - X[R[, 3], ])
 
   return(Xn)
 }
