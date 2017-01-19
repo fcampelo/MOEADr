@@ -60,7 +60,7 @@ perform_variation <- function(X         = NULL,
     B <- call.env$B
   }
 
-  # Preserve original elements of X (used in some variation operators such as binrecomb)
+  # Preserve original elements of X (used in some variation operators such as binrec)
   Xc <- X
 
   # ========== Error catching and default value definitions
@@ -89,7 +89,7 @@ perform_variation <- function(X         = NULL,
     X <- do.call(opname,
                  args = varargs)
 
-    # Repair operator matrix X
+    # Repair operator for matrix X
     repair$X <- X
     X <- do.call(repname,
                  args = repair)
