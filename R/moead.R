@@ -137,11 +137,24 @@
 #'                   showevery  = 10)
 #'
 #' ## 3: run MOEA/D
-#' out <- moead(problem, decomp,  aggfun, neighbors, variation,
+#' out1 <- moead(problem, decomp,  aggfun, neighbors, variation,
 #'              update,  scaling, repair, stopcrit,  showpars)
 #'
-#' # 4: Plot output
-#' plot(out$Y[,1], out$Y[,2], type = "p", pch = 20)
+#' # 4: Plot output using:
+#' # plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)
+#'
+#'
+#' # Rerun with standard DE variation operators (rand mutation + binomial
+#' # recombination)
+#' variation <- list(list(name  = "diffmut",
+#'                        basis = "rand",
+#'                        phi   = NULL),
+#'                   list(name  = "binrec",
+#'                        rho   = 0.8))
+#'
+#' out2 <- moead(problem, decomp,  aggfun, neighbors, variation,
+#'               update,  scaling, repair, stopcrit,  showpars)
+#' # plot(out2$Y[,1], out2$Y[,2], type = "p", pch = 20)
 
 moead <- function(problem,      # List:  MObj problem
                   decomp,       # List:  decomposition strategy
