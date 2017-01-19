@@ -17,6 +17,9 @@
 #' @param variation List vector containing the variation operators to be used.
 #' See \code{\link{moead}} for details. If \code{NULL} the function searches
 #' for \code{variation} in the calling environment.
+#' @param repair List vector containing the repair operator to be used.
+#' See \code{\link{moead}} for details. If \code{NULL} the function searches
+#' for \code{repair} in the calling environment.
 #'
 #' @return Modified population matrix X
 #'
@@ -55,7 +58,7 @@ perform_variation <- function(X         = NULL,
   }
 
   # Capture "B" from calling environment (if needed)
-  if (is.null(P)) {
+  if (is.null(B)) {
     assertthat::assert_that(assertthat::has_name(call.env, "B"))
     B <- call.env$B
   }

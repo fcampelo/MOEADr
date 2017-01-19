@@ -1,16 +1,26 @@
 #' Binomial Recombination
 #'
+#' Binomial recombination implementation for the MOEA/D.
+#'
+#' This variation operator only works if at least one other variation operator
+#' is performed prior to its execution, otherwise it becomes an identity
+#' operator (returns an unchanged matrix X).
+#'
 #' @param X Population matrix
 #' @param rho mutation probability
-#' @param Xc Original Population matrix
+#' @param Xc Original population matrix
 #' @param ... other parameters (unused, included for compatibility with
 #' generic call)
 #'
-#' @return Matrix \code{X}' containing the mutated population
+#' @return Matrix \code{X}' containing the recombined population
+#'
+#' @section References:
+#' K. Price, R.M. Storn, J.A. Lampinen, "Differential Evolution: A
+#' Practical Approach to Global Optimization", Springer 2005
 #'
 #' @export
 
-variation_binrecomb <- function(X, Xc, rho, ...){
+variation_binrec <- function(X, Xc, rho, ...){
 
   # ========== Error catching and default value definitions
   assertthat::assert_that(
@@ -20,18 +30,17 @@ variation_binrecomb <- function(X, Xc, rho, ...){
     is.numeric(rho) && is_within(rho, 0, 1, strict = FALSE))
   # ==========
 
-  # Define minimum mutating positions
-  k <- matrix(FALSE, nrow(X), ncol(X))
-  for (i in 1:nrow(X)) { k[i, sample(ncol(X), 1)] = TRUE }
+  # Recombination matrix
+  R <- randM(X) < rho
 
-  # Define mutation probability matrix (eq 28)
-  u <- (randM(X) <= rho)
+  # Guarantee that at least one variable is recombined for each candidate
+  # solution
+  K <- matrix(FALSE, nrow(X), ncol(X))
+  for (i in 1:nrow(X)) {
+    K[i, sample(ncol(X), size = 1)] <- TRUE
+  }
+  R <- R | (rowSums(R) == 0 & K)
 
-  # For any row without mutations, add the minimum mutation (eq 29)
-  u <- u | (rowSums(u) == 0 & k)
-
-  # Calculate the mutated population
-  Xn <- X * (u) + Xc * (!u)
-
-  return(Xn)
+  # Perform recombination and return
+  return(R * X + (!R) * Xc)
 }

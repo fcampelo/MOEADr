@@ -20,10 +20,12 @@ Truncation repair operation
 }
 \details{
 Repairs the solution matrix X to guarantee that all values are in the
-[0,1] interval. This is done by simply truncating the matrix to 0,1.
+[0, 1] interval. This is done by simply truncating all elements of the
+matrix.
+}
+\section{References}{
 
-Code copied shamelessly from fcampelo's ExpDE repository.
-https://github.com/fcampelo/ExpDE/blob/master/R/ExpDE.R
+Code reused from https://github.com/fcampelo/ExpDE/blob/master/R/ExpDE.R
 Lines 240-242
 }
 
