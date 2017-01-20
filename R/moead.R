@@ -95,6 +95,8 @@
 #'    See \code{Update strategies} for details.
 #' @param scaling List containing the objective scaling parameters
 #'    See \code{Objective scaling} for details.
+#' @param repair List containing the solution repair parameters
+#'    See \code{Repair operators} for details.
 #' @param stopcrit list containing the stop criteria parameters.
 #'    See \code{Stop criteria} for details.
 #' @param showpars list containing the echoing behavior parameters.
@@ -128,18 +130,31 @@
 #'                        etam  = 20, pm = 0.1))
 #' update    <- list(name       = "standard")
 #' scaling   <- list(name       = "none")
+#' repair    <- list(name       = "truncate")
 #' stopcrit  <- list(list(name  = "maxiter",
 #'                     maxiter  = 200))
 #' showpars  <- list(show.iters = "numbers",
 #'                   showevery  = 10)
 #'
 #' ## 3: run MOEA/D
-#' out <- moead(problem, decomp, aggfun,
-#'              neighbors, variation, update,
-#'              scaling, stopcrit,showpars)
+#' out1 <- moead(problem, decomp,  aggfun, neighbors, variation,
+#'              update,  scaling, repair, stopcrit,  showpars)
 #'
-#' # 4: Plot output
-#' plot(out$Y[,1], out$Y[,2], type = "p", pch = 20)
+#' # 4: Plot output using:
+#' # plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)
+#'
+#'
+#' # Rerun with standard DE variation operators (rand mutation + binomial
+#' # recombination)
+#' variation <- list(list(name  = "diffmut",
+#'                        basis = "rand",
+#'                        Phi   = NULL),
+#'                   list(name  = "binrec",
+#'                        rho   = 0.8))
+#'
+#' out2 <- moead(problem, decomp,  aggfun, neighbors, variation,
+#'               update,  scaling, repair, stopcrit,  showpars)
+#' # plot(out2$Y[,1], out2$Y[,2], type = "p", pch = 20)
 
 moead <- function(problem,      # List:  MObj problem
                   decomp,       # List:  decomposition strategy
@@ -148,6 +163,7 @@ moead <- function(problem,      # List:  MObj problem
                   variation,    # List:  variation operators
                   update,       # List:  update method
                   scaling,      # List:  objective scaling strategy
+                  repair,       # List:  repair strategy
                   stopcrit,     # List:  stop criteria
                   showpars,     # List:  echoing behavior
                   seed = NULL)  # Seed for PRNG
@@ -161,6 +177,7 @@ moead <- function(problem,      # List:  MObj problem
     # "variation"   checked in "perform_variation(...)"
     # "update"      checked in "update_population(...)"
     # "scaling"     checked in
+    # "repair"      checked in
     # "stopcrit"    checked in
     # "showpars"    checked in
 
@@ -206,7 +223,7 @@ moead <- function(problem,      # List:  MObj problem
         X <- perform_variation()
 
         # Evaluate offspring population on objectives
-        Y <- evaluate_population()
+        Y <- evaluate_population(X)
 
         # Update population
         update_population()

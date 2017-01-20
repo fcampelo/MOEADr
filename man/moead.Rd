@@ -4,8 +4,8 @@
 \alias{moead}
 \title{MOEA/D}
 \usage{
-moead(problem, decomp, aggfun, neighbors, variation, update, scaling, stopcrit,
-  showpars, seed = NULL)
+moead(problem, decomp, aggfun, neighbors, variation, update, scaling, repair,
+  stopcrit, showpars, seed = NULL)
 }
 \arguments{
 \item{problem}{List containing the problem parameters.
@@ -28,6 +28,9 @@ See \code{Update strategies} for details.}
 
 \item{scaling}{List containing the objective scaling parameters
 See \code{Objective scaling} for details.}
+
+\item{repair}{List containing the solution repair parameters
+See \code{Repair operators} for details.}
 
 \item{stopcrit}{list containing the stop criteria parameters.
 See \code{Stop criteria} for details.}
@@ -162,17 +165,30 @@ variation <- list(list(name  = "sbx",
                        etam  = 20, pm = 0.1))
 update    <- list(name       = "standard")
 scaling   <- list(name       = "none")
+repair    <- list(name       = "truncate")
 stopcrit  <- list(list(name  = "maxiter",
                     maxiter  = 200))
 showpars  <- list(show.iters = "numbers",
                   showevery  = 10)
 
 ## 3: run MOEA/D
-out <- moead(problem, decomp, aggfun,
-             neighbors, variation, update,
-             scaling, stopcrit,showpars)
+out1 <- moead(problem, decomp,  aggfun, neighbors, variation,
+             update,  scaling, repair, stopcrit,  showpars)
 
-# 4: Plot output
-plot(out$Y[,1], out$Y[,2], type = "p", pch = 20)
+# 4: Plot output using:
+# plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)
+
+
+# Rerun with standard DE variation operators (rand mutation + binomial
+# recombination)
+variation <- list(list(name  = "diffmut",
+                       basis = "rand",
+                       Phi   = NULL),
+                  list(name  = "binrec",
+                       rho   = 0.8))
+
+out2 <- moead(problem, decomp,  aggfun, neighbors, variation,
+              update,  scaling, repair, stopcrit,  showpars)
+# plot(out2$Y[,1], out2$Y[,2], type = "p", pch = 20)
 }
 

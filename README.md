@@ -1,5 +1,5 @@
 ## MOEADr package
-[![Build Status](https://api.travis-ci.org/fcampelo/MOEADr.png?branch=master)](https://travis-ci.org/fcampelo/MOEADr)
+[![Build Status](https://api.travis-ci.org/fcampelo/MOEADr.png)](https://travis-ci.org/fcampelo/MOEADr)
 
 ***
 

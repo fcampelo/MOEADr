@@ -39,6 +39,10 @@ updt_standard <- function(moead.env){
   # for the incumbent solution for that subproblem.
   bigZ <- scalarize_values(moead.env, normYs)
 
+  # copy bigZ to the main environment "moead()" (for use with variation
+  # operators, if needed)
+  moead.env$bigZ <- bigZ
+
   # Get selection indices for each neighborhood
   sel.indx <- apply(bigZ,
                     MARGIN = 2,
