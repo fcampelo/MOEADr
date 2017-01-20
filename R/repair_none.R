@@ -14,6 +14,5 @@
 #' @export
 
 repair_none <- function(X, ...){
-
   return(X)
 }

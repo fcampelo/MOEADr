@@ -17,6 +17,9 @@
 #' @param variation List vector containing the variation operators to be used.
 #' See \code{\link{moead}} for details. If \code{NULL} the function searches
 #' for \code{variation} in the calling environment.
+#' @param repair List vector containing the repair operator to be used.
+#' See \code{\link{moead}} for details. If \code{NULL} the function searches
+#' for \code{repair} in the calling environment.
 #'
 #' @return Modified population matrix X
 #'
@@ -27,6 +30,7 @@ perform_variation <- function(X         = NULL,
                               B         = NULL,
                               variation = NULL,
                               repair    = NULL){
+
   # Capture calling environment
   call.env <- parent.frame()
 
@@ -55,12 +59,13 @@ perform_variation <- function(X         = NULL,
   }
 
   # Capture "B" from calling environment (if needed)
-  if (is.null(P)) {
+  if (is.null(B)) {
     assertthat::assert_that(assertthat::has_name(call.env, "B"))
     B <- call.env$B
   }
 
-  # Preserve original elements of X (used in some variation operators such as binrecomb)
+  # Preserve the original elements of X (prior to variation - used in some
+  # variation operators such as binomial recombination)
   Xc <- X
 
   # ========== Error catching and default value definitions
@@ -70,8 +75,8 @@ perform_variation <- function(X         = NULL,
                       assertthat::assert_that(assertthat::has_name(x, "name"))})
 
   # Assert that repair has a "name" field, and prepare the repair operator
-  assertthat::assert_that(assertthat::has_name(repair,"name"))
-  repname <- paste0("repair_",repair$name)
+  assertthat::assert_that(assertthat::has_name(repair, "name"))
+  repname <- paste0("repair_", repair$name)
 
   for (i in seq_along(variation)){
     # Assemble function name
@@ -89,7 +94,7 @@ perform_variation <- function(X         = NULL,
     X <- do.call(opname,
                  args = varargs)
 
-    # Repair operator matrix X
+    # Repair operator for matrix X
     repair$X <- X
     X <- do.call(repname,
                  args = repair)
