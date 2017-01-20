@@ -44,11 +44,11 @@ scalarize_values <- function(moead.env, normYs){
   # ==========
 
   # Get matrix of objective values for each neighborhood, ordered by
-  # subproblem.
+  # subproblem. It's a (nrow(X) * T) x m matrix
   bigY <- normYs$Y[as.vector(t(moead.env$B)), ]
 
   # Get matrix of weight vectors for each subproblem, replicated for the
-  # neighborhoods
+  # neighborhoods. It's a (nrow(X) * T) x m matrix
   bigW <- moead.env$W[rep(1:nrow(moead.env$W),
                           each  = ncol(moead.env$B)), ]
 

@@ -183,7 +183,7 @@ out1 <- moead(problem, decomp,  aggfun, neighbors, variation,
 # recombination)
 variation <- list(list(name  = "diffmut",
                        basis = "rand",
-                       phi   = NULL),
+                       Phi   = NULL),
                   list(name  = "binrec",
                        rho   = 0.8))
 

@@ -30,6 +30,7 @@ perform_variation <- function(X         = NULL,
                               B         = NULL,
                               variation = NULL,
                               repair    = NULL){
+
   # Capture calling environment
   call.env <- parent.frame()
 
@@ -63,7 +64,8 @@ perform_variation <- function(X         = NULL,
     B <- call.env$B
   }
 
-  # Preserve original elements of X (used in some variation operators such as binrec)
+  # Preserve the original elements of X (prior to variation - used in some
+  # variation operators such as binomial recombination)
   Xc <- X
 
   # ========== Error catching and default value definitions
@@ -73,8 +75,8 @@ perform_variation <- function(X         = NULL,
                       assertthat::assert_that(assertthat::has_name(x, "name"))})
 
   # Assert that repair has a "name" field, and prepare the repair operator
-  assertthat::assert_that(assertthat::has_name(repair,"name"))
-  repname <- paste0("repair_",repair$name)
+  assertthat::assert_that(assertthat::has_name(repair, "name"))
+  repname <- paste0("repair_", repair$name)
 
   for (i in seq_along(variation)){
     # Assemble function name

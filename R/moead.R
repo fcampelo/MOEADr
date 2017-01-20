@@ -148,7 +148,7 @@
 #' # recombination)
 #' variation <- list(list(name  = "diffmut",
 #'                        basis = "rand",
-#'                        phi   = NULL),
+#'                        Phi   = NULL),
 #'                   list(name  = "binrec",
 #'                        rho   = 0.8))
 #'
@@ -223,7 +223,7 @@ moead <- function(problem,      # List:  MObj problem
         X <- perform_variation()
 
         # Evaluate offspring population on objectives
-        Y <- evaluate_population()
+        Y <- evaluate_population(X)
 
         # Update population
         update_population()
