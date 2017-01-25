@@ -24,6 +24,11 @@
 #' Proceedings of the 2014 Annual Conference on Genetic and
 #' Evolutionary Computation (GECCO), 2014.
 #'
+#' H. Sato,
+#' "Analysis of inverted PBI and comparison with other scalarizing functions in
+#' decomposition based MOEAs."
+#' Journal of Heuristics 21(6):819-849, 2015
+#'
 #' @export
 
 scalarization_ipbi <- function(Y, W, maxP, aggfun, eps = 1e-16, ...){
@@ -57,7 +62,7 @@ scalarization_ipbi <- function(Y, W, maxP, aggfun, eps = 1e-16, ...){
                byrow = FALSE)
 
   # Calculate D2 (returns numeric vector with N elements)
-  D2 <- sqrt(rowSums(((maxP - Y) - D1 * W) ^ 2))
+  D2 <- sqrt(rowSums(((maxP - Y) - D1 * W / NormW) ^ 2))
 
 
   # Lucas' version (as documented in our the manuscript)
