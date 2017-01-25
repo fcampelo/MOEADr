@@ -1,8 +1,8 @@
 Package: MOEADr
 Type: Package
 Title: Component-Wise MOEA/D Implementation
-Version: 0.0.0.9035
-Date: 2017-1-19
+Version: 0.0.0.9036
+Date: 2017-1-25
 Imports:
     FNN,
     assertthat,
@@ -10,7 +10,8 @@ Imports:
 Suggests:
     testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    irace
 Depends:
     R (>= 3.3.0)
 Author: c(person("Felipe", "Campelo",
