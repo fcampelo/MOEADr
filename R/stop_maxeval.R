@@ -17,10 +17,9 @@
 #'
 #' @export
 stop_maxeval <- function(moead.env){
-  maxeval <- max(unlist(lapply(moead.env$stopcrit,
-                               FUN = function(x){ifelse(x$name == "maxeval",
-                                                        yes = x$maxeval,
-                                                        no  = -Inf)})))
+  maxeval.i <- which(sapply(moead.env$stopcrit,
+                            function(x) x$name) == "maxeval")
+  maxeval   <- moead.env$stopcrit[[maxeval.i]]$maxeval
   assertthat::assert_that(assertthat::is.count(maxeval))
 
   return(moead.env$nfe >= maxeval)

@@ -249,6 +249,6 @@ moead <- function(problem,      # List:  MObj problem
               W      = W,
               nfe    = nfe,
               n.iter = iter,
-              time   = sum(iter.times),
+              time   = difftime(Sys.time(), time.start),
               seed   = seed))
 }

@@ -22,7 +22,8 @@
 #'
 #' @export
 stop_maxtime <- function(moead.env){
-  t.pars <- stopcrit[[which(sapply(stopcrit, function(x)x$name) == "maxtime")]]
+  t.pars <- moead.env$stopcrit[[which(sapply(moead.env$stopcrit,
+                                   function(x)x$name) == "maxtime")]]
   assertthat::assert_that(assertthat::is.count(t.pars$maxtime))
 
   cur.time <- Sys.time()
