@@ -38,5 +38,10 @@ H. Sato,
 and many-objective optimization."
 Proceedings of the 2014 Annual Conference on Genetic and
 Evolutionary Computation (GECCO), 2014.
+
+H. Sato,
+"Analysis of inverted PBI and comparison with other scalarizing functions in
+decomposition based MOEAs."
+Journal of Heuristics 21(6):819-849, 2015
 }
 
