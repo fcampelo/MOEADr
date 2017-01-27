@@ -167,7 +167,7 @@ update    <- list(name       = "standard")
 scaling   <- list(name       = "none")
 repair    <- list(name       = "truncate")
 stopcrit  <- list(list(name  = "maxiter",
-                    maxiter  = 200))
+                       maxiter  = 200))
 showpars  <- list(show.iters = "numbers",
                   showevery  = 10)
 

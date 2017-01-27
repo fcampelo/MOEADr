@@ -23,6 +23,10 @@
 #' @export
 make_vectorized_smoof <- function(prob.name, ...){
 
+  if(!("smoof" %in% rownames(utils::installed.packages()))){
+    stop("Please install package 'smoof' to continue")
+  }
+
   my.args            <- as.list(sys.call())[-1]
   my.args$prob.name  <- NULL
   if (length(my.args) == 0) my.args <- list()

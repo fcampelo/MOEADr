@@ -1,13 +1,14 @@
 Package: MOEADr
 Type: Package
 Title: Component-Wise MOEA/D Implementation
-Version: 0.0.0.9036
-Date: 2017-1-25
+Version: 0.0.0.9038
+Date: 2017-1-27
 Imports:
     FNN,
     assertthat,
-    smoof
+    R.utils
 Suggests:
+    smoof,
     testthat,
     knitr,
     rmarkdown,

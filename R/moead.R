@@ -132,7 +132,7 @@
 #' scaling   <- list(name       = "none")
 #' repair    <- list(name       = "truncate")
 #' stopcrit  <- list(list(name  = "maxiter",
-#'                     maxiter  = 200))
+#'                        maxiter  = 200))
 #' showpars  <- list(show.iters = "numbers",
 #'                   showevery  = 10)
 #'
@@ -169,80 +169,86 @@ moead <- function(problem,      # List:  MObj problem
                   seed = NULL)  # Seed for PRNG
 {
 
-    # ========== Error catching and default value definitions
-    # "problem"     checked in "create_population(...)"
-    # "decomp"      checked in "decompose_problem(...)"
-    # "aggfun"      checked in "scalarize_values(...)"
-    # "neighbors"   checked in "define_neighborhood(...)"
-    # "variation"   checked in "perform_variation(...)"
-    # "update"      checked in "update_population(...)"
-    # "scaling"     checked in
-    # "repair"      checked in
-    # "stopcrit"    checked in
-    # "showpars"    checked in
+  # ========== Error catching and default value definitions
+  # "problem"     checked in "create_population(...)"
+  # "decomp"      checked in "decompose_problem(...)"
+  # "aggfun"      checked in "scalarize_values(...)"
+  # "neighbors"   checked in "define_neighborhood(...)"
+  # "variation"   checked in "perform_variation(...)"
+  # "update"      checked in "update_population(...)"
+  # "scaling"     checked in
+  # "repair"      checked in
+  # "stopcrit"    checked in
+  # "showpars"    checked in
 
-    # Check seed
-    if (is.null(seed)) {
-        seed <- as.integer(Sys.time())
-    } else {
-        assertthat::assert_that(assertthat::is.count(seed))
-    }
-    # ==========
+  # Check seed
+  if (is.null(seed)) {
+    seed <- as.integer(Sys.time())
+  } else {
+    assertthat::assert_that(assertthat::is.count(seed))
+  }
+  # ==========
 
-    # ========== Initial setup
-    set.seed(seed)  # set PRNG seed
-    nfe <- 0        # set counter for function evaluations
+  # ========== Algorithm setup
+  set.seed(seed)  # set PRNG seed
+  nfe <- 0        # set counter for function evaluations
+  time.start <- Sys.time() # Store initial time
 
-    # Generate weigth vectors
-    W <- generate_weights(m = problem$m)
+  # ========== Initial definitions
+  # Generate weigth vectors
+  W <- generate_weights(m = problem$m)
 
-    # Generate initial population
-    X <- create_population(nrow(W))
+  # Generate initial population
+  X <- create_population(nrow(W))
 
-    # Evaluate population on objectives
+  # Evaluate population on objectives
+  Y <- evaluate_population(X)
+  # ==========
+
+  # ========== Iterative cycle
+  keep.running  <- TRUE      # stop criteria flag
+  iter          <- 0         # counter: iterations
+
+  while(keep.running){
+    # Update iteration counter
+    iter <- iter + 1
+
+    # Define/update neighborhood probability matrix
+    BP <- define_neighborhood()
+    B  <- BP$B
+    P  <- BP$P
+
+    # Store current population
+    Xt <- X
+    Yt <- Y
+
+    # Perform variation
+    X <- perform_variation()
+
+    # Evaluate offspring population on objectives
     Y <- evaluate_population(X)
 
-    # ========== Iterative cycle
-    keep.running  <- TRUE      # stop criteria flag
-    iter          <- 0         # counter: iterations
+    # Update population
+    update_population()
 
-    while(keep.running){
-        # Update iteration counter
-        iter <- iter + 1
+    # Echo whatever is demanded
+    print_progress()
 
-        # Define/update neighborhood probability matrix
-        BP <- define_neighborhood()
-        B  <- BP$B
-        P  <- BP$P
+    # Verify stop criteria
+    check_stop_criteria()
+  }
+  # ==========
 
-        # Store current population
-        Xt <- X
-        Yt <- Y
+  # ========== Output
+  # Prepare output
+  X <- denormalize_population(X, problem)
 
-        # Perform variation
-        X <- perform_variation()
-
-        # Evaluate offspring population on objectives
-        Y <- evaluate_population(X)
-
-        # Update population
-        update_population()
-
-        # Echo whatever is demanded
-        print_progress()
-
-        # Verify stop criteria
-        check_stop_criteria()
-    }
-
-    # Prepare output
-    X <- denormalize_population(X, problem)
-
-    # Output
-    return(list(X      = X,
-                Y      = Y,
-                W      = W,
-                nfe    = nfe,
-                n.iter = iter,
-                seed   = seed))
+  # Output
+  return(list(X      = X,
+              Y      = Y,
+              W      = W,
+              nfe    = nfe,
+              n.iter = iter,
+              time   = sum(iter.times),
+              seed   = seed))
 }
