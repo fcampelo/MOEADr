@@ -46,6 +46,18 @@ variation_sbx <- function(X, P, etax, pc = 1, eps = 1e-6, ...){
     is.numeric(eps) && eps > 0)
   # ==========
 
+  # Standardize population matrix
+  dimX <- dim(X)
+  minP <- matrix(getminP(X),
+                 nrow = dimX[1],
+                 ncol = dimX[2],
+                 byrow = TRUE)
+  maxP <- matrix(getmaxP(X),
+                 nrow = dimX[1],
+                 ncol = dimX[2],
+                 byrow = TRUE)
+  X <- (X - minP) / (maxP - minP)
+
   # Draw crossover pairs: for the i-th candidate solution, get two mutually
   # exclusive points according to the probabilities given in P[i, ].
   np <- nrow(X)
@@ -87,10 +99,11 @@ variation_sbx <- function(X, P, etax, pc = 1, eps = 1e-6, ...){
               ncol = ncol(X),
               byrow = FALSE)
 
+  # Update recombined population
   V <- V1 * S + V2 * !S
 
-  # Truncate to [0,1] and return
-  return(pmax(0 * V, pmin(0 * V + 1, V)))
+  # Return de-standardized results
+  return(minP + V * (maxP - minP))
 }
 
 
