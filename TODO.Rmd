@@ -6,13 +6,34 @@ output: html_document
 ---
 
 ## For the package itself
-- Verify inverted PBI (check equations, there's something fishy there)
-- implement other alternatives for objective scaling
-- implement other update strategies
-- local search operators (at least one)?
-- implement more variation operators
+- VARIATION: Transformar Repair para Variation
+- VARIATION: Modificar o perform variation para nao chamar mais o Repair separadamente
+- VARIATION: Local search operator: Choose and implement 2 local search operators: (1)/(2)/Wishlist
+
+- UPDATE POP: implement other update strategies: updt restricted, updt best
+- UPDATE POP: Choose and implement penalty operators (1)/(2)/Wishlist
+
+- STOP CRITERIA: Implementar MaxTime
+
+- DOCUMENTATION: Vigneta de Sample Problem
+- DOCUMENTATION: Vigneta sobre o variation stack
+
+- OUTPUT: Opcoes de output para logfile
 
 ## For the paper:
+- Having the complete package: Define a search space of algorithms, 
+  and use the irace to find a well adjusted MOEAD variation
+- Comment about the utility of the package for the reproducibility
+
+
 - Finish thinking the experiments.
 - Perform and document experiments.
 - Finish documenting the modules.
+
+## Wishlist
+- VARIATION: more variation operators
+- DEFINE NEIGHBORHOOD: Make it un-hardcoded
+- GENERATE POPULATION: Make it un-hardcoded
+- SCALARIZATION: Verify that iPBI is correct (check with Hiroyuki Sato -- Institute of ElectroCommunication in Tokyo)
+- UPDATE POP: implement other alternatives for objective scaling
+- OUTPUT: Logging hooks for user-defined variation operators
