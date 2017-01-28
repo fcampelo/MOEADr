@@ -6,8 +6,6 @@ output: html_document
 ---
 
 ## For the package itself
-- VARIATION: Transformar Repair para Variation
-- VARIATION: Modificar o perform variation para nao chamar mais o Repair separadamente
 - VARIATION: Local search operator: Choose and implement 2 local search operators: (1)/(2)/Wishlist
 
 - UPDATE POP: implement other update strategies: updt restricted, updt best
