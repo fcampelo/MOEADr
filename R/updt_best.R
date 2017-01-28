@@ -29,8 +29,22 @@ updt_standard <- function(moead.env){
   # Input "moead.env" is assumed to have been already verified in
   # update_population(), and will not be re-checked here.
 
+  # Perform scaling and get updated estimate of the 'ideal' and 'nadir'
+  # points
+  normYs <- scale_objectives(moead.env)
+
+  # Calculate matrix with scalarized performance values. Each column
+  # contains the T scalarized performances of the candidate solutions in the
+  # neighborhood of a given subproblem, plus the scalarized performance value
+  # for the incumbent solution for that subproblem.
+  bigZ <- scalarize_values(moead.env, normYs)
+
+  # copy bigZ to the main environment "moead()" (for use with variation
+  # operators, if needed)
+  moead.env$bigZ <- bigZ
+
   # Get selection indices for each neighborhood
-  sel.indx <- apply(moead.env$bigZ,
+  sel.indx <- apply(bigZ,
                     MARGIN = 2,
                     FUN = which.min)
 
