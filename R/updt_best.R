@@ -19,29 +19,7 @@
 #'
 #' @export
 
-updt_standard <- function(moead.env){
-  # Solution x_i^{t+1} will receive the best solution from the set:
-  # ${x_i^t, {v_j^t \forall j \in N(i)}} | w_i$
-  # where $v_j^t$ is the j-th 'offspring' candidate solution, N(i) is the
-  # neighborhood of i, and $w_i$ is the i-th weight vector.
-
-  # ========== Error catching and default value definitions
-  # Input "moead.env" is assumed to have been already verified in
-  # update_population(), and will not be re-checked here.
-
-  # Perform scaling and get updated estimate of the 'ideal' and 'nadir'
-  # points
-  normYs <- scale_objectives(moead.env)
-
-  # Calculate matrix with scalarized performance values. Each column
-  # contains the T scalarized performances of the candidate solutions in the
-  # neighborhood of a given subproblem, plus the scalarized performance value
-  # for the incumbent solution for that subproblem.
-  bigZ <- scalarize_values(moead.env, normYs)
-
-  # copy bigZ to the main environment "moead()" (for use with variation
-  # operators, if needed)
-  moead.env$bigZ <- bigZ
+updt_best <- function(moead.env){
 
   # Get selection indices for each neighborhood
   sel.indx <- apply(bigZ,

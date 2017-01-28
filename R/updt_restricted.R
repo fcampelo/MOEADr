@@ -19,34 +19,23 @@
 #'
 #' @export
 
-updt_standard <- function(moead.env){
-  # Solution x_i^{t+1} will receive the best solution from the set:
-  # ${x_i^t, {v_j^t \forall j \in N(i)}} | w_i$
-  # where $v_j^t$ is the j-th 'offspring' candidate solution, N(i) is the
-  # neighborhood of i, and $w_i$ is the i-th weight vector.
+updt_restricted <- function(moead.env){
 
-  # ========== Error catching and default value definitions
-  # Input "moead.env" is assumed to have been already verified in
-  # update_population(), and will not be re-checked here.
+  assertthat::assert_that(
+    assertthat::has_name(moead.env$update,"nr"),
+    assertthat::is.count(moead.env$update$nr))
 
-  # Perform scaling and get updated estimate of the 'ideal' and 'nadir'
-  # points
-  normYs <- scale_objectives(moead.env)
+  nr <- moead.env$update$nr
 
-  # Calculate matrix with scalarized performance values. Each column
-  # contains the T scalarized performances of the candidate solutions in the
-  # neighborhood of a given subproblem, plus the scalarized performance value
-  # for the incumbent solution for that subproblem.
-  bigZ <- scalarize_values(moead.env, normYs)
+  # Get the selection matrix for all neighborhoods
+  sel.indx <- t(apply(moead.env$bigZ,
+                      MARGIN = 2,
+                      FUN = function (X) { unlist(as.matrix(sort.int(X, index.return = TRUE))[2]) }))
+  # Code snipped for getting vector of sorting indexes from
+  # https://joelgranados.com/2011/03/01/r-finding-the-ordering-index-vector/
 
-  # copy bigZ to the main environment "moead()" (for use with variation
-  # operators, if needed)
-  moead.env$bigZ <- bigZ
-
-  # Get selection indices for each neighborhood
-  sel.indx <- apply(bigZ,
-                    MARGIN = 2,
-                    FUN = which.min)
+  # Add a final column with the incumbent index
+  sel.indx <- cbind(sel.indx,rep(ncol(moead.env$B)+1,nrow(sel.indx)))
 
   # Function for returning the selected solution (variable or objectives space)
   # for a subproblem:
@@ -56,9 +45,18 @@ updt_standard <- function(moead.env){
   # - XYt: matrix of incumbent solutions (in variable or objective space)
   # - B: matrix of neighborhoods
   do.update <- function(i, sel.indx, XY, XYt, B){
-    if (sel.indx[i] > ncol(B)) return(XYt[i, ]) # last row = incumbent solution
-    else return(XY[B[i, sel.indx[i]], ])
+    for (j in sel.indx[i,]) {
+      if (j > ncol(B)) return(XYt[i, ]) # last row = incumbent solution
+      else if (used[B[i, j]] < nr)
+      {
+        used[B[i,j]] <<- used[B[i,j]] + 1 # modifies count matrix in parent env
+        return(XY[B[i,j], ])
+      }
+    }
   }
+
+  # Counts how many time each solution has been used
+  used <- rep(0,nrow(moead.env$X))
 
   # Update matrix of candidate solutions
   Xnext <- t(vapply(X = 1:nrow(moead.env$X),
@@ -70,6 +68,9 @@ updt_standard <- function(moead.env){
                     B = moead.env$B,
                     USE.NAMES = FALSE))
 
+  # used count needs to be reset
+  used <- rep(0,nrow(moead.env$X))
+
   # Update matrix of function values
   Ynext <- t(vapply(X = 1:nrow(moead.env$Y),
                     FUN = do.update,
@@ -79,6 +80,8 @@ updt_standard <- function(moead.env){
                     XYt = moead.env$Yt,
                     B = moead.env$B,
                     USE.NAMES = FALSE))
+
+  # print(sum(used)) Total number of times the incumbent solution was NOT used, for debugging
 
   return(list(X = Xnext, Y = Ynext))
 }
