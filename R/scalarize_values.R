@@ -34,7 +34,7 @@
 #'
 #' @export
 
-scalarize_values <- function(moead.env, normYs){
+scalarize_values <- function(moead.env, normYs, B){
 
   # ========== Error catching and default value definitions
   # Input "moead.env" is assumed to have been already verified in
@@ -45,30 +45,30 @@ scalarize_values <- function(moead.env, normYs){
 
   # Get matrix of objective values for each neighborhood, ordered by
   # subproblem. It's a (nrow(X) * T) x m matrix
-  bigY <- normYs$Y[as.vector(t(moead.env$B)), ]
+  bigY <- normYs$Y[as.vector(t(B)), ]
 
   # Get matrix of weight vectors for each subproblem, replicated for the
   # neighborhoods. It's a (nrow(X) * T) x m matrix
   bigW <- moead.env$W[rep(1:nrow(moead.env$W),
-                          each  = ncol(moead.env$B)), ]
+                          each  = ncol(B)), ]
 
   # Prepare bigZ matrix
   bigZ <- matrix(numeric(),
                  ncol = nrow(moead.env$Y),
-                 nrow = ncol(moead.env$B) + 1)
+                 nrow = ncol(B) + 1)
 
   # Scalarization function to be used
   function_name <- paste0("scalarization_", tolower(moead.env$aggfun$name))
 
   # Fill in the scalarized function values for the candidate solutions
-  bigZ[1:ncol(moead.env$B), ] <- matrix(do.call(function_name,
-                                           args = list(Y    = bigY,
-                                                       W    = bigW,
-                                                       aggfun = moead.env$aggfun,
-                                                       minP = normYs$minP,
-                                                       maxP = normYs$maxP)),
-                                        ncol  = nrow(moead.env$W),
-                                        byrow = FALSE)
+  bigZ[1:ncol(B), ] <- matrix(do.call(function_name,
+                                      args = list(Y    = bigY,
+                                                  W    = bigW,
+                                                  aggfun = moead.env$aggfun,
+                                                  minP = normYs$minP,
+                                                  maxP = normYs$maxP)),
+                                      ncol  = nrow(moead.env$W),
+                                      byrow = FALSE)
 
   # Fill in the scalarized function values for the incumbent solutions
   bigZ[nrow(bigZ), ] <- do.call(function_name,

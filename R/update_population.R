@@ -49,6 +49,20 @@ update_population <- function(){
     identical(dim(moead.env$Y), dim(moead.env$W)))
   # ==========
 
+  # Perform scaling and get updated estimate of the 'ideal' and 'nadir'
+  # points
+  normYs <- scale_objectives(moead.env)
+
+  # Calculate matrix with scalarized performance values. Each column
+  # contains the T scalarized performances of the candidate solutions in the
+  # neighborhood of a given subproblem, plus the scalarized performance value
+  # for the incumbent solution for that subproblem.
+  bigZ <- scalarize_values(moead.env, normYs, moead.env$B)
+
+  # copy bigZ to the main environment "moead()" (for use with variation
+  # operators, if needed)
+  moead.env$bigZ <- bigZ
+
   # ========== Generate vectors
   function_name <- paste0("updt_", tolower(moead.env$update$name))
   NextPop <- do.call(function_name,
