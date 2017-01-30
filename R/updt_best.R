@@ -1,10 +1,20 @@
 #' "Best" Neighborhood Replacement Update for MOEA/D
 #'
-#' Population update using the "Best" neighborhood replacement method for the
-#' MOEADr package.
+#' Population update using the "best neighborhood" replacement
+#' method for the MOEADr package.
 #'
-#' This routine executes the "best" neighborhood replacement operation to
-#' update the population matrix of the MOEA/D.
+#' The Best Neighborhood replacement method resolves in three
+#' steps:
+#'
+#' 1- For each subproblem i, the best individual x_j from the
+#'    entire population is chosen.
+#'
+#' 2- The neighborhood of subproblem i is replaced by the
+#'    neighborhood of problem j. The size of this neighborhood
+#'    is truncated by parameter \code{Tr}.
+#'
+#' 3- The Restricted replacement method is applied to this
+#'    new neighborhood.
 #'
 #' @section Parameters:
 #' This routine receives a single input variable, \code{moead.env}, which is
@@ -13,6 +23,13 @@
 #'
 #' @param moead.env list representing the environment of the base function
 #' \code{moead}.
+#'
+#' @param nr A positive integer. It determinines the maximum number of times that
+#' any individual can be selected (if nr is equal to the population size,
+#' updated_restricted behaves exactly as updated_standard)
+#'
+#' @param Tr A positive integer. It determines the maximum size of the neighborhood
+#' calculated by the Best Neighborhood method.
 #'
 #' @return List object containing the update population matrix (\code{Xnext})
 #' and its corresponding matrix of objective function values (\code{Ynext}).
@@ -50,18 +67,21 @@ updt_best <- function(moead.env){
   moead.env$bestB <- B
   moead.env$bestP <- P
 
-  # Calculate full scalarized performance matrix
+  # Calculate performance of all individuals for all subproblems
   normYs <- scale_objectives(moead.env)
   bigZ <- scalarize_values(moead.env, normYs, B)
 
-  # Find best solution for each problem and modify B
+  # Find best solution for each problem and modify B and BigZ accordingly
   best.indx <- apply(bigZ,
                      MARGIN = 2,
                      FUN = which.min)
-  best.cand <- sapply(1:nrow(B),FUN = function(X) { if (best.indx[X] == ncol(B)+1) { X } else { B[X, best.indx[X]] }})
+  best.cand <- sapply(1:nrow(B),FUN = function(X) { if (best.indx[X] == ncol(B)+1)
+                                                       { X } else
+                                                       { B[X, best.indx[X]] }})
+  B <- B[best.cand, 1:Tr]
+  bigZ <- scalarize_values(moead.env, normYs, B)
 
-  B <- B[best.cand,1:Tr]
-  bigZ <- scalarize_values(moead.env,normYs,B)
+  # Code below here should be identical to updt_restricted
 
   # Get the selection matrix for all neighborhoods
   sel.indx <- t(apply(bigZ,
@@ -71,7 +91,7 @@ updt_best <- function(moead.env){
   # https://joelgranados.com/2011/03/01/r-finding-the-ordering-index-vector/
 
   # Add a final column with the incumbent index
-  sel.indx <- cbind(sel.indx,rep(ncol(B)+1,nrow(sel.indx)))
+  sel.indx <- cbind(sel.indx, rep(ncol(B) + 1, nrow(sel.indx)))
 
   # Function for returning the selected solution (variable or objectives space)
   # for a subproblem:
@@ -81,18 +101,18 @@ updt_best <- function(moead.env){
   # - XYt: matrix of incumbent solutions (in variable or objective space)
   # - B: matrix of neighborhoods
   do.update <- function(i, sel.indx, XY, XYt, B){
-    for (j in sel.indx[i,]) {
-      if (j > ncol(B)) return(XYt[i, ]) # last row = incumbent solution
-      else if (used[B[i, j]] < nr)
+    for (j in sel.indx[i,]) {               # each element in b_i, in fitness order
+      if (j > ncol(B)) return(XYt[i, ])     # last row = incumbent solution
+      else if (used[B[i, j]] < nr)          # tests if the current element is still available
       {
-        used[B[i,j]] <<- used[B[i,j]] + 1 # modifies count matrix in parent env
-        return(XY[B[i,j], ])
+        used[B[i, j]] <<- used[B[i, j]] + 1 # modifies count matrix in parent env
+        return(XY[B[i, j], ])
       }
     }
   }
 
-  # Counts how many time each solution has been used
-  used <- rep(0,nrow(moead.env$X))
+  # Counter of how many time each solution has been used
+  used <- rep(0, nrow(moead.env$X))
 
   # Update matrix of candidate solutions
   Xnext <- t(vapply(X = 1:nrow(moead.env$X),
@@ -104,8 +124,8 @@ updt_best <- function(moead.env){
                     B = B,
                     USE.NAMES = FALSE))
 
-  # used count needs to be reset
-  used <- rep(0,nrow(moead.env$X))
+  # Resetting counter for a second pass.
+  used <- rep(0, nrow(moead.env$X))
 
   # Update matrix of function values
   Ynext <- t(vapply(X = 1:nrow(moead.env$Y),
