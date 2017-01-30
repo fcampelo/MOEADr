@@ -1,6 +1,6 @@
-#' Standard Neighborhood Replacement Update for MOEA/D
+#' Restricted Neighborhood Replacement Update for MOEA/D
 #'
-#' Population update using the standard neighborhood replacement method for the
+#' Population update using the restricted neighborhood replacement method for the
 #' MOEADr package.
 #'
 #' This routine executes the standard neighborhood replacement operation to

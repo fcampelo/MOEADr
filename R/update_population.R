@@ -57,7 +57,7 @@ update_population <- function(){
   # contains the T scalarized performances of the candidate solutions in the
   # neighborhood of a given subproblem, plus the scalarized performance value
   # for the incumbent solution for that subproblem.
-  bigZ <- scalarize_values(moead.env, normYs)
+  bigZ <- scalarize_values(moead.env, normYs, moead.env$B)
 
   # copy bigZ to the main environment "moead()" (for use with variation
   # operators, if needed)
