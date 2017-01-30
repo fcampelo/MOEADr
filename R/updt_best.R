@@ -1,9 +1,9 @@
-#' Standard Neighborhood Replacement Update for MOEA/D
+#' "Best" Neighborhood Replacement Update for MOEA/D
 #'
-#' Population update using the standard neighborhood replacement method for the
+#' Population update using the "Best" neighborhood replacement method for the
 #' MOEADr package.
 #'
-#' This routine executes the standard neighborhood replacement operation to
+#' This routine executes the "best" neighborhood replacement operation to
 #' update the population matrix of the MOEA/D.
 #'
 #' @section Parameters:
@@ -21,10 +21,57 @@
 
 updt_best <- function(moead.env){
 
-  # Get selection indices for each neighborhood
-  sel.indx <- apply(bigZ,
-                    MARGIN = 2,
-                    FUN = which.min)
+  ## Verify that the necessary parameters exist.
+  assertthat::assert_that(
+    assertthat::has_name(moead.env$update,"nr"),
+    assertthat::has_name(moead.env$update,"Tr"),
+    assertthat::is.count(moead.env$update$nr),
+    assertthat::is.count(moead.env$update$Tr))
+
+  nr <- moead.env$update$nr
+  Tr <- moead.env$update$Tr
+
+  ## Generate expanded neighbor matrix
+  # Preparing the environment requested by define_neighborhood()
+  neighbors <- moead.env$neighbors
+  neighbors$T <- nrow(moead.env$X) - 1
+  iter <- moead.env$iter
+  X <- moead.env$X
+  W <- moead.env$W
+  if ("bestB" %in% names(moead.env)) {
+    B <- moead.env$bestB
+    P <- moead.env$bestP
+  }
+
+  # Calculating full neighborhood
+  BP <- define_neighborhood()
+  B <- BP$B
+  P <- BP$P
+  moead.env$bestB <- B
+  moead.env$bestP <- P
+
+  # Calculate full scalarized performance matrix
+  normYs <- scale_objectives(moead.env)
+  bigZ <- scalarize_values(moead.env, normYs, B)
+
+  # Find best solution for each problem and modify B
+  best.indx <- apply(bigZ,
+                     MARGIN = 2,
+                     FUN = which.min)
+  best.cand <- sapply(1:nrow(B),FUN = function(X) { if (best.indx[X] == ncol(B)+1) { X } else { B[X, best.indx[X]] }})
+
+  B <- B[best.cand,1:Tr]
+  bigZ <- scalarize_values(moead.env,normYs,B)
+
+  # Get the selection matrix for all neighborhoods
+  sel.indx <- t(apply(bigZ,
+                      MARGIN = 2,
+                      FUN = function (X) { unlist(as.matrix(sort.int(X, index.return = TRUE))[2]) }))
+  # Code snipped for getting vector of sorting indexes from
+  # https://joelgranados.com/2011/03/01/r-finding-the-ordering-index-vector/
+
+  # Add a final column with the incumbent index
+  sel.indx <- cbind(sel.indx,rep(ncol(B)+1,nrow(sel.indx)))
 
   # Function for returning the selected solution (variable or objectives space)
   # for a subproblem:
@@ -34,9 +81,18 @@ updt_best <- function(moead.env){
   # - XYt: matrix of incumbent solutions (in variable or objective space)
   # - B: matrix of neighborhoods
   do.update <- function(i, sel.indx, XY, XYt, B){
-    if (sel.indx[i] > ncol(B)) return(XYt[i, ]) # last row = incumbent solution
-    else return(XY[B[i, sel.indx[i]], ])
+    for (j in sel.indx[i,]) {
+      if (j > ncol(B)) return(XYt[i, ]) # last row = incumbent solution
+      else if (used[B[i, j]] < nr)
+      {
+        used[B[i,j]] <<- used[B[i,j]] + 1 # modifies count matrix in parent env
+        return(XY[B[i,j], ])
+      }
+    }
   }
+
+  # Counts how many time each solution has been used
+  used <- rep(0,nrow(moead.env$X))
 
   # Update matrix of candidate solutions
   Xnext <- t(vapply(X = 1:nrow(moead.env$X),
@@ -45,8 +101,11 @@ updt_best <- function(moead.env){
                     sel.indx = sel.indx,
                     XY = moead.env$X,
                     XYt = moead.env$Xt,
-                    B = moead.env$B,
+                    B = B,
                     USE.NAMES = FALSE))
+
+  # used count needs to be reset
+  used <- rep(0,nrow(moead.env$X))
 
   # Update matrix of function values
   Ynext <- t(vapply(X = 1:nrow(moead.env$Y),
@@ -55,7 +114,7 @@ updt_best <- function(moead.env){
                     sel.indx = sel.indx,
                     XY = moead.env$Y,
                     XYt = moead.env$Yt,
-                    B = moead.env$B,
+                    B = B,
                     USE.NAMES = FALSE))
 
   return(list(X = Xnext, Y = Ynext))
