@@ -1,13 +1,15 @@
 ---
 title: "TODO"
-author: "Felipe Campelo"
-date: "13/01/2016"
+author: "Felipe Campelo, Claus Aranha"
+date: "30/01/2016"
 output: html_document
 ---
 
+## Problems
+- Variation diffmut: Line 90 - bigZ is created if not in environment, but not returned to env. Correct?
+- Functions that depend on "call env" should start with an asset that call env has all necessary names
+
 ## For the package itself
-- VARIATION: Transformar Repair para Variation
-- VARIATION: Modificar o perform variation para nao chamar mais o Repair separadamente
 - VARIATION: Local search operator: Choose and implement 2 local search operators: (1)/(2)/Wishlist
 
 - UPDATE POP: implement other update strategies: updt restricted, updt best
@@ -37,3 +39,4 @@ output: html_document
 - SCALARIZATION: Verify that iPBI is correct (check with Hiroyuki Sato -- Institute of ElectroCommunication in Tokyo)
 - UPDATE POP: implement other alternatives for objective scaling
 - OUTPUT: Logging hooks for user-defined variation operators
+- PROFILE: Profile the package under different argument combinations and identify bottlenecks
