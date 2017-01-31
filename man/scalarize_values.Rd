@@ -4,7 +4,7 @@
 \alias{scalarize_values}
 \title{Scalarize values for MOEA/D}
 \usage{
-scalarize_values(moead.env, normYs)
+scalarize_values(moead.env, normYs, B)
 }
 \arguments{
 \item{moead.env}{list representing the environment of the base function

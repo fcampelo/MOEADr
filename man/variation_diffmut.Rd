@@ -17,7 +17,7 @@ variation_diffmut(X, P, B, Phi, basis = "rand", ...)
 
 \item{Phi}{Mutation parameter, random if NULL}
 
-\item{basis}{how to select the basis vector, can be one of "random", "mean" or "weighted"}
+\item{basis}{how to select the basis vector, can be one of "random", "mean" or "wgi"}
 
 \item{...}{other parameters (unused, included for compatibility with
 generic call)}
