@@ -32,7 +32,7 @@ updt_standard <- function(moead.env){
   # Get selection indices for each neighborhood
   sel.indx <- apply(moead.env$bigZ,
                     MARGIN = 2,
-                    FUN = which.min)
+                    FUN    = which.min)
 
   # Function for returning the selected solution (variable or objectives space)
   # for a subproblem:

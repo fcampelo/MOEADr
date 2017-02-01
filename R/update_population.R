@@ -27,6 +27,10 @@
 #'          \code{get_update_methods()}.
 #' }
 #'
+#' Internally, the calling environment is stored in a list variable
+#' \code{moead.env} (which is passed down to specific \code{updt_xyz} routines,
+#' see, for instance, \code{\link{updt_standard}}).
+#'
 #' @return The function does not explicitly return any value. However, it
 #' modifies the state of the calling environment, updating the population
 #' matrix \code{X} and the matrix of objective values \code{Y}.
@@ -36,12 +40,12 @@
 update_population <- function(){
 
   # Get access to the variables in the calling environment
-  moead.env   <- parent.frame()
+  moead.env <- parent.frame()
 
   # ========== Error catching and default value definitions
   assertthat::assert_that(
     all(assertthat::has_name(moead.env, c("X", "Xt", "Y", "Yt", "B",
-                                    "scaling", "update", "aggfun"))),
+                                          "scaling", "update", "aggfun"))),
     nrow(moead.env$X) == nrow(moead.env$B),
     nrow(moead.env$X) == nrow(moead.env$Y),
     identical(dim(moead.env$X), dim(moead.env$Xt)),
