@@ -233,6 +233,7 @@ moead <- function(problem,      # List:  MObj problem
     # Store current population
     Xt <- X
     Yt <- Y
+    Vt <- V
 
     # Perform variation
     X <- perform_variation()

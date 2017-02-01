@@ -64,8 +64,8 @@ updt_best <- function(moead.env){
   BP <- define_neighborhood()
   B <- BP$B
   P <- BP$P
-  moead.env$bestB <- B
-  moead.env$bestP <- P
+  moead.env$bestB <- B # FIXME: this does not work, I want to store the big neighborhood in the parent frame
+  moead.env$bestP <- P #        In case the neighborhood does not need to change every generation
 
   # Calculate performance of all individuals for all subproblems
   normYs <- scale_objectives(moead.env)
@@ -81,17 +81,12 @@ updt_best <- function(moead.env){
   B <- B[best.cand, 1:Tr]
   bigZ <- scalarize_values(moead.env, normYs, B)
 
+  # calculate selection indexes based on new B and new bigZ
+  moead.env$B <- B
+  moead.env$bigZ <- bigZ
+  sel.indx <- order_neighborhood(moead.env)
+
   # Code below here should be identical to updt_restricted
-
-  # Get the selection matrix for all neighborhoods
-  sel.indx <- t(apply(bigZ,
-                      MARGIN = 2,
-                      FUN = function (X) { unlist(as.matrix(sort.int(X, index.return = TRUE))[2]) }))
-  # Code snipped for getting vector of sorting indexes from
-  # https://joelgranados.com/2011/03/01/r-finding-the-ordering-index-vector/
-
-  # Add a final column with the incumbent index
-  sel.indx <- cbind(sel.indx, rep(ncol(B) + 1, nrow(sel.indx)))
 
   # Function for returning the selected solution (variable or objectives space)
   # for a subproblem:
