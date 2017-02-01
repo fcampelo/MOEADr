@@ -16,6 +16,11 @@
 #'    \item \code{$xmax} - vector of upper bounds of each variable
 #'    \item \code{$m}    - integer containing the number of objectives
 #' }
+#' \code{problem} may also contain the following optional field:
+#' {\itemize
+#'    \item \code{$vname} - name of the solution violation function, that is, a
+#'          routine that calculates the violation penalty V = v(X);
+#' }
 #'
 #' The function indicated in \code{problem$name} must be able to receive a
 #' matrix with each row representing one candidate solution, and return a matrix
@@ -23,6 +28,11 @@
 #' of the input argument that receives the population matrix must be either
 #' \code{X} or \code{x}.
 #'
+#' The function indicated in \code{problem$vname} must be able to receive a
+#' matrix with each row representing one candidate solution, and return a vector
+#' with each element representing the violation penalty values for that
+#' solution. The name of the input argument that receives the population
+#' matrix must be either \code{X} or \code{x}.
 #'
 #' @section Decomposition Methods:
 #' The \code{decomp} parameter defines the method to be used for the
@@ -202,7 +212,9 @@ moead <- function(problem,      # List:  MObj problem
   X <- create_population(nrow(W))
 
   # Evaluate population on objectives
-  Y <- evaluate_population(X)
+  EV <- evaluate_population(X)
+  Y <- EV$Y
+  V <- EV$V
   # ==========
 
   # ========== Iterative cycle
@@ -221,12 +233,15 @@ moead <- function(problem,      # List:  MObj problem
     # Store current population
     Xt <- X
     Yt <- Y
+    Vt <- V
 
     # Perform variation
     X <- perform_variation()
 
     # Evaluate offspring population on objectives
-    Y <- evaluate_population(X)
+    EV <- evaluate_population(X)
+    Y <- EV$Y
+    V <- EV$V
 
     # Update population
     update_population()
@@ -246,6 +261,7 @@ moead <- function(problem,      # List:  MObj problem
   # Output
   return(list(X      = X,
               Y      = Y,
+              V      = V,
               W      = W,
               nfe    = nfe,
               n.iter = iter,

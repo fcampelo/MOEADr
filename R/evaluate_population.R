@@ -61,7 +61,8 @@ evaluate_population <- function(X       = NULL,
   # Input "problem" is assumed to have been already verified in
   # create_population(), and will not be re-checked here.
 
-  assertthat::assert_that(is_within(X, 0, 1, strict = c(FALSE, FALSE)))
+  # we are no longer assuming the population obeys box constraints
+  # assertthat::assert_that(is_within(X, 0, 1, strict = c(FALSE, FALSE)))
 
   # ==========
 
@@ -87,7 +88,18 @@ evaluate_population <- function(X       = NULL,
   Y <- do.call(problem$name,
                args = my.args)
 
+  if ("vname" %in% names(problem))
+  {
+    V <- do.call(problem$vname,
+                 args = my.args)
+  }
+  else
+  {
+    V <- NULL
+  }
+
   call.env$nfe <- call.env$nfe + nrow(X)
 
-  return(Y)
+  R <- list(Y=Y,V=V)
+  return(R)
 }
