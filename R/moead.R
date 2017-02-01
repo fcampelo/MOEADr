@@ -77,6 +77,9 @@
 #' @section Update Methods:
 #' TODO
 #'
+#' @section Constraint Handling Methods:
+#' TODO
+#'
 #' @section Objective Scaling:
 #' TODO
 #'
@@ -103,10 +106,10 @@
 #'    See \code{Variation operators} for details.
 #' @param update List containing the population update parameters
 #'    See \code{Update strategies} for details.
+#' @param constraint List containing the constraint handing parameters
+#'    See \code{Constraint operators} for details.
 #' @param scaling List containing the objective scaling parameters
 #'    See \code{Objective scaling} for details.
-#' @param repair List containing the solution repair parameters
-#'    See \code{Repair operators} for details.
 #' @param stopcrit list containing the stop criteria parameters.
 #'    See \code{Stop criteria} for details.
 #' @param showpars list containing the echoing behavior parameters.
@@ -140,7 +143,8 @@
 #'                        etam  = 20, pm = 0.1))
 #' update    <- list(name       = "standard")
 #' scaling   <- list(name       = "none")
-#' repair    <- list(name       = "truncate")
+#' constraint<- list(name       = "penalty",
+#'                   beta       = 0.5)
 #' stopcrit  <- list(list(name  = "maxiter",
 #'                        maxiter  = 200))
 #' showpars  <- list(show.iters = "numbers",
@@ -148,7 +152,7 @@
 #'
 #' ## 3: run MOEA/D
 #' out1 <- moead(problem, decomp,  aggfun, neighbors, variation,
-#'              update,  scaling, repair, stopcrit,  showpars)
+#'              update, constraint, scaling, stopcrit,  showpars)
 #'
 #' # 4: Plot output using:
 #' # plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)
@@ -172,8 +176,8 @@ moead <- function(problem,      # List:  MObj problem
                   neighbors,    # List:  neighborhood assignment strategy
                   variation,    # List:  variation operators
                   update,       # List:  update method
+                  constraint,   # List:  constraint handling method
                   scaling,      # List:  objective scaling strategy
-                  repair,       # List:  repair strategy
                   stopcrit,     # List:  stop criteria
                   showpars,     # List:  echoing behavior
                   seed = NULL)  # Seed for PRNG
