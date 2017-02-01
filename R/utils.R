@@ -5,8 +5,6 @@ randM <- function(M) {
          ncol = ncol(M))
 }
 
-
-
 # Denormalize population
 # X is a matrix of row vectors
 denormalize_population <- function(X, problem){
@@ -60,3 +58,13 @@ getminP <- function(X){
 getmaxP <- function(X){
   apply(X, MARGIN = 2, FUN = max, na.rm = TRUE)
 }
+
+# Example of violation condition: Box constraints.
+# Sum the values from a solution matrix that are out of bound of 0 and 1
+violation_box <- function(X,...) { apply(X, 1, function(x) { sum((pmax(x - 1, 0)) + abs(pmin(x, 0)))} )}
+
+# Example of violation condition: Unitary constraints.
+# Calculate the difference between the L1 norm of each individual and 1
+# (in other words, whether the parameters sum to 1 or not)
+violation_unitary <- function(X,...) { apply(X, 1, function(x) { abs(sum(x) - 1) }) }
+
