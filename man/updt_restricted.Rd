@@ -10,15 +10,15 @@ updt_restricted(moead.env)
 \item{moead.env}{list representing the environment of the base function
 \code{moead}.
 
-This routine also expects the list \code{moead.env$updated} to be populated
-with the following names:}
-
-\item{nr}{A positive integer. It determines the maximum number of times that
-any individual can be selected (if nr is equal to the population size,
-updated_restricted behaves exactly as updated_standard)}
+This routine expects \code{moead.env} to contain all fields listed in the
+\code{Parameters} section of \code{\link{update_population}}. Additionaly,
+the parameter \code{moead.env$update} is expected to contain a
+field \code{moead.env$update$nr} containing a positive integer.
+This value determines the maximum number of times that
+any individual can be selected.}
 }
 \value{
-List object containing the update population matrix (\code{Xnext})
+List object containing the updated population matrix (\code{Xnext})
 and its corresponding matrix of objective function values (\code{Ynext}).
 }
 \description{

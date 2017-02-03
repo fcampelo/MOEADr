@@ -18,20 +18,21 @@
 #' @param moead.env list representing the environment of the base function
 #' \code{moead}.
 #'
-#' This routine also expects the list \code{moead.env$updated} to be populated
-#' with the following names:
+#' This routine expects \code{moead.env} to contain all fields listed in the
+#' \code{Parameters} section of \code{\link{update_population}}. Additionaly,
+#' the parameter \code{moead.env$update} is expected to contain a
+#' field \code{moead.env$update$nr} containing a positive integer.
+#' This value determines the maximum number of times that
+#' any individual can be selected.
 #'
-#' @param nr A positive integer. It determines the maximum number of times that
-#' any individual can be selected (if nr is equal to the population size,
-#' updated_restricted behaves exactly as updated_standard)
-#'
-#' @return List object containing the update population matrix (\code{Xnext})
+#' @return List object containing the updated population matrix (\code{Xnext})
 #' and its corresponding matrix of objective function values (\code{Ynext}).
 #'
 #' @export
 
 updt_restricted <- function(moead.env){
 
+  # ========== Error catching and default value definitions
   assertthat::assert_that(
     assertthat::has_name(moead.env$update,"nr"),
     assertthat::is.count(moead.env$update$nr),
@@ -43,7 +44,7 @@ updt_restricted <- function(moead.env){
   # Function for returning the selected solution (variable or objectives space)
   # for a subproblem:
   # - i: subproblem index
-  # - sel.indx: vector of selection indices (see above)
+  # - sel.indx: matrix of selection indices (see above)
   # - XY: matrix of candidate solutions (in variable or objective space)
   # - XYt: matrix of incumbent solutions (in variable or objective space)
   # - B: matrix of neighborhoods
@@ -58,24 +59,27 @@ updt_restricted <- function(moead.env){
     }
   }
 
+  # Vector of indices (random permutation)
+  I  <- sample.int(nrow(moead.env$X))
+
   # Counter of how many time each solution has been used
   used <- rep(0, nrow(moead.env$X))
 
   # Update matrix of candidate solutions
-  Xnext <- t(vapply(X = 1:nrow(moead.env$X),
-                    FUN = do.update,
+  Xnext <- t(vapply(X         = I,
+                    FUN       = do.update,
                     FUN.VALUE = numeric(ncol(moead.env$X)),
-                    sel.indx = sel.indx,
-                    XY = moead.env$X,
-                    XYt = moead.env$Xt,
-                    B = moead.env$B,
+                    sel.indx  = sel.indx,
+                    XY        = moead.env$X,
+                    XYt       = moead.env$Xt,
+                    B         = moead.env$B,
                     USE.NAMES = FALSE))
 
   # Resetting counter for a second pass.
   used <- rep(0, nrow(moead.env$X))
 
   # Update matrix of function values
-  Ynext <- t(vapply(X = 1:nrow(moead.env$Y),
+  Ynext <- t(vapply(X = I,
                     FUN = do.update,
                     FUN.VALUE = numeric(ncol(moead.env$Y)),
                     sel.indx = sel.indx,
@@ -84,7 +88,10 @@ updt_restricted <- function(moead.env){
                     B = moead.env$B,
                     USE.NAMES = FALSE))
 
-  # print(sum(used)) Total number of times the incumbent solution was NOT used, for debugging
+  # Unshuffle Xnext, Ynext
+  I2 <- order(I)
+  Xnext <- Xnext[I2, ]
+  Ynext <- Ynext[I2, ]
 
   return(list(X = Xnext, Y = Ynext))
 }

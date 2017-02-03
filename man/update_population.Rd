@@ -39,5 +39,9 @@ The calling environment must contain at least the following parameters:
          The list of available update methods can be generated using
          \code{get_update_methods()}.
 }
+
+Internally, the calling environment is stored in a list variable
+\code{moead.env} (which is passed down to specific \code{updt_xyz} routines,
+see, for instance, \code{\link{updt_standard}}).
 }
 

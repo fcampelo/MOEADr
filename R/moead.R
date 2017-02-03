@@ -146,7 +146,7 @@
 #' constraint<- list(name       = "penalty",
 #'                   beta       = 0.5)
 #' stopcrit  <- list(list(name  = "maxiter",
-#'                        maxiter  = 200))
+#'                     maxiter  = 200))
 #' showpars  <- list(show.iters = "numbers",
 #'                   showevery  = 10)
 #'

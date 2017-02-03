@@ -49,7 +49,7 @@ define_neighborhood <- function(neighbors = NULL,
     all(assertthat::has_name(neighbors, c("name", "T"))),
     neighbors$name %in% valid.methods,
     assertthat::is.count(neighbors$T),
-    neighbors$T < nrow(call.env$X),
+    neighbors$T <= nrow(call.env$X),
     is.numeric(neighbors$delta.p),
     length(neighbors$delta.p) == 1,
     is_within(neighbors$delta.p, 0, 1, strict = FALSE))

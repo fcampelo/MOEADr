@@ -1,35 +1,39 @@
-#' "Best" Neighborhood Replacement Update for MOEA/D
+#' Best Neighborhood Replacement Update for MOEA/D
 #'
-#' Population update using the "best neighborhood" replacement
+#' Population update using the best neighborhood replacement
 #' method for the MOEADr package.
 #'
-#' The Best Neighborhood replacement method resolves in three
-#' steps:
+#' The Best Neighborhood Replacement method consists of three steps:
 #'
-#' 1- For each subproblem i, the best individual x_j from the
-#'    entire population is chosen.
-#'
-#' 2- The neighborhood of subproblem i is replaced by the
-#'    neighborhood of problem j. The size of this neighborhood
-#'    is truncated by parameter \code{Tr}.
-#'
-#' 3- The Restricted replacement method is applied to this
-#'    new neighborhood.
+#' \itemize{
+#'     \item For each subproblem i, the best candidate solution x_j from the
+#'           entire population is determined.
+#'     \item The neighborhood of subproblem i is replaced by the neighborhood of
+#'           subproblem j. The size of this neighborhood, truncated by a
+#'           parameter \code{Tr}.
+#'     \item The Restricted replacement method is then applied using this new
+#'     neighborhood.
+#'}
 #'
 #' @section Parameters:
 #' This routine receives a single input variable, \code{moead.env}, which is
-#' generated within the calling function \code{update_population()}. See
-#' \code{\link{update_population}} for more information.
+#' generated within the calling function \code{update_population()}. It expects
+#' \code{moead.env} to contain all fields listed in the \code{Parameters}
+#' section of \code{\link{update_population}}. Additionaly, the parameter
+#' \code{moead.env$update} is expected to contain two fields:
+#' \itemize{
+#'     \item \code{moead.env$update$Tr}  containing a positive integer.
+#'     This value determines the size of the neighborhood to be used.
+#'     \item \code{moead.env$update$nr} containing a positive integer.
+#'           This value determines the maximum number of times that any
+#'           candidate solution can be selected. If \code{nr = Tr}, then
+#'           \code{update_restricted} is equivalent with \code{update_standard}.
+#' }
+#'
+#' See \code{\link{update_population}} for more information.
 #'
 #' @param moead.env list representing the environment of the base function
-#' \code{moead}.
-#'
-#' @param nr A positive integer. It determinines the maximum number of times that
-#' any individual can be selected (if nr is equal to the population size,
-#' updated_restricted behaves exactly as updated_standard)
-#'
-#' @param Tr A positive integer. It determines the maximum size of the neighborhood
-#' calculated by the Best Neighborhood method.
+#' \code{moead}. See section \code{Parameters} for details.
 #'
 #' @return List object containing the update population matrix (\code{Xnext})
 #' and its corresponding matrix of objective function values (\code{Ynext}).
@@ -40,8 +44,7 @@ updt_best <- function(moead.env){
 
   ## Verify that the necessary parameters exist.
   assertthat::assert_that(
-    assertthat::has_name(moead.env$update,"nr"),
-    assertthat::has_name(moead.env$update,"Tr"),
+    all(assertthat::has_name(moead.env$update, c("nr", "Tr"))),
     assertthat::is.count(moead.env$update$nr),
     assertthat::is.count(moead.env$update$Tr))
 
@@ -50,53 +53,66 @@ updt_best <- function(moead.env){
 
   ## Generate expanded neighbor matrix
   # Preparing the environment requested by define_neighborhood()
-  neighbors <- moead.env$neighbors
-  neighbors$T <- nrow(moead.env$X) - 1
-  iter <- moead.env$iter
-  X <- moead.env$X
-  W <- moead.env$W
-  if ("bestB" %in% names(moead.env)) {
-    B <- moead.env$bestB
-    P <- moead.env$bestP
+  neighbors2   <- moead.env$neighbors
+  neighbors2$T <- nrow(moead.env$X) # <--- check this
+  iter         <- moead.env$iter
+  X            <- moead.env$X
+  W            <- moead.env$W
+
+  if (!("bestB" %in% names(moead.env))) {
+    # Calculate full neighborhood
+    BP <- define_neighborhood(neighbors2)
+    moead.env$bestB <- BP$B
+    moead.env$bestP <- BP$P
   }
+  B <- moead.env$bestB
+  P <- moead.env$bestP
 
-  # Calculating full neighborhood
-  BP <- define_neighborhood()
-  B <- BP$B
-  P <- BP$P
-  moead.env$bestB <- B # FIXME: this does not work, I want to store the big neighborhood in the parent frame
-  moead.env$bestP <- P #        In case the neighborhood does not need to change every generation
-
-  # Calculate performance of all individuals for all subproblems
+  # Calculate scalarized performance of all individuals for all subproblems
   normYs <- scale_objectives(moead.env)
-  bigZ <- scalarize_values(moead.env, normYs, B)
+  bigZ   <- scalarize_values(moead.env, normYs, B)
 
-  # Find best solution for each problem and modify B and BigZ accordingly
-  best.indx <- apply(bigZ,
-                     MARGIN = 2,
-                     FUN = which.min)
-  best.cand <- sapply(1:nrow(B),FUN = function(X) { if (best.indx[X] == ncol(B)+1)
-                                                       { X } else
-                                                       { B[X, best.indx[X]] }})
-  B <- B[best.cand, 1:Tr]
-  bigZ <- scalarize_values(moead.env, normYs, B)
+  # Find the problem in which each CANDIDATE solution (not incumbent) performs
+  # best
+  best.indx <- apply(X      = bigZ[1:(nrow(bigZ) - 1), ],
+                     MARGIN = 1,
+                     FUN    = which.min)
 
-  # calculate selection indexes based on new B and new bigZ
-  moead.env$B <- B
-  moead.env$bigZ <- bigZ
-  sel.indx <- order_neighborhood(moead.env)
+  best.subprob <- mapply(FUN      = function(i, j, B){B[i, j]},
+                         i        = 1:10,
+                         j        = best.indx,
+                         MoreArgs = list(B = B))
 
-  # Code below here should be identical to updt_restricted
+  # Define restricted neighborhoods for best update (that is, the update
+  # neighborhood of subproblem i is set as the neighborhood of best.subprob[i])
+  B    <- B[best.subprob, 1:Tr]
+
+  # Assemble bigZ matrix according to the update neighborhood
+  bigZ <- t(sapply(X   = 1:nrow(B),
+                   FUN = function(i, Z, B){ Z[B[i, ], i] },
+                   Z   = bigZ,
+                   B   = B))
+
+  # ========= Code below here should be identical to updt_restricted =========#
+
+  # Get the selection matrix for all neighborhoods
+  sel.indx <- t(apply(moead.env$bigZ,
+                      MARGIN = 2,
+                      FUN = function (X) {
+                        unlist(as.matrix(sort.int(X,
+                                                  index.return = TRUE))[2]) }))
+  # Code snipped for getting vector of sorting indexes from
+  # https://joelgranados.com/2011/03/01/r-finding-the-ordering-index-vector/
 
   # Function for returning the selected solution (variable or objectives space)
   # for a subproblem:
   # - i: subproblem index
-  # - sel.indx: vector of selection indices (see above)
+  # - sel.indx: matrix of selection indices (see above)
   # - XY: matrix of candidate solutions (in variable or objective space)
   # - XYt: matrix of incumbent solutions (in variable or objective space)
   # - B: matrix of neighborhoods
   do.update <- function(i, sel.indx, XY, XYt, B){
-    for (j in sel.indx[i,]) {               # each element in b_i, in fitness order
+    for (j in sel.indx[i,]) {               #each element in b_i, in fitness order
       if (j > ncol(B)) return(XYt[i, ])     # last row = incumbent solution
       else if (used[B[i, j]] < nr)          # tests if the current element is still available
       {
@@ -106,31 +122,39 @@ updt_best <- function(moead.env){
     }
   }
 
+  # Vector of indices (random permutation)
+  I  <- sample.int(nrow(moead.env$X))
+
   # Counter of how many time each solution has been used
   used <- rep(0, nrow(moead.env$X))
 
   # Update matrix of candidate solutions
-  Xnext <- t(vapply(X = 1:nrow(moead.env$X),
-                    FUN = do.update,
+  Xnext <- t(vapply(X         = I,
+                    FUN       = do.update,
                     FUN.VALUE = numeric(ncol(moead.env$X)),
-                    sel.indx = sel.indx,
-                    XY = moead.env$X,
-                    XYt = moead.env$Xt,
-                    B = B,
+                    sel.indx  = sel.indx,
+                    XY        = moead.env$X,
+                    XYt       = moead.env$Xt,
+                    B         = moead.env$B,
                     USE.NAMES = FALSE))
 
   # Resetting counter for a second pass.
   used <- rep(0, nrow(moead.env$X))
 
   # Update matrix of function values
-  Ynext <- t(vapply(X = 1:nrow(moead.env$Y),
+  Ynext <- t(vapply(X = I,
                     FUN = do.update,
                     FUN.VALUE = numeric(ncol(moead.env$Y)),
                     sel.indx = sel.indx,
                     XY = moead.env$Y,
                     XYt = moead.env$Yt,
-                    B = B,
+                    B = moead.env$B,
                     USE.NAMES = FALSE))
+
+  # Unshuffle Xnext, Ynext
+  I2 <- order(I)
+  Xnext <- Xnext[I2, ]
+  Ynext <- Ynext[I2, ]
 
   return(list(X = Xnext, Y = Ynext))
 }
