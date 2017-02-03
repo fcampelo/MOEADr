@@ -61,7 +61,11 @@ evaluate_population <- function(X       = NULL,
   # Input "problem" is assumed to have been already verified in
   # create_population(), and will not be re-checked here.
 
-  assertthat::assert_that(is_within(X, 0, 1, strict = c(FALSE, FALSE)))
+  # REMOVED: there is no guarantee of truncation, so box constraints may be
+  # violated from time to time. This has to be dealt with by adding
+  # variation_truncate to the variation stack, or be the constraint handling
+  # method of choice.
+  # assertthat::assert_that(is_within(X, 0, 1, strict = c(FALSE, FALSE)))
 
   # ==========
 

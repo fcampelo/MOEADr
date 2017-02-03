@@ -27,6 +27,10 @@
 #'          \code{get_update_methods()}.
 #' }
 #'
+#' Internally, the calling environment is stored in a list variable
+#' \code{moead.env} (which is passed down to specific \code{updt_xyz} routines,
+#' see, for instance, \code{\link{updt_standard}}).
+#'
 #' @return The function does not explicitly return any value. However, it
 #' modifies the state of the calling environment, updating the population
 #' matrix \code{X} and the matrix of objective values \code{Y}.
@@ -36,18 +40,32 @@
 update_population <- function(){
 
   # Get access to the variables in the calling environment
-  moead.env   <- parent.frame()
+  moead.env <- parent.frame()
 
   # ========== Error catching and default value definitions
   assertthat::assert_that(
     all(assertthat::has_name(moead.env, c("X", "Xt", "Y", "Yt", "B",
-                                    "scaling", "update", "aggfun"))),
+                                          "scaling", "update", "aggfun"))),
     nrow(moead.env$X) == nrow(moead.env$B),
     nrow(moead.env$X) == nrow(moead.env$Y),
     identical(dim(moead.env$X), dim(moead.env$Xt)),
     identical(dim(moead.env$Y), dim(moead.env$Yt)),
     identical(dim(moead.env$Y), dim(moead.env$W)))
   # ==========
+
+  # Perform scaling and get updated estimate of the 'ideal' and 'nadir'
+  # points
+  normYs <- scale_objectives(moead.env)
+
+  # Calculate matrix with scalarized performance values. Each column
+  # contains the T scalarized performances of the candidate solutions in the
+  # neighborhood of a given subproblem, plus the scalarized performance value
+  # for the incumbent solution for that subproblem.
+  bigZ <- scalarize_values(moead.env, normYs, moead.env$B)
+
+  # copy bigZ to the main environment "moead()" (for use with variation
+  # operators, if needed)
+  moead.env$bigZ <- bigZ
 
   # ========== Generate vectors
   function_name <- paste0("updt_", tolower(moead.env$update$name))

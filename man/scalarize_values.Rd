@@ -4,7 +4,7 @@
 \alias{scalarize_values}
 \title{Scalarize values for MOEA/D}
 \usage{
-scalarize_values(moead.env, normYs)
+scalarize_values(moead.env, normYs, B)
 }
 \arguments{
 \item{moead.env}{list representing the environment of the base function
@@ -12,6 +12,8 @@ scalarize_values(moead.env, normYs)
 
 \item{normYs}{list containing matrices of scaled objective values (see
 section \code{Parameters}).}
+
+\item{B}{neighborhood matrix, generate by \code{\link{define_neighborhood}}.}
 }
 \value{
 [(T + 1) x N] matrix of scalarized performance values. Each column

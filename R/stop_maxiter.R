@@ -17,10 +17,9 @@
 #'
 #' @export
 stop_maxiter <- function(moead.env){
-  maxiter <- max(unlist(lapply(moead.env$stopcrit,
-                               FUN = function(x){ifelse(x$name == "maxiter",
-                                                        yes = x$maxiter,
-                                                        no  = -Inf)})))
+  maxiter.i <- which(sapply(moead.env$stopcrit,
+                            function(x) x$name) == "maxiter")
+  maxiter   <- moead.env$stopcrit[[maxiter.i]]$maxiter
   assertthat::assert_that(assertthat::is.count(maxiter))
 
   return(moead.env$iter >= maxiter)

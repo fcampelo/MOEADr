@@ -40,12 +40,6 @@ perform_variation <- function(X         = NULL,
     variation <- call.env$variation
   }
 
-  # Capture "repair" from calling environment (if needed)
-  if (is.null(repair)) {
-    assertthat::assert_that(assertthat::has_name(call.env, "repair"))
-    repair <- call.env$repair
-  }
-
   # Capture "X" from calling environment (if needed)
   if (is.null(X)) {
     assertthat::assert_that(assertthat::has_name(call.env, "X"))
@@ -74,10 +68,6 @@ perform_variation <- function(X         = NULL,
                     FUN = function(x){
                       assertthat::assert_that(assertthat::has_name(x, "name"))})
 
-  # Assert that repair has a "name" field, and prepare the repair operator
-  assertthat::assert_that(assertthat::has_name(repair, "name"))
-  repname <- paste0("repair_", repair$name)
-
   for (i in seq_along(variation)){
     # Assemble function name
     opname       <- paste0("variation_", variation[[i]]$name)
@@ -93,11 +83,6 @@ perform_variation <- function(X         = NULL,
     # Perform i-th variation operator
     X <- do.call(opname,
                  args = varargs)
-
-    # Repair operator for matrix X
-    repair$X <- X
-    X <- do.call(repname,
-                 args = repair)
   }
 
   return(X)
