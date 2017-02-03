@@ -4,8 +4,8 @@
 \alias{moead}
 \title{MOEA/D}
 \usage{
-moead(problem, decomp, aggfun, neighbors, variation, update, scaling, repair,
-  stopcrit, showpars, seed = NULL)
+moead(problem, decomp, aggfun, neighbors, variation, update, constraint,
+  scaling, stopcrit, showpars, seed = NULL)
 }
 \arguments{
 \item{problem}{List containing the problem parameters.
@@ -26,11 +26,11 @@ See \code{Variation operators} for details.}
 \item{update}{List containing the population update parameters
 See \code{Update strategies} for details.}
 
+\item{constraint}{List containing the constraint handing parameters
+See \code{Constraint operators} for details.}
+
 \item{scaling}{List containing the objective scaling parameters
 See \code{Objective scaling} for details.}
-
-\item{repair}{List containing the solution repair parameters
-See \code{Repair operators} for details.}
 
 \item{stopcrit}{list containing the stop criteria parameters.
 See \code{Stop criteria} for details.}
@@ -60,12 +60,23 @@ definitions for the multiobjective optimization problem to be solved.
    \item \code{$xmax} - vector of upper bounds of each variable
    \item \code{$m}    - integer containing the number of objectives
 }
+\code{problem} may also contain the following optional field:
+{\itemize
+   \item \code{$vname} - name of the solution violation function, that is, a
+         routine that calculates the violation penalty V = v(X);
+}
 
 The function indicated in \code{problem$name} must be able to receive a
 matrix with each row representing one candidate solution, and return a matrix
 with each row representing the objective values for that solution. The name
 of the input argument that receives the population matrix must be either
 \code{X} or \code{x}.
+
+The function indicated in \code{problem$vname} must be able to receive a
+matrix with each row representing one candidate solution, and return a vector
+with each element representing the violation penalty values for that
+solution. The name of the input argument that receives the population
+matrix must be either \code{X} or \code{x}.
 }
 
 \section{Decomposition Methods}{
@@ -120,6 +131,11 @@ TODO
 TODO
 }
 
+\section{Constraint Handling Methods}{
+
+TODO
+}
+
 \section{Objective Scaling}{
 
 TODO
@@ -165,7 +181,8 @@ variation <- list(list(name  = "sbx",
                        etam  = 20, pm = 0.1))
 update    <- list(name       = "standard")
 scaling   <- list(name       = "none")
-repair    <- list(name       = "truncate")
+constraint<- list(name       = "penalty",
+                  beta       = 0.5)
 stopcrit  <- list(list(name  = "maxiter",
                     maxiter  = 200))
 showpars  <- list(show.iters = "numbers",
@@ -173,7 +190,7 @@ showpars  <- list(show.iters = "numbers",
 
 ## 3: run MOEA/D
 out1 <- moead(problem, decomp,  aggfun, neighbors, variation,
-             update,  scaling, repair, stopcrit,  showpars)
+             update, constraint, scaling, stopcrit,  showpars)
 
 # 4: Plot output using:
 # plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)

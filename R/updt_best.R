@@ -54,7 +54,7 @@ updt_best <- function(moead.env){
   ## Generate expanded neighbor matrix
   # Preparing the environment requested by define_neighborhood()
   neighbors2   <- moead.env$neighbors
-  neighbors2$T <- nrow(moead.env$X) # <--- check this
+  neighbors2$T <- nrow(moead.env$X)
   iter         <- moead.env$iter
   X            <- moead.env$X
   W            <- moead.env$W
@@ -88,15 +88,18 @@ updt_best <- function(moead.env){
   B    <- B[best.subprob, 1:Tr]
 
   # Assemble bigZ matrix according to the update neighborhood
-  bigZ <- t(sapply(X   = 1:nrow(B),
-                   FUN = function(i, Z, B){ Z[B[i, ], i] },
-                   Z   = bigZ,
-                   B   = B))
+  bigZ <- rbind(sapply(X   = 1:nrow(B),
+                         FUN = function(i, Z, B){ Z[B[i, ], i] },
+                         Z   = bigZ,
+                         B   = B),
+                bigZ[nrow(bigZ), ])
 
-  # ========= Code below here should be identical to updt_restricted =========#
+
+  #====== Code below here should be (almost) identical to updt_restricted =====#
+  #(except for replacing moead.env$B/bigZ/X by the local version of B/bigZ/X)
 
   # Get the selection matrix for all neighborhoods
-  sel.indx <- t(apply(moead.env$bigZ,
+  sel.indx <- t(apply(bigZ,
                       MARGIN = 2,
                       FUN = function (X) {
                         unlist(as.matrix(sort.int(X,
@@ -135,7 +138,7 @@ updt_best <- function(moead.env){
                     sel.indx  = sel.indx,
                     XY        = moead.env$X,
                     XYt       = moead.env$Xt,
-                    B         = moead.env$B,
+                    B         = B,
                     USE.NAMES = FALSE))
 
   # Resetting counter for a second pass.
@@ -148,7 +151,7 @@ updt_best <- function(moead.env){
                     sel.indx = sel.indx,
                     XY = moead.env$Y,
                     XYt = moead.env$Yt,
-                    B = moead.env$B,
+                    B = B,
                     USE.NAMES = FALSE))
 
   # Unshuffle Xnext, Ynext
