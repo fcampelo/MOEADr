@@ -35,19 +35,11 @@ updt_restricted <- function(moead.env){
   # ========== Error catching and default value definitions
   assertthat::assert_that(
     assertthat::has_name(moead.env$update,"nr"),
-    assertthat::is.count(moead.env$update$nr))
+    assertthat::is.count(moead.env$update$nr),
+    assertthat::has_name(moead.env,"sel.indx"))
 
   nr <- moead.env$update$nr
-
-  # Get the selection matrix for all neighborhoods
-  sel.indx <- t(apply(moead.env$bigZ,
-                      MARGIN = 2,
-                      FUN = function (X) {
-                        unlist(as.matrix(sort.int(X,
-                                                  index.return = TRUE))[2]) }))
-  # Code snipped for getting vector of sorting indexes from
-  # https://joelgranados.com/2011/03/01/r-finding-the-ordering-index-vector/
-
+  sel.indx <- moead.env$sel.indx
 
   # Function for returning the selected solution (variable or objectives space)
   # for a subproblem:

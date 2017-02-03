@@ -91,7 +91,18 @@ evaluate_population <- function(X       = NULL,
   Y <- do.call(problem$name,
                args = my.args)
 
+  if ("vname" %in% names(problem))
+  {
+    V <- do.call(problem$vname,
+                 args = my.args)
+  }
+  else
+  {
+    V <- NULL
+  }
+
   call.env$nfe <- call.env$nfe + nrow(X)
 
-  return(Y)
+  R <- list(Y=Y,V=V)
+  return(R)
 }

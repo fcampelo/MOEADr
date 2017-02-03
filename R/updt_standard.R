@@ -25,14 +25,11 @@ updt_standard <- function(moead.env){
   # where $v_j^t$ is the j-th 'offspring' candidate solution, N(i) is the
   # neighborhood of i, and $w_i$ is the i-th weight vector.
 
-  # ========== Error catching and default value definitions
-  # Input "moead.env" is assumed to have been already verified in
-  # update_population(), and will not be re-checked here.
+  assertthat::assert_that(
+    assertthat::has_name(moead.env,"sel.indx"))
 
-  # Get selection indices for each neighborhood
-  sel.indx <- apply(moead.env$bigZ,
-                    MARGIN = 2,
-                    FUN    = which.min)
+  # Get best selection index for each neighborhood
+  sel.indx <- moead.env$sel.indx[,1]
 
   # Function for returning the selected solution (variable or objectives space)
   # for a subproblem:

@@ -104,7 +104,6 @@ updt_best <- function(moead.env){
   # Code snipped for getting vector of sorting indexes from
   # https://joelgranados.com/2011/03/01/r-finding-the-ordering-index-vector/
 
-
   # Function for returning the selected solution (variable or objectives space)
   # for a subproblem:
   # - i: subproblem index

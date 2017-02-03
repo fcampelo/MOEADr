@@ -50,6 +50,7 @@ update_population <- function(){
     nrow(moead.env$X) == nrow(moead.env$Y),
     identical(dim(moead.env$X), dim(moead.env$Xt)),
     identical(dim(moead.env$Y), dim(moead.env$Yt)),
+    identical(dim(moead.env$V), dim(moead.env$Vt)),
     identical(dim(moead.env$Y), dim(moead.env$W)))
   # ==========
 
@@ -61,11 +62,17 @@ update_population <- function(){
   # contains the T scalarized performances of the candidate solutions in the
   # neighborhood of a given subproblem, plus the scalarized performance value
   # for the incumbent solution for that subproblem.
-  bigZ <- scalarize_values(moead.env, normYs, moead.env$B)
+  moead.env$bigZ <- scalarize_values(moead.env, normYs, moead.env$B)
+
+
+  # Calculate the index ordering matrix. Each row contains the indexes of the neighborhood,
+  # in order of their "selection quality" (which takes into account both the performance value
+  # and constraint handling policy, if any)
+  moead.env$sel.indx <- order_neighborhood(moead.env)
+
 
   # copy bigZ to the main environment "moead()" (for use with variation
   # operators, if needed)
-  moead.env$bigZ <- bigZ
 
   # ========== Generate vectors
   function_name <- paste0("updt_", tolower(moead.env$update$name))
