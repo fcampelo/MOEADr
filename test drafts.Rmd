@@ -11,17 +11,17 @@ ZDT1 <- make_vectorized_smoof(prob.name  = "ZDT1",
 
 ## 2: set input parameters
 problem   <- list(name  = "ZDT1",xmin = rep(0, 3), xmax = rep(1, 3), m = 2)
-decomp    <- list(name  = "SLD", H = 9)
-neighbors <- list(name  = "lambda", T = 3, delta.p = 1)
+decomp    <- list(name  = "SLD", H = 99)
+neighbors <- list(name  = "lambda", T = 20, delta.p = 1)
 aggfun    <- list(name  = "wt")
 variation <- list(
               list(name = "sbx",     etax = 20, pc = 1),
               list(name = "polymut", etam = 20, pm = 0.1))
-update    <- list(name  = "restricted", nr = 1)
+update    <- list(name  = "best", nr = 2, Tr = 10)
 scaling   <- list(name  = "none")
 repair    <- list(name  = "truncate")
 stopcrit  <- list(
-              list(name = "maxiter", maxiter = 50))
+              list(name = "maxiter", maxiter = 100))
 showpars  <- list(show.iters = "numbers", showevery = 10)
 ```
 

@@ -53,43 +53,54 @@ updt_best <- function(moead.env){
 
   ## Generate expanded neighbor matrix
   # Preparing the environment requested by define_neighborhood()
-  neighbors <- moead.env$neighbors
-  neighbors$T <- nrow(moead.env$X) - 1
-  iter <- moead.env$iter
-  X <- moead.env$X
-  W <- moead.env$W
-  if ("bestB" %in% names(moead.env)) {
-    B <- moead.env$bestB
-    P <- moead.env$bestP
+  neighbors2   <- moead.env$neighbors
+  neighbors2$T <- nrow(moead.env$X) # <--- check this
+  iter         <- moead.env$iter
+  X            <- moead.env$X
+  W            <- moead.env$W
+
+  if (!("bestB" %in% names(moead.env))) {
+    # Calculate full neighborhood
+    BP <- define_neighborhood(neighbors2)
+    moead.env$bestB <- BP$B
+    moead.env$bestP <- BP$P
   }
+  B <- moead.env$bestB
+  P <- moead.env$bestP
 
-  # Calculating full neighborhood
-  BP <- define_neighborhood()
-  B <- BP$B
-  P <- BP$P
-  moead.env$bestB <- B
-  moead.env$bestP <- P
-
-  # Calculate performance of all individuals for all subproblems
+  # Calculate scalarized performance of all individuals for all subproblems
   normYs <- scale_objectives(moead.env)
-  bigZ <- scalarize_values(moead.env, normYs, B)
+  bigZ   <- scalarize_values(moead.env, normYs, B)
 
-  # Find best solution for each problem and modify B and BigZ accordingly
-  best.indx <- apply(bigZ,
-                     MARGIN = 2,
-                     FUN = which.min)
-  best.cand <- sapply(1:nrow(B),FUN = function(X) { if (best.indx[X] == ncol(B)+1)
-                                                       { X } else
-                                                       { B[X, best.indx[X]] }})
-  B <- B[best.cand, 1:Tr]
-  bigZ <- scalarize_values(moead.env, normYs, B)
+  # Find the problem in which each CANDIDATE solution (not incumbent) performs
+  # best
+  best.indx <- apply(X      = bigZ[1:(nrow(bigZ) - 1), ],
+                     MARGIN = 1,
+                     FUN    = which.min)
 
-  # Code below here should be identical to updt_restricted
+  best.subprob <- mapply(FUN      = function(i, j, B){B[i, j]},
+                         i        = 1:10,
+                         j        = best.indx,
+                         MoreArgs = list(B = B))
+
+  # Define restricted neighborhoods for best update (that is, the update
+  # neighborhood of subproblem i is set as the neighborhood of best.subprob[i])
+  B    <- B[best.subprob, 1:Tr]
+
+  # Assemble bigZ matrix according to the update neighborhood
+  bigZ <- t(sapply(X   = 1:nrow(B),
+                   FUN = function(i, Z, B){ Z[B[i, ], i] },
+                   Z   = bigZ,
+                   B   = B))
+
+  # ========= Code below here should be identical to updt_restricted =========#
 
   # Get the selection matrix for all neighborhoods
-  sel.indx <- t(apply(bigZ,
+  sel.indx <- t(apply(moead.env$bigZ,
                       MARGIN = 2,
-                      FUN = function (X) { unlist(as.matrix(sort.int(X, index.return = TRUE))[2]) }))
+                      FUN = function (X) {
+                        unlist(as.matrix(sort.int(X,
+                                                  index.return = TRUE))[2]) }))
   # Code snipped for getting vector of sorting indexes from
   # https://joelgranados.com/2011/03/01/r-finding-the-ordering-index-vector/
 
@@ -97,12 +108,12 @@ updt_best <- function(moead.env){
   # Function for returning the selected solution (variable or objectives space)
   # for a subproblem:
   # - i: subproblem index
-  # - sel.indx: vector of selection indices (see above)
+  # - sel.indx: matrix of selection indices (see above)
   # - XY: matrix of candidate solutions (in variable or objective space)
   # - XYt: matrix of incumbent solutions (in variable or objective space)
   # - B: matrix of neighborhoods
   do.update <- function(i, sel.indx, XY, XYt, B){
-    for (j in sel.indx[i,]) {               # each element in b_i, in fitness order
+    for (j in sel.indx[i,]) {               #each element in b_i, in fitness order
       if (j > ncol(B)) return(XYt[i, ])     # last row = incumbent solution
       else if (used[B[i, j]] < nr)          # tests if the current element is still available
       {
@@ -119,13 +130,13 @@ updt_best <- function(moead.env){
   used <- rep(0, nrow(moead.env$X))
 
   # Update matrix of candidate solutions
-  Xnext <- t(vapply(X = I,
-                    FUN = do.update,
+  Xnext <- t(vapply(X         = I,
+                    FUN       = do.update,
                     FUN.VALUE = numeric(ncol(moead.env$X)),
-                    sel.indx = sel.indx,
-                    XY = moead.env$X,
-                    XYt = moead.env$Xt,
-                    B = B,
+                    sel.indx  = sel.indx,
+                    XY        = moead.env$X,
+                    XYt       = moead.env$Xt,
+                    B         = moead.env$B,
                     USE.NAMES = FALSE))
 
   # Resetting counter for a second pass.
@@ -138,7 +149,7 @@ updt_best <- function(moead.env){
                     sel.indx = sel.indx,
                     XY = moead.env$Y,
                     XYt = moead.env$Yt,
-                    B = B,
+                    B = moead.env$B,
                     USE.NAMES = FALSE))
 
   # Unshuffle Xnext, Ynext
