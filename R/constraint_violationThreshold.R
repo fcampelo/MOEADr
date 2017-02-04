@@ -1,20 +1,24 @@
-#' "Tournament" constraint handling method for MOEA/D
+#' "Violation Threshold" constraint handling method for MOEA/D
 #'
-#' Uses the Tournament Constraint handling method to generate a
+#' Uses the Violation Threshold Constraint handling method to generate a
 #' preference index.
 #'
 #' This function calculates the preference index of a set of neighborhoods
-#' based on the "Tournament" constraint handling method. Please
+#' based on the "Violation Threshold" constraint handling method. Please
 #' see {\code{help(order_neighborhood)}} for more information on the
 #' preference index matrix.
 #'
 #' We define an individual as "Feasible", if its violation value V is below
-#' a user defined Threshold. Given two individuals a_i and a_j in the same
+#' a user defined Treshold. Also, we define the Violation Threshold "ev" as
+#'
+#' ev = 1/N * #feasible/N * sum(violations).
+#'
+#' Given two individuals a_i and a_j in the same
 #' neighborhood, they are ordered according to the following rule:
 #'
 #' \itemize{
-#' \item If both a_i and a_j are feasible, they are ordered by smallest performance value
-#' \item If either a_i or a_j ar unfeasible, they are ordered by smallest violation value
+#' \item If both a_i and a_j are feasible OR if both v(a_i) and v(a_j) <= ev, they are ordered by smallest performance value
+#' \item else they are ordered by smallest violation value
 #' }
 #'
 #' @section Parameters:
@@ -35,7 +39,7 @@
 #'
 #' @export
 
-constraint_tournament <- function(B, bigZ, bigV, threshold, ...)
+constraint_violationThreshold <- function(B, bigZ, bigV, threshold, V, ...)
 {
   # ========== Error catching and default value definitions
   assertthat::assert_that(
@@ -45,8 +49,11 @@ constraint_tournament <- function(B, bigZ, bigV, threshold, ...)
     )
   # ==========
 
+  # QUESTION: Vt (incumbent solutions) are included in bigV, bigZ. Should
+  # We include the incumbent solutions in the calculation of ev?
 
-  feasible <- (bigV <= threshold)
+  ev <- ((sum(V <= threshold)) / (length(V) ** 2)) * sum(V)
+  feasible <- ((bigV <= threshold) | (bigV <= ev))
 
   # Create the matrix of performance for feasible indexes,
   # and of violation for infeasible indexes.

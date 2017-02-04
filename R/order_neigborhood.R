@@ -62,6 +62,8 @@ order_neighborhood <- function(moead.env)
     varargs$B    <- moead.env$B
     varargs$bigZ <- moead.env$bigZ
     varargs$bigV <- bigV
+    varargs$V    <- moead.env$V
+    varargs$Vt   <- moead.env$Vt
     # Perform i-th variation operator
 
     sel.indx <- do.call(opname,

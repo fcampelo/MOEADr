@@ -1,10 +1,10 @@
-#' "Tournament" constraint handling method for MOEA/D
+#' "Stochastic Ranking" constraint handling method for MOEA/D
 #'
-#' Uses the Tournament Constraint handling method to generate a
+#' Uses the Stochastic Ranking Constraint handling method to generate a
 #' preference index.
 #'
 #' This function calculates the preference index of a set of neighborhoods
-#' based on the "Tournament" constraint handling method. Please
+#' based on the "Stochastic Ranking" constraint handling method. Please
 #' see {\code{help(order_neighborhood)}} for more information on the
 #' preference index matrix.
 #'
@@ -13,8 +13,8 @@
 #' neighborhood, they are ordered according to the following rule:
 #'
 #' \itemize{
-#' \item If both a_i and a_j are feasible, they are ordered by smallest performance value
-#' \item If either a_i or a_j ar unfeasible, they are ordered by smallest violation value
+#' \item If both a_i and a_j are feasible OR if U(0,1) <= pf, they are ordered by smallest performance value
+#' \item If either a_i or a_j ar unfeasible AND if U(0,1) > pf, they are ordered by smallest violation value
 #' }
 #'
 #' @section Parameters:
@@ -25,6 +25,7 @@
 #' @param bigV Matrix of violation values for each neighborhood and the
 #' incumbent solution
 #' @param threshold A real-valued, non-negative feasibility treshold
+#' @param pf A probability value to consider non-feasible solutions as feasible
 #' @param ... other parameters (unused, included for compatibility with
 #' generic call)
 #'
@@ -35,18 +36,20 @@
 #'
 #' @export
 
-constraint_tournament <- function(B, bigZ, bigV, threshold, ...)
+constraint_violationThreshold <- function(B, bigZ, bigV, threshold, pf, ...)
 {
   # ========== Error catching and default value definitions
   assertthat::assert_that(
     identical(dim(bigZ),dim(bigV)),
     is.numeric(threshold),
-    threshold >= 0
+    threshold >= 0,
+    is.numeric(pf),
+    is_within(pf,0,1)
     )
   # ==========
 
-
-  feasible <- (bigV <= threshold)
+  pf.matrix <- matrix(runif(prod(dim(bigZ))),dim(bigZ))
+  feasible <- ((bigV <= threshold) | (pf.matrix <= pf))
 
   # Create the matrix of performance for feasible indexes,
   # and of violation for infeasible indexes.
