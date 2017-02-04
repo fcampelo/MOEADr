@@ -11,13 +11,13 @@ ZDT1 <- make_vectorized_smoof(prob.name  = "ZDT1",
 
 ## 2: set input parameters
 problem   <- list(name  = "ZDT1",xmin = rep(0, 3), xmax = rep(1, 3), m = 2)
-decomp    <- list(name  = "SLD", H = 99)
-neighbors <- list(name  = "lambda", T = 20, delta.p = 1)
+decomp    <- list(name  = "SLD", H = 9)
+neighbors <- list(name  = "lambda", T = 4, delta.p = 1)
 aggfun    <- list(name  = "wt")
 variation <- list(
               list(name = "sbx",     etax = 20, pc = 1),
               list(name = "polymut", etam = 20, pm = 0.1))
-update    <- list(name  = "best", nr = 2, Tr = 10)
+update    <- list(name  = "best", nr = 2, Tr = 3)
 scaling   <- list(name  = "none")
 repair    <- list(name  = "truncate")
 stopcrit  <- list(
@@ -30,7 +30,7 @@ showpars  <- list(show.iters = "numbers", showevery = 10)
 ```{r}
 ## 3: run MOEA/D
 out1 <- moead(problem, decomp,  aggfun, neighbors, variation, 
-              update, scaling, repair, stopcrit,  showpars)
+              update, NULL, scaling, repair, stopcrit, showpars)
 
 # 4: Plot output
 plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)

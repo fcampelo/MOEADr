@@ -54,7 +54,7 @@ updt_best <- function(moead.env){
   ## Generate expanded neighbor matrix
   # Preparing the environment requested by define_neighborhood()
   neighbors2   <- moead.env$neighbors
-  neighbors2$T <- nrow(moead.env$X) # <--- check this
+  neighbors2$T <- nrow(moead.env$X)
   iter         <- moead.env$iter
   X            <- moead.env$X
   W            <- moead.env$W
@@ -87,15 +87,7 @@ updt_best <- function(moead.env){
   B    <- B[best.subprob, 1:Tr]
 
   # Assemble bigZ matrix according to the update neighborhood
-  bigZ <- scalarize_values(moead.env, moead.env$normYs, B)
-
-  # Felipe: the values in BigZ depend on B, so we need to recalculate bigZ when we recalculate B
-  # Specially becaues the bigZ defined below does not keep the incumbent solution on the last line.
-  # bigZ <- t(sapply(X   = 1:nrow(B),
-  #                  FUN = function(i, Z, B){ Z[B[i, ], i] },
-  #                  Z   = bigZ,
-  #                  B   = B))
-
+  bigZ     <- scalarize_values(moead.env, moead.env$normYs, B)
   best.env <- list (bigZ = bigZ, B = B, V = moead.env$V, Vt = moead.env$Vt)
   sel.indx <- order_neighborhood(best.env)
 
@@ -132,7 +124,7 @@ updt_best <- function(moead.env){
                     sel.indx  = sel.indx,
                     XY        = moead.env$X,
                     XYt       = moead.env$Xt,
-                    B         = moead.env$B,
+                    B         = B,
                     USE.NAMES = FALSE))
 
   # Resetting counter for a second pass.
@@ -145,7 +137,7 @@ updt_best <- function(moead.env){
                     sel.indx = sel.indx,
                     XY = moead.env$Y,
                     XYt = moead.env$Yt,
-                    B = moead.env$B,
+                    B = B,
                     USE.NAMES = FALSE))
 
   # Unshuffle Xnext, Ynext
