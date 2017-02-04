@@ -9,9 +9,10 @@
 #' preference index matrix.
 #'
 #' We define an individual as "Feasible", if its violation value V is below
-#' a user defined Treshold. Also, we define the Violation Threshold "ev" as
+#' a user defined Treshold. Also, for each neighborhood we define a Violation
+#' Threshold "ev" as
 #'
-#' ev = 1/N * #feasible/N * sum(violations).
+#' ev = 1/#neighborhood * #feasible/#neighborhood * sum(violations).
 #'
 #' Given two individuals a_i and a_j in the same
 #' neighborhood, they are ordered according to the following rule:
@@ -39,7 +40,7 @@
 #'
 #' @export
 
-constraint_violationThreshold <- function(B, bigZ, bigV, threshold, V, ...)
+constraint_violationThreshold <- function(B, bigZ, bigV, threshold, ...)
 {
   # ========== Error catching and default value definitions
   assertthat::assert_that(
@@ -49,10 +50,14 @@ constraint_violationThreshold <- function(B, bigZ, bigV, threshold, V, ...)
     )
   # ==========
 
-  # QUESTION: Vt (incumbent solutions) are included in bigV, bigZ. Should
-  # We include the incumbent solutions in the calculation of ev?
+  # Matrix with repeated Ev threshold values
+  ev <- apply(bigV,
+              MARGIN = 2,
+              FUN = function(x) {
+                rep( ((sum(x <= threshold)) / (length(x) ** 2)) * sum(x), length(x))
+                }
+              )
 
-  ev <- ((sum(V <= threshold)) / (length(V) ** 2)) * sum(V)
   feasible <- ((bigV <= threshold) | (bigV <= ev))
 
   # Create the matrix of performance for feasible indexes,
