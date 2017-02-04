@@ -24,7 +24,7 @@ The calling environment must contain (at least) the following parameters:
 \item \code{Yt}: matrix of objective values for population \code{Xt}
 \item \code{X} : candidate population matrix
 \item \code{Y} : matrix of objective values for population \code{X}
-\item \code{B} : neighborhood matrix (\code{\link[=define_neighborhood]{define_neighborhood()}}$B)
+\item \code{B} : neighborhood matrix (built by \code{\link[=define_neighborhood]{define_neighborhood()}}$B)
 \item \code{W} : matrix of weigths (output of \code{\link[=generate_weights]{generate_weights()}})
 \item \code{aggfun}: list of scalarization parameters (see
 \code{\link[=scalarize_values]{scalarize_values()}} for details).

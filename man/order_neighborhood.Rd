@@ -8,7 +8,7 @@ order_neighborhood(moead.env)
 }
 \arguments{
 \item{moead.env}{list representing the environment of the base function
-\code{\link[=moead]{moead()}}, which passed from .}
+\code{\link[=moead]{moead()}}.}
 }
 \value{
 \link{N x (T+1)} matrix of preference indexes. Each row contains
