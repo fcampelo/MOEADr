@@ -8,33 +8,35 @@ order_neighborhood(moead.env)
 }
 \arguments{
 \item{moead.env}{list representing the environment of the base function
-\code{moead}.}
+\code{\link[=moead]{moead()}}, which passed from .}
 }
 \value{
 \link{N x (T+1)} matrix of preference indexes. Each row contains
 the T indexes of the candidate solutions in the neighborhood of
-a given subproblem, plus a value of T+1 for the incumbent solution for
-that subproblem, in an order defined by the constraint handling
-method defined.
+a given subproblem, plus a value (column T+1) for the incumbent solution of
+that subproblem, in an order defined by the constraint handling method
+specified in \code{moead.env$constraint}.
 }
 \description{
-Calculates the order of a candidate matrix based on their scalarized performance and violation values
+Calculates the ordering of competing solutions for each subproblem in the
+MOEA/D, based on their scalarized performance and violation values.
 }
 \details{
-This routine receives a matrix of scalarized performance values, a neighborhood matrix,
-and a list of violation values, and calculates the preference order of the candidates
-for each neighborhood based on the performance values and the constraint handling method.
+This routine receives a matrix of scalarized performance values (returned by
+\code{\link[=scalarize_values]{scalarize_values()}}), a neighborhood matrix, and a list of violation values,
+and calculates the preference order of the candidates for each neighborhood
+based on the performance values and the constraint handling method.
 }
 \section{Parameters}{
 
-This routine receives one input variable:
-\code{moead.env} is generated within the calling function \code{update_population()}.
-See \code{\link{update_population}} for more information.
+This routine receives a single input variable, \code{moead.env}, which is
+generated within the calling function \code{\link[=update_population]{update_population()}}. See that routine
+for details.
 
 The environment listed in \code{moead.env} must contain the variable
-\code{constraint} which provides the type of constraint handling
-to be employed and the relevant parameters. The list of available
+\code{constraint}, which provides the type of constraint handling to be
+employed, as well as its relevant parameters. The list of available
 constraint handling methods can be generated using
-\code{get_constraint_methods()}
+\code{\link[=get_constraint_methods]{get_constraint_methods()}}.
 }
 

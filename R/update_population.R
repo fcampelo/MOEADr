@@ -5,31 +5,27 @@
 #' @section Parameters:
 #' This routine accesses the required variables in the calling environment using
 #' \code{parent.frame()}, so it does not require any explicit input parameters.
-#' The calling environment must contain at least the following parameters:
-#' \itemize{
-#'    \item \code{Xt}: current population matrix
-#'    \item \code{Yt}: matrix of objective values for population \code{Xt}
-#'    \item \code{X} : candidate population matrix
-#'    \item \code{Y} : matrix of objective values for population \code{X}
-#'    \item \code{B} : neighborhood matrix (output of
-#'    \code{define_neighborhood(...)$B})
-#'    \item \code{W} : matrix of weigths (output of
-#'    \code{generate_weights(...)})
-#'    \item \code{aggfun}: list of scalarization parameters (see
-#'        \code{\link{scalarize_values}()} for details).
-#'    \item \code{scaling}: list of function scaling parameters (see
-#'        \code{\link{scale_objectives}()} for details).
-#'    \item \code{update}: list of update parameters, containing at least the
+#' The calling environment must contain (at least) the following parameters:
+#'    - \code{Xt}: current population matrix
+#'    - \code{Yt}: matrix of objective values for population \code{Xt}
+#'    - \code{X} : candidate population matrix
+#'    - \code{Y} : matrix of objective values for population \code{X}
+#'    - \code{B} : neighborhood matrix ([define_neighborhood()]$B)
+#'    - \code{W} : matrix of weigths (output of [generate_weights()])
+#'    - \code{aggfun}: list of scalarization parameters (see
+#'    [scalarize_values()] for details).
+#'    - \code{scaling}: list of function scaling parameters (see
+#'        [scale_objectives()] for details).
+#'    - \code{update}: list of update parameters, containing (at least) the
 #'          field \code{update$name}, describing the method to be used for
 #'          updating the population. Other parameters required for specific
 #'          update methods are also included in this variable.
 #'          The list of available update methods can be generated using
-#'          \code{get_update_methods()}.
-#' }
+#'          [get_update_methods()].
 #'
 #' Internally, the calling environment is stored in a list variable
 #' \code{moead.env} (which is passed down to specific \code{updt_xyz} routines,
-#' see, for instance, \code{\link{updt_standard}}).
+#' see, for instance, [updt_standard()]).
 #'
 #' @return The function does not explicitly return any value. However, it
 #' modifies the state of the calling environment, updating the population
