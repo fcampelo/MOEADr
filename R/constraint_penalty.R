@@ -47,9 +47,7 @@ constraint_penalty <- function(B, bigZ, bigV, beta, ...)
   # Get the selection matrix for all neighborhoods
   sel.indx <- t(apply(bigZV,
                       MARGIN = 2,
-                      FUN = function (X) { unlist(as.matrix(sort.int(X, index.return = TRUE))[2]) }))
-  # Code snipped for getting vector of sorting indexes from
-  # https://joelgranados.com/2011/03/01/r-finding-the-ordering-index-vector/
+                      FUN = order))
 
   return(sel.indx)
 }
