@@ -167,7 +167,7 @@
 #'                        rho   = 0.8))
 #'
 #' out2 <- moead(problem, decomp,  aggfun, neighbors, variation,
-#'               update,  scaling, repair, stopcrit,  showpars)
+#'               update, constraint, scaling, stopcrit,  showpars)
 #' # plot(out2$Y[,1], out2$Y[,2], type = "p", pch = 20)
 
 moead <- function(problem,      # List:  MObj problem

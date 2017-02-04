@@ -69,8 +69,7 @@ updt_best <- function(moead.env){
   P <- moead.env$bestP
 
   # Calculate scalarized performance of all individuals for all subproblems
-  normYs <- scale_objectives(moead.env)
-  bigZ   <- scalarize_values(moead.env, normYs, B)
+  bigZ   <- scalarize_values(moead.env, moead.env$normYs, B)
 
   # Find the problem in which each CANDIDATE solution (not incumbent) performs
   # best
@@ -88,24 +87,11 @@ updt_best <- function(moead.env){
   B    <- B[best.subprob, 1:Tr]
 
   # Assemble bigZ matrix according to the update neighborhood
-  bigZ <- rbind(sapply(X   = 1:nrow(B),
-                         FUN = function(i, Z, B){ Z[B[i, ], i] },
-                         Z   = bigZ,
-                         B   = B),
-                bigZ[nrow(bigZ), ])
+  bigZ     <- scalarize_values(moead.env, moead.env$normYs, B)
+  best.env <- list (bigZ = bigZ, B = B, V = moead.env$V, Vt = moead.env$Vt)
+  sel.indx <- order_neighborhood(best.env)
 
-
-  #====== Code below here should be (almost) identical to updt_restricted =====#
-  #(except for replacing moead.env$B/bigZ/X by the local version of B/bigZ/X)
-
-  # Get the selection matrix for all neighborhoods
-  sel.indx <- t(apply(bigZ,
-                      MARGIN = 2,
-                      FUN = function (X) {
-                        unlist(as.matrix(sort.int(X,
-                                                  index.return = TRUE))[2]) }))
-  # Code snipped for getting vector of sorting indexes from
-  # https://joelgranados.com/2011/03/01/r-finding-the-ordering-index-vector/
+  # ========= Code below here should be identical to updt_restricted =========#
 
   # Function for returning the selected solution (variable or objectives space)
   # for a subproblem:
