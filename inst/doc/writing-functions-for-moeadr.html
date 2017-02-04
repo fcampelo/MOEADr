@@ -12,7 +12,7 @@
 
 <meta name="author" content="Felipe Campelo" />
 
-<meta name="date" content="2017-01-09" />
+<meta name="date" content="2017-02-04" />
 
 <title>Writing Functions for the MOEADr Package</title>
 
@@ -32,7 +32,7 @@
 
 <h1 class="title toc-ignore">Writing Functions for the MOEADr Package</h1>
 <h4 class="author"><em>Felipe Campelo</em></h4>
-<h4 class="date"><em>2017-01-09</em></h4>
+<h4 class="date"><em>2017-02-04</em></h4>
 
 
 
@@ -69,7 +69,7 @@
 <li><strong>W</strong>: matrix of weights ( <em>N x m</em> )</li>
 <li><strong>X</strong>: matrix of candidate solutions at a given iteration. Each row is a point in the space of variables. ( <em>N x nv</em> )</li>
 <li><strong>Xt</strong>: matrix of incumbent solutions at a given iteration ( <em>N x nv</em> )</li>
-<li><strong>Y</strong>: matrix of objective function values (corresponding to the rows of <strong>X</strong>). Each row is a point in the space of variables. ( <em>N x m</em> )</li>
+<li><strong>Y</strong>: matrix of objective function values (corresponding to the rows of <strong>X</strong>). Each row is a point in the space of objectives. ( <em>N x m</em> )</li>
 <li><strong>Yt</strong>: matrix of objective function values (corresponding to the rows of <strong>Xt</strong>) ( <em>N x m</em> )</li>
 <li><strong>B</strong>: matrix of neighborhoods ( <em>N x T</em> )</li>
 <li><strong>P</strong>: matrix of selection probabilities (derived from <strong>B</strong>) ( <em>N x N</em> ).</li>

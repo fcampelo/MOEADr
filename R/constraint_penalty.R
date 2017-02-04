@@ -1,7 +1,7 @@
 #' "Penalty" constraint handling method for MOEA/D
 #'
-#' Uses the Penalty Constraint handling method to generate a
-#' preference index.
+#' Uses the Penalty Function constraint handling method to generate a
+#' preference index for the MOEADr framework.
 #'
 #' This function calculates the preference index of a set of neighborhoods
 #' based on the "Penalty" constraint handling method. Please

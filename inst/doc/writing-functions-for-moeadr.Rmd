@@ -37,7 +37,7 @@ This document describes how to write functions implementing new variants for any
 - **W**: matrix of weights ( _N x m_ )
 - **X**: matrix of candidate solutions at a given iteration. Each row is a point in the space of variables. ( _N x nv_ )
 - **Xt**: matrix of incumbent solutions at a given iteration ( _N x nv_ )
-- **Y**: matrix of objective function values (corresponding to the rows of **X**). Each row is a point in the space of variables. ( _N x m_ )
+- **Y**: matrix of objective function values (corresponding to the rows of **X**). Each row is a point in the space of objectives. ( _N x m_ )
 - **Yt**: matrix of objective function values (corresponding to the rows of **Xt**) ( _N x m_ )
 - **B**: matrix of neighborhoods ( _N x T_ )
 - **P**: matrix of selection probabilities (derived from **B**) ( _N x N_ ).

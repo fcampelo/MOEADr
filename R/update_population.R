@@ -10,7 +10,7 @@
 #'    - \code{Yt}: matrix of objective values for population \code{Xt}
 #'    - \code{X} : candidate population matrix
 #'    - \code{Y} : matrix of objective values for population \code{X}
-#'    - \code{B} : neighborhood matrix ([define_neighborhood()]$B)
+#'    - \code{B} : neighborhood matrix (built by [define_neighborhood()]$B)
 #'    - \code{W} : matrix of weigths (output of [generate_weights()])
 #'    - \code{aggfun}: list of scalarization parameters (see
 #'    [scalarize_values()] for details).

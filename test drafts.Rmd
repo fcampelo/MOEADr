@@ -5,24 +5,106 @@ title: "Drafts for testing stuff"
 ```{r}
 rm(list=ls())
 ## 1: prepare test problem
-library(smoof)
-ZDT1 <- make_vectorized_smoof(prob.name  = "ZDT1", 
-                              dimensions = 3)
+moeadr_dtlz1 <- function(X,     # population matrix
+                         ...    # allow function to receive extra parameters. 
+                                # These are unused in most cases, but it is useful 
+                                # for preventng errors due to unwanted parameters 
+                                # being passed
+){
+
+  # "smoof" is listed in the Suggests field MOEADr's DESCRIPTION, but we need to 
+  # be sure that it is available, so:
+  if(!("smoof" %in% rownames(utils::installed.packages()))){
+    stop("Please install package 'smoof' to continue")
+  }
+  
+  # make 10-variable, 2-objective DTLZ1
+  smoof_dtlz1 <- smoof::makeDTLZ1Function(dimensions   = 10, 
+                                          n.objectives = 2)
+  
+  # Evaluate points in a vectorized manner:
+  Y <- t(apply(X,
+               MARGIN = 1,
+               FUN = smoof_dtlz1))
+  
+  # Return [N x n_f] matrix
+  return(Y)
+}
+
+
+my_constraints <- function(X,           # population matrix
+                           epsilon = 0, # tolerance for equality constraints
+                                        # (defaults to zero if not provided)
+                           ...)
+{
+  
+  nv <- 10 # number of variables of the problem
+  
+  # Prepare output matrix of constraint function values
+  Cmatrix <- matrix(numeric(), 
+                    nrow = nrow(X),
+                    ncol = 2 * nv + 2) # 20 inequality box constraints, plus g1 and h1
+  
+  # Set informative column names (be nice to your users!)
+  colnames(Cmatrix) <- c(paste0("x", 
+                                rep(1:nv, times = 2), 
+                                rep(c("min","max"), each = nv)),
+                         "g1",
+                         "h1")
+                    
+  # Box limits of the feasible space
+  Xmin <- matrix(0, nrow = nrow(X), ncol = nv)
+  Xmax <- matrix(1, nrow = nrow(X), ncol = nv)
+  
+  # Calculate "x_i >= 0" and "x_i <= 1" constraints
+  Cmatrix[, 1:nv]              <- Xmin - X
+  Cmatrix[, (nv + 1):(2 * nv)] <- X - Xmax
+  
+  # g1 and h1 functions
+  g1 <- function(X){
+    return(X[, 1] ^ 2 + 2 * X[, 2] ^ 2 - 1.2)
+  }
+  h1 <- function(X){
+    return(X[, 3] * X[, 4] - 0.5)
+  }
+  
+  # Calculate g1(x) and h1(x)
+  Cmatrix[, 2 * nv + 1] <- g1(X)
+  Cmatrix[, 2 * nv + 2] <- h1(X)
+  
+  # Assemble matrix of *violations*
+  Vmatrix <- Cmatrix
+  Vmatrix[, 1:(2 * nv + 1)] <- pmax(Vmatrix[, 1:(2 * nv + 1)], 0)        # inequality constraints
+  Vmatrix[, 2 * nv + 2] <- pmax(abs(Vmatrix[, 2 * nv + 2]) - epsilon, 0) # equality constraint h1
+  
+  # Return necessary variables
+  return(list(Cmatrix = Cmatrix,
+              Vmatrix = Vmatrix,
+              v       = rowSums(Vmatrix)))
+  
+}
 
 ## 2: set input parameters
-problem   <- list(name  = "ZDT1",xmin = rep(0, 3), xmax = rep(1, 3), m = 2)
-decomp    <- list(name  = "SLD", H = 9)
-neighbors <- list(name  = "lambda", T = 4, delta.p = 1)
-aggfun    <- list(name  = "wt")
-variation <- list(
-              list(name = "sbx",     etax = 20, pc = 1),
-              list(name = "polymut", etam = 20, pm = 0.1))
-update    <- list(name  = "best", nr = 2, Tr = 3)
-scaling   <- list(name  = "none")
-repair    <- list(name  = "truncate")
-stopcrit  <- list(
-              list(name = "maxiter", maxiter = 100))
-showpars  <- list(show.iters = "numbers", showevery = 10)
+problem    <- list(name        = "moeadr_dtlz1",
+                   xmin        = rep(0, 10), 
+                   xmax        = rep(1, 10), 
+                   m           = 2,
+                   constraints = list(
+                     name    = "my_constraints",
+                     epsilon = 0.05))
+decomp     <- list(name  = "SLD", H = 19)
+neighbors  <- list(name  = "lambda", T = 5, delta.p = 1)
+aggfun     <- list(name  = "wt")
+variation  <- list(
+  list(name = "sbx",     etax = 20, pc = 1),
+  list(name = "polymut", etam = 20, pm = 0.1))
+update     <- list(name  = "best", nr = 2, Tr = 3)
+scaling    <- list(name  = "none")
+repair     <- list(name  = "truncate")
+stopcrit   <- list(
+  list(name = "maxiter", maxiter = 100))
+showpars   <- list(show.iters = "numbers", showevery = 10)
+constraint <- list(name = "penalty", beta = 10)
 ```
 
 
@@ -30,7 +112,7 @@ showpars  <- list(show.iters = "numbers", showevery = 10)
 ```{r}
 ## 3: run MOEA/D
 out1 <- moead(problem, decomp,  aggfun, neighbors, variation, 
-              update, NULL, scaling, repair, stopcrit, showpars)
+              update, constraint, scaling, repair, stopcrit, showpars)
 
 # 4: Plot output
 plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)

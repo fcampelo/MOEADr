@@ -61,25 +61,26 @@ that calculates \strong{Y} = \strong{f}(\strong{X});
 \item \code{$m}    - integer containing the number of objectives
 }
 
-\code{problem} may also contain the following optional fields:
+Besides these fields, \code{problem} should contain any other relevant inputs
+for the routine listed in \code{$name}. \code{problem} may also contain the
+(optional) field \code{problem$constraints}, which is a list object
+containing information about the problem constraints. If present, this list
+must have the following fields:
 \itemize{
-\item \code{$vname} - name of the solution violation function, that is, a
-routine that calculates the violation penalty \strong{V} = v(\strong{X});
-\item \code{$epsilon} - a small non-negative value indicating the tolerance
-to be considered for equality constraints
+\item \code{$constraints$name} - (required) name of the function that
+calculates the constraint values (see below for details)
+\item \code{$constraints$epsilon} - (optional) a small non-negative value
+indicating the tolerance to be considered for equality constraints.
+Defaults to zero.
 }
 
-The functions indicated in \code{problem$name} and \code{problem$vname} must
-be able to receive a matrix with each row representing one candidate
-solution. The name of the input argument that receives the population matrix
-must be either \code{X} or \code{x}.
+Besides these fields, \code{problem$constraint} should contain any other
+relevant inputs for the routine listed in \code{problem$constraint$name}.
 
-Function \code{problem$name} must return a matrix with each row representing
-the objective values for one solution. Function \code{problem$vname} must
-return a vector with each element representing the sum of violations for one
-solution, that is,
-
-$$V\link{k} = v(X\link{k, }) = sum_i max(g_i(x_k), 0) + sum_j max( |h_j(x_k)| - epsilon, 0)$$
+Detailed instructions for defining the routines for calculating the
+objective and constraint functions are provided in the vignette
+\emph{Defining Problems in the MOEADr Package}. Check that documentation for
+details.
 }
 
 \section{Decomposition Methods}{

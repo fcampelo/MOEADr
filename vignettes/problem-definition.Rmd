@@ -1,0 +1,181 @@
+---
+title: "Defining Problems in the MOEADr Package"
+author: "Felipe Campelo"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+This is a short guide to defining the problem structure for running MOEA/Ds using the MOEADr package. In this document, we cover:
+
+- Structure of the input variable `problem`
+- Structure of objective function routines, given as `problem$name`
+- structure of constraing function routines, given as `problem$constraint$name`
+
+A general description of the algorithm and the component-based interpretation behind the MOEADr package is available in our paper^[F. Campelo, L.S. Batista and C. Aranha, "A Component-Wise Perspective on Multiobjective Evolutionary Algorithms based on Decomposition", in preparation.]
+
+# Problem structure
+In the MOEADr package, all information regarding the problem is input as a list 
+variable `problem`. This parameter must contain enough information for the 
+algorithm to corretly evaluate all the objective and constraint functions, as
+documented in function `moead()` and replicated below for convenience.
+
+The `problem` list must contain the following required fields:
+
+- `problem$name`, with the name of the problem instance function, that is, a routine that calculates **Y** = **f**(**X**). The details of this routine are documented in Section _Objective Functions Routine_, see below.  
+- `problem$xmin`, containing a vector of lower bounds of each variable of the problem.  
+- `problem$xmax`, containing a vector of upper bounds of each variable of the problem.  
+- `problem$m`, containing a positive integer `m>1` with the number of objectives
+
+Fields `$xmin` and `$xmax` provide information for the internal variable standardization performed by the MOEADr package, as well as information about the number of problem variables. This information is also used for the definition of the initial population, but it **does not** guarantee that the points will remain within this interval as the iterations progress - for that, variation operators such as `truncate` or explicit constraints (see below, Section _Constraint Functions Routine_) must be employed.
+
+Besides these fields, `problem` should contain any other relevant inputs for the routine listed in `problem$name`. 
+ 
+`problem` may also contain the optional field `problem$constraints`, which is itself a list object containing information about the problem constraints. If present, `problem$constraints` must contain the following fields:
+
+- `problem$constraints$name` - (required) name of the function that
+        calculates the constraint values. The details of this routine are documented in Section _Constraint Functions Routine_, see below.  
+- `problem$constraints$epsilon` - (optional) a small non-negative value
+        indicating the tolerance to be considered for equality constraints.
+        Defaults to zero.
+
+Besides these fields, `problem$constraints` should contain any other relevant inputs for the routine listed in `problem$constraints$name`.
+
+To guide us through the steps required to define a problem structure for the MOEADr package, assume that we want to use the MOEADr framework to solve a 10-variable, 2-objective DTLZ1 benchmark function^[http://www.tik.ee.ethz.ch/sop/download/supplementary/testproblems/dtlz1/]. Assume that the feasible space is defined by the interval [0, 1] for all variables, and by $x_1^2 + 2x_2^2 \leq 1.2$ and $x_3x_4 = 0.5$. In this case, the `problem` variable would be defined as:
+
+```{r, eval = FALSE}
+problem <- list(name        = "moeadr_dtlz1",  # objective function routine
+                xmin        = rep(0, 10),      # lower limits
+                xmax        = rep(1, 10),      # upper limits
+                m           = 2,               # number of objectives
+                constraints = list(
+                  name      = "my_constraints", # constraint function routine
+                  epsilon   = 0.05))                  # tolerance for equality constraints
+```
+
+The specific requirements regarding functions `problem$name` and `problem$constraints$name` are provided in the following sections.
+
+
+# Objective Functions Routine
+
+The routine indicated in `problem$name` must be able to receive a [ N x n<sub>v</sub> ] matrix, where each row represents one candidate solution. The name of the input argument that receives the population matrix must be either \code{X} or \code{x}. 
+
+This routine must return a [ N x n<sub>f</sub> ] matrix, where each row contains the n<sub>f</sub> objective function values for one solution. 
+
+To illustrate these requirements, we provide below the example function `moeadr_dtlz1`.^[This function is not available in the MOEADr package - instead we provide the more general function `make_vectorized_smoof()`. See the documentation for details.] This function is simply a MOEADr-compliant wrapper for the DTLZ1 implementation available in the `smoof` package.
+
+```{r, eval = FALSE}
+moeadr_dtlz1 <- function(X,     # population matrix
+                         ...    # allow function to receive extra parameters. 
+                                # These are unused in most cases, but it is useful 
+                                # for preventng errors due to unwanted parameters 
+                                # being passed
+){
+
+  # "smoof" is listed in the Suggests field MOEADr's DESCRIPTION, but we need to 
+  # be sure that it is available, so:
+  if(!("smoof" %in% rownames(utils::installed.packages()))){
+    stop("Please install package 'smoof' to continue")
+  }
+  
+  # make 10-variable, 2-objective DTLZ1
+  smoof_dtlz1 <- smoof::makeDTLZ1Function(dimensions   = 10, 
+                                          n.objectives = 2)
+  
+  # Evaluate points in a vectorized manner:
+  Y <- t(apply(X,
+               MARGIN = 1,
+               FUN = smoof_dtlz1))
+  
+  # Return [N x n_f] matrix
+  return(Y)
+}
+```
+
+Notice that the objective functions routine does not use the information from 
+`xmin`, `xmax`, `m`, or `constraints` - these fields are used elsewhere in the 
+MOEADr structure to define the initial population, weight matrices, truncation operators etc.
+
+# Constraint Functions Routine
+
+As in the objective functions case, the routine indicated in `problem$constraints$name` must be able to receive a [ N x n<sub>v</sub> ] matrix, where each row represents one candidate solution. The name of the input argument that receives the population matrix must be either \code{X} or \code{x}. 
+
+This function must return a list object containing the following fields:
+
+- `$Cmatrix`, a [ N x (n<sub>g</sub> + n<sub>h</sub>) ] matrix, where each row contains the individual constraint function values for one solution. The names of each column should ideally be informative regardind to which constraint the function refers (this is not mandatory, but it is a good practice that can save the user a great deal of time).  
+- `$Vmatrix`, a [ N x (n<sub>g</sub> + n<sub>h</sub>) ] matrix, where each row contains the individual constraint **violations** for one solution.
+- `$v`, a vector [N x 1], where each component contains the total violation of one solution, that is,  the value of:
+
+$$v[k] = v(x_k) = \sum_i max(~g_i(x_k),~~0) + \sum_j max(~|h_j(x_k)| - \epsilon,~~0)$$
+`v` is calculated simply as `rowsums(Vmatrix)`, but returning it prevents having to re-compute `v` in different places of the MOEA/D structure.
+
+To illustrate these requirements, we provide below the example function `my_constraints`.^[Also not available in the MOEADr package, since it does not make much practical sense.] Recall that we have a number of different constraints that were stated in the problem definition:
+
+- 10 inequality constraints regarding the requirement that $x_i \geq 0$
+- 10 inequality constraints regarding the requirement that $x_i \leq 1$
+- 1 inequality constraint $g_1(\mathbf{x}) = x_1^2 + 2x_2^2 - 1.2 \leq 0$
+- 1 equality constraint $h_1(\mathbf{x}) = x_3x_4 - 0.5 = 0$
+
+```{r, eval = FALSE}
+my_constraints <- function(X,           # population matrix
+                           epsilon = 0, # tolerance for equality constraints
+                                        # (defaults to zero if not provided)
+                           ...)
+{
+  
+  nv <- 10 # number of variables of the problem
+  
+  # Prepare output matrix of constraint function values
+  Cmatrix <- matrix(numeric(), 
+                    nrow = nrow(X),
+                    ncol = 2 * nv + 2) # 20 inequality box constraints, plus g1 and h1
+  
+  # Set informative column names (be nice to your users!)
+  colnames(Cmatrix) <- c(paste0("x", 
+                                rep(1:nv, times = 2), 
+                                rep(c("min","max"), each = nv)),
+                         "g1",
+                         "h1")
+                    
+  # Box limits of the feasible space
+  Xmin <- matrix(0, nrow = nrow(X), ncol = nv)
+  Xmax <- matrix(1, nrow = nrow(X), ncol = nv)
+  
+  # Calculate "x_i >= 0" and "x_i <= 1" constraints
+  Cmatrix[, 1:nv]              <- Xmin - X
+  Cmatrix[, (nv + 1):(2 * nv)] <- X - Xmax
+  
+  # g1 and h1 functions
+  g1 <- function(X){
+    return(X[, 1] ^ 2 + 2 * X[, 2] ^ 2 - 1.2)
+  }
+  h1 <- function(X){
+    return(X[, 3] * X[, 4] - 0.5)
+  }
+  
+  # Calculate g1(x) and h1(x)
+  Cmatrix[, 2 * nv + 1] <- g1(X)
+  Cmatrix(, 2 * nv + 2) <- h1(X)
+  
+  # Assemble matrix of *violations*
+  Vmatrix <- Cmatrix
+  Vmatrix[, 1:(2 * nv + 1)] <- pmax(Vmatrix[, 1:(2 * nv + 1)], 0)        # inequality constraints
+  Vmatrix[, 2 * nv + 2] <- pmax(abs(Vmatrix[, 2 * nv + 2]) - epsilon, 0) # equality constraint h1
+  
+  # Return necessary variables
+  return(list(Cmatrix = Cmatrix,
+              Vmatrix = Vmatrix,
+              v       = rowSums(Vmatrix)))
+  
+}
+```
+
+Some **VERY** important points:
+
+- All constraints are expressed in the standard form, that is, $g_i(\mathbf{x}) \leq 0$ and $h_j(\mathbf{x}) = 0$. You may choose to express them differently, but in that case be extra careful with the calculations of `Vmatrix` and `v`;
+- All box constraints must be included as part of the constraint violations 
+routine, otherwise they will be ignored by the constraint handling approaches. This can in principle be a valid option, for instance, if i) the problem is actually unconstrained; or ii) a repair method such as the _truncate_ variation operator is used.

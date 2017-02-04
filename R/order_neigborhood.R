@@ -20,7 +20,7 @@
 #' [get_constraint_methods()].
 #'
 #' @param moead.env list representing the environment of the base function
-#' [moead()], which passed from .
+#' [moead()].
 #'
 #' @return [N x (T+1)] matrix of preference indexes. Each row contains
 #' the T indexes of the candidate solutions in the neighborhood of
@@ -57,9 +57,9 @@ order_neighborhood <- function(moead.env)
   {
     # calculate the penalty matrix of the neighborhoods and incumbent solution,
     # using the same process used to calculate bigZ (see scalarize_values)
-    bigV <- t(cbind(matrix(moead.env$V[moead.env$B],
+    bigV <- t(cbind(matrix(moead.env$V$v[moead.env$B],
                            dim(moead.env$B)),
-                    moead.env$Vt))
+                    moead.env$Vt$v))
 
     # use constraint handler function to calculate selection matrix
     opname       <- paste0("constraint_", moead.env$constraint$name)
