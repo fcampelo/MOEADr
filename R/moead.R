@@ -9,30 +9,29 @@
 #' The \code{problem} parameter consists of a list with all necessary
 #' definitions for the multiobjective optimization problem to be solved.
 #' \code{problem} must contain at least the following fields:
-#' \itemize{
-#'    \item \code{$name} - name of the problem instance function, that is, a
-#'          routine that calculates Y = f(X);
-#'    \item \code{$xmin} - vector of lower bounds of each variable
-#'    \item \code{$xmax} - vector of upper bounds of each variable
-#'    \item \code{$m}    - integer containing the number of objectives
-#' }
-#' \code{problem} may also contain the following optional field:
-#' {\itemize
-#'    \item \code{$vname} - name of the solution violation function, that is, a
-#'          routine that calculates the violation penalty V = v(X);
-#' }
+#'    - \code{$name} - name of the problem instance function, that is, a routine
+#'    that calculates **Y** = **f**(**X**);
+#'    - \code{$xmin} - vector of lower bounds of each variable
+#'    - \code{$xmax} - vector of upper bounds of each variable
+#'    - \code{$m}    - integer containing the number of objectives
 #'
-#' The function indicated in \code{problem$name} must be able to receive a
-#' matrix with each row representing one candidate solution, and return a matrix
-#' with each row representing the objective values for that solution. The name
-#' of the input argument that receives the population matrix must be either
-#' \code{X} or \code{x}.
+#' \code{problem} may also contain the following optional fields:
+#'    - \code{$vname} - name of the solution violation function, that is, a
+#'    routine that calculates the violation penalty **V** = v(**X**);
+#'    - \code{$epsilon} - a small non-negative value indicating the tolerance
+#'    to be considered for equality constraints
 #'
-#' The function indicated in \code{problem$vname} must be able to receive a
-#' matrix with each row representing one candidate solution, and return a vector
-#' with each element representing the violation penalty values for that
-#' solution. The name of the input argument that receives the population
-#' matrix must be either \code{X} or \code{x}.
+#' The functions indicated in \code{problem$name} and \code{problem$vname} must
+#' be able to receive a matrix with each row representing one candidate
+#' solution. The name of the input argument that receives the population matrix
+#' must be either \code{X} or \code{x}.
+#'
+#' Function \code{problem$name} must return a matrix with each row representing
+#' the objective values for one solution. Function \code{problem$vname} must
+#' return a vector with each element representing the sum of violations for one
+#' solution, that is,
+#'
+#' $$V[k] = v(X[k, ]) = sum_i max(g_i(x_k), 0) + sum_j max( |h_j(x_k)| - epsilon, 0)$$
 #'
 #' @section Decomposition Methods:
 #' The \code{decomp} parameter defines the method to be used for the
@@ -210,15 +209,15 @@ moead <- function(problem,      # List:  MObj problem
 
   # ========== Initial definitions
   # Generate weigth vectors
-  W <- generate_weights(m = problem$m)
+  W  <- generate_weights(m = problem$m)
 
   # Generate initial population
-  X <- create_population(nrow(W))
+  X  <- create_population(nrow(W))
 
   # Evaluate population on objectives
   EV <- evaluate_population(X)
-  Y <- EV$Y
-  V <- EV$V
+  Y  <- EV$Y
+  V  <- EV$V
   # ==========
 
   # ========== Iterative cycle

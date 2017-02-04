@@ -54,29 +54,32 @@ The \code{problem} parameter consists of a list with all necessary
 definitions for the multiobjective optimization problem to be solved.
 \code{problem} must contain at least the following fields:
 \itemize{
-   \item \code{$name} - name of the problem instance function, that is, a
-         routine that calculates Y = f(X);
-   \item \code{$xmin} - vector of lower bounds of each variable
-   \item \code{$xmax} - vector of upper bounds of each variable
-   \item \code{$m}    - integer containing the number of objectives
-}
-\code{problem} may also contain the following optional field:
-{\itemize
-   \item \code{$vname} - name of the solution violation function, that is, a
-         routine that calculates the violation penalty V = v(X);
+\item \code{$name} - name of the problem instance function, that is, a routine
+that calculates \strong{Y} = \strong{f}(\strong{X});
+\item \code{$xmin} - vector of lower bounds of each variable
+\item \code{$xmax} - vector of upper bounds of each variable
+\item \code{$m}    - integer containing the number of objectives
 }
 
-The function indicated in \code{problem$name} must be able to receive a
-matrix with each row representing one candidate solution, and return a matrix
-with each row representing the objective values for that solution. The name
-of the input argument that receives the population matrix must be either
-\code{X} or \code{x}.
+\code{problem} may also contain the following optional fields:
+\itemize{
+\item \code{$vname} - name of the solution violation function, that is, a
+routine that calculates the violation penalty \strong{V} = v(\strong{X});
+\item \code{$epsilon} - a small non-negative value indicating the tolerance
+to be considered for equality constraints
+}
 
-The function indicated in \code{problem$vname} must be able to receive a
-matrix with each row representing one candidate solution, and return a vector
-with each element representing the violation penalty values for that
-solution. The name of the input argument that receives the population
-matrix must be either \code{X} or \code{x}.
+The functions indicated in \code{problem$name} and \code{problem$vname} must
+be able to receive a matrix with each row representing one candidate
+solution. The name of the input argument that receives the population matrix
+must be either \code{X} or \code{x}.
+
+Function \code{problem$name} must return a matrix with each row representing
+the objective values for one solution. Function \code{problem$vname} must
+return a vector with each element representing the sum of violations for one
+solution, that is,
+
+$$V\link{k} = v(X\link{k, }) = sum_i max(g_i(x_k), 0) + sum_j max( |h_j(x_k)| - epsilon, 0)$$
 }
 
 \section{Decomposition Methods}{
@@ -98,13 +101,13 @@ at least three parameters: \code{neighbors$name}, \code{neighbors$T}, and
 \code{neighbors$name} defines the strategy used to define the neighborhoods.
 Currently available methods are:
 \itemize{
-   \item \code{$name = "lambda"}: uses the distances between
-   weight vectors. The calculation is performed only once for the entire run,
-   since the weight vectors are assumed static.
-   \item \code{$name = "x"}: uses the distances between the
-   incumbent solutions associated with each subproblem. In this case the
-   calculation is performed at each iteration, since incumbent solutions may
-   change.
+\item \code{$name = "lambda"}: uses the distances between
+weight vectors. The calculation is performed only once for the entire run,
+since the weight vectors are assumed static.
+\item \code{$name = "x"}: uses the distances between the
+incumbent solutions associated with each subproblem. In this case the
+calculation is performed at each iteration, since incumbent solutions may
+change.
 }
 
 \code{neighbors$T} defines the neighborhood size. This parameter must receive
@@ -157,6 +160,7 @@ F. Campelo, L.S. Batista, C. Aranha:
 "A Component-Wise Perspective on Multiobjective Evolutionary Algorithms
 based on Decomposition". In preparation, 2016.
 }
+
 \examples{
 
 # MOEA/D as in Zhang and Li (2007) (sec. V-E, p.721-722)
@@ -205,7 +209,6 @@ variation <- list(list(name  = "diffmut",
                        rho   = 0.8))
 
 out2 <- moead(problem, decomp,  aggfun, neighbors, variation,
-              update,  scaling, repair, stopcrit,  showpars)
+              update, constraint, scaling, stopcrit,  showpars)
 # plot(out2$Y[,1], out2$Y[,2], type = "p", pch = 20)
 }
-

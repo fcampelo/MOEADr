@@ -20,4 +20,3 @@ the MOEADr package, to be used as the \code{stopcrit[[i]]$name} parameter
 in the \code{moead(...)} call. Instructions for obtaining more info on each
 criterion are also returned.
 }
-

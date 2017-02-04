@@ -20,7 +20,7 @@ Truncation variation operator
 }
 \details{
 Truncate the solution matrix X to guarantee that all values are in the
-[0, 1] interval.
+\link{0, 1} interval.
 }
 \section{References}{
 

@@ -21,9 +21,9 @@ package. For internal use only, not to be called directly by the user.
 When this stop criterion is used, one element of the \code{stopcrit}
 parameter (see \code{\link{moead}}) must have the following structure:
 \itemize{
-   \item \code{stopcrit$name = "maxtime"}
-   \item \code{stopcrit$maxtime = T}, where \code{T} is a positive integer
-         representing the desired time limit (in seconds).
+\item \code{stopcrit$name = "maxtime"}
+\item \code{stopcrit$maxtime = T}, where \code{T} is a positive integer
+representing the desired time limit (in seconds).
 }
 }
 \section{Warning}{

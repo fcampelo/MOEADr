@@ -32,10 +32,10 @@ This R implementation of the Simulated Binary Crossover reproduces the C code
 implementation available in package "emoa", version 0.5-0, by Olaf Mersmann.
 The differences between the present version and the original one are:
 \itemize{
-   \item All variables are considered bounded in the (0, 1) interval, which
-         simplifies the calculations.
-   \item Calculations are vectorized over variables, which also simplifies
-         the operator.
+\item All variables are considered bounded in the (0, 1) interval, which
+simplifies the calculations.
+\item Calculations are vectorized over variables, which also simplifies
+the operator.
 }
 }
 \section{References}{

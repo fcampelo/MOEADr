@@ -33,5 +33,6 @@ Description: Modular implementation of MOEA/D approaches for multiobjective
 License: GPL-2
 LazyData: TRUE
 Encoding: UTF-8
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.0
+Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr

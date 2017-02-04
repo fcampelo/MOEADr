@@ -22,13 +22,13 @@ method for the MOEADr package.
 The Best Neighborhood Replacement method consists of three steps:
 
 \itemize{
-    \item For each subproblem i, the best candidate solution x_j from the
-          entire population is determined.
-    \item The neighborhood of subproblem i is replaced by the neighborhood of
-          subproblem j. The size of this neighborhood, truncated by a
-          parameter \code{Tr}.
-    \item The Restricted replacement method is then applied using this new
-    neighborhood.
+\item For each subproblem i, the best candidate solution x_j from the
+entire population is determined.
+\item The neighborhood of subproblem i is replaced by the neighborhood of
+subproblem j. The size of this neighborhood, truncated by a
+parameter \code{Tr}.
+\item The Restricted replacement method is then applied using this new
+neighborhood.
 }
 }
 \section{Parameters}{
@@ -39,12 +39,12 @@ generated within the calling function \code{update_population()}. It expects
 section of \code{\link{update_population}}. Additionaly, the parameter
 \code{moead.env$update} is expected to contain two fields:
 \itemize{
-    \item \code{moead.env$update$Tr}  containing a positive integer.
-    This value determines the size of the neighborhood to be used.
-    \item \code{moead.env$update$nr} containing a positive integer.
-          This value determines the maximum number of times that any
-          candidate solution can be selected. If \code{nr = Tr}, then
-          \code{update_restricted} is equivalent with \code{update_standard}.
+\item \code{moead.env$update$Tr}  containing a positive integer.
+This value determines the size of the neighborhood to be used.
+\item \code{moead.env$update$nr} containing a positive integer.
+This value determines the maximum number of times that any
+candidate solution can be selected. If \code{nr = Tr}, then
+\code{update_restricted} is equivalent with \code{update_standard}.
 }
 
 See \code{\link{update_population}} for more information.

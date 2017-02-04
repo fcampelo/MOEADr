@@ -22,4 +22,3 @@ Identity operator (no variation performed)
 Performs the identity operator (no variation). This routine is included to
 simplify the use of automated tuning / design tools such as Iterated Racing.
 }
-

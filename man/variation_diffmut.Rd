@@ -40,13 +40,13 @@ and x_basis, x_a and x_b are distinct vectors from the population.
 This function include the following variations of this operator:
 
 \itemize{
-   \item Phi may be either constant (user provided) or randomly chosen.
-   \item x_basis can be a random vector from the population
-         (\code{basis = "rand"})
-   \item x_basis can be the mean point in the T neighborhood points
-         (\code{basis = "mean"})
-   \item x_basis can be the weighted mean point in the T neighborhood points
-         (\code{basis = "wgi"})
+\item Phi may be either constant (user provided) or randomly chosen.
+\item x_basis can be a random vector from the population
+(\code{basis = "rand"})
+\item x_basis can be the mean point in the T neighborhood points
+(\code{basis = "mean"})
+\item x_basis can be the weighted mean point in the T neighborhood points
+(\code{basis = "wgi"})
 }
 }
 \section{References}{

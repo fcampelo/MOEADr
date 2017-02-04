@@ -26,10 +26,10 @@ current (\code{Yt}) and candidate (\code{Y}) solutions. The
 following methods are currently available:
 
 \itemize{
-   \item \code{scaling$name = "none"}: no scaling
-   \item \code{scaling$name = "simple"}: simple linear scaling between
-   estimated ideal and nadir points, calculated from the available points in
-   \code{Y} and \code{Yt} at each iteration.
+\item \code{scaling$name = "none"}: no scaling
+\item \code{scaling$name = "simple"}: simple linear scaling between
+estimated ideal and nadir points, calculated from the available points in
+\code{Y} and \code{Yt} at each iteration.
 }
 }
 \section{Parameters}{
@@ -40,10 +40,10 @@ generated within the calling function \code{update_population()}
 This environment must contain at least the following variables:
 
 \itemize{
-   \item \code{Yt}: matrix of objective values for population \code{Xt}
-   \item \code{Y} : matrix of objective values for population \code{X}
-   \item \code{scaling}: list of function scaling parameters, containing at
-   least the field \code{scaling$name}.
+\item \code{Yt}: matrix of objective values for population \code{Xt}
+\item \code{Y} : matrix of objective values for population \code{X}
+\item \code{scaling}: list of function scaling parameters, containing at
+least the field \code{scaling$name}.
 }
 }
 

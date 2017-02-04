@@ -21,8 +21,7 @@ package. For internal use only, not to be called directly by the user.
 When this stop criterion is used, one element of the \code{stopcrit}
 parameter (see \code{\link{moead}}) must have the following structure:
 \itemize{
-   \item \code{stopcrit$name = "maxeval"}
-   \item \code{stopcrit$maxeval = K}, where \code{K} is a positive integer.
+\item \code{stopcrit$name = "maxeval"}
+\item \code{stopcrit$maxeval = K}, where \code{K} is a positive integer.
 }
 }
-

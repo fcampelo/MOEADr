@@ -20,24 +20,24 @@ This routine accesses the required variables in the calling environment using
 \code{parent.frame()}, so it does not require any explicit input parameters.
 The calling environment must contain at least the following parameters:
 \itemize{
-   \item \code{Xt}: current population matrix
-   \item \code{Yt}: matrix of objective values for population \code{Xt}
-   \item \code{X} : candidate population matrix
-   \item \code{Y} : matrix of objective values for population \code{X}
-   \item \code{B} : neighborhood matrix (output of
-   \code{define_neighborhood(...)$B})
-   \item \code{W} : matrix of weigths (output of
-   \code{generate_weights(...)})
-   \item \code{aggfun}: list of scalarization parameters (see
-       \code{\link{scalarize_values}()} for details).
-   \item \code{scaling}: list of function scaling parameters (see
-       \code{\link{scale_objectives}()} for details).
-   \item \code{update}: list of update parameters, containing at least the
-         field \code{update$name}, describing the method to be used for
-         updating the population. Other parameters required for specific
-         update methods are also included in this variable.
-         The list of available update methods can be generated using
-         \code{get_update_methods()}.
+\item \code{Xt}: current population matrix
+\item \code{Yt}: matrix of objective values for population \code{Xt}
+\item \code{X} : candidate population matrix
+\item \code{Y} : matrix of objective values for population \code{X}
+\item \code{B} : neighborhood matrix (output of
+\code{define_neighborhood(...)$B})
+\item \code{W} : matrix of weigths (output of
+\code{generate_weights(...)})
+\item \code{aggfun}: list of scalarization parameters (see
+\code{\link{scalarize_values}()} for details).
+\item \code{scaling}: list of function scaling parameters (see
+\code{\link{scale_objectives}()} for details).
+\item \code{update}: list of update parameters, containing at least the
+field \code{update$name}, describing the method to be used for
+updating the population. Other parameters required for specific
+update methods are also included in this variable.
+The list of available update methods can be generated using
+\code{get_update_methods()}.
 }
 
 Internally, the calling environment is stored in a list variable

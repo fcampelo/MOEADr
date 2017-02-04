@@ -25,4 +25,3 @@ list of available methods for generating the weights, as well as information
 about their specific parameters, can be generated using
 \code{get_decomposition_methods()}.
 }
-

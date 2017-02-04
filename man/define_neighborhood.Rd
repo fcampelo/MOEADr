@@ -27,12 +27,12 @@ This routine calculates the neighborhood relations for the MOEA/D. The
 following methods are currently available:
 
 #' \itemize{
-   \item \code{neighbors$name = "lambda"}: defines the neighborhood using the
-   distance matrix for the weight vectors. The calculation is performed only
-   once for the entire run.
-   \item \code{neighbors$name = "x"}: defines the neighborhood using
-   the distance matrix for the incumbent solution associated with each
-   subproblem. In this case the calculation is performed at each iteration.
+\item \code{neighbors$name = "lambda"}: defines the neighborhood using the
+distance matrix for the weight vectors. The calculation is performed only
+once for the entire run.
+\item \code{neighbors$name = "x"}: defines the neighborhood using
+the distance matrix for the incumbent solution associated with each
+subproblem. In this case the calculation is performed at each iteration.
 }
 
 The number of neighbors declared in \code{neighbors$T} must be smaller than
@@ -41,4 +41,3 @@ the number of subproblems (defined in \code{generate_weights}).
 The probability of sampling from the neighborhood when performing variation,
 \code{neightbors$delta.p}, must be a scalar value between 0 and 1.
 }
-

@@ -8,9 +8,6 @@ output: html_document
 
 ## For the package itself
 ### Features needed for paper experiments
-- VARIATION: Local search operator: Choose and implement 2 local search operators: (1)/(2)/Wishlist
-- UPDATE POP: Choose and implement penalty operators (1)/(2)/Wishlist
-- STOP CRITERIA: Implementar MaxTime
 - OUTPUT: Opcoes de output para logfile
 
 ### Code Issues

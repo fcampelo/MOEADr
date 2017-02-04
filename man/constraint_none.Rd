@@ -19,7 +19,7 @@ incumbent solution}
 generic call)}
 }
 \value{
-[N x (T+1)] matrix of preference indexes. Each row contains
+\link{N x (T+1)} matrix of preference indexes. Each row contains
 the T indexes of the candidate solutions in the neighborhood of
 a given subproblem, plus a value of T+1 for the incumbent solution for
 that subproblem.

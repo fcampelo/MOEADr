@@ -38,4 +38,3 @@ This routine performs the variation block for the MOEA/D. The
 list of available variation operators can be generated using
 \code{get_variation_operators()}.
 }
-
