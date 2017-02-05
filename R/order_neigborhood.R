@@ -70,8 +70,8 @@ order_neighborhood <- function(moead.env)
     varargs$B    <- moead.env$B
     varargs$bigZ <- moead.env$bigZ
     varargs$bigV <- bigV
-    varargs$V    <- moead.env$V
-    varargs$Vt   <- moead.env$Vt
+    varargs$V    <- moead.env$V$v
+    varargs$Vt   <- moead.env$Vt$v
 
     # call constraint handling method
     sel.indx <- do.call(opname,
