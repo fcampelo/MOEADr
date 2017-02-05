@@ -153,7 +153,7 @@
 #'
 #' ## 3: run MOEA/D
 #' out1 <- moead(problem, decomp,  aggfun, neighbors, variation, update,
-#'               constraint, scaling, stopcrit,  showpars, seed)
+#'               constraint, scaling, stopcrit, showpars, seed)
 #'
 #' # 4: Plot output:
 #' plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)
@@ -165,10 +165,11 @@
 #'                        basis = "rand",
 #'                        Phi   = NULL),
 #'                   list(name  = "binrec",
-#'                        rho   = 0.8))
+#'                        rho   = 0.8),
+#'                   list(name  = "truncate"))
 #'
-#' out2 <- moead(problem, decomp,  aggfun, neighbors, variation,
-#'               update, constraint, scaling, stopcrit,  showpars)
+#' out2 <- moead(problem, decomp,  aggfun, neighbors, variation, update,
+#'               constraint, scaling, stopcrit, showpars, seed)
 #' plot(out2$Y[,1], out2$Y[,2], type = "p", pch = 20)
 
 moead <- function(problem,      # List:  MObj problem

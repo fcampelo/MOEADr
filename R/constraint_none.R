@@ -13,7 +13,7 @@
 #' @param ... other parameters (unused, included for compatibility with
 #' generic call)
 #'
-#' @return [ N x (T+1) ] matrix of preference indices. Each row `i` contains
+#' @return `[ N x (T+1) ]` matrix of preference indices. Each row `i` contains
 #' a permutation of `{1, 2, ..., (T+1)}`, where `1,...,T` correspond
 #' to the solutions contained in the neighborhood of the i-th subproblem,
 #' `B[i, ]`, and `T+1` corresponds to the incumbent solution for that
@@ -23,20 +23,20 @@
 #'
 #' @export
 
-constraint_none <- function(B, bigZ, bigV, beta, ...)
+constraint_none <- function(B, bigZ, bigV, ...)
 {
   # ========== Error catching and default value definitions
   assertthat::assert_that(
-    identical(dim(bigZ),dim(bigV)),
-    is.numeric(beta),
-    beta > 0
+    identical(dim(bigZ),dim(bigV))
     )
   # ==========
 
   # Get the selection matrix for all neighborhoods
   sel.indx <- t(apply(bigZ,
                       MARGIN = 2,
-                      FUN = function (X) { unlist(as.matrix(sort.int(X, index.return = TRUE))[2]) }))
+                      FUN = function (X) {
+                        unlist(as.matrix(sort.int(X,
+                                                  index.return = TRUE))[2]) }))
   # Code snipped for getting vector of sorting indexes from
   # https://joelgranados.com/2011/03/01/r-finding-the-ordering-index-vector/
 

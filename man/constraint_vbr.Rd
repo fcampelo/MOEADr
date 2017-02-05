@@ -4,7 +4,7 @@
 \alias{constraint_vbr}
 \title{"Violation-based Ranking" constraint handling method for MOEA/D}
 \usage{
-constraint_vbr(bigZ, bigV, type = c("ts", "sr", "vt"), ...)
+constraint_vbr(bigZ, bigV, type = c("ts", "sr", "vt"), pf = NULL, ...)
 }
 \arguments{
 \item{bigZ}{Matrix of scalarized objective values for each neighborhood and
@@ -15,10 +15,13 @@ incumbent solution (generated in \code{\link[=order_neighborhood]{order_neighbor
 
 \item{type}{type of \code{c(x)} function to use (see \code{c(x) Criteria} for details).}
 
-\item{...}{type-specific parameters (e.g., \code{pf} for \code{type == "sr"})}
+\item{pf}{probability parameter for type = "sr" (ignored in other modes).}
+
+\item{...}{other parameters (unused, included for compatibility with
+generic call)}
 }
 \value{
-\link{ N x (T+1) } matrix of preference indices. Each row \code{i} contains
+\code{[ N x (T+1) ]} matrix of preference indices. Each row \code{i} contains
 a permutation of \code{{1, 2, ..., (T+1)}}, where \code{1,...,T} correspond
 to the solutions contained in the neighborhood of the i-th subproblem,
 \code{B[i, ]}, and \code{T+1} corresponds to the incumbent solution for that
@@ -74,10 +77,6 @@ Violation Threshold \code{[Asafuddoula2014]}\tab | \code{$type = "vt"}\tab | \co
 where \eqn{pf \in [0,1]} is a user-defined parameter for the "sr" method, and
 \code{eps_v^i} is subproblem-dependent, adaptive quantity calculated internally
 in the routine (see \code{[Asafuddoula2014]} and \code{[Campelo2017]} for details).
-}
-
-\section{Parameters}{
-
 }
 
 \section{References}{

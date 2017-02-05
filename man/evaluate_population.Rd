@@ -15,7 +15,7 @@ searches for \code{problem} in the calling environment. See Section
 \code{Problem Description} of the \code{\link[=moead]{moead()}} documentation for details.}
 }
 \value{
-\link{N x m} matrix of objective function values, where \code{N} is the
+\code{[N x m]} matrix of objective function values, where \code{N} is the
 population size and \code{m} is the number of objectives.
 }
 \description{

@@ -2,8 +2,8 @@
 #'
 #' Truncation variation operator
 #'
-#' Truncate the solution matrix X to guarantee that all values are in the
-#' [0, 1] interval.
+#' Truncate the solution matrix \code{X} to guarantee that all values are in the
+#' `[0, 1]` interval.
 #'
 #' @param X Population matrix
 #' @param ... other parameters (unused, included for compatibility with

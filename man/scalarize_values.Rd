@@ -16,7 +16,7 @@ section \code{Parameters}).}
 \item{B}{neighborhood matrix, generate by \code{\link{define_neighborhood}}.}
 }
 \value{
-\link{(T + 1) x N} matrix of scalarized performance values. Each column
+\code{[ (T+1) x N ]} matrix of scalarized performance values. Each column
 contains the T scalarized performances of the candidate solutions in the
 neighborhood of a given subproblem, plus the scalarized performance value
 for the incumbent solution for that subproblem.

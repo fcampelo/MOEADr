@@ -19,6 +19,6 @@ Matrix \code{X}
 Truncation variation operator
 }
 \details{
-Truncate the solution matrix X to guarantee that all values are in the
-\link{0, 1} interval.
+Truncate the solution matrix \code{X} to guarantee that all values are in the
+\code{[0, 1]} interval.
 }

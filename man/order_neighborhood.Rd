@@ -11,7 +11,7 @@ order_neighborhood(moead.env)
 \code{\link[=moead]{moead()}}.}
 }
 \value{
-\link{N x (T+1)} matrix of preference indexes. Each row contains
+\code{[N x (T+1)]} matrix of preference indexes. Each row contains
 the T indexes of the candidate solutions in the neighborhood of
 a given subproblem, plus a value (column T+1) for the incumbent solution of
 that subproblem, in an order defined by the constraint handling method

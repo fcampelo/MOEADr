@@ -21,7 +21,7 @@ incumbent solution (generated in \code{\link[=order_neighborhood]{order_neighbor
 generic call)}
 }
 \value{
-\link{ N x (T+1) } matrix of preference indices. Each row \code{i} contains
+\code{[ N x (T+1) ]} matrix of preference indices. Each row \code{i} contains
 a permutation of \code{{1, 2, ..., (T+1)}}, where \code{1,...,T} correspond
 to the solutions contained in the neighborhood of the i-th subproblem,
 \code{B[i, ]}, and \code{T+1} corresponds to the incumbent solution for that
@@ -40,7 +40,3 @@ based on the "penalty" constraint handling method. Please
 see \code{\link[=order_neighborhood]{order_neighborhood()}} for more information on the preference index
 matrix.
 }
-\section{Parameters}{
-
-}
-

@@ -37,7 +37,7 @@ create_population <- function(N,              # population size
 
     if(assertthat::has_name(problem, "constraint")){
       con <- problem$constraint
-      assertthat::assert_that(assertthat::has_name(constraint, "name"))
+      assertthat::assert_that(assertthat::has_name(con, "name"))
       if (!is.null(con$epsilon)) {
         assertthat::assert_that(is.numeric(con$epsilon),
                                 con$epsilon >= 0)

@@ -20,7 +20,7 @@
 #' searches for \code{problem} in the calling environment. See Section
 #' \code{Problem Description} of the [moead()] documentation for details.
 #'
-#' @return [N x m] matrix of objective function values, where \code{N} is the
+#' @return `[N x m]` matrix of objective function values, where \code{N} is the
 #' population size and \code{m} is the number of objectives.
 #'
 #' @export
