@@ -8,8 +8,8 @@
 #'
 #' @section Parameters:
 #' This routine receives a single input variable, \code{moead.env}, which is
-#' generated within the calling function \code{update_population()}. See
-#' \code{\link{update_population}} for more information.
+#' generated within the calling function [update_population()]. See
+#' the documentation of that function for more information.
 #'
 #' @param moead.env list representing the environment of the base function
 #' \code{moead}.
@@ -26,10 +26,10 @@ updt_standard <- function(moead.env){
   # neighborhood of i, and $w_i$ is the i-th weight vector.
 
   assertthat::assert_that(
-    assertthat::has_name(moead.env,"sel.indx"))
+    assertthat::has_name(moead.env, "sel.indx"))
 
   # Get best selection index for each neighborhood
-  sel.indx <- moead.env$sel.indx[,1]
+  sel.indx <- moead.env$sel.indx[, 1]
 
   # Function for returning the selected solution (variable or objectives space)
   # for a subproblem:
@@ -44,23 +44,23 @@ updt_standard <- function(moead.env){
   }
 
   # Update matrix of candidate solutions
-  Xnext <- t(vapply(X = 1:nrow(moead.env$X),
-                    FUN = do.update,
+  Xnext <- t(vapply(X         = 1:nrow(moead.env$X),
+                    FUN       = do.update,
                     FUN.VALUE = numeric(ncol(moead.env$X)),
-                    sel.indx = sel.indx,
-                    XY = moead.env$X,
-                    XYt = moead.env$Xt,
-                    B = moead.env$B,
+                    sel.indx  = sel.indx,
+                    XY        = moead.env$X,
+                    XYt       = moead.env$Xt,
+                    B         = moead.env$B,
                     USE.NAMES = FALSE))
 
   # Update matrix of function values
-  Ynext <- t(vapply(X = 1:nrow(moead.env$Y),
-                    FUN = do.update,
+  Ynext <- t(vapply(X         = 1:nrow(moead.env$Y),
+                    FUN       = do.update,
                     FUN.VALUE = numeric(ncol(moead.env$Y)),
-                    sel.indx = sel.indx,
-                    XY = moead.env$Y,
-                    XYt = moead.env$Yt,
-                    B = moead.env$B,
+                    sel.indx  = sel.indx,
+                    XY        = moead.env$Y,
+                    XYt       = moead.env$Yt,
+                    B         = moead.env$B,
                     USE.NAMES = FALSE))
 
   return(list(X = Xnext, Y = Ynext))

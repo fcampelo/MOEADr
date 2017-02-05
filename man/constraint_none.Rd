@@ -2,7 +2,7 @@
 % Please edit documentation in R/constraint_none.R
 \name{constraint_none}
 \alias{constraint_none}
-\title{None constraint handling method for MOEA/D}
+\title{NULL constraint handling method for MOEA/D}
 \usage{
 constraint_none(B, bigZ, bigV, beta, ...)
 }
@@ -19,19 +19,18 @@ incumbent solution}
 generic call)}
 }
 \value{
-\link{N x (T+1)} matrix of preference indexes. Each row contains
-the T indexes of the candidate solutions in the neighborhood of
-a given subproblem, plus a value of T+1 for the incumbent solution for
-that subproblem.
+\link{ N x (T+1) } matrix of preference indices. Each row \code{i} contains
+a permutation of \code{{1, 2, ..., (T+1)}}, where \code{1,...,T} correspond
+to the solutions contained in the neighborhood of the i-th subproblem,
+\code{B[i, ]}, and \code{T+1} corresponds to the incumbent solution for that
+subproblem. The order of the permutation is defined by the increasing values
+of \code{f(xk)}, where \code{f(xk)} is the aggregation function value of
+the k-th solution being compared.
 }
 \description{
 Construct the preference index matrix based only on performance values.
 }
 \details{
-This function ignores the violation values when constructing the preference index
-matrix, using only the scalarized performance values.
+This function ignores the violation values when constructing the preference
+index matrix, using only the scalarized performance values.
 }
-\section{Parameters}{
-
-}
-

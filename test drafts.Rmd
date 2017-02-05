@@ -84,35 +84,55 @@ my_constraints <- function(X,           # population matrix
   
 }
 
+
+library(smoof)
+ZDT1 <- make_vectorized_smoof(prob.name  = "ZDT1",
+                              dimensions = 5)
+
 ## 2: set input parameters
-problem    <- list(name        = "moeadr_dtlz1",
-                   xmin        = rep(0, 10), 
-                   xmax        = rep(1, 10), 
-                   m           = 2,
-                   constraints = list(
-                     name    = "my_constraints",
-                     epsilon = 0.05))
-decomp     <- list(name  = "SLD", H = 19)
-neighbors  <- list(name  = "lambda", T = 5, delta.p = 1)
+problem   <- list(name       = "ZDT1",
+                  xmin       = rep(0, 5),
+                  xmax       = rep(1, 5),
+                  m          = 2)
+
+# problem    <- list(name        = "moeadr_dtlz1",
+#                    xmin        = rep(0, 10), 
+#                    xmax        = rep(1, 10), 
+#                    m           = 2),
+#                    constraints = list(
+#                      name    = "my_constraints",
+#                      epsilon = 0.05))
+decomp     <- list(name  = "SLD", H = 9)
+neighbors  <- list(name  = "lambda", T = 4, delta.p = 0.9)
 aggfun     <- list(name  = "wt")
 variation  <- list(
   list(name = "sbx",     etax = 20, pc = 1),
-  list(name = "polymut", etam = 20, pm = 0.1))
-update     <- list(name  = "best", nr = 2, Tr = 3)
-scaling    <- list(name  = "none")
-repair     <- list(name  = "truncate")
+  list(name = "polymut", etam = 20, pm = 0.1),
+  list(name = "truncate"))
+update     <- list(name  = "standard", nr = 2, Tr = 3)
+scaling    <- list(name  = "simple")
+constraint <- list(name = "vbr", type = "ts")
 stopcrit   <- list(
   list(name = "maxiter", maxiter = 100))
 showpars   <- list(show.iters = "numbers", showevery = 10)
-constraint <- list(name = "penalty", beta = 10)
+seed       <- NULL
 ```
 
 
 
 ```{r}
 ## 3: run MOEA/D
-out1 <- moead(problem, decomp,  aggfun, neighbors, variation, 
-              update, constraint, scaling, repair, stopcrit, showpars)
+out1 <- moead(problem,      # List:  MObj problem
+              decomp,       # List:  decomposition strategy
+              aggfun,       # List:  scalar aggregation function
+              neighbors,    # List:  neighborhood assignment strategy
+              variation,    # List:  variation operators
+              update,       # List:  update method
+              constraint,   # List:  constraint handling method
+              scaling,      # List:  objective scaling strategy
+              stopcrit,     # List:  stop criteria
+              showpars,     # List:  echoing behavior
+              seed = NULL)  # Seed for PRNG
 
 # 4: Plot output
 plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)

@@ -75,6 +75,7 @@ evaluate_population <- function(X       = NULL,
   if ("constraints" %in% names(problem))
   {
     con <- problem$constraints
+    if (is.null(con$epsilon)) con$epsilon <- 0
 
     # Prepare arguments for function call
     vfun.args <- as.list(formals(con$name))

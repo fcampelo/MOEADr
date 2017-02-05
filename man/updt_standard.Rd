@@ -25,7 +25,7 @@ update the population matrix of the MOEA/D.
 \section{Parameters}{
 
 This routine receives a single input variable, \code{moead.env}, which is
-generated within the calling function \code{update_population()}. See
-\code{\link{update_population}} for more information.
+generated within the calling function \code{\link[=update_population]{update_population()}}. See
+the documentation of that function for more information.
 }
 

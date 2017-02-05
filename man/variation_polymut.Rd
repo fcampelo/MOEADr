@@ -4,7 +4,7 @@
 \alias{variation_polymut}
 \title{Polynomial mutation}
 \usage{
-variation_polymut(X, etam, pm, ...)
+variation_polymut(X, etam, pm, eps = 1e-06, ...)
 }
 \arguments{
 \item{X}{Population matrix}
@@ -12,6 +12,8 @@ variation_polymut(X, etam, pm, ...)
 \item{etam}{mutation constant}
 
 \item{pm}{variable-wise probability of mutation}
+
+\item{eps}{small constant used to prevent divisions by zero}
 
 \item{...}{other parameters (unused, included for compatibility with
 generic call)}

@@ -15,6 +15,7 @@
 #' @param X Population matrix
 #' @param etam mutation constant
 #' @param pm variable-wise probability of mutation
+#' @param eps small constant used to prevent divisions by zero
 #' @param ... other parameters (unused, included for compatibility with
 #' generic call)
 #'
@@ -31,7 +32,7 @@
 #'
 #' @export
 
-variation_polymut <- function(X, etam, pm, ...){
+variation_polymut <- function(X, etam, pm, eps = 1e-6, ...){
 
   # ========== Error catching and default value definitions
   assertthat::assert_that(
@@ -50,7 +51,7 @@ variation_polymut <- function(X, etam, pm, ...){
                  nrow = dimX[1],
                  ncol = dimX[2],
                  byrow = TRUE)
-  X <- (X - minP) / (maxP - minP)
+  X <- (X - minP) / (maxP - minP + eps)
 
   # Define positions that will be mutated
   R <- randM(X) <= pm

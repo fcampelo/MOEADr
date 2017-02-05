@@ -183,22 +183,23 @@ aggfun    <- list(name       = "wt")
 variation <- list(list(name  = "sbx",
                        etax  = 20, pc = 1),
                   list(name  = "polymut",
-                       etam  = 20, pm = 0.1))
+                       etam  = 20, pm = 0.1),
+                  list(name  = "truncate"))
 update    <- list(name       = "standard")
 scaling   <- list(name       = "none")
-constraint<- list(name       = "penalty",
-                  beta       = 0.5)
+constraint<- list(name       = "none")
 stopcrit  <- list(list(name  = "maxiter",
                     maxiter  = 200))
 showpars  <- list(show.iters = "numbers",
                   showevery  = 10)
+seed      <- NULL
 
 ## 3: run MOEA/D
-out1 <- moead(problem, decomp,  aggfun, neighbors, variation,
-             update, constraint, scaling, stopcrit,  showpars)
+out1 <- moead(problem, decomp,  aggfun, neighbors, variation, update,
+              constraint, scaling, stopcrit,  showpars, seed)
 
-# 4: Plot output using:
-# plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)
+# 4: Plot output:
+plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)
 
 
 # Rerun with standard DE variation operators (rand mutation + binomial
@@ -211,5 +212,5 @@ variation <- list(list(name  = "diffmut",
 
 out2 <- moead(problem, decomp,  aggfun, neighbors, variation,
               update, constraint, scaling, stopcrit,  showpars)
-# plot(out2$Y[,1], out2$Y[,2], type = "p", pch = 20)
+plot(out2$Y[,1], out2$Y[,2], type = "p", pch = 20)
 }

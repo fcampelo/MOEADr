@@ -56,7 +56,7 @@ variation_sbx <- function(X, P, etax, pc = 1, eps = 1e-6, ...){
                  nrow = dimX[1],
                  ncol = dimX[2],
                  byrow = TRUE)
-  X <- (X - minP) / (maxP - minP)
+  X <- (X - minP) / (maxP - minP + eps)
 
   # Draw crossover pairs: for the i-th candidate solution, get two mutually
   # exclusive points according to the probabilities given in P[i, ].

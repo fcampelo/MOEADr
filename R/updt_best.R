@@ -78,7 +78,7 @@ updt_best <- function(moead.env){
                      FUN    = which.min)
 
   best.subprob <- mapply(FUN      = function(i, j, B){B[i, j]},
-                         i        = 1:10,
+                         i        = 1:nrow(B),
                          j        = best.indx,
                          MoreArgs = list(B = B))
 
@@ -86,9 +86,13 @@ updt_best <- function(moead.env){
   # neighborhood of subproblem i is set as the neighborhood of best.subprob[i])
   B    <- B[best.subprob, 1:Tr]
 
-  # Assemble bigZ matrix according to the update neighborhood
+  # Assemble bigZ matrix according to the update_best neighborhood
   bigZ     <- scalarize_values(moead.env, moead.env$normYs, B)
-  best.env <- list (bigZ = bigZ, B = B, V = moead.env$V, Vt = moead.env$Vt)
+  best.env <- list (bigZ       = bigZ,
+                    B          = B,
+                    V          = moead.env$V,
+                    Vt         = moead.env$Vt,
+                    constraint = moead.env$constraint)
   sel.indx <- order_neighborhood(best.env)
 
   # ========= Code below here should be identical to updt_restricted =========#
