@@ -71,8 +71,12 @@ scale_objectives <- function(moead.env, eps = 1e-16){
                    byrow = TRUE)
 
     # Perform linear scaling
-    Y  <- (Y - MinP) / (MaxP - MinP + eps)
-    Yt <- (Yt - MinP) / (MaxP - MinP + eps)
+    Y    <- (Y - MinP) / (MaxP - MinP + eps)
+    Yt   <- (Yt - MinP) / (MaxP - MinP + eps)
+
+    # In this case, minP = 0 and maxP = 1:
+    minP <- 0 * minP
+    maxP <- minP + 1
 
     return(list(Y    = Y,
                 Yt   = Yt,

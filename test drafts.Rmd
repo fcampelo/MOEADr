@@ -102,18 +102,18 @@ problem   <- list(name       = "ZDT1",
 #                    constraints = list(
 #                      name    = "my_constraints",
 #                      epsilon = 0.05))
-decomp     <- list(name  = "SLD", H = 9)
-neighbors  <- list(name  = "lambda", T = 4, delta.p = 0.9)
+decomp     <- list(name  = "SLD", H = 99)
+neighbors  <- list(name  = "lambda", T = 20, delta.p = 0.9)
 aggfun     <- list(name  = "wt")
 variation  <- list(
   list(name = "sbx",     etax = 20, pc = 1),
   list(name = "polymut", etam = 20, pm = 0.1),
   list(name = "truncate"))
 update     <- list(name  = "standard", nr = 2, Tr = 3)
-scaling    <- list(name  = "simple")
+scaling    <- list(name  = "none")
 constraint <- list(name = "vbr", type = "ts")
 stopcrit   <- list(
-  list(name = "maxiter", maxiter = 100))
+  list(name = "maxiter", maxiter = 200))
 showpars   <- list(show.iters = "numbers", showevery = 10)
 seed       <- NULL
 ```
@@ -135,9 +135,7 @@ out1 <- moead(problem,      # List:  MObj problem
               seed = NULL)  # Seed for PRNG
 
 # 4: Plot output
-plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)
+plot(out1$Y[1:99,1], out1$Y[1:99,2], type = "p", pch = 20)
 
 ```
-
-
 

@@ -53,11 +53,7 @@ update_population <- function(){
 
   # Perform scaling and get updated estimate of the 'ideal' and 'nadir'
   # points
-
-  ##### Y and Yt return normalized according to minP, maxP, but this is not
-  ##### being considered in the scalarize_xyz functions (y - minp < 0!!!)
   moead.env$normYs <- scale_objectives(moead.env)
-  #####
 
   # Calculate matrix with scalarized performance values. Each column
   # contains the T scalarized performances of the candidate solutions in the
