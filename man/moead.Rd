@@ -186,7 +186,7 @@ variation <- list(list(name  = "sbx",
                        etam  = 20, pm = 0.1),
                   list(name  = "truncate"))
 update    <- list(name       = "standard")
-scaling   <- list(name       = "none")
+scaling   <- list(name       = "simple")
 constraint<- list(name       = "none")
 stopcrit  <- list(list(name  = "maxiter",
                     maxiter  = 200))

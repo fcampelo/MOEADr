@@ -143,7 +143,7 @@
 #'                        etam  = 20, pm = 0.1),
 #'                   list(name  = "truncate"))
 #' update    <- list(name       = "standard")
-#' scaling   <- list(name       = "none")
+#' scaling   <- list(name       = "simple")
 #' constraint<- list(name       = "none")
 #' stopcrit  <- list(list(name  = "maxiter",
 #'                     maxiter  = 200))
@@ -269,8 +269,11 @@ moead <- function(problem,      # List:  MObj problem
               Y      = Y,
               V      = V,
               W      = W,
+              ideal  = apply(Y, 2, min),
+              nadir  = apply(Y, 2, max),
               nfe    = nfe,
               n.iter = iter,
               time   = difftime(Sys.time(), time.start),
               seed   = seed))
 }
+

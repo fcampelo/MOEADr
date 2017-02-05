@@ -11,10 +11,10 @@ Formatted data frame containing reference name (for
 \code{constraint$name}) and instructions for More Info about each method.
 }
 \description{
-Prints the constraint methods available in the MOEADr package
+Prints the constraint handling methods available in the MOEADr package
 }
 \details{
-This routine prints the names of the constraint methods available in
+This routine prints the names of the constraint handling methods available in
 the MOEADr package, to be used as the \code{constraint$name} parameter in the
 \code{moead(...)} call. Instructions for obtaining more info on each
 operator are also returned.

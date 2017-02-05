@@ -53,8 +53,8 @@ problem <- list(name        = "moeadr_dtlz1",  # objective function routine
                 xmax        = rep(1, 10),      # upper limits
                 m           = 2,               # number of objectives
                 constraints = list(
-                  name      = "my_constraints", # constraint function routine
-                  epsilon   = 0.05))                  # tolerance for equality constraints
+                  name      = "my_constraints",# constraint function routine
+                  epsilon   = 0.05))           # tolerance for equality constraints
 ```
 
 The specific requirements regarding functions `problem$name` and `problem$constraints$name` are provided in the following sections.
@@ -179,3 +179,8 @@ Some **VERY** important points:
 - All constraints are expressed in the standard form, that is, $g_i(\mathbf{x}) \leq 0$ and $h_j(\mathbf{x}) = 0$. You may choose to express them differently, but in that case be extra careful with the calculations of `Vmatrix` and `v`;
 - All box constraints must be included as part of the constraint violations 
 routine, otherwise they will be ignored by the constraint handling approaches. This can in principle be a valid option, for instance, if i) the problem is actually unconstrained; or ii) a repair method such as the _truncate_ variation operator is used.
+
+---
+The MOEADr package already provides a convenient implementation for a "box constraints" (function `box_constraints()`) and "unitary constraints" (function `unitary_constraints()`). See the specific documentation for details.
+
+To use these functions, simple make `constraints = list(name = "box_constraints")` (or `"unitary_constraints"`, if that is the case) in your definition of the `problem` input. And don't forget the `epsilon` in the case of unitary constraints!
