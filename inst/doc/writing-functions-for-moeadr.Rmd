@@ -1,0 +1,131 @@
+---
+title: "Writing Functions for the MOEADr Package"
+author: "Felipe Campelo"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+This is a short guide to writing new functions for the MOEADr package. This package provides a component-based framework for developing (and applying) Multiobjective Evolutionary Algorithms based on Decomposition (MOEA/D)^[Q. Zhang and H. Li, "MOEA/D: A Multiobjective Evolutionary Algorithm Based on Decomposition", IEEE Trans. Evol. Comp. 11(6): 712-731, 2007.].
+
+The modular implementation provided in this package provides control over the following aspects of the algorithm:
+
+- *decomp*, the decomposition strategy
+- *aggfun*, the scalar aggregation function
+- *neighbors*, the neighborhood assignment strategy
+- *variation*, the variation operators used
+- *update*, the population update method
+- *scaling*, the strategy used for objective scaling 
+- *stopcrit*, the stop criteria used by the algorithm
+
+This document describes how to write functions implementing new variants for any of these modules. A general description of the algorithm and the component-based interpretation behind the MOEADr package is available in our paper^[F. Campelo, L.S. Batista and C. Aranha, "A Component-Wise Perspective on Multiobjective Evolutionary Algorithms based on Decomposition", in preparation.]
+  
+  
+# General guidelines
+## Nomenclature
+- Functions should be preferably defined in the form *verb_object* (e.g., *generate_weights* or *evaluate_population*)
+- Please try to follow the policy *one function, one file, same name* (very short functions for general use can be exceptions - in this case they should be placed in the _utils.R_ file.
+- It is considered kosher to access (and even modify) variables in the  environment defined by the main _moead()_ function from within other functions, by taking advantage of, e.g., `parent.frame`. However, this should be used with caution. Remember, with great power comes a great ability to generate impossibly hidden bugs.
+- Documentation should be complete. Please use `roxygen2`-style documentation in all functions. 
+- Also, please make liberal use of in-code comments to clarify any non-trivial operation.
+
+## Important variables defined in the package
+- **W**: matrix of weights ( _N x m_ )
+- **X**: matrix of candidate solutions at a given iteration. Each row is a point in the space of variables. ( _N x nv_ )
+- **Xt**: matrix of incumbent solutions at a given iteration ( _N x nv_ )
+- **Y**: matrix of objective function values (corresponding to the rows of **X**). Each row is a point in the space of objectives. ( _N x m_ )
+- **Yt**: matrix of objective function values (corresponding to the rows of **Xt**) ( _N x m_ )
+- **B**: matrix of neighborhoods ( _N x T_ )
+- **P**: matrix of selection probabilities (derived from **B**) ( _N x N_ ).
+- **nfe**: counter, number of solutions evaluated
+- **iter**: counter, number of iterations
+- **keep.running**: flag. TRUE if any stop criterion is met
+
+# Contributing to the modules  
+## Decomposition strategies
+To discover the available decomposition strategies, use `MOEADr::get_decomposition_methods()`. Decomposition functions are called from within `generate_weights`. 
+
+- INPUTS: 
+    - the function must be able to receive one parameter called _decomp_, which is a list object containing the specifications and variables necessary for defining the decomposition strategy. Use `?moead` and `?decomposition_sld` to get details on the structure of _decomp_.
+    - If any other external information is needed, use `parent.frame(n = 2)` to access it directly from the `moead` environment.
+
+- OUTPUTS: 
+    - the function must output a _N x m_ matrix of weights, with _N_ the number of subproblems and _m_ the number of objectives.
+
+### Other guidelines and requirements:  
+- The name of the function (and of the file) must have the format *decomposition_XYZ*, with *XYZ* being the moniker for the contributed method (which is going to be passed as _decomp$name_).
+- Please follow the _one function, one file, same name_ policy strictly (otherwise `get_decomposition_methods()` won't be able to correctly list the method.
+
+### Example file
+Check *decomposition_sld.R* for a good example of decomposition routine (e.g., to use as a template).
+
+
+## Scalar aggregation functions
+To discover the available decomposition strategies, use  `MOEADr::get_scalarization_methods()`. Scalarization functions are called from within `scalarize_values`, which in turn is called within a `updt_XYZ` routine invoked by `update_population`.
+
+- INPUTS: the function receives the following parameters when called within `scalarize_values`:
+    - Y: matrix of objective function values
+    - W: matrix of weights
+    - aggfun: list object containing the specifications and variables necessary for defining the scalar aggregation strategy. Use `?moead` and `?scalarization_pbi` to get details on the structure of _aggfun_.
+    - minP: numeric vector with _m_ elements, containing an estimate of the "ideal point".
+    - maxP: numeric vector with _m_ elements, containing an estimate of the "nadir point".
+    
+Note that the function does not need to have all these parameters defined as formal arguments: use `...` to avoid declaring useless arguments.
+
+- OUTPUTS: the function must output a numeric vector of size _N_, containing the scalarized values.
+
+### Other guidelines and requirements:  
+- The name of the function (and of the file) must have the format *scalarization_XYZ*, with *XYZ* being the moniker for the contributed method (which is going to be passed as _aggfun$name_).
+- Please follow the _one function, one file, same name_ policy strictly (otherwise `get_scalarization_methods()` won't be able to correctly list the method.
+
+### Example file
+Check *scalarize_pbi.R* for a good example of decomposition routine (e.g., to use as a template).
+
+
+## Neighborhood assignment options
+The strategy for defining the neighborhood structure in the MOEADr package is essentially the same (use Euclidean distances and use the `neighbors$T` nearest subproblems as a neighborhood). The only difference is the space in which the distances are calculated, which has implications in the need for re-calculating the neighborhood structure. The neighborhoods are defined using an efficient C implementation of the k-nearest-neighbors algorithm available in function `FNN::get.knn`, which is the only reason why package `MOEADr` lists `FNN` in its _Imports_ field (see _DESCRIPTION_).
+
+The neighborhood assignment function is `define_neighborhood`, which is called directly from the main function `moead`. 
+
+- INPUTS: `define_neighborhood` can receive two parameters:
+    - neighbors: list object containing the specifications and variables necessary for defining the neighborhood assignment strategy. Use `?moead` and `?define_neighborhood` to get details on the structure of _neighbor_.
+    - v.matrix: matrix of row vectors to be used in the calculation of the Euclidean distances for defining the neighborhoods.
+    
+Both input arguments can be ommitted, in which case they are captured directly from the parent environment (i.e., from the calling function `moead`). The `v.matrix` argument is filled with the weight matrix **W** if `neighbors$name == "lambda"`, or with the population matrix **X** if `neighbors$name == "x"` (in which case the neighborhood structure is also recalculated at each iteration.
+
+- OUTPUTS: the function must output a list object containing two matrices:
+    - **B**: each row represents the neighborhood of a subproblem as indices (first element is the subproblem index, and the following `neighbors$T - 1` elements are the neighbor indices). This is a _N x T_ matrix.
+    - **P**: matrix of probabilities of selection to be used in the sampling of solutions for variation operators. Each element \eqn{p_{i,j}} represents the probability of using the solution associated with the _j_-th subproblem when performing a variation operator (e.g., recombination) for the _i_-th subproblem. This is a _N x N_ matrix.
+
+### Other guidelines and requirements:  
+- Unlike the previous modules, the neighborhood assignment strategies are defined as options passed to a single function `define_neighborhood`. Other possibilities (e.g., to deal with adaptive weights, which would require periodic recalculation) can, at least in principle, use the same strategy. However, if an alternative assignment method becomes too different from the one currently implemented, it may be better to break the options and use the _one function, one file, same name_ policy. In this case, the current options should be moved to independent functions starting with a common preffix (as is the case with other modules, e.g., decomposition).
+
+
+### Example file
+Check *define_neighborhood.R* for the current neighborhood assignment alternatives (e.g., to use as a template).
+
+
+## Variation operators
+To discover the available variation operators, use  `MOEADr::get_variation_operators()`. Scalarization functions are called from within `scalarize_values`, which in turn is called within a `updt_XYZ` routine invoked by `update_population`.
+
+- INPUTS: the function receives the following parameters when called within `scalarize_values`:
+    - Y: matrix of objective function values
+    - W: matrix of weights
+    - aggfun: list object containing the specifications and variables necessary for defining the scalar aggregation strategy. Use `?moead` and `?scalarization_pbi` to get details on the structure of _aggfun_.
+    - minP: numeric vector with _m_ elements, containing an estimate of the "ideal point".
+    - maxP: numeric vector with _m_ elements, containing an estimate of the "nadir point".
+    
+Note that the function does not need to have all these parameters defined as formal arguments: use `...` to avoid declaring useless arguments.
+
+- OUTPUTS: the function must output a numeric vector of size _N_, containing the scalarized values.
+
+### Other guidelines and requirements:  
+- The name of the function (and of the file) must have the format *scalarization_XYZ*, with *XYZ* being the moniker for the contributed method (which is going to be passed as _aggfun$name_).
+- Please follow the _one function, one file, same name_ policy strictly (otherwise `get_scalarization_methods()` won't be able to correctly list the method.
+
+### Example file
+Check *scalarize_pbi.R* for a good example of decomposition routine (e.g., to use as a template).
