@@ -4,22 +4,26 @@
 \alias{perform_variation}
 \title{Run variation operators}
 \usage{
-perform_variation(X = NULL, P = NULL, B = NULL, variation = NULL, ...)
+perform_variation(X = NULL, P = NULL, B = NULL, W = NULL,
+  variation = NULL, ...)
 }
 \arguments{
 \item{X}{Population matrix of the MOEA/D (each row is a candidate solution).
 If \code{NULL} the function searches for \code{X} in the calling environment.}
 
 \item{P}{Matrix of probabilities of selection for variation (created by
-\code{define_neighborhoods}). If \code{NULL} the function searches for
+\code{\link[=define_neighborhoods]{define_neighborhoods()}}). If \code{NULL} the function searches for
 \code{P} in the calling environment.}
 
 \item{B}{Matrix of neighborhood indexes (created by
-\code{define_neighborhoods}). If \code{NULL} the function searches for
+\code{\link[=define_neighborhoods]{define_neighborhoods()}}). If \code{NULL} the function searches for
 \code{B} in the calling environment.}
 
+\item{W}{matrix of weights (created by \code{\link[=generate_weights]{generate_weights()}}). If \code{NULL}
+the function searches for \code{W} in the calling environment.}
+
 \item{variation}{List vector containing the variation operators to be used.
-See \code{\link{moead}} for details. If \code{NULL} the function searches
+See \code{\link[=moead]{moead()}} for details. If \code{NULL} the function searches
 for \code{variation} in the calling environment.}
 
 \item{...}{other parameters (unused, included for compatibility with

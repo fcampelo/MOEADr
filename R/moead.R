@@ -242,7 +242,7 @@ moead <- function(problem,      # List:  MObj problem
     Vt <- V
 
     # Perform variation
-    X <- perform_variation()
+    X <- perform_variation(X, P, B, W, variation)
 
     # Evaluate offspring population on objectives
     YV <- evaluate_population(X)

@@ -9,13 +9,15 @@
 #' @param X Population matrix of the MOEA/D (each row is a candidate solution).
 #' If \code{NULL} the function searches for \code{X} in the calling environment.
 #' @param P Matrix of probabilities of selection for variation (created by
-#' \code{define_neighborhoods}). If \code{NULL} the function searches for
+#' [define_neighborhoods()]). If \code{NULL} the function searches for
 #' \code{P} in the calling environment.
 #' @param B Matrix of neighborhood indexes (created by
-#' \code{define_neighborhoods}). If \code{NULL} the function searches for
+#' [define_neighborhoods()]). If \code{NULL} the function searches for
 #' \code{B} in the calling environment.
+#' @param W matrix of weights (created by [generate_weights()]). If \code{NULL}
+#' the function searches for \code{W} in the calling environment.
 #' @param variation List vector containing the variation operators to be used.
-#' See \code{\link{moead}} for details. If \code{NULL} the function searches
+#' See [moead()] for details. If \code{NULL} the function searches
 #' for \code{variation} in the calling environment.
 #' @param ... other parameters (unused, included for compatibility with
 #' generic call)
@@ -27,34 +29,20 @@
 perform_variation <- function(X         = NULL,
                               P         = NULL,
                               B         = NULL,
+                              W         = NULL,
                               variation = NULL,
                               ...){
 
   # Capture calling environment
   call.env <- parent.frame()
 
-  # Capture "variation" from calling environment (if needed)
-  if (is.null(variation)) {
-    assertthat::assert_that(assertthat::has_name(call.env, "variation"))
-    variation <- call.env$variation
-  }
-
-  # Capture "X" from calling environment (if needed)
-  if (is.null(X)) {
-    assertthat::assert_that(assertthat::has_name(call.env, "X"))
-    X <- call.env$X
-  }
-
-  # Capture "P" from calling environment (if needed)
-  if (is.null(P)) {
-    assertthat::assert_that(assertthat::has_name(call.env, "P"))
-    P <- call.env$P
-  }
-
-  # Capture "B" from calling environment (if needed)
-  if (is.null(B)) {
-    assertthat::assert_that(assertthat::has_name(call.env, "B"))
-    B <- call.env$B
+  # Capture variables from calling environment (if needed)
+  vtc <- c("variation", "X", "B", "P", "W")
+  for (i in seq_along(vtc)){
+    if(is.null(get(vtc[i]))){
+      assertthat::assert_that(assertthat::has_name(call.env, vtc[i]))
+      assign(vtc[i], call.env[[vtc[i]]])
+    }
   }
 
   # Preserve the original elements of X (prior to variation - used in some
@@ -71,7 +59,7 @@ perform_variation <- function(X         = NULL,
   # Check if local search is part of the variation stack,
   # and treat it accordingly
   lsi <- which(sapply(variation, FUN = function(x){x$name}) == "localsearch")
-  if (length(lsi) > 0){
+  if (length(lsi) > 0 | assertthat::has_name(call.env, "ls.args")){
     localsearch      <- variation[[lsi]]
     variation[[lsi]] <- NULL
     valid.types      <- gsub(" ", "", get_localsearch_methods()[,1])
@@ -140,20 +128,21 @@ perform_variation <- function(X         = NULL,
   if (length(lsi) > 0){
 
     # Flag subproblems that will undergo local search in a given iteration
-    do.ls <- stats::runif(nrow(X)) <= rep(gamma.ls, times = nrow(X)) |
+    which.x <- stats::runif(nrow(X)) <= rep(gamma.ls, times = nrow(X)) |
       (call.env$iter + call.env$first.ls - 1) %% tau.ls == 0
 
+    # Prepare argument list for local search
     varargs          <- call.env$ls.args
     varargs$X        <- X
     varargs$Xt       <- call.env$Xt
     varargs$Yt       <- call.env$Yt
     varargs$B        <- B
-    varargs$which.x  <- do.ls
+    varargs$which.x  <- which.x
+
+    # Perform local search
     X <- do.call("variation_localsearch",
                  args = call.env$ls.args)
   }
-
-
 
   return(X)
 }

@@ -16,23 +16,23 @@ Suggests:
 Depends:
     R (>= 3.3.0)
 Author: c(person("Felipe", "Campelo",
-            email   = "fcampelo@ufmg.br",
-            role    = c("aut", "cre"),
-            comment = "Original concept; organization; coding"),
-          person("Lucas", "Batista",
-            email   = "lusoba@ufmg.br",
-            role    = "com",
-            comment = "Literature review; initial formalization of operators"),
-          person("Claus", "Aranha",
-            email   = "caranha@cs.tsukuba.ac.jp",
-            role    = "aut",
-            comment = "Coding; testing"))
+    email   = "fcampelo@ufmg.br",
+    role    = c("aut", "cre"),
+    comment = "Original concept; organization; coding"),
+    person("Lucas", "Batista",
+    email   = "lusoba@ufmg.br",
+    role    = "com",
+    comment = "Literature review; initial formalization of operators"),
+    person("Claus", "Aranha",
+    email   = "caranha@cs.tsukuba.ac.jp",
+    role    = "aut",
+    comment = "Coding; testing"))
 Maintainer: Felipe Campelo <fcampelo@ufmg.br>
 Description: Modular implementation of MOEA/D approaches for multiobjective
     optimization.
 License: GPL-2
 LazyData: TRUE
 Encoding: UTF-8
-RoxygenNote: 6.0.0
+RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
