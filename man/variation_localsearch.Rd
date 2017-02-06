@@ -40,7 +40,7 @@ This operator is called as any other variation operator, but it presents
 some specific features that affect the general behavior of .
 \itemize{
 \item If the input parameter \code{tau.ls} is present, then this operator is
-executed once every \doce{tau.ls} iterations.
+executed once every \code{tau.ls} iterations.
 \item If the input parameter \code{gamma.ls} is present, then this operator is
 executed at iterations when the condition \code{runif() < gamma.ls} is
 verified.

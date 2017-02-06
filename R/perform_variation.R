@@ -17,6 +17,8 @@
 #' @param variation List vector containing the variation operators to be used.
 #' See \code{\link{moead}} for details. If \code{NULL} the function searches
 #' for \code{variation} in the calling environment.
+#' @param ... other parameters (unused, included for compatibility with
+#' generic call)
 #'
 #' @return Modified population matrix X
 #'
@@ -138,13 +140,13 @@ perform_variation <- function(X         = NULL,
   if (length(lsi) > 0){
 
     # Flag subproblems that will undergo local search in a given iteration
-    do.ls <- runif(nrow(X)) <= rep(gamma.ls, times = nrow(X)) |
+    do.ls <- stats::runif(nrow(X)) <= rep(gamma.ls, times = nrow(X)) |
       (call.env$iter + call.env$first.ls - 1) %% tau.ls == 0
 
     varargs          <- call.env$ls.args
     varargs$X        <- X
-    varargs$Xt       <- Xt
-    varargs$Yt       <- Yt
+    varargs$Xt       <- call.env$Xt
+    varargs$Yt       <- call.env$Yt
     varargs$B        <- B
     varargs$which.x  <- do.ls
     X <- do.call("variation_localsearch",

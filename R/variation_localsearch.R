@@ -7,7 +7,7 @@
 #' some specific features that affect the general behavior of .
 #'
 #' - If the input parameter \code{tau.ls} is present, then this operator is
-#' executed once every \doce{tau.ls} iterations.
+#' executed once every \code{tau.ls} iterations.
 #' - If the input parameter \code{gamma.ls} is present, then this operator is
 #' executed at iterations when the condition \code{runif() < gamma.ls} is
 #' verified.

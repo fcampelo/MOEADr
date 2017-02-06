@@ -21,6 +21,9 @@ If \code{NULL} the function searches for \code{X} in the calling environment.}
 \item{variation}{List vector containing the variation operators to be used.
 See \code{\link{moead}} for details. If \code{NULL} the function searches
 for \code{variation} in the calling environment.}
+
+\item{...}{other parameters (unused, included for compatibility with
+generic call)}
 }
 \value{
 Modified population matrix X
