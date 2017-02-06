@@ -4,8 +4,7 @@
 \alias{perform_variation}
 \title{Run variation operators}
 \usage{
-perform_variation(X = NULL, P = NULL, B = NULL, variation = NULL,
-  repair = NULL)
+perform_variation(X = NULL, P = NULL, B = NULL, variation = NULL, ...)
 }
 \arguments{
 \item{X}{Population matrix of the MOEA/D (each row is a candidate solution).
@@ -22,10 +21,6 @@ If \code{NULL} the function searches for \code{X} in the calling environment.}
 \item{variation}{List vector containing the variation operators to be used.
 See \code{\link{moead}} for details. If \code{NULL} the function searches
 for \code{variation} in the calling environment.}
-
-\item{repair}{List vector containing the repair operator to be used.
-See \code{\link{moead}} for details. If \code{NULL} the function searches
-for \code{repair} in the calling environment.}
 }
 \value{
 Modified population matrix X

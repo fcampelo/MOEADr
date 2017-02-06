@@ -4,12 +4,12 @@
 \alias{variation_binrec}
 \title{Binomial Recombination}
 \usage{
-variation_binrec(X, Xc, rho, ...)
+variation_binrec(X, Xt, rho, ...)
 }
 \arguments{
 \item{X}{Population matrix}
 
-\item{Xc}{Original population matrix}
+\item{Xt}{Original population matrix}
 
 \item{rho}{mutation probability}
 
