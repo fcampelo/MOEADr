@@ -43,12 +43,12 @@ update_population <- function(){
     all(assertthat::has_name(moead.env, c("X", "Xt", "Y", "Yt",
                                           "V", "Vt", "B",
                                           "scaling", "update", "aggfun"))),
-    nrow(moead.env$X) == nrow(moead.env$B),
-    nrow(moead.env$X) == nrow(moead.env$Y),
-    identical(dim(moead.env$X), dim(moead.env$Xt)),
-    identical(dim(moead.env$Y), dim(moead.env$Yt)),
-    identical(dim(moead.env$V), dim(moead.env$Vt)),
-    identical(dim(moead.env$Y), dim(moead.env$W)))
+    identical(nrow(moead.env$X), nrow(moead.env$B)),
+    identical(nrow(moead.env$X), nrow(moead.env$Y)),
+    identical(dim(moead.env$X),  dim(moead.env$Xt)),
+    identical(dim(moead.env$Y),  dim(moead.env$Yt)),
+    identical(dim(moead.env$V),  dim(moead.env$Vt)),
+    identical(dim(moead.env$Y),  dim(moead.env$W)))
   # ==========
 
   # Perform scaling and get updated estimate of the 'ideal' and 'nadir'

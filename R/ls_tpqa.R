@@ -32,19 +32,14 @@ ls_tpqa <- function(X, Y, B, W, which.x, eps = 1e-6, ...){
   # Most error catching and default value definitions are assumed to have been
   # verified in the calling functions, and will not be repeated here.
   assertthat::assert_that(is.numeric(eps), eps >= 0,
-                          nrow(X) == nrow(Y),
-                          nrow(Y)  == dim(B))
-  if(is.null(tau.ls)) tau.ls     <- Inf
-  if(is.null(gamma.ls)) gamma.ls <- 0
-  if(is.null(unsync)) unsync     <- TRUE
-  if(is.null(trunc.x)) trunc.x   <- TRUE
+                          identical(nrow(X), nrow(Y)),
+                          identical(dim(Y) , dim(W)),
+                          identical(nrow(B), nrow(X)))
 
-  assertthat::assert_that(assertthat::has_name(call.env, "iter"),
-                          type %in% valid.types,
-                          assertthat::is.count(tau.ls),
-                          is_within(gamma.ls, 0, 1),
-                          is.logical(unsync),
-                          is.logical(trunc.x))
+
+
+
+
 
 
   # Return results

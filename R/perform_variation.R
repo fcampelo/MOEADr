@@ -34,14 +34,14 @@ perform_variation <- function(X         = NULL,
                               ...){
 
   # Capture calling environment
-  call.env <- parent.frame()
+  moead.env <- parent.frame()
 
   # Capture variables from calling environment (if needed)
   vtc <- c("variation", "X", "B", "P", "W")
   for (i in seq_along(vtc)){
     if(is.null(get(vtc[i]))){
-      assertthat::assert_that(assertthat::has_name(call.env, vtc[i]))
-      assign(vtc[i], call.env[[vtc[i]]])
+      assertthat::assert_that(assertthat::has_name(moead.env, vtc[i]))
+      assign(vtc[i], moead.env[[vtc[i]]])
     }
   }
 
@@ -59,7 +59,7 @@ perform_variation <- function(X         = NULL,
   # Check if local search is part of the variation stack,
   # and treat it accordingly
   lsi <- which(sapply(variation, FUN = function(x){x$name}) == "localsearch")
-  if (length(lsi) > 0 | assertthat::has_name(call.env, "ls.args")){
+  if (length(lsi) > 0 | assertthat::has_name(moead.env, "ls.args")){
     localsearch      <- variation[[lsi]]
     variation[[lsi]] <- NULL
     valid.types      <- gsub(" ", "", get_localsearch_methods()[,1])
@@ -76,7 +76,7 @@ perform_variation <- function(X         = NULL,
     if(is.null(unsync)) unsync     <- TRUE
     if(is.null(trunc.x)) trunc.x   <- TRUE
 
-    assertthat::assert_that(assertthat::has_name(call.env, "iter"),
+    assertthat::assert_that(assertthat::has_name(moead.env, "iter"),
                             type %in% valid.types,
                             assertthat::is.count(tau.ls),
                             is_within(gamma.ls, 0, 1),
@@ -86,20 +86,22 @@ perform_variation <- function(X         = NULL,
     # ==========
 
     # Make the necessary preparations in the first iteration
-    if (call.env$iter == 1){
+    if (moead.env$iter == 1){
+      # Define iteration for the first occurrence of local search (if tau.ls is
+      # defined). It never happens in the very first iteration.
       if (unsync) {
-        first.ls <- sample.int(n = tau.ls,
-                               size = nrow(X),
-                               replace = TRUE)
+        first.ls <- 1 + sample.int(n = tau.ls - 1,
+                                   size = nrow(X),
+                                   replace = TRUE)
       } else first.ls <- rep(tau.ls, times = nrow(X))
 
-      call.env$ls.args          <- localsearch
-      call.env$ls.args$name     <- NULL
-      call.env$ls.args$tau.ls   <- tau.ls
-      call.env$ls.args$gamma.ls <- gamma.ls
-      call.env$ls.args$unsync   <- unsync
-      call.env$ls.args$trunc.x  <- trunc.x
-      call.env$ls.args$first.ls <- first.ls
+      moead.env$ls.args          <- localsearch
+      moead.env$ls.args$name     <- NULL
+      moead.env$ls.args$tau.ls   <- tau.ls
+      moead.env$ls.args$gamma.ls <- gamma.ls
+      moead.env$ls.args$unsync   <- unsync
+      moead.env$ls.args$trunc.x  <- trunc.x
+      moead.env$ls.args$first.ls <- first.ls
     }
   }
   # ================== END LOCAL SEARCH SETUP ================== #
@@ -129,20 +131,28 @@ perform_variation <- function(X         = NULL,
 
     # Flag subproblems that will undergo local search in a given iteration
     which.x <- stats::runif(nrow(X)) <= rep(gamma.ls, times = nrow(X)) |
-      (call.env$iter + call.env$first.ls - 1) %% tau.ls == 0
+      (moead.env$iter + moead.env$first.ls - 1) %% tau.ls == 0
 
     # Prepare argument list for local search
-    varargs          <- call.env$ls.args
-    varargs$X        <- X
-    varargs$Xt       <- call.env$Xt
-    varargs$Yt       <- call.env$Yt
+    varargs          <- moead.env$ls.args
+    varargs$Xt       <- moead.env$Xt
+    varargs$Yt       <- moead.env$Yt
+    varargs$Vt       <- moead.env$Vt
+    varargs$bigZ     <- moead.env$bigZ
+    varargs$sel.indx <- moead.env$sel.indx
+
     varargs$B        <- B
     varargs$which.x  <- which.x
 
     # Perform local search
-    X <- do.call("variation_localsearch",
-                 args = call.env$ls.args)
+    Xls <- do.call("variation_localsearch",
+                   args = varargs)
+
+    # Replace points that underwent local search
+    X[which.x, ] <- Xls[which.x, ]
   }
+
+
 
   return(X)
 }
