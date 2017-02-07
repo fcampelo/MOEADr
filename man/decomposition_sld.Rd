@@ -7,31 +7,33 @@
 decomposition_sld(decomp, ...)
 }
 \arguments{
-\item{decomp}{TODO}
+\item{decomp}{list containing the relevant decomposition parameters.
+Besides \code{decomp$name = "sld"}, this method requires the definition of the
+following key-value pairs:
+\itemize{
+\item \code{decomp$H}, decomposition constant. Suggested values for \code{decomp$H}
+are (use with caution):
+\tabular{ccccc}{
+\code{m}\tab |\tab\code{H}\tab |\tab\code{N}\cr
+\code{2}    \tab  |\tab\code{99}      \tab |\tab\code{100}\cr
+\code{3}    \tab  |\tab\code{12}      \tab |\tab\code{91}\cr
+\code{5}    \tab  |\tab\code{6}       \tab |\tab\code{210}\cr
+}
+It is important to highlight that the number of vectors generated (\code{N}) must
+be greater than the number of neighbors declared in \code{neighbors$T}
+(see \code{\link[=moead]{moead()}} for details).
+\item \code{decomp$.nobj}: integer value, \code{decomp$.nobj > 1}. Number of
+objectives of the problem.
+}}
 
-\item{...}{other parameters (unused, included for compatibility with
-generic call)}
+\item{...}{other parameters (included for compatibility with generic call)}
 }
 \description{
 Problem Decomposition using Simplex-lattice Design for MOEADr package
 }
 \details{
 This routine calculates the weight vectors for the MOEA/D using the
-Simplex-lattice Design. Besides \code{decomp$name = "SLD"}, this method
-requires the definition of a decomposition constant \code{decomp$H}.
-#' Suggested values for \code{decomp$H} are (use with caution):
-
-\tabular{cccc}{
-\code{m}\tab \code{method}\tab \code{H}\tab N\cr
-
-2    \tab "SLD" \tab  \code{99}      \tab 100\cr
-3    \tab "SLD" \tab  \code{12}      \tab 91\cr
-5    \tab "SLD" \tab  \code{6}       \tab 210\cr
-}
-
-It is important to highlight that the number of vectors generated must be
-greater than the number of neighbors declared in \code{neighbors$T}
-(see \code{\link{moead}} for details).
+Simplex-lattice Design.
 }
 \section{References}{
 

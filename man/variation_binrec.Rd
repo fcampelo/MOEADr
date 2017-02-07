@@ -13,8 +13,7 @@ variation_binrec(X, Xt, rho, ...)
 
 \item{rho}{mutation probability}
 
-\item{...}{other parameters (unused, included for compatibility with
-generic call)}
+\item{...}{other parameters (included for compatibility with generic call)}
 }
 \value{
 Matrix \code{X}' containing the recombined population

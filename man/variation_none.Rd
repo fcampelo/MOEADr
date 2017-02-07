@@ -9,11 +9,10 @@ variation_none(X, ...)
 \arguments{
 \item{X}{Population matrix}
 
-\item{...}{other parameters (unused, included for compatibility with
-generic call)}
+\item{...}{other parameters (included for compatibility with generic call)}
 }
 \value{
-Matrix \code{X}
+Input matrix \code{X}
 }
 \description{
 Identity operator (no variation performed)

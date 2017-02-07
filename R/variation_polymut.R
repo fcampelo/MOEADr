@@ -3,21 +3,20 @@
 #' Polynomial mutation implementation for the MOEA/D
 #'
 #' This R implementation of the Polynomial Mutation reproduces the C code
-#' implementation available in package "emoa", version 0.5-0, by Olaf Mersmann.
+#' implementation available in the R package **emoa** 0.5-0, by Olaf Mersmann.
 #' The differences between the present version and the original one are:
 #' \itemize{
-#'    \item All variables are considered bounded in the (0, 1) interval, which
-#'          simplifies the calculations.
+#'    \item The operator is performed on the variables scaled to the `[0, 1]`
+#'    interval, which simplifies the calculations.
 #'    \item Calculations are vectorized over variables, which also simplifies
-#'          the operator.
+#'          the implementation.
 #' }
 #'
 #' @param X Population matrix
 #' @param etam mutation constant
 #' @param pm variable-wise probability of mutation
 #' @param eps small constant used to prevent divisions by zero
-#' @param ... other parameters (unused, included for compatibility with
-#' generic call)
+#' @param ... other parameters (included for compatibility with generic call)
 #'
 #' @section References:
 #' K. Deb and S. Agrawal (1999). A Niched-Penalty Approach for Constraint
@@ -28,7 +27,7 @@
 #' Optimization Algorithms. R package version 0.5-0.\cr
 #' http://CRAN.R-project.org/package=emoa
 #'
-#' @return Matrix \code{X}' containing the mutated population
+#' @return Matrix `X`' containing the mutated population
 #'
 #' @export
 
@@ -44,12 +43,12 @@ variation_polymut <- function(X, etam, pm, eps = 1e-6, ...){
   # Standardize population matrix
   dimX <- dim(X)
   minP <- matrix(getminP(X),
-                 nrow = dimX[1],
-                 ncol = dimX[2],
+                 nrow  = dimX[1],
+                 ncol  = dimX[2],
                  byrow = TRUE)
   maxP <- matrix(getmaxP(X),
-                 nrow = dimX[1],
-                 ncol = dimX[2],
+                 nrow  = dimX[1],
+                 ncol  = dimX[2],
                  byrow = TRUE)
   X <- (X - minP) / (maxP - minP + eps)
 

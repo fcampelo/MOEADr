@@ -39,8 +39,8 @@
 #' generation of the weight vectors. \code{decomp} must have
 #' at least the \code{$name} parameter. Currently implemented methods can be
 #' verified using \code{get_decomposition_methods()}. Check
-#' \code{\link{generate_weights}} and the information provided by
-#' \code{get_decomposition_methods()} for more details.
+#' [generate_weights()] and the information provided by
+#' [get_decomposition_methods()] for more details.
 #'
 #' @section Neighborhood Strategies:
 #' The \code{neighbors} parameter defines the method for defining the
@@ -113,7 +113,7 @@
 #' @param stopcrit list containing the stop criteria parameters.
 #'    See \code{Stop criteria} for details.
 #' @param showpars list containing the echoing behavior parameters.
-#'    Use \code{?print_progress} for details.
+#'    See [print_progress()] for details.
 #' @param seed seed for the pseudorandom number generator. Defaults to NULL,
 #'    in which case \code{as.integer(Sys.time())} is used for the definition.
 #'
@@ -185,7 +185,7 @@ moead <- function(problem,      # List:  MObj problem
                   seed = NULL)  # Seed for PRNG
 {
 
-  # ========== Error catching and default value definitions
+  # ============== Error catching and default value definitions ============== #
   # "problem"     checked in "create_population(...)"
   # "decomp"      checked in "decompose_problem(...)"
   # "aggfun"      checked in "scalarize_values(...)"
@@ -203,27 +203,31 @@ moead <- function(problem,      # List:  MObj problem
   } else {
     assertthat::assert_that(assertthat::is.count(seed))
   }
-  # ==========
+  # ============ End Error catching and default value definitions ============ #
 
-  # ========== Algorithm setup
-  set.seed(seed)  # set PRNG seed
-  nfe <- 0        # set counter for function evaluations
+  # ============================= Algorithm setup ============================ #
+  set.seed(seed)           # set PRNG seed
+  nfe        <- 0          # set counter for function evaluations
   time.start <- Sys.time() # Store initial time
+  # =========================== End Algorithm setup ========================== #
 
-  # ========== Initial definitions
+  # =========================== Initial definitions ========================== #
   # Generate weigth vectors
-  W  <- generate_weights(m = problem$m)
+  W  <- generate_weights(decomp = decomp,
+                         m      = problem$m)
 
   # Generate initial population
-  X  <- create_population(nrow(W))
+  X  <- create_population(N       = nrow(W),
+                          problem = problem)
 
   # Evaluate population on objectives
-  YV <- evaluate_population(X)
+  YV <- evaluate_population(X       = X,
+                            problem = problem)
   Y  <- YV$Y
   V  <- YV$V
-  # ==========
+  # ========================= End Initial definitions ======================== #
 
-  # ========== Iterative cycle
+  # ============================= Iterative cycle ============================ #
   keep.running  <- TRUE      # stop criteria flag
   iter          <- 0         # counter: iterations
 
@@ -231,36 +235,56 @@ moead <- function(problem,      # List:  MObj problem
     # Update iteration counter
     iter <- iter + 1
 
+    # ========== Neighborhoods
     # Define/update neighborhood probability matrix
-    BP <- define_neighborhood()
+    BP <- define_neighborhood(neighbors = neighbors,
+                              v.matrix  = switch(neighbors$name,
+                                                 lambda = W,
+                                                 x      = X),
+                              iter      = iter)
     B  <- BP$B
     P  <- BP$P
 
+    # ========== Variation
     # Store current population
     Xt <- X
     Yt <- Y
     Vt <- V
 
     # Perform variation
-    X <- perform_variation(X, P, B, W, variation)
+    Xv <- perform_variation(X         = X,
+                            B         = B,
+                            P         = P,
+                            W         = W,
+                            variation = variation)
+    X       <- Xv$X
+    ls.args <- Xv$ls.args
 
+    # ========== Evaluation
     # Evaluate offspring population on objectives
-    YV <- evaluate_population(X)
+    YV <- evaluate_population(X       = X,
+                              problem = problem)
     Y <- YV$Y
     V <- YV$V
 
+    # ========== Update
     # Update population
-     update_population()
+    XY <- update_population(call.env = environment())
+    X  <- XY$X
+    Y  <- XY$Y
+    V  <- XY$V
 
+    # ========== Print
     # Echo whatever is demanded
     print_progress()
 
+    # ========== Stop Criteria
     # Verify stop criteria
     check_stop_criteria()
   }
-  # ==========
+  # =========================== End Iterative cycle ========================== #
 
-  # ========== Output
+  # ================================== Output ================================ #
   # Prepare output
   X <- denormalize_population(X, problem)
 
@@ -275,5 +299,6 @@ moead <- function(problem,      # List:  MObj problem
               n.iter = iter,
               time   = difftime(Sys.time(), time.start),
               seed   = seed))
+  # ================================ End Output ============================== #
 }
 

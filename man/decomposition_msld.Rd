@@ -8,14 +8,14 @@ decomposition_msld(decomp, ...)
 }
 \arguments{
 \item{decomp}{list containing the relevant decomposition parameters.
-For the Multi-layered Simplex-lattice design, the following key-value
-pairs must be elements of \code{decomp}:
+Besides \code{decomp$name = "msld"}, this method requires the definition of the
+following key-value pairs in \code{decomp}:
 
 \itemize{
 \item \code{decomp$H}: array of positive integers representing the
 \code{H} values to be used by the SLD decomposition
-at each layer (see \code{\link{decomposition_sld}}
-for details).
+at each layer (see \code{\link[=decomposition_sld]{decomposition_sld()}} for
+details).
 \item \code{decomp$tau}: array of scale multipliers for each layer,
 \eqn{0 < \tau_i \le 1}, \eqn{\tau_i != \tau_j} for all \eqn{i != j}.
 Must have the same lenght as \code{decomp$H}.
@@ -23,8 +23,7 @@ Must have the same lenght as \code{decomp$H}.
 objectives of the problem.
 }}
 
-\item{...}{other parameters (unused, included for compatibility with
-generic call)}
+\item{...}{other parameters (included for compatibility with generic call)}
 }
 \description{
 Problem Decomposition using Multi-layered Simplex-lattice Design for MOEADr

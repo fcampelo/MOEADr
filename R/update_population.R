@@ -2,64 +2,50 @@
 #'
 #' Selection and population update procedures for the MOEA/D
 #'
-#' @section Parameters:
-#' This routine accesses the required variables in the calling environment using
-#' \code{parent.frame()}, so it does not require any explicit input parameters.
-#' The calling environment must contain (at least) the following parameters:
-#'    - \code{Xt}: current population matrix
-#'    - \code{Yt}: matrix of objective values for population \code{Xt}
-#'    - \code{X} : candidate population matrix
-#'    - \code{Y} : matrix of objective values for population \code{X}
-#'    - \code{B} : neighborhood matrix (built by [define_neighborhood()]$B)
-#'    - \code{W} : matrix of weigths (output of [generate_weights()])
-#'    - \code{aggfun}: list of scalarization parameters (see
-#'    [scalarize_values()] for details).
-#'    - \code{scaling}: list of function scaling parameters (see
-#'        [scale_objectives()] for details).
-#'    - \code{update}: list of update parameters, containing (at least) the
-#'          field \code{update$name}, describing the method to be used for
-#'          updating the population. Other parameters required for specific
-#'          update methods are also included in this variable.
-#'          The list of available update methods can be generated using
-#'          [get_update_methods()].
+#' This update routine is intended to be used internally by the main [moead()]
+#' function, and should not be called directly by the user.
 #'
-#' Internally, the calling environment is stored in a list variable
-#' \code{moead.env} (which is passed down to specific \code{updt_xyz} routines,
-#' see, for instance, [updt_standard()]).
+#' @param call.env  calling environment (generated using, e.g., [environment()].
+#' The calling environment must contain all parameters required by functions
+#' [scalarize_values()], [scale_objectives()], and for the specific update
+#' method given in `call.env$update`. The list of available update methods can
+#' be generated using [get_update_methods()].
 #'
-#' @return The function does not explicitly return any value. However, it
-#' modifies the state of the calling environment, updating the population
-#' matrix \code{X} and the matrix of objective values \code{Y}.
+#' @return List object containing the updated values of the population matrix
+#' `X`, objective function matrix `Y`, and constraint values list `V`.
 #'
 #' @export
 
-update_population <- function(){
-
-  # Get access to the variables in the calling environment
-  moead.env <- parent.frame()
+update_population <- function(call.env){
 
   # ========== Error catching and default value definitions
+  #Y, Yt, scaling, B,
+
   assertthat::assert_that(
-    all(assertthat::has_name(moead.env, c("X", "Xt", "Y", "Yt",
-                                          "V", "Vt", "B",
-                                          "scaling", "update", "aggfun"))),
-    identical(nrow(moead.env$X), nrow(moead.env$B)),
-    identical(nrow(moead.env$X), nrow(moead.env$Y)),
-    identical(dim(moead.env$X),  dim(moead.env$Xt)),
-    identical(dim(moead.env$Y),  dim(moead.env$Yt)),
-    identical(dim(moead.env$V),  dim(moead.env$Vt)),
-    identical(dim(moead.env$Y),  dim(moead.env$W)))
+    all(assertthat::has_name(call.env, c("X", "Xt", "Y", "Yt",
+                                         "V", "Vt", "B",
+                                         "scaling", "update", "aggfun"))),
+    identical(nrow(call.env$X), nrow(call.env$B)),
+    identical(nrow(call.env$X), nrow(call.env$Y)),
+    identical(dim(call.env$X),  dim(call.env$Xt)),
+    identical(dim(call.env$Y),  dim(call.env$Yt)),
+    identical(dim(call.env$V),  dim(call.env$Vt)),
+    identical(dim(call.env$Y),  dim(call.env$W)))
   # ==========
 
   # Perform scaling and get updated estimate of the 'ideal' and 'nadir'
   # points
-  moead.env$normYs <- scale_objectives(moead.env)
+  normYs <- scale_objectives(Y       = call.env$Y,
+                             Yt      = call.env$Yt,
+                             scaling = call.env$scaling)
 
   # Calculate matrix with scalarized performance values. Each column
   # contains the T scalarized performances of the candidate solutions in the
   # neighborhood of a given subproblem, plus the scalarized performance value
   # for the incumbent solution for that subproblem.
-  moead.env$bigZ <- scalarize_values(moead.env, moead.env$normYs, moead.env$B)
+  bigZ <- scalarize_values(call.env = call.env,
+                           normYs   = normYs,
+                           B        = call.env$B)
 
 
   # Calculate the index ordering matrix. Each row contains the indexes of the neighborhood,
@@ -72,7 +58,6 @@ update_population <- function(){
   NextPop <- do.call(function_name,
                      args = list(moead.env = moead.env))
 
-  moead.env$X <- NextPop$X
-  moead.env$Y <- NextPop$Y
-
+  # Return
+  return(NextPop)
 }

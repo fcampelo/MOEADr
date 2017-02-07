@@ -9,10 +9,9 @@
 #' @param X Population matrix
 #' @param rho mutation probability
 #' @param Xt Original population matrix
-#' @param ... other parameters (unused, included for compatibility with
-#' generic call)
+#' @param ... other parameters (included for compatibility with generic call)
 #'
-#' @return Matrix \code{X}' containing the recombined population
+#' @return Matrix `X`' containing the recombined population
 #'
 #' @section References:
 #' K. Price, R.M. Storn, J.A. Lampinen, "Differential Evolution: A

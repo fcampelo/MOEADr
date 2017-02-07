@@ -1,14 +1,22 @@
 #' Problem Decomposition using Uniform Design
 #'
-#' Problem Decomposition using Uniform Design for MOEADr
-#' package
+#' Problem Decomposition using Uniform Design for MOEADr package
 #'
-#' This routine calculates the weight vectors for the MOEA/D using the
-#' Uniform Design:
+#' This routine calculates the weight vectors for the MOEA/D using the Uniform
+#' Design:
 #'
-#' @param decomp TODO
-#' @param ... other parameters (unused, included for compatibility with
-#' generic call)
+#' @param decomp list containing the relevant decomposition parameters.
+#'  Besides `decomp$name = "uniform"`, this method requires the definition of the
+#'  following key-value pairs:
+#' \itemize{
+#'   \item `decomp$N`, number of subproblems to generate. It is important to
+#'         highlight that the number of subproblems must be greater than the
+#'         number of neighbors declared in `neighbors$T` (see [moead()] for
+#'         details).
+#'   \item \code{decomp$.nobj}: integer value, `decomp$.nobj > 1`. Number of
+#'         objectives of the problem.
+#' }
+#' @param ... other parameters (included for compatibility with generic call)
 #'
 #' @section References:
 #' R. Wang, T. Zhang, B. Guo, "An enhanced MOEA/D using uniform directions
@@ -31,14 +39,10 @@ decomposition_uniform <- function(decomp, ...){
   nf <- decomp$.nobj
 
   # 1. Calculate the non-factors of N
-  # div <- seq_len(N);
-  # div <- div[N %% div != 0]
-
   div <- seq_len(N)
   div <- div[sapply(div, is_coprime, N)]
 
   # 2. Generates H, matrix of all |nf-1| size subsets of div
-  # Question: Are the permutations of the rows of H needed?
   H <- t(utils::combn(div, nf-1))
 
   # 3. Generate matrixes U_N(h), and find one with lowest CD

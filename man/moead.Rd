@@ -36,7 +36,7 @@ See \code{Objective scaling} for details.}
 See \code{Stop criteria} for details.}
 
 \item{showpars}{list containing the echoing behavior parameters.
-Use \code{?print_progress} for details.}
+See \code{\link[=print_progress]{print_progress()}} for details.}
 
 \item{seed}{seed for the pseudorandom number generator. Defaults to NULL,
 in which case \code{as.integer(Sys.time())} is used for the definition.}
@@ -89,8 +89,8 @@ The \code{decomp} parameter defines the method to be used for the
 generation of the weight vectors. \code{decomp} must have
 at least the \code{$name} parameter. Currently implemented methods can be
 verified using \code{get_decomposition_methods()}. Check
-\code{\link{generate_weights}} and the information provided by
-\code{get_decomposition_methods()} for more details.
+\code{\link[=generate_weights]{generate_weights()}} and the information provided by
+\code{\link[=get_decomposition_methods]{get_decomposition_methods()}} for more details.
 }
 
 \section{Neighborhood Strategies}{

@@ -4,49 +4,36 @@
 #'
 #' This routine performs the variation block for the MOEA/D. The
 #' list of available variation operators can be generated using
-#' \code{get_variation_operators()}.
+#' [get_variation_operators()].
+#'
+#' If the `localsearch` operator is included, it is executed whenever its
+#' conditions (period of occurrence or probability of occurrence) are verified.
+#' See [variation_localsearch()] for details.
+#'
+#' **Warning**: this routine may access (but not directly modify) variables
+#' from the calling environment.
 #'
 #' @param X Population matrix of the MOEA/D (each row is a candidate solution).
-#' If \code{NULL} the function searches for \code{X} in the calling environment.
 #' @param P Matrix of probabilities of selection for variation (created by
-#' [define_neighborhoods()]). If \code{NULL} the function searches for
-#' \code{P} in the calling environment.
-#' @param B Matrix of neighborhood indexes (created by
-#' [define_neighborhoods()]). If \code{NULL} the function searches for
-#' \code{B} in the calling environment.
-#' @param W matrix of weights (created by [generate_weights()]). If \code{NULL}
-#' the function searches for \code{W} in the calling environment.
+#' [define_neighborhoods()]).
+#' @param B Matrix of neighborhood indexes (created by [define_neighborhood()]).
+#' @param W matrix of weights (created by [generate_weights()]).
 #' @param variation List vector containing the variation operators to be used.
-#' See [moead()] for details. If \code{NULL} the function searches
-#' for \code{variation} in the calling environment.
-#' @param ... other parameters (unused, included for compatibility with
-#' generic call)
+#' See [moead()] for details.
+#' @param ... other parameters (included for compatibility with generic call)
 #'
-#' @return Modified population matrix X
+#' @return List object containing a modified population matrix `X` and a
+#' local search argument list `ls.arg`.
 #'
 #' @export
 
-perform_variation <- function(X         = NULL,
-                              P         = NULL,
-                              B         = NULL,
-                              W         = NULL,
-                              variation = NULL,
-                              ...){
+perform_variation <- function(X, P, B, W, variation, ...){
 
-  # Capture calling environment
-  moead.env <- parent.frame()
+  # Get calling environment
+  call.env <- parent.frame()
 
-  # Capture variables from calling environment (if needed)
-  vtc <- c("variation", "X", "B", "P", "W")
-  for (i in seq_along(vtc)){
-    if(is.null(get(vtc[i]))){
-      assertthat::assert_that(assertthat::has_name(moead.env, vtc[i]))
-      assign(vtc[i], moead.env[[vtc[i]]])
-    }
-  }
-
-  # Preserve the original elements of X (prior to variation - used in some
-  # variation operators such as binomial recombination)
+  # Preserve the original matrix (used in some variation operators such as
+  # binomial recombination)
   Xt <- X
 
   # Assert that all elements of "variation" have a "name" field
@@ -59,50 +46,51 @@ perform_variation <- function(X         = NULL,
   # Check if local search is part of the variation stack,
   # and treat it accordingly
   lsi <- which(sapply(variation, FUN = function(x){x$name}) == "localsearch")
-  if (length(lsi) > 0 | assertthat::has_name(moead.env, "ls.args")){
-    localsearch      <- variation[[lsi]]
-    variation[[lsi]] <- NULL
-    valid.types      <- gsub(" ", "", get_localsearch_methods()[,1])
-    type             <- localsearch$type
-    tau.ls           <- localsearch$tau.ls
-    gamma.ls         <- localsearch$gamma.ls
-    unsync           <- localsearch$unsync
-    trunc.x          <- localsearch$trunc.x
+  if (length(lsi) == 0){
+    ls.args <- NULL
+  } else {
+    if("ls.args" %in% names(call.env)) {
+      ls.args <- call.env(ls.args)
+    } else {
+      ls.args      <- variation[[lsi]]
+      valid.types  <- gsub(" ", "", get_localsearch_methods()[,1])
 
-    # ========== Error catching and default value definitions
-    assertthat::assert_that(!is.null(tau.ls)  || !is.null(gamma.ls))
-    if(is.null(tau.ls)) tau.ls     <- Inf
-    if(is.null(gamma.ls)) gamma.ls <- 0
-    if(is.null(unsync)) unsync     <- TRUE
-    if(is.null(trunc.x)) trunc.x   <- TRUE
+      # ========== Error catching and default value definitions
+      assertthat::assert_that(
+        !is.null(ls.args$tau.ls)  | !is.null(ls.args$gamma.ls))
 
-    assertthat::assert_that(assertthat::has_name(moead.env, "iter"),
-                            type %in% valid.types,
-                            assertthat::is.count(tau.ls),
-                            is_within(gamma.ls, 0, 1),
-                            is.logical(unsync),
-                            is.logical(trunc.x))
+      if(is.null(ls.args$tau.ls))   ls.args$tau.ls   <- Inf
+      if(is.null(ls.args$gamma.ls)) ls.args$gamma.ls <- 0
+      if(is.null(ls.args$unsync))   ls.args$unsync   <- TRUE
+      if(is.null(ls.args$trunc.x))  ls.args$trunc.x  <- TRUE
+
+      assertthat::assert_that(
+        assertthat::has_name(call.env, "iter"),
+        ls.args$type %in% valid.types,
+        assertthat::is.count(ls.args$tau.ls),
+        is_within(ls.args$gamma.ls, 0, 1, strict = FALSE),
+        is.logical(ls.args$unsync),
+        is.logical(ls.args$trunc.x))
+    }
 
     # ==========
 
     # Make the necessary preparations in the first iteration
-    if (moead.env$iter == 1){
+    if (call.env$iter == 1){
       # Define iteration for the first occurrence of local search (if tau.ls is
       # defined). It never happens in the very first iteration.
-      if (unsync) {
+      if (ls.args$unsync) {
         first.ls <- 1 + sample.int(n = tau.ls - 1,
                                    size = nrow(X),
                                    replace = TRUE)
       } else first.ls <- rep(tau.ls, times = nrow(X))
 
-      moead.env$ls.args          <- localsearch
-      moead.env$ls.args$name     <- NULL
-      moead.env$ls.args$tau.ls   <- tau.ls
-      moead.env$ls.args$gamma.ls <- gamma.ls
-      moead.env$ls.args$unsync   <- unsync
-      moead.env$ls.args$trunc.x  <- trunc.x
-      moead.env$ls.args$first.ls <- first.ls
+      ls.args$name     <- NULL
+      ls.args$first.ls <- first.ls
     }
+
+    # remove local search from the general operator stack
+    variation[[lsi]] <- NULL
   }
   # ================== END LOCAL SEARCH SETUP ================== #
 
@@ -130,19 +118,21 @@ perform_variation <- function(X         = NULL,
   if (length(lsi) > 0){
 
     # Flag subproblems that will undergo local search in a given iteration
-    which.x <- stats::runif(nrow(X)) <= rep(gamma.ls, times = nrow(X)) |
-      (moead.env$iter + moead.env$first.ls - 1) %% tau.ls == 0
+    # (based on both the LS period and LS probability criteria)
+    which.tau   <- (call.env$iter + ls.args$first.ls - 1) %% ls.args$tau.ls == 0
+    which.gamma <- stats::runif(nrow(X)) <= rep(ls.args$gamma.ls,
+                                                times = nrow(X))
+    which.x     <-  which.tau | which.gamma
 
     # Prepare argument list for local search
-    varargs          <- moead.env$ls.args
-    varargs$Xt       <- moead.env$Xt
-    varargs$Yt       <- moead.env$Yt
-    varargs$Vt       <- moead.env$Vt
-    varargs$bigZ     <- moead.env$bigZ
-    varargs$sel.indx <- moead.env$sel.indx
-
+    varargs          <- ls.args
+    varargs$Xt       <- Xt
     varargs$B        <- B
     varargs$which.x  <- which.x
+    varargs$Yt       <- call.env$Yt
+    varargs$Vt       <- call.env$Vt
+    varargs$bigZ     <- call.env$bigZ
+    varargs$sel.indx <- call.env$sel.indx
 
     # Perform local search
     Xls <- do.call("variation_localsearch",
@@ -152,7 +142,7 @@ perform_variation <- function(X         = NULL,
     X[which.x, ] <- Xls[which.x, ]
   }
 
-
-
-  return(X)
+  # Output
+  return(list (X       = X,
+               ls.args = ls.args))
 }

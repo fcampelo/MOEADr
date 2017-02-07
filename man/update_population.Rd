@@ -4,42 +4,23 @@
 \alias{update_population}
 \title{Update population}
 \usage{
-update_population()
+update_population(call.env)
+}
+\arguments{
+\item{call.env}{calling environment (generated using, e.g., \code{\link[=environment]{environment()}}.
+The calling environment must contain all parameters required by functions
+\code{\link[=scalarize_values]{scalarize_values()}}, \code{\link[=scale_objectives]{scale_objectives()}}, and for the specific update
+method given in \code{call.env$update}. The list of available update methods can
+be generated using \code{\link[=get_update_methods]{get_update_methods()}}.}
 }
 \value{
-The function does not explicitly return any value. However, it
-modifies the state of the calling environment, updating the population
-matrix \code{X} and the matrix of objective values \code{Y}.
+List object containing the updated values of the population matrix
+\code{X}, objective function matrix \code{Y}, and constraint values list \code{V}.
 }
 \description{
 Selection and population update procedures for the MOEA/D
 }
-\section{Parameters}{
-
-This routine accesses the required variables in the calling environment using
-\code{parent.frame()}, so it does not require any explicit input parameters.
-The calling environment must contain (at least) the following parameters:
-\itemize{
-\item \code{Xt}: current population matrix
-\item \code{Yt}: matrix of objective values for population \code{Xt}
-\item \code{X} : candidate population matrix
-\item \code{Y} : matrix of objective values for population \code{X}
-\item \code{B} : neighborhood matrix (built by \code{\link[=define_neighborhood]{define_neighborhood()}}$B)
-\item \code{W} : matrix of weigths (output of \code{\link[=generate_weights]{generate_weights()}})
-\item \code{aggfun}: list of scalarization parameters (see
-\code{\link[=scalarize_values]{scalarize_values()}} for details).
-\item \code{scaling}: list of function scaling parameters (see
-\code{\link[=scale_objectives]{scale_objectives()}} for details).
-\item \code{update}: list of update parameters, containing (at least) the
-field \code{update$name}, describing the method to be used for
-updating the population. Other parameters required for specific
-update methods are also included in this variable.
-The list of available update methods can be generated using
-\code{\link[=get_update_methods]{get_update_methods()}}.
+\details{
+This update routine is intended to be used internally by the main \code{\link[=moead]{moead()}}
+function, and should not be called directly by the user.
 }
-
-Internally, the calling environment is stored in a list variable
-\code{moead.env} (which is passed down to specific \code{updt_xyz} routines,
-see, for instance, \code{\link[=updt_standard]{updt_standard()}}).
-}
-

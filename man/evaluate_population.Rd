@@ -4,14 +4,12 @@
 \alias{evaluate_population}
 \title{Evaluate population}
 \usage{
-evaluate_population(X = NULL, problem = NULL)
+evaluate_population(X, problem)
 }
 \arguments{
-\item{X}{Population matrix of the MOEA/D (each row is a candidate solution).
-If \code{NULL} the function searches for \code{X} in the calling environment.}
+\item{X}{Population matrix of the MOEA/D (each row is a candidate solution).}
 
-\item{problem}{list of named problem parameters. If NULL the function
-searches for \code{problem} in the calling environment. See Section
+\item{problem}{list of named problem parameters. See Section
 \code{Problem Description} of the \code{\link[=moead]{moead()}} documentation for details.}
 }
 \value{

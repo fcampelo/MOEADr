@@ -4,16 +4,32 @@
 \alias{define_neighborhood}
 \title{Calculate neighborhood relations}
 \usage{
-define_neighborhood(neighbors = NULL, v.matrix = NULL)
+define_neighborhood(neighbors, v.matrix, iter)
 }
 \arguments{
 \item{neighbors}{List containing the decomposition method parameters.
-If \code{NULL} the function searches for \code{neighbors} in the calling
-environment.}
+This list must contain the following key-value pairs:
+\itemize{
+\item \code{neighbors$name}, type of neighborhood to use. The following types
+are currently available:
+\itemize{
+\item \code{neighbors$name = "lambda"}: defines the neighborhood using
+the distance matrix for the weight vectors. The calculation is
+performed only once for the entire run.
+\item \code{neighbors$name = "x"}: defines the neighborhood using
+the distance matrix for the incumbent solution associated with
+each subproblem. In this case the calculation is performed at
+each iteration.
+}
+\item \code{neighbors$T}: Neighborhood size. The value of \code{neighbors$T}
+must be smaller than the number of subproblems.
+\item \code{neighbors$delta.p}: Probability of sampling from the neighborhood
+when performing variation. Must be a scalar value between 0 and 1.
+}}
 
-\item{v.matrix}{matrix of vectors for defining neighborhoods. If NULL it is
-captured directly from the calling environment, depending on
-\code{neighbors$name}).}
+\item{v.matrix}{matrix of vectors to be used for defining the neighborhoods.}
+
+\item{iter}{iteration counter of the MOEA/D}
 }
 \value{
 List containing the matrix of selection probabilities (\code{P}) and
@@ -23,21 +39,8 @@ the matrix of neighborhoods (\code{B}).
 Calculates neighborhood relations for the MOEADr package
 }
 \details{
-This routine calculates the neighborhood relations for the MOEA/D. The
-following methods are currently available:
+This routine calculates the neighborhood relations for the MOEA/D.
 
-#' \itemize{
-\item \code{neighbors$name = "lambda"}: defines the neighborhood using the
-distance matrix for the weight vectors. The calculation is performed only
-once for the entire run.
-\item \code{neighbors$name = "x"}: defines the neighborhood using
-the distance matrix for the incumbent solution associated with each
-subproblem. In this case the calculation is performed at each iteration.
-}
-
-The number of neighbors declared in \code{neighbors$T} must be smaller than
-the number of subproblems (defined in \code{generate_weights}).
-
-The probability of sampling from the neighborhood when performing variation,
-\code{neightbors$delta.p}, must be a scalar value between 0 and 1.
+\strong{Warning}: this routine may access (but not directly modify) matrices
+\code{B} and \code{P} from the calling environment (see section \code{Value} for details).
 }

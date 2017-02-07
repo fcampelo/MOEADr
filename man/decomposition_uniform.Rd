@@ -7,18 +7,26 @@
 decomposition_uniform(decomp, ...)
 }
 \arguments{
-\item{decomp}{TODO}
+\item{decomp}{list containing the relevant decomposition parameters.
+Besides \code{decomp$name = "uniform"}, this method requires the definition of the
+following key-value pairs:
+\itemize{
+\item \code{decomp$N}, number of subproblems to generate. It is important to
+highlight that the number of subproblems must be greater than the
+number of neighbors declared in \code{neighbors$T} (see \code{\link[=moead]{moead()}} for
+details).
+\item \code{decomp$.nobj}: integer value, \code{decomp$.nobj > 1}. Number of
+objectives of the problem.
+}}
 
-\item{...}{other parameters (unused, included for compatibility with
-generic call)}
+\item{...}{other parameters (included for compatibility with generic call)}
 }
 \description{
-Problem Decomposition using Uniform Design for MOEADr
-package
+Problem Decomposition using Uniform Design for MOEADr package
 }
 \details{
-This routine calculates the weight vectors for the MOEA/D using the
-Uniform Design:
+This routine calculates the weight vectors for the MOEA/D using the Uniform
+Design:
 }
 \section{References}{
 

@@ -9,16 +9,14 @@ variation_truncate(X, ...)
 \arguments{
 \item{X}{Population matrix}
 
-\item{...}{other parameters (unused, included for compatibility with
-generic call)}
+\item{...}{other parameters (included for compatibility with generic call)}
 }
 \value{
-Matrix \code{X}
+Truncated matrix \code{X}'.
 }
 \description{
 Truncation variation operator
 }
 \details{
-Truncate the solution matrix \code{X} to guarantee that all values are in the
-\code{[0, 1]} interval.
+Truncate the solution matrix \code{X} to the \code{[0, 1]} interval.
 }

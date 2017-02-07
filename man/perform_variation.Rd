@@ -4,33 +4,26 @@
 \alias{perform_variation}
 \title{Run variation operators}
 \usage{
-perform_variation(X = NULL, P = NULL, B = NULL, W = NULL,
-  variation = NULL, ...)
+perform_variation(X, P, B, W, variation, ...)
 }
 \arguments{
-\item{X}{Population matrix of the MOEA/D (each row is a candidate solution).
-If \code{NULL} the function searches for \code{X} in the calling environment.}
+\item{X}{Population matrix of the MOEA/D (each row is a candidate solution).}
 
 \item{P}{Matrix of probabilities of selection for variation (created by
-\code{\link[=define_neighborhoods]{define_neighborhoods()}}). If \code{NULL} the function searches for
-\code{P} in the calling environment.}
+\code{\link[=define_neighborhoods]{define_neighborhoods()}}).}
 
-\item{B}{Matrix of neighborhood indexes (created by
-\code{\link[=define_neighborhoods]{define_neighborhoods()}}). If \code{NULL} the function searches for
-\code{B} in the calling environment.}
+\item{B}{Matrix of neighborhood indexes (created by \code{\link[=define_neighborhood]{define_neighborhood()}}).}
 
-\item{W}{matrix of weights (created by \code{\link[=generate_weights]{generate_weights()}}). If \code{NULL}
-the function searches for \code{W} in the calling environment.}
+\item{W}{matrix of weights (created by \code{\link[=generate_weights]{generate_weights()}}).}
 
 \item{variation}{List vector containing the variation operators to be used.
-See \code{\link[=moead]{moead()}} for details. If \code{NULL} the function searches
-for \code{variation} in the calling environment.}
+See \code{\link[=moead]{moead()}} for details.}
 
-\item{...}{other parameters (unused, included for compatibility with
-generic call)}
+\item{...}{other parameters (included for compatibility with generic call)}
 }
 \value{
-Modified population matrix X
+List object containing a modified population matrix \code{X} and a
+local search argument list \code{ls.arg}.
 }
 \description{
 Sequentially apply variation operators for the MOEADr package
@@ -38,5 +31,12 @@ Sequentially apply variation operators for the MOEADr package
 \details{
 This routine performs the variation block for the MOEA/D. The
 list of available variation operators can be generated using
-\code{get_variation_operators()}.
+\code{\link[=get_variation_operators]{get_variation_operators()}}.
+
+If the \code{localsearch} operator is included, it is executed whenever its
+conditions (period of occurrence or probability of occurrence) are verified.
+See \code{\link[=variation_localsearch]{variation_localsearch()}} for details.
+
+\strong{Warning}: this routine may access (but not directly modify) variables
+from the calling environment.
 }

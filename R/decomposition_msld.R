@@ -7,22 +7,21 @@
 #' Multi-layered Simplex-lattice Design.
 #'
 #' @param decomp list containing the relevant decomposition parameters.
-#' For the Multi-layered Simplex-lattice design, the following key-value
-#' pairs must be elements of \code{decomp}:
+#'  Besides `decomp$name = "msld"`, this method requires the definition of the
+#'  following key-value pairs in `decomp`:
 #'
 #' \itemize{
-#'   \item \code{decomp$H}: array of positive integers representing the
+#'   \item `decomp$H`: array of positive integers representing the
 #'                          \code{H} values to be used by the SLD decomposition
-#'                          at each layer (see \code{\link{decomposition_sld}}
-#'                          for details).
+#'                          at each layer (see [decomposition_sld()] for
+#'                          details).
 #'   \item \code{decomp$tau}: array of scale multipliers for each layer,
 #'         \eqn{0 < \tau_i \le 1}, \eqn{\tau_i != \tau_j} for all \eqn{i != j}.
 #'         Must have the same lenght as \code{decomp$H}.
 #'   \item \code{decomp$.nobj}: integer value, \code{decomp$.nobj > 1}. Number of
 #'         objectives of the problem.
 #' }
-#' @param ... other parameters (unused, included for compatibility with
-#' generic call)
+#' @param ... other parameters (included for compatibility with generic call)
 #'
 #' @section References:
 #' K. Li et al. (2014), "An Evolutionary Many-Objective Optimization
@@ -30,11 +29,6 @@
 #' IEEE Trans. Evol. Comp. 19(5):694-716, 2015. DOI: 10.1109/TEVC.2014.2373386
 #'
 #' @export
-
-# QUESTIONS:
-# - I am requiring that length of H is greater than 1. OK?
-# - the scaling operation (line 57) destroys zeroes. Is it ok?
-# - the rbind destroys row indexes, I'm fixing that. Is it ok?
 
 decomposition_msld <- function(decomp, ...){
 

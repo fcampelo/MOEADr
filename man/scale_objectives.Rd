@@ -4,18 +4,23 @@
 \alias{scale_objectives}
 \title{Scaling of the objective function values}
 \usage{
-scale_objectives(moead.env, eps = 1e-16)
+scale_objectives(Y, Yt, scaling, eps = 1e-16, ...)
 }
 \arguments{
-\item{moead.env}{list representing the environment of the base function
-\code{moead}.}
+\item{Y}{matrix of objective function values for the incumbent solutions}
+
+\item{Yt}{matrix of objective function values for the candidate solutions}
+
+\item{scaling}{list containing the scaling parameters (see \code{\link[=moead]{moead()}} for
+details).}
 
 \item{eps}{tolerance value for avoiding divisions by zero.}
+
+\item{...}{other parameters (included for compatibility with generic call)}
 }
 \value{
 List object containing scaled objective function value matrices
-\code{Y} and \code{Yt}, as well as "ideal" point \code{minP} and "nadir"
-point \code{maxP}.
+\code{Y} and \code{Yt}, as well as estimates of the "ideal" point \code{minP`` and "nadir" point}maxP`.
 }
 \description{
 Performs scaling of the objective function values for the MOEADr package
@@ -32,18 +37,3 @@ estimated ideal and nadir points, calculated from the available points in
 \code{Y} and \code{Yt} at each iteration.
 }
 }
-\section{Parameters}{
-
-This routine receives a single input variable, \code{moead.env}, which is
-generated within the calling function \code{update_population()}
-(see \code{\link{update_population}} for more information).
-This environment must contain at least the following variables:
-
-\itemize{
-\item \code{Yt}: matrix of objective values for population \code{Xt}
-\item \code{Y} : matrix of objective values for population \code{X}
-\item \code{scaling}: list of function scaling parameters, containing at
-least the field \code{scaling$name}.
-}
-}
-

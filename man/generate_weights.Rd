@@ -4,14 +4,15 @@
 \alias{generate_weights}
 \title{Calculate weight vectors}
 \usage{
-generate_weights(decomp = NULL, m)
+generate_weights(decomp, m, ...)
 }
 \arguments{
 \item{decomp}{List containing the decomposition method parameters. See
-\code{\link{moead}} for details. If \code{NULL} the function searches for
-\code{decomp} in the calling environment.}
+\code{\link[=moead]{moead()}} for details.}
 
 \item{m}{Number of objectives (\eqn{m \ge 2})}
+
+\item{...}{other parameters (included for compatibility with generic call)}
 }
 \value{
 Weight matrix \code{W}
