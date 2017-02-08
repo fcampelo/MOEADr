@@ -40,7 +40,6 @@ values for the candidate and incumbent populations. It calculates the
 preference order of the candidates for each neighborhood based on the
 performance values and constraint handling method.
 
-The list of available
-constraint handling methods can be generated using
+The list of available constraint handling methods can be generated using
 \code{\link[=get_constraint_methods]{get_constraint_methods()}}.
 }

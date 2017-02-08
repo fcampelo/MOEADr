@@ -10,12 +10,13 @@
 #' conditions (period of occurrence or probability of occurrence) are verified.
 #' See [variation_localsearch()] for details.
 #'
-#' **Warning**: this routine may access (but not directly modify) variables
-#' from the calling environment.
+#' **Warning**: this routine (and the ones called within it) may access (but
+#' not directly modify) variables from the calling environment, depending on
+#' the specific operators being performed.
 #'
 #' @param X Population matrix of the MOEA/D (each row is a candidate solution).
 #' @param P Matrix of probabilities of selection for variation (created by
-#' [define_neighborhoods()]).
+#' [define_neighborhood()]).
 #' @param B Matrix of neighborhood indexes (created by [define_neighborhood()]).
 #' @param W matrix of weights (created by [generate_weights()]).
 #' @param variation List vector containing the variation operators to be used.
@@ -83,7 +84,7 @@ perform_variation <- function(X, P, B, W, variation, ...){
         first.ls <- 1 + sample.int(n       = ls.args$tau.ls - 1,
                                    size    = nrow(X),
                                    replace = TRUE)
-      } else first.ls <- rep(tau.ls,
+      } else first.ls <- rep(ls.args$tau.ls,
                              times = nrow(X))
 
       ls.args$name     <- NULL
@@ -101,12 +102,12 @@ perform_variation <- function(X, P, B, W, variation, ...){
     opname       <- paste0("variation_", variation[[i]]$name)
 
     # Update list of function inputs
-    varargs      <- variation[[i]]
-    varargs$name <- NULL
-    varargs$X    <- X
-    varargs$Xt   <- Xt
-    varargs$P    <- P
-    varargs$B    <- B
+    varargs          <- variation[[i]]
+    varargs$X        <- X
+    varargs$Xt       <- Xt
+    varargs$P        <- P
+    varargs$B        <- B
+    varargs$call.env <- call.env
 
     # Perform i-th variation operator
     X <- do.call(opname,
@@ -126,14 +127,8 @@ perform_variation <- function(X, P, B, W, variation, ...){
     which.x     <-  which.tau | which.gamma
 
     # Prepare argument list for local search
-    varargs          <- ls.args
-    varargs$Xt       <- Xt
-    varargs$B        <- B
+    varargs          <- c(ls.args, call.env)
     varargs$which.x  <- which.x
-    varargs$Yt       <- call.env$Yt
-    varargs$Vt       <- call.env$Vt
-    varargs$bigZ     <- call.env$bigZ
-    varargs$sel.indx <- call.env$sel.indx
 
     # Perform local search
     Xls <- do.call("variation_localsearch",

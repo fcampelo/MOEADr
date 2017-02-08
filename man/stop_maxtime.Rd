@@ -4,14 +4,21 @@
 \alias{stop_maxtime}
 \title{Stop criterion: maximum runtime}
 \usage{
-stop_maxtime(moead.env)
+stop_maxtime(stopcrit, iter.times, ...)
 }
 \arguments{
-\item{moead.env}{list representing the environment of the base function
-\code{moead}.}
+\item{stopcrit}{list containing the parameters defining the stop
+handling method. See Section \code{Constraint Handling} of the \code{\link[=moead]{moead()}}
+documentation for details.}
+
+\item{iter.times}{vector containing the times spent by each iteration of the
+moead() routine, up to the current one.}
+
+\item{...}{other parameters (included for compatibility with generic call)}
 }
 \value{
-boolean value: TRUE if this criterion has been met, FALSE otherwise.
+boolean value: \code{TRUE} if this criterion has been met, \code{FALSE}
+otherwise.
 }
 \description{
 Verifies stop criterion "run time limit" for the MOEADr
@@ -19,11 +26,11 @@ package. For internal use only, not to be called directly by the user.
 }
 \details{
 When this stop criterion is used, one element of the \code{stopcrit}
-parameter (see \code{\link{moead}}) must have the following structure:
+parameter (see \code{\link[=moead]{moead()}}) must have the following structure:
 \itemize{
 \item \code{stopcrit$name = "maxtime"}
-\item \code{stopcrit$maxtime = T}, where \code{T} is a positive integer
-representing the desired time limit (in seconds).
+\item \code{stopcrit$maxtime}, containing a positive integer representing the
+desired time limit (in seconds).
 }
 }
 \section{Warning}{

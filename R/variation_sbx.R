@@ -14,7 +14,7 @@
 #'
 #' @param X Population matrix
 #' @param P Matrix of probabilities of selection for variation (created by
-#' [define_neighborhoods()]).
+#' [define_neighborhood()]).
 #' @param etax spread constant
 #' @param pc variable-wise probability of recombination
 #' @param eps smallest difference considered for recombination

@@ -206,9 +206,10 @@ moead <- function(problem,      # List:  MObj problem
   # ============ End Error catching and default value definitions ============ #
 
   # ============================= Algorithm setup ============================ #
-  set.seed(seed)           # set PRNG seed
-  nfe        <- 0          # set counter for function evaluations
-  time.start <- Sys.time() # Store initial time
+  set.seed(seed)              # set PRNG seed
+  nfe        <- 0             # set counter for function evaluations
+  time.start <- Sys.time()    # Store initial time
+  iter.times <- numeric(1000) # pre-allocate vector for iteration times.
   # =========================== End Algorithm setup ========================== #
 
   # =========================== Initial definitions ========================== #
@@ -269,9 +270,9 @@ moead <- function(problem,      # List:  MObj problem
 
     # ========== Scalarization
     # Objective scaling and estimation of 'ideal' and 'nadir' points
-    normYs <- scale_objectives(Y       = call.env$Y,
-                               Yt      = call.env$Yt,
-                               scaling = call.env$scaling)
+    normYs <- scale_objectives(Y       = Y,
+                               Yt      = Yt,
+                               scaling = scaling)
 
     # Scalarization by neighborhood.
     # bigZ is an [(T+1) x N] matrix, in which each column has the T scalarized
@@ -300,13 +301,22 @@ moead <- function(problem,      # List:  MObj problem
     Y  <- XY$Y
     V  <- XY$V
 
-    # ========== Print
-    # Echo whatever is demanded #<------ stopped here
-    print_progress()
-
     # ========== Stop Criteria
+    # Calculate iteration time
+    iter.times[iter] <- ifelse(iter == 1,
+                               as.numeric(difftime(time1 = Sys.time(),
+                                                   time2 = time.start,
+                                                   units = "secs")),
+                               as.numeric(difftime(time1 = Sys.time(),
+                                                   time2 = iter.times[iter - 1],
+                                                   units = "secs")))
     # Verify stop criteria
-    check_stop_criteria()
+    keep.running <- check_stop_criteria(stopcrit = stopcrit,
+                                        call.env = environment())
+
+    # ========== Print
+    # Echo whatever is demanded
+    print_progress(iter, time.start, showpars)
   }
   # =========================== End Iterative cycle ========================== #
 

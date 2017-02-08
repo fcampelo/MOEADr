@@ -4,28 +4,24 @@
 \alias{print_progress}
 \title{Print progress of MOEA/D}
 \usage{
-print_progress()
+print_progress(iter, time.start, showpars)
+}
+\arguments{
+\item{iter}{internal iteration counter of the \code{\link[=moead]{moead()}} routine.}
+
+\item{time.start}{internal starting time of the \code{\link[=moead]{moead()}} routine.}
+
+\item{showpars}{list object containing parameters that control the printed
+output of \code{\link[=moead]{moead()}}. Parameter \code{showpars} can have the
+following key-value pairs:
+\itemize{
+\item \code{$show.iters}: type of output ("dots", "numbers", or "none"). If
+not present in \code{showpars}, it defaults to "numbers";
+\item \code{$showevery}: positive integer that determines how frequently
+the routine echoes something to the terminal. If not present in
+\code{showpars}, it defaults to \code{10}.
+}}
 }
 \description{
 Echoes progress of MOEA/D to the terminal for the MOEADr package
 }
-\section{Parameters}{
-
-This routine accesses all variables defined in the calling environment using
-\code{parent.frame()}, so it does not require any explicit input parameters.
-However, the calling environment must contain:
-\itemize{
-\item \code{showpars}: list containing parameters that control the printed
-output of \code{moead()}. Parameter \code{showpars}
-can have the following fields:
-\itemize{
-\item \code{$show.iters = c("dots", "numbers", "none")}: type of output.
-Defaults to \code{"numbers"}.
-\item \code{$showevery}: positive integer that determines how frequently
-the routine echoes something to the terminal.
-Defaults to \code{10}.
-}
-\item \code{iter} : counter that registers the iteration number
-}
-}
-

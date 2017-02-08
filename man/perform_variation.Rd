@@ -10,7 +10,7 @@ perform_variation(X, P, B, W, variation, ...)
 \item{X}{Population matrix of the MOEA/D (each row is a candidate solution).}
 
 \item{P}{Matrix of probabilities of selection for variation (created by
-\code{\link[=define_neighborhoods]{define_neighborhoods()}}).}
+\code{\link[=define_neighborhood]{define_neighborhood()}}).}
 
 \item{B}{Matrix of neighborhood indexes (created by \code{\link[=define_neighborhood]{define_neighborhood()}}).}
 
@@ -37,6 +37,7 @@ If the \code{localsearch} operator is included, it is executed whenever its
 conditions (period of occurrence or probability of occurrence) are verified.
 See \code{\link[=variation_localsearch]{variation_localsearch()}} for details.
 
-\strong{Warning}: this routine may access (but not directly modify) variables
-from the calling environment.
+\strong{Warning}: this routine (and the ones called within it) may access (but
+not directly modify) variables from the calling environment, depending on
+the specific operators being performed.
 }

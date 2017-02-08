@@ -6,7 +6,7 @@
 #' function, and should not be called directly by the user. The list of
 #' available update methods can be generated using [get_update_methods()].
 #'
-#' @param call.env  calling environment (generated using, e.g., [environment()].
+#' @param call.env calling environment (generated using, e.g., [environment()].
 #'
 #' @return List object containing the updated values of the population matrix
 #' `X`, objective function matrix `Y`, and constraint values list `V`.

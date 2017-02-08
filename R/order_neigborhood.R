@@ -9,8 +9,7 @@
 #' preference order of the candidates for each neighborhood based on the
 #' performance values and constraint handling method.
 #'
-#'The list of available
-#' constraint handling methods can be generated using
+#' The list of available constraint handling methods can be generated using
 #' [get_constraint_methods()].
 #'
 #' @param bigZ Matrix of scalarized performance values by neighborhood,

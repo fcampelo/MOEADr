@@ -10,7 +10,7 @@ variation_sbx(X, P, etax, pc = 1, eps = 1e-06, ...)
 \item{X}{Population matrix}
 
 \item{P}{Matrix of probabilities of selection for variation (created by
-\code{\link[=define_neighborhoods]{define_neighborhoods()}}).}
+\code{\link[=define_neighborhood]{define_neighborhood()}}).}
 
 \item{etax}{spread constant}
 

@@ -4,7 +4,7 @@
 \alias{variation_diffmut}
 \title{Differential Mutation}
 \usage{
-variation_diffmut(X, P, B, Phi, basis = "rand", ...)
+variation_diffmut(X, P, B, Phi, basis = "rand", call.env, ...)
 }
 \arguments{
 \item{X}{Population matrix}
@@ -28,6 +28,9 @@ neighborhood;
 neighborhood.
 }}
 
+\item{call.env}{list representing the environment of the base function
+\code{\link[=moead]{moead()}}, passed down from \code{\link[=perform_variation]{perform_variation()}}.}
+
 \item{...}{other parameters (included for compatibility with generic call)}
 }
 \value{
@@ -44,6 +47,9 @@ operator with general form:
 
 Where u is the new candidate vector, \code{Phi != 0} is a real number,
 and \code{x_basis}, \code{x_a} and \code{x_b} are distinct vectors.
+
+This routine is intended to be used internally by \code{\link[=perform_variation]{perform_variation()}},
+and should not be called directly by the user.
 }
 \section{References}{
 

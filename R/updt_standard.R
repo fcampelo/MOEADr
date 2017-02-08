@@ -58,30 +58,35 @@ updt_standard <- function(call.env){
                     B         = call.env$B,
                     USE.NAMES = FALSE))
 
+
   # Update list of constraint values
-  Vnext <- list(Cmatrix = NULL, Vmatrix = NULL, v = NULL)
+  if(is.null(call.env$V)){
+    Vnext <- NULL
+  } else{
+    Vnext <- list(Cmatrix = NULL, Vmatrix = NULL, v = NULL)
 
-  ## 1: Cmatrix
-  Vnext$Cmatrix <- t(vapply(X         = 1:nrow(call.env$V$Cmatrix),
-                            FUN       = do.update,
-                            FUN.VALUE = numeric(ncol(call.env$V$Cmatrix)),
-                            sel.indx  = std.sel.indx,
-                            XY        = call.env$V$Cmatrix,
-                            XYt       = call.env$Vt$Cmatrix,
-                            B         = call.env$B,
-                    USE.NAMES = FALSE))
-  ## 2: Vmatrix
-  Vnext$Vmatrix <- t(vapply(X         = 1:nrow(call.env$V$Vmatrix),
-                            FUN       = do.update,
-                            FUN.VALUE = numeric(ncol(call.env$V$Vmatrix)),
-                            sel.indx  = std.sel.indx,
-                            XY        = call.env$V$Vmatrix,
-                            XYt       = call.env$Vt$Vmatrix,
-                            B         = call.env$B,
-                            USE.NAMES = FALSE))
+    ## 1: Cmatrix
+    Vnext$Cmatrix <- t(vapply(X         = 1:nrow(call.env$V$Cmatrix),
+                              FUN       = do.update,
+                              FUN.VALUE = numeric(ncol(call.env$V$Cmatrix)),
+                              sel.indx  = std.sel.indx,
+                              XY        = call.env$V$Cmatrix,
+                              XYt       = call.env$Vt$Cmatrix,
+                              B         = call.env$B,
+                              USE.NAMES = FALSE))
+    ## 2: Vmatrix
+    Vnext$Vmatrix <- t(vapply(X         = 1:nrow(call.env$V$Vmatrix),
+                              FUN       = do.update,
+                              FUN.VALUE = numeric(ncol(call.env$V$Vmatrix)),
+                              sel.indx  = std.sel.indx,
+                              XY        = call.env$V$Vmatrix,
+                              XYt       = call.env$Vt$Vmatrix,
+                              B         = call.env$B,
+                              USE.NAMES = FALSE))
 
-  ## 3: v
-  Vnext$v <- rowSums(Vnext$Vmatrix)
+    ## 3: v
+    Vnext$v <- rowSums(Vnext$Vmatrix)
+  }
 
   # Output
   return(list(X = Xnext,

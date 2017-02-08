@@ -4,14 +4,20 @@
 \alias{stop_maxeval}
 \title{Stop criterion: maximum number of evaluations}
 \usage{
-stop_maxeval(moead.env)
+stop_maxeval(stopcrit, nfe, ...)
 }
 \arguments{
-\item{moead.env}{list representing the environment of the base function
-\code{moead}.}
+\item{stopcrit}{list containing the parameters defining the stop
+handling method. See Section \code{Constraint Handling} of the \code{\link[=moead]{moead()}}
+documentation for details.}
+
+\item{nfe}{evaluations counter of \code{\link[=moead]{moead()}}.}
+
+\item{...}{other parameters (included for compatibility with generic call)}
 }
 \value{
-boolean value: TRUE if this criterion has been met, FALSE otherwise.
+boolean value: \code{TRUE} if this criterion has been met, \code{FALSE}
+otherwise.
 }
 \description{
 Verifies stop criterion "maximum number of evaluations" for the MOEADr
@@ -19,9 +25,10 @@ package. For internal use only, not to be called directly by the user.
 }
 \details{
 When this stop criterion is used, one element of the \code{stopcrit}
-parameter (see \code{\link{moead}}) must have the following structure:
+parameter (see \code{\link[=moead]{moead()}}) must have the following structure:
 \itemize{
 \item \code{stopcrit$name = "maxeval"}
-\item \code{stopcrit$maxeval = K}, where \code{K} is a positive integer.
+\item \code{stopcrit$maxeval}, containing a positive integer representing the
+desired maximum number of evaluations.
 }
 }
