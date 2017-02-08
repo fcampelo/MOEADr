@@ -10,8 +10,7 @@
 #' @param W matrix of weights.
 #' @param minP numeric vector containing estimated ideal point
 #' @param eps tolerance value for avoiding divisions by zero.
-#' @param ... other parameters (unused, included for compatibility with
-#' generic call)
+#' @param ... other parameters (included for compatibility with generic call)
 #'
 #' @return vector of scalarized performance values.
 #'
@@ -36,8 +35,8 @@ scalarization_ws <- function(Y, W, minP, eps = 1e-16, ...){
 
   # Replicate minP for dimensional consistency
   minP <- matrix(minP,
-                 nrow = nrow(Y),
-                 ncol = ncol(Y),
+                 nrow  = nrow(Y),
+                 ncol  = ncol(Y),
                  byrow = TRUE)
 
   Z <- apply(W * (Y - minP),

@@ -7,11 +7,7 @@
 update_population(call.env)
 }
 \arguments{
-\item{call.env}{calling environment (generated using, e.g., \code{\link[=environment]{environment()}}.
-The calling environment must contain all parameters required by functions
-\code{\link[=scalarize_values]{scalarize_values()}}, \code{\link[=scale_objectives]{scale_objectives()}}, and for the specific update
-method given in \code{call.env$update}. The list of available update methods can
-be generated using \code{\link[=get_update_methods]{get_update_methods()}}.}
+\item{call.env}{calling environment (generated using, e.g., \code{\link[=environment]{environment()}}.}
 }
 \value{
 List object containing the updated values of the population matrix
@@ -22,5 +18,6 @@ Selection and population update procedures for the MOEA/D
 }
 \details{
 This update routine is intended to be used internally by the main \code{\link[=moead]{moead()}}
-function, and should not be called directly by the user.
+function, and should not be called directly by the user. The list of
+available update methods can be generated using \code{\link[=get_update_methods]{get_update_methods()}}.
 }

@@ -13,8 +13,10 @@ evaluate_population(X, problem)
 \code{Problem Description} of the \code{\link[=moead]{moead()}} documentation for details.}
 }
 \value{
-\code{[N x m]} matrix of objective function values, where \code{N} is the
-population size and \code{m} is the number of objectives.
+List object containing the matrix of objective function values and
+a list object containing information about the constraint violations (a
+matrix of constraint values \code{Cmatrix}, a matrix of constraint violations
+\code{Vmatrix}, and a vector of total violations \code{v}).
 }
 \description{
 Evaluate a population matrix on the objective functions for the MOEADr

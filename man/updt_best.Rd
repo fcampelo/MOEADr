@@ -4,49 +4,41 @@
 \alias{updt_best}
 \title{Best Neighborhood Replacement Update for MOEA/D}
 \usage{
-updt_best(moead.env)
+updt_best(call.env)
 }
 \arguments{
-\item{moead.env}{list representing the environment of the base function
-\code{moead}. See section \code{Parameters} for details.}
+\item{call.env}{list representing the environment of the base function
+\code{\link[=moead]{moead()}}. Variable \code{call.env$update} must have the following key-value
+pairs:
+\itemize{
+\item \code{update$Tr}: positive integer, neighborhood size for the update
+operation
+\item \code{update$nr}: positive integer, maximum number of copies of a given
+candidate solution.
+}}
 }
 \value{
-List object containing the update population matrix (\code{Xnext})
-and its corresponding matrix of objective function values (\code{Ynext}).
+List object containing the update population matrix (\code{X}),
+and its corresponding matrix of objective function values (\code{Y}) and
+constraint value list (\code{V}).
 }
 \description{
-Population update using the best neighborhood replacement
-method for the MOEADr package.
+Population update using the best neighborhood replacement method for the
+MOEADr package.
 }
 \details{
 The Best Neighborhood Replacement method consists of three steps:
 
 \itemize{
-\item For each subproblem i, the best candidate solution x_j from the
+\item For each subproblem \code{i}, the best candidate solution \code{x_j} from the
 entire population is determined.
-\item The neighborhood of subproblem i is replaced by the neighborhood of
-subproblem j. The size of this neighborhood, truncated by a
-parameter \code{Tr}.
-\item The Restricted replacement method is then applied using this new
-neighborhood.
-}
-}
-\section{Parameters}{
-
-This routine receives a single input variable, \code{moead.env}, which is
-generated within the calling function \code{update_population()}. It expects
-\code{moead.env} to contain all fields listed in the \code{Parameters}
-section of \code{\link{update_population}}. Additionaly, the parameter
-\code{moead.env$update} is expected to contain two fields:
-\itemize{
-\item \code{moead.env$update$Tr}  containing a positive integer.
-This value determines the size of the neighborhood to be used.
-\item \code{moead.env$update$nr} containing a positive integer.
-This value determines the maximum number of times that any
-candidate solution can be selected. If \code{nr = Tr}, then
-\code{update_restricted} is equivalent with \code{update_standard}.
+\item The neighborhood of subproblem \code{i} is replaced by the neighborhood
+of subproblem j. The size of this neighborhood is given by a parameter
+\code{Tr}.
+\item The Restricted replacement (see \code{\link[=updt_restricted]{updt_restricted()}}) is then
+applied using this new neighborhood.
 }
 
-See \code{\link{update_population}} for more information.
+This update routine is intended to be used internally by the main \code{\link[=moead]{moead()}}
+function, and should not be called directly by the user.
 }
-

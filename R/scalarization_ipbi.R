@@ -10,12 +10,11 @@
 #' @param W matrix of weights.
 #' @param maxP numeric vector containing estimated ideal point
 #' @param aggfun list containing parameters for the aggregation function. Must
-#' contain the non-negative numeric constant \code{aggfun$theta}.
+#' contain the non-negative numeric constant `aggfun$theta`.
 #' @param eps tolerance value for avoiding divisions by zero.
-#' @param ... other parameters (unused, included for compatibility with
-#' generic call)
+#' @param ... other parameters (included for compatibility with generic call)
 #'
-#' @return vector of scalarized performance values.
+#' @return Vector of scalarized performance values.
 #'
 #' @section References:
 #' H. Sato,
@@ -43,8 +42,8 @@ scalarization_ipbi <- function(Y, W, maxP, aggfun, eps = 1e-16, ...){
 
   # Replicate maxP (estimated nadir point) for dimensional consistency
   maxP <- matrix(maxP,
-                 nrow = nrow(Y),
-                 ncol = ncol(Y),
+                 nrow  = nrow(Y),
+                 ncol  = ncol(Y),
                  byrow = TRUE)
 
   # Norm of the weight vectors
@@ -57,15 +56,15 @@ scalarization_ipbi <- function(Y, W, maxP, aggfun, eps = 1e-16, ...){
   # Calculate D1 (returns N x m numeric matrix with all columns equal, for
   # convenience in the calculation of D2).
   D1 <- matrix(abs(rowSums((maxP - Y) * W)) / NormW[, 1],
-               nrow = nrow(W),
-               ncol = ncol(W),
+               nrow  = nrow(W),
+               ncol  = ncol(W),
                byrow = FALSE)
 
   # Calculate D2 (returns numeric vector with N elements)
   D2 <- sqrt(rowSums(((maxP - Y) - D1 * W / NormW) ^ 2))
 
 
-  # Lucas' version (as documented in our the manuscript)
+  # Lucas' version (to review)
   # D1 <- matrix(abs(rowSums((Y - maxP) * W)) / NormW[, 1],
   #              nrow = nrow(W),
   #              ncol = ncol(W),

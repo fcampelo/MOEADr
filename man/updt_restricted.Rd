@@ -4,39 +4,29 @@
 \alias{updt_restricted}
 \title{Restricted Neighborhood Replacement Update for MOEA/D}
 \usage{
-updt_restricted(moead.env)
+updt_restricted(call.env)
 }
 \arguments{
-\item{moead.env}{list representing the environment of the base function
-\code{moead}.
-
-This routine expects \code{moead.env} to contain all fields listed in the
-\code{Parameters} section of \code{\link{update_population}}. Additionaly,
-the parameter \code{moead.env$update} is expected to contain a
-field \code{moead.env$update$nr} containing a positive integer.
-This value determines the maximum number of times that
-any individual can be selected.}
+\item{call.env}{list representing the environment of the base function
+\code{\link[=moead]{moead()}}. Variable \code{call.env$update} must have a field \code{update$nr}
+containing a positive integer (maximum number of copies of a given candidate
+solution)}
 }
 \value{
-List object containing the updated population matrix (\code{Xnext})
-and its corresponding matrix of objective function values (\code{Ynext}).
+List object containing the update population matrix (\code{X}),
+and its corresponding matrix of objective function values (\code{Y}) and
+constraint value list (\code{V}).
 }
 \description{
 Population update using the restricted neighborhood replacement
 method for the MOEADr package.
 }
 \details{
-The restricted neighborhood replacement method behaves like
-the "standard" replacement method, except that each individual
-can only be selected up to \code{nr} times. After this limit
-has been reached, the next best individual in the same
-neighborhood is selected.
+The restricted neighborhood replacement method behaves like the "standard"
+replacement method, except that each individual can only be selected up to
+\code{nr} times. After this limit has been reached, the next best individual in
+the same neighborhood is selected.
+
+This update routine is intended to be used internally by the main \code{\link[=moead]{moead()}}
+function, and should not be called directly by the user.
 }
-\section{Parameters}{
-
-
-This routine receives a single input variable, \code{moead.env}, which is
-generated within the calling function \code{update_population()}. See
-\code{\link{update_population}} for more information.
-}
-

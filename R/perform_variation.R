@@ -80,10 +80,11 @@ perform_variation <- function(X, P, B, W, variation, ...){
       # Define iteration for the first occurrence of local search (if tau.ls is
       # defined). It never happens in the very first iteration.
       if (ls.args$unsync) {
-        first.ls <- 1 + sample.int(n = tau.ls - 1,
-                                   size = nrow(X),
+        first.ls <- 1 + sample.int(n       = ls.args$tau.ls - 1,
+                                   size    = nrow(X),
                                    replace = TRUE)
-      } else first.ls <- rep(tau.ls, times = nrow(X))
+      } else first.ls <- rep(tau.ls,
+                             times = nrow(X))
 
       ls.args$name     <- NULL
       ls.args$first.ls <- first.ls

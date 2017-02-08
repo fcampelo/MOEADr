@@ -15,8 +15,7 @@ scalarization_ws(Y, W, minP, eps = 1e-16, ...)
 
 \item{eps}{tolerance value for avoiding divisions by zero.}
 
-\item{...}{other parameters (unused, included for compatibility with
-generic call)}
+\item{...}{other parameters (included for compatibility with generic call)}
 }
 \value{
 vector of scalarized performance values.

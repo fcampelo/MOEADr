@@ -48,29 +48,33 @@ define_neighborhood <- function(neighbors, v.matrix, iter){
     is_within(neighbors$delta.p, 0, 1, strict = FALSE))
 
   if (iter == 1 || neighbors$name != "lambda"){
+    BP <- list(B = NULL, P = NULL, fullB = NULL, fullP = NULL)
 
     # Calculate neighborhood matrix
-    B <- cbind(1:nrow(v.matrix),
-               FNN::get.knn(data      = v.matrix,
-                            k         = neighbors$T - 1)$nn.index)
+    BP$fullB <- cbind(1:nrow(v.matrix),
+                      FNN::get.knn(data      = v.matrix,
+                                   k         = nrow(v.matrix) - 1)$nn.index)
+    BP$B <- BP$fullB[, 1:neighbors$T]
     np  <- nrow(v.matrix)
-    P   <- matrix((1 - neighbors$delta.p) / (np - neighbors$T),
-                  nrow = np,
-                  ncol = np)
+    BP$P   <- matrix((1 - neighbors$delta.p) / (np - neighbors$T),
+                     nrow = np,
+                     ncol = np)
     val <- neighbors$delta.p / neighbors$T
-    P   <- do.call(rbind,
-                   lapply(1:np,
-                          FUN = function(i, p, b, val){p[i, b[i, ]] <- val; p[i, ]},
-                          p   = P,
-                          b   = B,
-                          val = val))
+    BP$P   <- do.call(rbind,
+                      lapply(1:np,
+                             FUN = function(i, p, b, val){
+                               p[i, b[i, ]] <- val; p[i, ]},
+                             p   = BP$P,
+                             b   = BP$B,
+                             val = val))
+    BP$fullP <- BP$P
+    BP$fullP[, ] <- 1/ncol(BP$fullP)
   } else {
     # just get the existing matrix
     call.env <- parent.frame()
-    assertthat::assert_that(all(assertthat::has_name(call.env, c("P", "B"))))
-    B <- call.env$B
-    P <- call.env$P
+    assertthat::assert_that("BP" %in% names(call.env))
+    BP <- call.env$BP
   }
 
-  return(list(B = B, P = P))
+  return(BP)
 }

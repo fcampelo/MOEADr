@@ -267,6 +267,32 @@ moead <- function(problem,      # List:  MObj problem
     Y <- YV$Y
     V <- YV$V
 
+    # ========== Scalarization
+    # Objective scaling and estimation of 'ideal' and 'nadir' points
+    normYs <- scale_objectives(Y       = call.env$Y,
+                               Yt      = call.env$Yt,
+                               scaling = call.env$scaling)
+
+    # Scalarization by neighborhood.
+    # bigZ is an [(T+1) x N] matrix, in which each column has the T scalarized
+    # values for the solutions in the neighborhood of one subproblem, plus the
+    # scalarized value for the incumbent solution for that subproblem.
+    bigZ <- scalarize_values(normYs  = normYs,
+                             W       = W,
+                             B       = B,
+                             aggfun  = aggfun)
+
+    # Calculate selection indices
+    # sel.indx is an [N x (T+1)] matrix, in which each row contains the indices
+    # of one neighborhood (plus incumbent), sorted by their "selection quality"
+    # (which takes into account both the performance value and constraint
+    # handling policy, if any)
+    sel.indx <- order_neighborhood(bigZ       = bigZ,
+                                   B          = B,
+                                   V          = V,
+                                   Vt         = Vt,
+                                   constraint = constraint)
+
     # ========== Update
     # Update population
     XY <- update_population(call.env = environment())
@@ -275,7 +301,7 @@ moead <- function(problem,      # List:  MObj problem
     V  <- XY$V
 
     # ========== Print
-    # Echo whatever is demanded
+    # Echo whatever is demanded #<------ stopped here
     print_progress()
 
     # ========== Stop Criteria

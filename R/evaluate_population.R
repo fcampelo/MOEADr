@@ -17,8 +17,10 @@
 #' @param problem list of named problem parameters. See Section
 #' `Problem Description` of the [moead()] documentation for details.
 #'
-#' @return `[N x m]` matrix of objective function values, where \code{N} is the
-#' population size and \code{m} is the number of objectives.
+#' @return List object containing the matrix of objective function values and
+#' a list object containing information about the constraint violations (a
+#' matrix of constraint values `Cmatrix`, a matrix of constraint violations
+#' `Vmatrix`, and a vector of total violations `v`).
 #'
 #' @export
 

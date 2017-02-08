@@ -85,65 +85,27 @@ my_constraints <- function(X,           # population matrix
 }
 
 
-boxcon <- function(X,           # population matrix
-                   epsilon = 0, # tolerance for equality constraints
-                   # (defaults to zero if not provided)
-                   ...)
-{
-  
-  nv <- 10 # number of variables of the problem
-  
-  # Prepare output matrix of constraint function values
-  Cmatrix <- matrix(numeric(), 
-                    nrow = nrow(X),
-                    ncol = 2 * nv) # 2 inequality box constraints/variable
-  
-  # Set informative column names (be nice to your users!)
-  colnames(Cmatrix) <- paste0("x", 
-                              rep(1:nv, times = 2), 
-                              rep(c("min","max"), each = nv))
-  
-  # Box limits of the feasible space
-  Xmin <- matrix(0, nrow = nrow(X), ncol = nv)
-  Xmax <- matrix(1, nrow = nrow(X), ncol = nv)
-  
-  # Calculate "x_i >= 0" and "x_i <= 1" constraints
-  Cmatrix[, 1:nv]              <- Xmin - X
-  Cmatrix[, (nv + 1):(2 * nv)] <- X - Xmax
-  
-  # Assemble matrix of *violations*
-  Vmatrix <- Cmatrix
-  Vmatrix <- pmax(Vmatrix, 0) # inequality constraints
-  
-  # Return necessary variables
-  return(list(Cmatrix = Cmatrix,
-              Vmatrix = Vmatrix,
-              v       = rowSums(Vmatrix)))
-  
-}
 
 
-library(smoof)
-ZDT1 <- make_vectorized_smoof(prob.name  = "ZDT1",
-                              dimensions = 5)
+
+
 
 ```
 
 
 ```{r}
-## 2: set input parameters
-problem   <- list(name       = "ZDT1",
-                  xmin       = rep(0, 5),
-                  xmax       = rep(1, 5),
-                  m          = 2)
+## 1: prepare test problem
+library(smoof)
+ZDT1 <- make_vectorized_smoof(prob.name  = "ZDT1",
+                              dimensions = 5)
 
-# problem    <- list(name        = "moeadr_dtlz1",
-#                    xmin        = rep(0, 10),
-#                    xmax        = rep(1, 10),
-#                    m           = 2,
-#                    constraints = list(
-#                      name    = "boxcon",
-#                      epsilon = 0.05))
+problem    <- list(name        = "ZDT1",
+                   xmin        = rep(0, 5),
+                   xmax        = rep(1, 5),
+                   m           = 2,
+                   constraints = list(
+                     name    = "box_constraints",
+                     epsilon = 0.05))
 
 decomp     <- list(name  = "SLD", H = 19)
 neighbors  <- list(name  = "lambda", T = 5, delta.p = 0.9)
@@ -158,7 +120,7 @@ variation  <- list(
                      type     = "tpqa",
                      tau.ls   = 5,
                      truncate = TRUE))
-update     <- list(name  = "standard")
+update     <- list(name  = "best", nr = 3, Tr = 4)
 scaling    <- list(name  = "none")
 constraint <- list(name = "vbr", type = "ts")
 stopcrit   <- list(
@@ -166,7 +128,6 @@ stopcrit   <- list(
 showpars   <- list(show.iters = "numbers", showevery = 10)
 seed       <- NULL
 ```
-
 
 
 ```{r}

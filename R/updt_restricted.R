@@ -3,48 +3,38 @@
 #' Population update using the restricted neighborhood replacement
 #' method for the MOEADr package.
 #'
-#' The restricted neighborhood replacement method behaves like
-#' the "standard" replacement method, except that each individual
-#' can only be selected up to \code{nr} times. After this limit
-#' has been reached, the next best individual in the same
-#' neighborhood is selected.
+#' The restricted neighborhood replacement method behaves like the "standard"
+#' replacement method, except that each individual can only be selected up to
+#' `nr` times. After this limit has been reached, the next best individual in
+#' the same neighborhood is selected.
 #'
-#' @section Parameters:
+#' This update routine is intended to be used internally by the main [moead()]
+#' function, and should not be called directly by the user.
 #'
-#' This routine receives a single input variable, \code{moead.env}, which is
-#' generated within the calling function \code{update_population()}. See
-#' \code{\link{update_population}} for more information.
+#' @param call.env list representing the environment of the base function
+#' [moead()]. Variable `call.env$update` must have a field `update$nr`
+#' containing a positive integer (maximum number of copies of a given candidate
+#' solution)
 #'
-#' @param moead.env list representing the environment of the base function
-#' \code{moead}.
-#'
-#' This routine expects \code{moead.env} to contain all fields listed in the
-#' \code{Parameters} section of \code{\link{update_population}}. Additionaly,
-#' the parameter \code{moead.env$update} is expected to contain a
-#' field \code{moead.env$update$nr} containing a positive integer.
-#' This value determines the maximum number of times that
-#' any individual can be selected.
-#'
-#' @return List object containing the updated population matrix (\code{Xnext})
-#' and its corresponding matrix of objective function values (\code{Ynext}).
+#' @return List object containing the update population matrix (`X`),
+#' and its corresponding matrix of objective function values (`Y`) and
+#' constraint value list (`V`).
 #'
 #' @export
-
-updt_restricted <- function(moead.env){
+updt_restricted <- function(call.env){
 
   # ========== Error catching and default value definitions
   assertthat::assert_that(
-    assertthat::has_name(moead.env$update,"nr"),
-    assertthat::is.count(moead.env$update$nr),
-    assertthat::has_name(moead.env,"sel.indx"))
+    assertthat::has_name(call.env$update,"nr"),
+    assertthat::is.count(call.env$update$nr))
 
-  nr <- moead.env$update$nr
-  sel.indx <- moead.env$sel.indx
+  nr            <- call.env$update$nr
+  rest.sel.indx <- call.env$sel.indx
 
   # Function for returning the selected solution (variable or objectives space)
   # for a subproblem:
   # - i: subproblem index
-  # - sel.indx: matrix of selection indices (see above)
+  # - sel.indx: matrix of selection indices
   # - XY: matrix of candidate solutions (in variable or objective space)
   # - XYt: matrix of incumbent solutions (in variable or objective space)
   # - B: matrix of neighborhoods
@@ -59,39 +49,65 @@ updt_restricted <- function(moead.env){
     }
   }
 
-  # Vector of indices (random permutation)
-  I  <- sample.int(nrow(moead.env$X))
+  # Vector of indices (random permutation), and deshuffling vector
+  I  <- sample.int(nrow(call.env$X))
+  I2 <- order(I)
 
   # Counter of how many time each solution has been used
-  used <- rep(0, nrow(moead.env$X))
+  used <- rep(0, nrow(call.env$X))
 
   # Update matrix of candidate solutions
   Xnext <- t(vapply(X         = I,
                     FUN       = do.update,
-                    FUN.VALUE = numeric(ncol(moead.env$X)),
-                    sel.indx  = sel.indx,
-                    XY        = moead.env$X,
-                    XYt       = moead.env$Xt,
-                    B         = moead.env$B,
+                    FUN.VALUE = numeric(ncol(call.env$X)),
+                    sel.indx  = rest.sel.indx,
+                    XY        = call.env$X,
+                    XYt       = call.env$Xt,
+                    B         = call.env$B,
                     USE.NAMES = FALSE))
-
-  # Resetting counter for a second pass.
-  used <- rep(0, nrow(moead.env$X))
+  Xnext <- Xnext[I2, ]
 
   # Update matrix of function values
-  Ynext <- t(vapply(X = I,
-                    FUN = do.update,
-                    FUN.VALUE = numeric(ncol(moead.env$Y)),
-                    sel.indx = sel.indx,
-                    XY = moead.env$Y,
-                    XYt = moead.env$Yt,
-                    B = moead.env$B,
+  used <- rep(0, nrow(call.env$Y))
+  Ynext <- t(vapply(X         = I,
+                    FUN       = do.update,
+                    FUN.VALUE = numeric(ncol(call.env$Y)),
+                    sel.indx  = rest.sel.indx,
+                    XY        = call.env$Y,
+                    XYt       = call.env$Yt,
+                    B         = call.env$B,
                     USE.NAMES = FALSE))
-
-  # Unshuffle Xnext, Ynext
-  I2 <- order(I)
-  Xnext <- Xnext[I2, ]
   Ynext <- Ynext[I2, ]
 
-  return(list(X = Xnext, Y = Ynext))
+  # Update list of constraint values
+  Vnext <- list(Cmatrix = NULL, Vmatrix = NULL, v = NULL)
+
+  ## 1: Cmatrix
+  used <- rep(0, nrow(call.env$Y))
+  Vnext$Cmatrix <- t(vapply(X         = I,
+                            FUN       = do.update,
+                            FUN.VALUE = numeric(ncol(call.env$V$Cmatrix)),
+                            sel.indx  = rest.sel.indx,
+                            XY        = call.env$V$Cmatrix,
+                            XYt       = call.env$Vt$Cmatrix,
+                            B         = call.env$B,
+                            USE.NAMES = FALSE))
+  ## 2: Vmatrix
+  used <- rep(0, nrow(call.env$Y))
+  Vnext$Vmatrix <- t(vapply(X         = I,
+                            FUN       = do.update,
+                            FUN.VALUE = numeric(ncol(call.env$V$Vmatrix)),
+                            sel.indx  = rest.sel.indx,
+                            XY        = call.env$V$Vmatrix,
+                            XYt       = call.env$Vt$Vmatrix,
+                            B         = call.env$B,
+                            USE.NAMES = FALSE))
+
+  ## 3: v
+  Vnext$v <- rowSums(Vnext$Vmatrix)
+
+  # Output
+  return(list(X = Xnext,
+              Y = Ynext,
+              V = Vnext))
 }

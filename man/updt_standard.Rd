@@ -4,15 +4,16 @@
 \alias{updt_standard}
 \title{Standard Neighborhood Replacement Update for MOEA/D}
 \usage{
-updt_standard(moead.env)
+updt_standard(call.env)
 }
 \arguments{
-\item{moead.env}{list representing the environment of the base function
-\code{moead}.}
+\item{call.env}{list representing the environment of the base function
+\code{\link[=moead]{moead()}}.}
 }
 \value{
-List object containing the update population matrix (\code{Xnext})
-and its corresponding matrix of objective function values (\code{Ynext}).
+List object containing the update population matrix (\code{X}),
+and its corresponding matrix of objective function values (\code{Y}) and
+constraint value list (\code{V}).
 }
 \description{
 Population update using the standard neighborhood replacement method for the
@@ -21,11 +22,6 @@ MOEADr package.
 \details{
 This routine executes the standard neighborhood replacement operation to
 update the population matrix of the MOEA/D.
+This update routine is intended to be used internally by the main \code{\link[=moead]{moead()}}
+function, and should not be called directly by the user.
 }
-\section{Parameters}{
-
-This routine receives a single input variable, \code{moead.env}, which is
-generated within the calling function \code{\link[=update_population]{update_population()}}. See
-the documentation of that function for more information.
-}
-
