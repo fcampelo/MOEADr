@@ -316,7 +316,7 @@ moead <- function(problem,      # List:  MObj problem
 
     # ========== Print
     # Echo whatever is demanded
-    print_progress(iter, time.start, showpars)
+    print_progress(iter.times, showpars)
   }
   # =========================== End Iterative cycle ========================== #
 

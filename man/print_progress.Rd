@@ -4,12 +4,10 @@
 \alias{print_progress}
 \title{Print progress of MOEA/D}
 \usage{
-print_progress(iter, time.start, showpars)
+print_progress(iter.times, showpars)
 }
 \arguments{
-\item{iter}{internal iteration counter of the \code{\link[=moead]{moead()}} routine.}
-
-\item{time.start}{internal starting time of the \code{\link[=moead]{moead()}} routine.}
+\item{iter.times}{vector of iteration times of the \code{\link[=moead]{moead()}} routine.}
 
 \item{showpars}{list object containing parameters that control the printed
 output of \code{\link[=moead]{moead()}}. Parameter \code{showpars} can have the

@@ -2,8 +2,7 @@
 #'
 #' Echoes progress of MOEA/D to the terminal for the MOEADr package
 #'
-#' @param iter internal iteration counter of the [moead()] routine.
-#' @param time.start internal starting time of the [moead()] routine.
+#' @param iter.times vector of iteration times of the [moead()] routine.
 #' @param showpars list object containing parameters that control the printed
 #'                 output of [moead()]. Parameter \code{showpars} can have the
 #'                 following key-value pairs:
@@ -17,10 +16,11 @@
 #'
 #' @export
 
-print_progress <- function(iter, time.start, showpars){
+print_progress <- function(iter.times, showpars){
 
   if(!any("show.iters" == names(showpars))) showpars$show.iters <- "numbers"
   if(!any("showevery" == names(showpars)))  showpars$showevery  <- 10
+  iter <- sum(iter.times != 0)
 
   assertthat::assert_that(
     assertthat::is.count(showpars$showevery),
@@ -35,9 +35,7 @@ print_progress <- function(iter, time.start, showpars){
       if (showpars$show.iters == "dots") cat(".")
       if (showpars$show.iters == "numbers") cat("\nIteration:", iter,
                                                 " | Elapsed time:",
-                                                difftime(Sys.time(),
-                                                         time.start,
-                                                         units = "secs"),
+                                                iter.times[iter],
                                                 "seconds")
     }
   }
