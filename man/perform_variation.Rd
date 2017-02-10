@@ -4,22 +4,19 @@
 \alias{perform_variation}
 \title{Run variation operators}
 \usage{
-perform_variation(X, P, B, W, variation, ...)
+perform_variation(variation, X, iter, ...)
 }
 \arguments{
-\item{X}{Population matrix of the MOEA/D (each row is a candidate solution).}
-
-\item{P}{Matrix of probabilities of selection for variation (created by
-\code{\link[=define_neighborhood]{define_neighborhood()}}).}
-
-\item{B}{Matrix of neighborhood indexes (created by \code{\link[=define_neighborhood]{define_neighborhood()}}).}
-
-\item{W}{matrix of weights (created by \code{\link[=generate_weights]{generate_weights()}}).}
-
 \item{variation}{List vector containing the variation operators to be used.
 See \code{\link[=moead]{moead()}} for details.}
 
-\item{...}{other parameters (included for compatibility with generic call)}
+\item{X}{Population matrix of the MOEA/D (each row is a candidate solution).}
+
+\item{iter}{iterations counter of the \code{\link[=moead]{moead()}} function.}
+
+\item{...}{other parameters to be passed down to the individual variation
+operators (see documentation of the specific \code{variation_}\strong{xyz}\code{()}
+functions for details)}
 }
 \value{
 List object containing a modified population matrix \code{X} and a

@@ -4,7 +4,7 @@
 \alias{variation_diffmut}
 \title{Differential Mutation}
 \usage{
-variation_diffmut(X, P, B, Phi, basis = "rand", call.env, ...)
+variation_diffmut(X, P, B, Phi, basis = "rand", ...)
 }
 \arguments{
 \item{X}{Population matrix}
@@ -28,10 +28,9 @@ neighborhood;
 neighborhood.
 }}
 
-\item{call.env}{list representing the environment of the base function
-\code{\link[=moead]{moead()}}, passed down from \code{\link[=perform_variation]{perform_variation()}}.}
-
-\item{...}{other parameters (included for compatibility with generic call)}
+\item{...}{other parameters to be passed down to specific options of basis
+vector generation (e.g., \code{Y}, \code{Yt}, \code{W}, \code{scaling} and \code{aggfun}, required
+when \code{basis = "wgi"}).}
 }
 \value{
 Matrix \code{X}' containing the mutated population

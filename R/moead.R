@@ -253,11 +253,8 @@ moead <- function(problem,      # List:  MObj problem
     Vt <- V
 
     # Perform variation
-    Xv <- perform_variation(X         = X,
-                            B         = B,
-                            P         = P,
-                            W         = W,
-                            variation = variation)
+    Xv      <- do.call(perform_variation,
+                       args = as.list(environment()))
     X       <- Xv$X
     ls.args <- Xv$ls.args
 
@@ -303,13 +300,16 @@ moead <- function(problem,      # List:  MObj problem
 
     # ========== Stop Criteria
     # Calculate iteration time
+    elapsed.time <- as.numeric(difftime(time1 = time.start,
+                                        time2 = Sys.time(),
+                                        units = "secs"))
     iter.times[iter] <- ifelse(iter == 1,
-                               as.numeric(difftime(time1 = Sys.time(),
-                                                   time2 = time.start,
-                                                   units = "secs")),
-                               as.numeric(difftime(time1 = Sys.time(),
-                                                   time2 = iter.times[iter - 1],
-                                                   units = "secs")))
+                               yes = as.numeric(elapsed.time),
+                               no  = as.numeric(elapsed.time) - sum(iter.times))
+    if (iter > 1){
+      iter.times[iter] <- iter.times[iter] - sum(iter.times[1:(iter - 1)])
+    }
+
     # Verify stop criteria
     keep.running <- check_stop_criteria(stopcrit = stopcrit,
                                         call.env = environment())

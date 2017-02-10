@@ -29,7 +29,7 @@
 stop_maxtime <- function(stopcrit, iter.times, ...){
   t.pars <- stopcrit[[which(sapply(stopcrit,
                                    function(x)x$name) == "maxtime")]]
-  assertthat::assert_that(assertthat::is.numeric(t.pars$maxtime),
+  assertthat::assert_that(is.numeric(t.pars$maxtime),
                           t.pars$maxtime > 0)
 
   elapsed.time       <- sum(iter.times)

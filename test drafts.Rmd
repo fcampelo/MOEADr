@@ -108,42 +108,38 @@ problem    <- list(name        = "ZDT1",
                      name    = "box_constraints",
                      epsilon = 0.05))
 
-decomp     <- list(name  = "SLD", H = 19)
-neighbors  <- list(name  = "lambda", T = 5, delta.p = 0.9)
+decomp     <- list(name  = "SLD", H = 99)
+neighbors  <- list(name  = "lambda", T = 20, delta.p = 0.9)
 aggfun     <- list(name  = "wt")
 variation  <- list(
                 list(name     = "sbx",
                      etax     = 20, pc = 1),
                 list(name     = "polymut",
                      etam     = 20, pm = 0.1),
-                list(name     = "truncate"),
-                list(name     = "localsearch",
-                     type     = "tpqa",
-                     tau.ls   = 5,
-                     truncate = TRUE))
-update     <- list(name  = "best", nr = 3, Tr = 4)
-scaling    <- list(name  = "none")
-constraint <- list(name = "vbr", type = "ts")
+                list(name     = "truncate"))
+update     <- list(name  = "standard")
+scaling    <- list(name  = "simple")
+constraint <- list(name = "none")
 stopcrit   <- list(
-  list(name = "maxiter", maxiter = 50))
+  list(name = "maxiter", maxiter = 200))
 showpars   <- list(show.iters = "numbers", showevery = 10)
-seed       <- NULL
+seed       <- 12345
 ```
 
 
 ```{r}
 ## 3: run MOEA/D
-out1 <- moead(problem,      # List:  MObj problem
-              decomp,       # List:  decomposition strategy
-              aggfun,       # List:  scalar aggregation function
-              neighbors,    # List:  neighborhood assignment strategy
-              variation,    # List:  variation operators
-              update,       # List:  update method
-              constraint,   # List:  constraint handling method
-              scaling,      # List:  objective scaling strategy
-              stopcrit,     # List:  stop criteria
-              showpars,     # List:  echoing behavior
-              seed = NULL)  # Seed for PRNG
+out1 <- moead(problem    = problem,
+              decomp     = decomp,
+              aggfun     = aggfun,
+              neighbors  = neighbors, 
+              variation  = variation, 
+              update     = update, 
+              constraint = constraint, 
+              scaling    = scaling,
+              stopcrit   = stopcrit, 
+              showpars   = showpars,
+              seed       = seed)  # Seed for PRNG
 
 # 4: Plot output
 plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)

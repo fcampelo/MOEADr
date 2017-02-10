@@ -32,6 +32,9 @@ Differential vector-based local search (DVLS) implementation for the MOEA/D
 \details{
 This routine implements the differential vector-based local search for
 the MOEADr package. Check the references for details.
+
+This routine is intended to be used internally by \code{\link[=variation_localsearch]{variation_localsearch()}},
+and should not be called directly by the user.
 }
 \section{References}{
 

@@ -15,27 +15,23 @@
 #' the specific operators being performed.
 #'
 #' @param X Population matrix of the MOEA/D (each row is a candidate solution).
-#' @param P Matrix of probabilities of selection for variation (created by
-#' [define_neighborhood()]).
-#' @param B Matrix of neighborhood indexes (created by [define_neighborhood()]).
-#' @param W matrix of weights (created by [generate_weights()]).
 #' @param variation List vector containing the variation operators to be used.
 #' See [moead()] for details.
-#' @param ... other parameters (included for compatibility with generic call)
+#' @param iter iterations counter of the [moead()] function.
+#' @param ... other parameters to be passed down to the individual variation
+#' operators (see documentation of the specific `variation_`**xyz**`()`
+#' functions for details)
 #'
 #' @return List object containing a modified population matrix `X` and a
 #' local search argument list `ls.arg`.
 #'
 #' @export
 
-perform_variation <- function(X, P, B, W, variation, ...){
+perform_variation <- function(variation, X, iter, ...){
 
-  # Get calling environment
-  call.env <- parent.frame()
-
-  # Preserve the original matrix (used in some variation operators such as
-  # binomial recombination)
-  Xt <- X
+  # Get all input parameters
+  # var.input.pars <- as.list(environment()) # <------ for debugging
+  var.input.pars <- as.list(sys.call())[-1]
 
   # Assert that all elements of "variation" have a "name" field
   .ignore <- lapply(variation,
@@ -48,10 +44,11 @@ perform_variation <- function(X, P, B, W, variation, ...){
   # and treat it accordingly
   lsi <- which(sapply(variation, FUN = function(x){x$name}) == "localsearch")
   if (length(lsi) == 0){
-    ls.args <- NULL
+    ls.args        <- NULL
+    variation.nols <- variation
   } else {
-    if("ls.args" %in% names(call.env)) {
-      ls.args <- call.env(ls.args)
+    if("ls.args" %in% names(var.input.pars)) {
+      ls.args <- var.input.pars$ls.args
     } else {
       ls.args      <- variation[[lsi]]
       valid.types  <- gsub(" ", "", get_localsearch_methods()[,1])
@@ -66,7 +63,7 @@ perform_variation <- function(X, P, B, W, variation, ...){
       if(is.null(ls.args$trunc.x))  ls.args$trunc.x  <- TRUE
 
       assertthat::assert_that(
-        assertthat::has_name(call.env, "iter"),
+        "iter" %in% names(var.input.pars),
         ls.args$type %in% valid.types,
         assertthat::is.count(ls.args$tau.ls),
         is_within(ls.args$gamma.ls, 0, 1, strict = FALSE),
@@ -77,13 +74,13 @@ perform_variation <- function(X, P, B, W, variation, ...){
     # ==========
 
     # Make the necessary preparations in the first iteration
-    if (call.env$iter == 1){
+    if (iter == 1){
       # Define iteration for the first occurrence of local search (if tau.ls is
       # defined). It never happens in the very first iteration.
       if (ls.args$unsync) {
-        first.ls <- 1 + sample.int(n       = ls.args$tau.ls - 1,
-                                   size    = nrow(X),
-                                   replace = TRUE)
+        first.ls <- sample.int(n       = ls.args$tau.ls - 1,
+                               size    = nrow(X),
+                               replace = TRUE)
       } else first.ls <- rep(ls.args$tau.ls,
                              times = nrow(X))
 
@@ -92,22 +89,18 @@ perform_variation <- function(X, P, B, W, variation, ...){
     }
 
     # remove local search from the general operator stack
-    variation[[lsi]] <- NULL
+    variation.nols <- variation[-lsi]
   }
   # ================== END LOCAL SEARCH SETUP ================== #
 
+
   # ========= PERFORM VARIATION (EXCEPT LOCAL SEARCH) ========== #
-  for (i in seq_along(variation)){
+  for (i in seq_along(variation.nols)){
     # Assemble function name
-    opname       <- paste0("variation_", variation[[i]]$name)
+    opname <- paste0("variation_", variation.nols[[i]]$name)
 
     # Update list of function inputs
-    varargs          <- variation[[i]]
-    varargs$X        <- X
-    varargs$Xt       <- Xt
-    varargs$P        <- P
-    varargs$B        <- B
-    varargs$call.env <- call.env
+    varargs <- c(var.input.pars, variation.nols[[i]])
 
     # Perform i-th variation operator
     X <- do.call(opname,
@@ -121,21 +114,24 @@ perform_variation <- function(X, P, B, W, variation, ...){
 
     # Flag subproblems that will undergo local search in a given iteration
     # (based on both the LS period and LS probability criteria)
-    which.tau   <- (call.env$iter + ls.args$first.ls - 1) %% ls.args$tau.ls == 0
+    # (local search never happens in the very first iteration)
+    which.tau   <- ((iter + ls.args$first.ls - 1) %% ls.args$tau.ls == 0)
     which.gamma <- stats::runif(nrow(X)) <= rep(ls.args$gamma.ls,
                                                 times = nrow(X))
-    which.x     <-  which.tau | which.gamma
+    which.x     <-  (which.tau | which.gamma) & (iter != 1)
 
-    # Prepare argument list for local search
-    varargs          <- c(ls.args, call.env)
-    varargs$which.x  <- which.x
+    if(any(which.x)){
+      # Prepare argument list for local search
+      var.args          <- c(var.input.pars, ls.args)
+      var.args$which.x  <- which.x
 
-    # Perform local search
-    Xls <- do.call("variation_localsearch",
-                   args = varargs)
+      # Perform local search
+      Xls <- do.call("variation_localsearch",
+                     args = var.args)
 
-    # Replace points that underwent local search
-    X[which.x, ] <- Xls[which.x, ]
+      # Replace points that underwent local search
+      X[which.x, ] <- Xls[which.x, ]
+    }
   }
 
   # Output

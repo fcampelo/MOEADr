@@ -31,20 +31,7 @@ Perform scalarization for the MOEADr package.
 }
 \details{
 This routine calculates the scalarized performance values for the MOEA/D.
-}
-\section{Parameters}{
 
-This routine receives two input variables:
-\itemize{
-\item \code{moead.env} is generated within the calling function
-\code{update_population()}. See \code{\link{update_population}} for more
-information.
-\item
-}
-
-The environment listed in \code{moead.env} must contain a variable
-\code{aggfun}, which provides the type of scalar aggregation function to be
-employed. The list of available scalarization methods can be generated using
+The list of available scalarization methods can be generated using
 \code{get_scalarization_methods()}
 }
-

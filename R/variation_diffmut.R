@@ -29,9 +29,9 @@
 #'          \item `basis = "wgi"`, for using the the weighted mean point of the
 #'                 neighborhood.
 #'        }
-#' @param call.env list representing the environment of the base function
-#' [moead()], passed down from [perform_variation()].
-#' @param ... other parameters (included for compatibility with generic call)
+#' @param ... other parameters to be passed down to specific options of basis
+#' vector generation (e.g., `Y`, `Yt`, `W`, `scaling` and `aggfun`, required
+#' when `basis = "wgi"`).
 #'
 #' @return Matrix `X`' containing the mutated population
 #'
@@ -44,7 +44,9 @@
 #'
 #' @export
 
-variation_diffmut <- function(X, P, B, Phi, basis = 'rand', call.env, ...){
+variation_diffmut <- function(X, P, B, Phi, basis = 'rand', ...){
+
+  input.pars <- as.list(sys.call())[-1]
 
   # ========== Error catching and default value definitions
   assertthat::assert_that(
@@ -85,13 +87,13 @@ variation_diffmut <- function(X, P, B, Phi, basis = 'rand', call.env, ...){
                            FUN    = mean) }))
   } else if (basis == "wgi"){
     # Calculate scalarized function values for each neighborhood
-    normYs <- scale_objectives(Y       = call.env$Y,
-                               Yt      = call.env$Yt,
-                               scaling = call.env$scaling)
-    bigZ   <- scalarize_values(normYs = normYs,
-                               W      = call.env$W,
-                               B      = B,
-                               aggfun = call.env$aggfun)
+    normYs <- scale_objectives(Y       = input.pars$Y,
+                               Yt      = input.pars$Yt,
+                               scaling = input.pars$scaling)
+    bigZ   <- scalarize_values(normYs  = normYs,
+                               W       = input.pars$W,
+                               B       = B,
+                               aggfun  = input.pars$aggfun)
 
     # Remove the last row, which refers to x_i^{(t-1)}
     bigZ <- t(bigZ[-nrow(bigZ), ])
