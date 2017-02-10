@@ -46,17 +46,17 @@ decomposition_msld <- function(decomp, ...){
     decomp$.nobj >= 2)
 
   # Calling SLD on each (h,tau) pair
-  W = mapply(decomp$H,
-             decomp$tau,
-             MoreArgs = list(decomp$.nobj),
-             FUN = function(h, t, nobj) {
+  W <- mapply(decomp$H,
+              decomp$tau,
+              MoreArgs = list(decomp$.nobj),
+              FUN = function(h, t, nobj) {
                 # building parameter list for decomposition_sld
                 x = list(H = h, .nobj = nobj)
                 l = decomposition_sld(x)
                 # scaling down vectors
                 l = l * t + (1 - t) / nobj
                 return(l)
-             })
+              })
 
   # putting the results together and fixing funky rownames
   if (is.list(W)) {W <- do.call(rbind, W)}

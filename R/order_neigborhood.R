@@ -47,7 +47,7 @@ order_neighborhood <- function(bigZ, B, V, Vt, constraint)
     sel.indx <- t(apply(bigZ,
                         MARGIN = 2,
                         FUN    = function (X) {
-                           unlist(as.matrix(sort.int(X,
+                          unlist(as.matrix(sort.int(X,
                                                     index.return = TRUE))[2])}))
     # Code snipped for getting vector of sorting indexes from
     # https://joelgranados.com/2011/03/01/r-finding-the-ordering-index-vector/
@@ -64,17 +64,17 @@ order_neighborhood <- function(bigZ, B, V, Vt, constraint)
     opname       <- paste0("constraint_", constraint$name)
 
     # Update list of function inputs
-    varargs      <- constraint
-    varargs$name <- NULL
-    varargs$B    <- B
-    varargs$bigZ <- bigZ
-    varargs$bigV <- bigV
-    varargs$V    <- V$v
-    varargs$Vt   <- Vt$v
+    ord.args      <- constraint
+    ord.args$name <- NULL
+    ord.args$B    <- B
+    ord.args$bigZ <- bigZ
+    ord.args$bigV <- bigV
+    ord.args$V    <- V$v
+    ord.args$Vt   <- Vt$v
 
     # call constraint handling method
     sel.indx <- do.call(opname,
-                        args = varargs)
+                        args = ord.args)
   }
 
   return(sel.indx)

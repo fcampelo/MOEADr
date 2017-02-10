@@ -206,10 +206,10 @@ moead <- function(problem,      # List:  MObj problem
   # ============ End Error catching and default value definitions ============ #
 
   # ============================= Algorithm setup ============================ #
-  set.seed(seed)              # set PRNG seed
-  nfe        <- 0             # set counter for function evaluations
-  time.start <- Sys.time()    # Store initial time
-  iter.times <- numeric(1000) # pre-allocate vector for iteration times.
+  set.seed(seed)               # set PRNG seed
+  nfe        <- 0              # counter for function evaluations
+  time.start <- Sys.time()     # Store initial time
+  iter.times <- numeric(10000) # pre-allocate vector for iteration times.
   # =========================== End Algorithm setup ========================== #
 
   # =========================== Initial definitions ========================== #
@@ -223,9 +223,12 @@ moead <- function(problem,      # List:  MObj problem
 
   # Evaluate population on objectives
   YV <- evaluate_population(X       = X,
-                            problem = problem)
-  Y  <- YV$Y
-  V  <- YV$V
+                            problem = problem,
+                            nfe     = nfe)
+  Y   <- YV$Y
+  V   <- YV$V
+  nfe <- YV$nfe
+
   # ========================= End Initial definitions ======================== #
 
   # ============================= Iterative cycle ============================ #
@@ -261,9 +264,11 @@ moead <- function(problem,      # List:  MObj problem
     # ========== Evaluation
     # Evaluate offspring population on objectives
     YV <- evaluate_population(X       = X,
-                              problem = problem)
-    Y <- YV$Y
-    V <- YV$V
+                              problem = problem,
+                              nfe     = nfe)
+    Y   <- YV$Y
+    V   <- YV$V
+    nfe <- YV$nfe
 
     # ========== Scalarization
     # Objective scaling and estimation of 'ideal' and 'nadir' points
@@ -293,7 +298,8 @@ moead <- function(problem,      # List:  MObj problem
 
     # ========== Update
     # Update population
-    XY <- update_population(call.env = environment())
+    XY <- do.call(update_population,
+                  args = as.list(environment()))
     X  <- XY$X
     Y  <- XY$Y
     V  <- XY$V

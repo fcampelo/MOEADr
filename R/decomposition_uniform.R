@@ -35,7 +35,7 @@ decomposition_uniform <- function(decomp, ...){
     assertthat::is.count(decomp$.nobj),
     decomp$N >= 3)
 
-  N <- decomp$N
+  N  <- decomp$N
   nf <- decomp$.nobj
 
   # 1. Calculate the non-factors of N

@@ -4,7 +4,8 @@
 \alias{ls_tpqa}
 \title{Three-point quadratic approximation local search}
 \usage{
-ls_tpqa(Xt, Yt, W, B, Vt, scaling, aggfun, constraint, epsilon, which.x, ...)
+ls_tpqa(Xt, Yt, W, B, Vt, scaling, aggfun, constraint, epsilon = 1e-06,
+  which.x, ...)
 }
 \arguments{
 \item{Xt}{Matrix of incumbent solutions}

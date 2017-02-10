@@ -16,16 +16,17 @@
 #' @param X Population matrix of the MOEA/D (each row is a candidate solution).
 #' @param problem list of named problem parameters. See Section
 #' `Problem Description` of the [moead()] documentation for details.
+#' @param nfe counter of function evaluations from the [moead()] routine.
 #'
-#' @return List object containing the matrix of objective function values and
+#' @return List object containing the matrix of objective function values,
 #' a list object containing information about the constraint violations (a
 #' matrix of constraint values `Cmatrix`, a matrix of constraint violations
-#' `Vmatrix`, and a vector of total violations `v`).
+#' `Vmatrix`, and a vector of total violations `v`), and the updated counter
+#' `nfe`.
 #'
 #' @export
 
-evaluate_population <- function(X,
-                                problem)
+evaluate_population <- function(X, problem, nfe)
 {
 
   # ========== Error catching and default value definitions
@@ -33,7 +34,9 @@ evaluate_population <- function(X,
   # create_population(), and will not be re-checked here.
   assertthat::assert_that(is.matrix(X),
                           is.numeric(X),
-                          ncol(X) == length(problem$xmax))
+                          ncol(X) == length(problem$xmax),
+                          nfe == as.integer(nfe),
+                          nfe >= 0)
 
   # ==========
 
@@ -89,9 +92,10 @@ evaluate_population <- function(X,
   }
 
   # Update evaluations counter in the calling environment
-  call.env     <- parent.frame()
-  call.env$nfe <- call.env$nfe + nrow(X)
+  nfe <- nfe + nrow(X)
 
-  R <- list(Y = Y, V = V)
+  R <- list(Y   = Y,
+            V   = V,
+            nfe = nfe)
   return(R)
 }

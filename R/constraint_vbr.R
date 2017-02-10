@@ -93,7 +93,7 @@ constraint_vbr <- function(bigZ, bigV, type = c("ts", "sr", "vt"), pf = NULL, ..
     )
 
   if (type == "sr"){
-    assertthat::assert_that("pf" %in% names(as.list(sys.call())[-1]),
+    assertthat::assert_that(is.numeric(pf),
                             is_within(pf, 0, 1, strict = FALSE))
   }
   # ==========
@@ -103,9 +103,9 @@ constraint_vbr <- function(bigZ, bigV, type = c("ts", "sr", "vt"), pf = NULL, ..
   cx <- switch(type,
         # TS: c(x) = FALSE \forall x
         ts = (bigV > Inf),
-        # SR: c(x) = runif() <= pf
+        # SR: c(x) = (runif() <= pf)
         sr = (randM(bigV) <= pf),
-        # VT: c(x) = v(x) <= eps_v
+        # VT: c(x) = (v(x) <= eps_v)
         vt = (bigV <= (colSums(feasible) / (nrow(bigV) ^ 2)) * colSums(bigV)))
 
   # Points to be compared using f^{agg}
@@ -113,10 +113,10 @@ constraint_vbr <- function(bigZ, bigV, type = c("ts", "sr", "vt"), pf = NULL, ..
 
   # Create the matrix of performance for feasible indexes,
   # and of violation for infeasible indexes.
-  bigF  <- bigZ
-  bigIF <- bigV
+  bigF        <- bigZ
+  bigI        <- bigV
   bigF[!useF] <- NA
-  bigIF[useF] <- NA
+  bigI[useF]  <- NA
 
   # Sort the feasible and infeasible matrixes, putting
   # all NAs in the back or front, respectively
@@ -125,16 +125,16 @@ constraint_vbr <- function(bigZ, bigV, type = c("ts", "sr", "vt"), pf = NULL, ..
                    FUN     = order,
                    na.last = TRUE))
 
-  indxIF <- t(apply(bigIF,
+  indxI <- t(apply(bigI,
                     MARGIN  = 2,
                     FUN     = order,
                     na.last = FALSE))
 
-  # Merge feasible and unfeasible matrixes, using NAs as
-  # a mask.
+  # Merge feasible and unfeasible matrixes
   indx.joint <- t(sapply(1:ncol(bigZ),
-                         function(i) { (indxIF[i, ] * !is.na(bigIF[indxIF[i, ], i])) +
-                                       (indxF[i,]   * !is.na(bigF[indxF[i, ], i])) }
+                         function(i) {
+                           (indxI[i, ] * !is.na(bigI[indxI[i, ], i])) +
+                             (indxF[i,]   * !is.na(bigF[indxF[i, ], i])) }
                          ))
 
   return(indx.joint)

@@ -4,19 +4,22 @@
 \alias{evaluate_population}
 \title{Evaluate population}
 \usage{
-evaluate_population(X, problem)
+evaluate_population(X, problem, nfe)
 }
 \arguments{
 \item{X}{Population matrix of the MOEA/D (each row is a candidate solution).}
 
 \item{problem}{list of named problem parameters. See Section
 \code{Problem Description} of the \code{\link[=moead]{moead()}} documentation for details.}
+
+\item{nfe}{counter of function evaluations from the \code{\link[=moead]{moead()}} routine.}
 }
 \value{
-List object containing the matrix of objective function values and
+List object containing the matrix of objective function values,
 a list object containing information about the constraint violations (a
 matrix of constraint values \code{Cmatrix}, a matrix of constraint violations
-\code{Vmatrix}, and a vector of total violations \code{v}).
+\code{Vmatrix}, and a vector of total violations \code{v}), and the updated counter
+\code{nfe}.
 }
 \description{
 Evaluate a population matrix on the objective functions for the MOEADr

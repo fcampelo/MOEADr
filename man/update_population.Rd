@@ -4,10 +4,15 @@
 \alias{update_population}
 \title{Update population}
 \usage{
-update_population(call.env)
+update_population(update, ...)
 }
 \arguments{
-\item{call.env}{calling environment (generated using, e.g., \code{\link[=environment]{environment()}}.}
+\item{update}{List containing the population update parameters. See
+Section \code{Update Strategies} of the \code{\link[=moead]{moead()}} documentation for
+details.}
+
+\item{...}{other parameters to be passed down to the specific
+\code{updt_}\strong{xyz}\code{()} routines.}
 }
 \value{
 List object containing the updated values of the population matrix
