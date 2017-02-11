@@ -125,16 +125,16 @@
 #' ## 1: prepare test problem
 #' library(smoof)
 #' ZDT1 <- make_vectorized_smoof(prob.name  = "ZDT1",
-#'                               dimensions = 30)
+#'                               dimensions = 3)
 #'
 #' ## 2: set input parameters
 #' problem   <- list(name       = "ZDT1",
-#'                   xmin       = rep(0, 30),
-#'                   xmax       = rep(1, 30),
+#'                   xmin       = rep(0, 3),
+#'                   xmax       = rep(1, 3),
 #'                   m          = 2)
-#' decomp    <- list(name       = "SLD", H = 99)
+#' decomp    <- list(name       = "SLD", H = 19)
 #' neighbors <- list(name       = "lambda",
-#'                   T          = 20,
+#'                   T          = 5,
 #'                   delta.p    = 1)
 #' aggfun    <- list(name       = "wt")
 #' variation <- list(list(name  = "sbx",
@@ -143,10 +143,10 @@
 #'                        etam  = 20, pm = 0.1),
 #'                   list(name  = "truncate"))
 #' update    <- list(name       = "standard")
-#' scaling   <- list(name       = "simple")
+#' scaling   <- list(name       = "none")
 #' constraint<- list(name       = "none")
 #' stopcrit  <- list(list(name  = "maxiter",
-#'                     maxiter  = 200))
+#'                     maxiter  = 100))
 #' showpars  <- list(show.iters = "numbers",
 #'                   showevery  = 10)
 #' seed      <- NULL

@@ -95,16 +95,18 @@ perform_variation <- function(variation, X, iter, ...){
 
 
   # ========= PERFORM VARIATION (EXCEPT LOCAL SEARCH) ========== #
+  X                <- var.input.pars$X
+  var.input.pars$X <- NULL
   for (i in seq_along(variation.nols)){
     # Assemble function name
     opname <- paste0("variation_", variation.nols[[i]]$name)
 
     # Update list of function inputs
-    varargs <- c(var.input.pars, variation.nols[[i]])
+    var.args <- c(var.input.pars, variation.nols[[i]], list(X = X))
 
     # Perform i-th variation operator
     X <- do.call(opname,
-                 args = varargs)
+                 args = var.args)
   }
   # ============ END VARIATION (EXCEPT LOCAL SEARCH) ============= #
 
@@ -122,12 +124,12 @@ perform_variation <- function(variation, X, iter, ...){
 
     if(any(which.x)){
       # Prepare argument list for local search
-      var.args          <- c(var.input.pars, ls.args)
-      var.args$which.x  <- which.x
+      ls.args          <- c(var.input.pars, ls.args)
+      ls.args$which.x  <- which.x
 
       # Perform local search
       Xls <- do.call("variation_localsearch",
-                     args = var.args)
+                     args = ls.args)
 
       # Replace points that underwent local search
       X[which.x, ] <- Xls[which.x, ]

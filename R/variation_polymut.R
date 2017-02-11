@@ -59,10 +59,10 @@ variation_polymut <- function(X, etam, pm, eps = 1e-6, ...){
   Deltaq <- calc_Deltaq(X, etam)
 
   # Update mutated population
-  V <- X * (!R) + (X + Deltaq) * R
+  Xp <- X * (!R) + (X + Deltaq) * R
 
   # Return de-standardized results
-  return(minP + V * (maxP - minP))
+  return(minP + Xp * (maxP - minP + eps))
 }
 
 

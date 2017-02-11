@@ -102,7 +102,7 @@ variation_sbx <- function(X, P, etax, pc = 1, eps = 1e-6, ...){
   V <- V1 * S + V2 * !S
 
   # Return de-standardized results
-  return(minP + V * (maxP - minP))
+  return(minP + V * (maxP - minP + eps))
 }
 
 
