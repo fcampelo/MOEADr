@@ -125,16 +125,16 @@
 #' ## 1: prepare test problem
 #' library(smoof)
 #' ZDT1 <- make_vectorized_smoof(prob.name  = "ZDT1",
-#'                               dimensions = 3)
+#'                               dimensions = 30)
 #'
 #' ## 2: set input parameters
 #' problem   <- list(name       = "ZDT1",
-#'                   xmin       = rep(0, 3),
-#'                   xmax       = rep(1, 3),
+#'                   xmin       = rep(0, 30),
+#'                   xmax       = rep(1, 30),
 #'                   m          = 2)
-#' decomp    <- list(name       = "SLD", H = 19)
+#' decomp    <- list(name       = "SLD", H = 99)
 #' neighbors <- list(name       = "lambda",
-#'                   T          = 5,
+#'                   T          = 20,
 #'                   delta.p    = 1)
 #' aggfun    <- list(name       = "wt")
 #' variation <- list(list(name  = "sbx",
@@ -306,15 +306,12 @@ moead <- function(problem,      # List:  MObj problem
 
     # ========== Stop Criteria
     # Calculate iteration time
-    elapsed.time <- as.numeric(difftime(time1 = time.start,
-                                        time2 = Sys.time(),
+    elapsed.time <- as.numeric(difftime(time1 = Sys.time(),
+                                        time2 = time.start,
                                         units = "secs"))
     iter.times[iter] <- ifelse(iter == 1,
                                yes = as.numeric(elapsed.time),
                                no  = as.numeric(elapsed.time) - sum(iter.times))
-    if (iter > 1){
-      iter.times[iter] <- iter.times[iter] - sum(iter.times[1:(iter - 1)])
-    }
 
     # Verify stop criteria
     keep.running <- check_stop_criteria(stopcrit = stopcrit,
