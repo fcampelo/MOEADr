@@ -10,9 +10,6 @@
 #' conditions (period of occurrence or probability of occurrence) are verified.
 #' See [variation_localsearch()] for details.
 #'
-#' **Warning**: this routine (and the ones called within it) may access (but
-#' not directly modify) variables from the calling environment, depending on
-#' the specific operators being performed.
 #'
 #' @param X Population matrix of the MOEA/D (each row is a candidate solution).
 #' @param variation List vector containing the variation operators to be used.

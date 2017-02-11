@@ -33,8 +33,4 @@ list of available variation operators can be generated using
 If the \code{localsearch} operator is included, it is executed whenever its
 conditions (period of occurrence or probability of occurrence) are verified.
 See \code{\link[=variation_localsearch]{variation_localsearch()}} for details.
-
-\strong{Warning}: this routine (and the ones called within it) may access (but
-not directly modify) variables from the calling environment, depending on
-the specific operators being performed.
 }

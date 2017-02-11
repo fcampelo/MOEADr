@@ -6,28 +6,28 @@
 #' based on decomposition - MOEA/D.
 #'
 #' @section Problem Description:
-#' The \code{problem} parameter consists of a list with all necessary
+#' The `problem` parameter consists of a list with all necessary
 #' definitions for the multiobjective optimization problem to be solved.
-#' \code{problem} must contain at least the following fields:
-#'    - \code{$name} - name of the problem instance function, that is, a routine
+#' `problem` must contain at least the following fields:
+#'    - `problem$name`: name of the problem instance function, that is, a routine
 #'    that calculates **Y** = **f**(**X**);
-#'    - \code{$xmin} - vector of lower bounds of each variable
-#'    - \code{$xmax} - vector of upper bounds of each variable
-#'    - \code{$m}    - integer containing the number of objectives
+#'    - `problem$xmin`: vector of lower bounds of each variable
+#'    - `problem$xmax`: vector of upper bounds of each variable
+#'    - `problem$m`:  integer containing the number of objectives
 #'
-#' Besides these fields, \code{problem} should contain any other relevant inputs
-#' for the routine listed in \code{$name}. \code{problem} may also contain the
-#' (optional) field \code{problem$constraints}, which is a list object
+#' Besides these fields, `problem` should contain any other relevant inputs
+#' for the routine listed in `$name`. `problem` may also contain the
+#' (optional) field `problem$constraints`, which is a list object
 #' containing information about the problem constraints. If present, this list
 #' must have the following fields:
-#'    - \code{$constraints$name} - (required) name of the function that
+#'    - `problem$constraints$name` - (required) name of the function that
 #'        calculates the constraint values (see below for details)
-#'    - \code{$constraints$epsilon} - (optional) a small non-negative value
+#'    - `problem$constraints$epsilon` - (optional) a small non-negative value
 #'        indicating the tolerance to be considered for equality constraints.
 #'        Defaults to zero.
 #'
-#' Besides these fields, \code{problem$constraint} should contain any other
-#' relevant inputs for the routine listed in \code{problem$constraint$name}.
+#' Besides these fields, `problem$constraint` should contain any other
+#' relevant inputs for the routine listed in `problem$constraint$name`.
 #'
 #' Detailed instructions for defining the routines for calculating the
 #' objective and constraint functions are provided in the vignette
@@ -35,59 +35,88 @@
 #' details.
 #'
 #' @section Decomposition Methods:
-#' The \code{decomp} parameter defines the method to be used for the
-#' generation of the weight vectors. \code{decomp} must have
-#' at least the \code{$name} parameter. Currently implemented methods can be
-#' verified using \code{get_decomposition_methods()}. Check
+#' The `decomp` parameter is a list that defines the method to be used for the
+#' generation of the weight vectors. `decomp` must have
+#' at least the `$name` parameter. Currently available methods can be
+#' verified using [get_decomposition_methods()]. Check
 #' [generate_weights()] and the information provided by
 #' [get_decomposition_methods()] for more details.
 #'
 #' @section Neighborhood Strategies:
-#' The \code{neighbors} parameter defines the method for defining the
-#' neighborhood relations among subproblems. \code{neighbors} must have
-#' at least three parameters: \code{neighbors$name}, \code{neighbors$T}, and
-#' \code{neighbors$delta.p}.
-#' \code{neighbors$name} defines the strategy used to define the neighborhoods.
-#' Currently available methods are:
-#' \itemize{
-#'    \item \code{$name = "lambda"}: uses the distances between
-#'    weight vectors. The calculation is performed only once for the entire run,
-#'    since the weight vectors are assumed static.
-#'    \item \code{$name = "x"}: uses the distances between the
-#'    incumbent solutions associated with each subproblem. In this case the
-#'    calculation is performed at each iteration, since incumbent solutions may
-#'    change.
-#' }
-#'
-#' \code{neighbors$T} defines the neighborhood size. This parameter must receive
+#' The `neighbors` parameter is a list that defines the method for defining the
+#' neighborhood relations among subproblems. `neighbors` must have
+#' at least three parameters:
+#' - `neighbors$name`, name of the strategy used to define the neighborhoods.
+#'     Currently available methods are:
+#'         - `$name = "lambda"`: uses the distances between weight vectors.
+#'            The calculation is performed only once for the entire run,
+#'            since the weight vectors are assumed static.
+#'         - `$name = "x"`: uses the distances between the incumbent solutions
+#'            associated with each subproblem. In this case the calculation is
+#'            performed at each iteration, since incumbent solutions may change.
+#' - `neighbors$T`: defines the neighborhood size. This parameter must receive
 #' a value smaller than the number of subproblems defined for the MOEA/D.
+#' - `neighbors$delta.p`: parameter that defines the probability of sampling
+#' from the neighborhood when performing variation.
 #'
-#' Finally, \code{neightbors$delta.p} is the parameter that defines the
-#' probability of sampling from the neighborhood when performing variation.
-#'
-#' Check \code{\link{define_neighborhood}} for more details.
+#' Check [define_neighborhood()] for more details.
 #'
 #'
 #' @section Variation Operators:
-#' TODO
+#' The `variation` parameter consists of a list vector, in which each
+#' sublist defines a variation operator to be used as part of the variation
+#' block. Each sublist must have at least a field `$name`, containing the name
+#' of the `i`-th variation operator to be applied. Use
+#' [get_variation_operators()] to generate a list of available operators, and
+#' consult the vignette `Variation Stack in the MOEADr Package` for more
+#' details.
 #'
 #' @section Scalar Aggregation Functions:
-#' TODO
+#' The `aggfun` parameter is a list that defines the scalar aggregation function
+#' to be used. `aggfun` must have at least the `$name` parameter. Currently
+#' available methods can be verified using [get_scalarization_methods()]. Check
+#' [scalarize_values()] and the information provided by
+#' [get_scalarization_methods()] for more details.
 #'
 #' @section Update Methods:
-#' TODO
+#' The `update` parameter is a list that defines the population update strategy
+#' to be used. `update` must have at least the `$name` parameter. Currently
+#' available methods can be verified using [get_update_methods()]. Check
+#' [update_population()] and the information provided by
+#' [get_update_methods()] for more details.
 #'
 #' @section Constraint Handling Methods:
-#' TODO
+#' The `constraint` parameter is a list that defines the constraint-handling
+#' technique to be used. `constraint` must have at least the `$name` parameter.
+#' Currently available methods can be verified using [get_constraint_methods()].
+#' Check [update_population()] and the information provided by
+#' [get_constraint_methods()] for more details.
 #'
 #' @section Objective Scaling:
-#' TODO
+#' Objective scaling refers to the re-scaling of the objective values at each
+#' iteration, which is generally considered to prevent problems arising from
+#' differently-scaled objective functions. `scaling` is a list that must have
+#' at least the `$name` parameter. Currently available options are
+#' `$name = "none"`, which does not perform any scaling, and `$name = "simple"`,
+#' which performs a simple linear scaling of the objectives to the interval
+#' `[0, 1]`.
 #'
 #' @section Stop Criteria:
-#' TODO
+#' The `stopcrit` parameter consists of a list vector, in which each
+#' sublist defines a termination criterion to be used for the MOEA/D. Each
+#' sublist must have at least a field `$name`, containing the name of the
+#' `i`-th criterion to be verified. The iterative cycle of the MOEA/D is
+#' terminated whenever any criterion is met. Use [get_stop_criteria()] to
+#' generate a list of available criteria, and check the information provided by
+#' that function for more details.
 #'
 #' @section Echoing Options:
-#' TODO
+#' The `showpars` parameter is a list that defines the echoing options of the
+#' MOEA/D. `showpars` must contain two fields:
+#' - `showpars$show.iters`, defining the type of echoing output. `$show.iters`
+#' can be set as `"none"`, `"numbers"`, or `"dots"`.
+#' - `showpars$showevery`, defining the period of echoing (in iterations).
+#' `$showevery` must be a positive integer.
 #'
 #' @section References:
 #' F. Campelo, L.S. Batista, C. Aranha:
@@ -160,7 +189,7 @@
 #'
 #'
 #' # Rerun with standard DE variation operators (rand mutation + binomial
-#' # recombination)
+#' # recombination), plus truncation to the [0, 1] interval
 #' variation <- list(list(name  = "diffmut",
 #'                        basis = "rand",
 #'                        Phi   = NULL),

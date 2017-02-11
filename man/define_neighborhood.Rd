@@ -41,6 +41,6 @@ Calculates neighborhood relations for the MOEADr package
 \details{
 This routine calculates the neighborhood relations for the MOEA/D.
 
-\strong{Warning}: this routine may access (but not directly modify) matrices
-\code{B} and \code{P} from the calling environment (see section \code{Value} for details).
+\strong{Warning}: this routine may access (but not directly modify) variables
+from the calling environment.
 }

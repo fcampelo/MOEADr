@@ -54,11 +54,11 @@ The \code{problem} parameter consists of a list with all necessary
 definitions for the multiobjective optimization problem to be solved.
 \code{problem} must contain at least the following fields:
 \itemize{
-\item \code{$name} - name of the problem instance function, that is, a routine
+\item \code{problem$name}: name of the problem instance function, that is, a routine
 that calculates \strong{Y} = \strong{f}(\strong{X});
-\item \code{$xmin} - vector of lower bounds of each variable
-\item \code{$xmax} - vector of upper bounds of each variable
-\item \code{$m}    - integer containing the number of objectives
+\item \code{problem$xmin}: vector of lower bounds of each variable
+\item \code{problem$xmax}: vector of upper bounds of each variable
+\item \code{problem$m}:  integer containing the number of objectives
 }
 
 Besides these fields, \code{problem} should contain any other relevant inputs
@@ -67,9 +67,9 @@ for the routine listed in \code{$name}. \code{problem} may also contain the
 containing information about the problem constraints. If present, this list
 must have the following fields:
 \itemize{
-\item \code{$constraints$name} - (required) name of the function that
+\item \code{problem$constraints$name} - (required) name of the function that
 calculates the constraint values (see below for details)
-\item \code{$constraints$epsilon} - (optional) a small non-negative value
+\item \code{problem$constraints$epsilon} - (optional) a small non-negative value
 indicating the tolerance to be considered for equality constraints.
 Defaults to zero.
 }
@@ -85,74 +85,107 @@ details.
 
 \section{Decomposition Methods}{
 
-The \code{decomp} parameter defines the method to be used for the
+The \code{decomp} parameter is a list that defines the method to be used for the
 generation of the weight vectors. \code{decomp} must have
-at least the \code{$name} parameter. Currently implemented methods can be
-verified using \code{get_decomposition_methods()}. Check
+at least the \code{$name} parameter. Currently available methods can be
+verified using \code{\link[=get_decomposition_methods]{get_decomposition_methods()}}. Check
 \code{\link[=generate_weights]{generate_weights()}} and the information provided by
 \code{\link[=get_decomposition_methods]{get_decomposition_methods()}} for more details.
 }
 
 \section{Neighborhood Strategies}{
 
-The \code{neighbors} parameter defines the method for defining the
+The \code{neighbors} parameter is a list that defines the method for defining the
 neighborhood relations among subproblems. \code{neighbors} must have
-at least three parameters: \code{neighbors$name}, \code{neighbors$T}, and
-\code{neighbors$delta.p}.
-\code{neighbors$name} defines the strategy used to define the neighborhoods.
-Currently available methods are:
+at least three parameters:
 \itemize{
-\item \code{$name = "lambda"}: uses the distances between
-weight vectors. The calculation is performed only once for the entire run,
+\item \code{neighbors$name}, name of the strategy used to define the neighborhoods.
+Currently available methods are:
+- \code{$name = "lambda"}: uses the distances between weight vectors.
+The calculation is performed only once for the entire run,
 since the weight vectors are assumed static.
-\item \code{$name = "x"}: uses the distances between the
-incumbent solutions associated with each subproblem. In this case the
-calculation is performed at each iteration, since incumbent solutions may
-change.
+- \code{$name = "x"}: uses the distances between the incumbent solutions
+associated with each subproblem. In this case the calculation is
+performed at each iteration, since incumbent solutions may change.
+\item \code{neighbors$T}: defines the neighborhood size. This parameter must receive
+a value smaller than the number of subproblems defined for the MOEA/D.
+\item \code{neighbors$delta.p}: parameter that defines the probability of sampling
+from the neighborhood when performing variation.
 }
 
-\code{neighbors$T} defines the neighborhood size. This parameter must receive
-a value smaller than the number of subproblems defined for the MOEA/D.
-
-Finally, \code{neightbors$delta.p} is the parameter that defines the
-probability of sampling from the neighborhood when performing variation.
-
-Check \code{\link{define_neighborhood}} for more details.
+Check \code{\link[=define_neighborhood]{define_neighborhood()}} for more details.
 }
 
 \section{Variation Operators}{
 
-TODO
+The \code{variation} parameter consists of a list vector, in which each
+sublist defines a variation operator to be used as part of the variation
+block. Each sublist must have at least a field \code{$name}, containing the name
+of the \code{i}-th variation operator to be applied. Use
+\code{\link[=get_variation_operators]{get_variation_operators()}} to generate a list of available operators, and
+consult the vignette \code{Variation Stack in the MOEADr Package} for more
+details.
 }
 
 \section{Scalar Aggregation Functions}{
 
-TODO
+The \code{aggfun} parameter is a list that defines the scalar aggregation function
+to be used. \code{aggfun} must have at least the \code{$name} parameter. Currently
+available methods can be verified using \code{\link[=get_scalarization_methods]{get_scalarization_methods()}}. Check
+\code{\link[=scalarize_values]{scalarize_values()}} and the information provided by
+\code{\link[=get_scalarization_methods]{get_scalarization_methods()}} for more details.
 }
 
 \section{Update Methods}{
 
-TODO
+The \code{update} parameter is a list that defines the population update strategy
+to be used. \code{update} must have at least the \code{$name} parameter. Currently
+available methods can be verified using \code{\link[=get_update_methods]{get_update_methods()}}. Check
+\code{\link[=update_population]{update_population()}} and the information provided by
+\code{\link[=get_update_methods]{get_update_methods()}} for more details.
 }
 
 \section{Constraint Handling Methods}{
 
-TODO
+The \code{constraint} parameter is a list that defines the constraint-handling
+technique to be used. \code{constraint} must have at least the \code{$name} parameter.
+Currently available methods can be verified using \code{\link[=get_constraint_methods]{get_constraint_methods()}}.
+Check \code{\link[=update_population]{update_population()}} and the information provided by
+\code{\link[=get_constraint_methods]{get_constraint_methods()}} for more details.
 }
 
 \section{Objective Scaling}{
 
-TODO
+Objective scaling refers to the re-scaling of the objective values at each
+iteration, which is generally considered to prevent problems arising from
+differently-scaled objective functions. \code{scaling} is a list that must have
+at least the \code{$name} parameter. Currently available options are
+\code{$name = "none"}, which does not perform any scaling, and \code{$name = "simple"},
+which performs a simple linear scaling of the objectives to the interval
+\code{[0, 1]}.
 }
 
 \section{Stop Criteria}{
 
-TODO
+The \code{stopcrit} parameter consists of a list vector, in which each
+sublist defines a termination criterion to be used for the MOEA/D. Each
+sublist must have at least a field \code{$name}, containing the name of the
+\code{i}-th criterion to be verified. The iterative cycle of the MOEA/D is
+terminated whenever any criterion is met. Use \code{\link[=get_stop_criteria]{get_stop_criteria()}} to
+generate a list of available criteria, and check the information provided by
+that function for more details.
 }
 
 \section{Echoing Options}{
 
-TODO
+The \code{showpars} parameter is a list that defines the echoing options of the
+MOEA/D. \code{showpars} must contain two fields:
+\itemize{
+\item \code{showpars$show.iters}, defining the type of echoing output. \code{$show.iters}
+can be set as \code{"none"}, \code{"numbers"}, or \code{"dots"}.
+\item \code{showpars$showevery}, defining the period of echoing (in iterations).
+\code{$showevery} must be a positive integer.
+}
 }
 
 \section{References}{
@@ -186,10 +219,10 @@ variation <- list(list(name  = "sbx",
                        etam  = 20, pm = 0.1),
                   list(name  = "truncate"))
 update    <- list(name       = "standard")
-scaling   <- list(name       = "simple")
+scaling   <- list(name       = "none")
 constraint<- list(name       = "none")
 stopcrit  <- list(list(name  = "maxiter",
-                    maxiter  = 200))
+                    maxiter  = 100))
 showpars  <- list(show.iters = "numbers",
                   showevery  = 10)
 seed      <- NULL
@@ -203,7 +236,7 @@ plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)
 
 
 # Rerun with standard DE variation operators (rand mutation + binomial
-# recombination)
+# recombination), plus truncation to the [0, 1] interval
 variation <- list(list(name  = "diffmut",
                        basis = "rand",
                        Phi   = NULL),

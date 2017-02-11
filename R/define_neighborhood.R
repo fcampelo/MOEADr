@@ -4,8 +4,8 @@
 #'
 #' This routine calculates the neighborhood relations for the MOEA/D.
 #'
-#' **Warning**: this routine may access (but not directly modify) matrices
-#' `B` and `P` from the calling environment (see section `Value` for details).
+#' **Warning**: this routine may access (but not directly modify) variables
+#' from the calling environment.
 #'
 #' @param neighbors List containing the decomposition method parameters.
 #'  This list must contain the following key-value pairs:

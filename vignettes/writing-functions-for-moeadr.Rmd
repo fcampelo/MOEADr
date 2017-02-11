@@ -19,6 +19,7 @@ The modular implementation provided in this package provides control over the fo
 - *neighbors*, the neighborhood assignment strategy
 - *variation*, the variation operators used
 - *update*, the population update method
+- *constraint*, the constraint-handling method
 - *scaling*, the strategy used for objective scaling 
 - *stopcrit*, the stop criteria used by the algorithm
 
