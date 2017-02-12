@@ -40,17 +40,21 @@ variation_polymut <- function(X, etam, pm, eps = 1e-6, ...){
     is.numeric(pm) && is_within(pm, 0, 1, strict = FALSE))
   # ==========
 
-  # Standardize population matrix
-  dimX <- dim(X)
-  minP <- matrix(getminP(X),
-                 nrow  = dimX[1],
-                 ncol  = dimX[2],
-                 byrow = TRUE)
-  maxP <- matrix(getmaxP(X),
-                 nrow  = dimX[1],
-                 ncol  = dimX[2],
-                 byrow = TRUE)
-  X <- (X - minP) / (maxP - minP + eps)
+  nflag <- FALSE
+  if(!is_within(X, 0, 1, strict = FALSE)){
+    # Standardize population matrix
+    dimX <- dim(X)
+    minP <- matrix(getminP(X),
+                   nrow  = dimX[1],
+                   ncol  = dimX[2],
+                   byrow = TRUE)
+    maxP <- matrix(getmaxP(X),
+                   nrow  = dimX[1],
+                   ncol  = dimX[2],
+                   byrow = TRUE)
+    X <- (X - minP) / (maxP - minP + eps)
+    nflag <- TRUE
+  }
 
   # Define positions that will be mutated
   R <- randM(X) <= pm
@@ -61,8 +65,12 @@ variation_polymut <- function(X, etam, pm, eps = 1e-6, ...){
   # Update mutated population
   Xp <- X * (!R) + (X + Deltaq) * R
 
-  # Return de-standardized results
-  return(minP + Xp * (maxP - minP + eps))
+  # Return (de-standardized, if needed) results
+  if (nflag){
+    return(minP + Xp * (maxP - minP + eps))
+  } else {
+    return(Xp)
+  }
 }
 
 

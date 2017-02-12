@@ -5,7 +5,7 @@
 \title{Best Neighborhood Replacement Update for MOEA/D}
 \usage{
 updt_best(update, X, Xt, Y, Yt, V, Vt, sel.indx, normYs, W, BP, constraint,
-  aggfun)
+  aggfun, ...)
 }
 \arguments{
 \item{update}{List containing the population update parameters. See

@@ -53,7 +53,7 @@
 #' constraint value list (`V`).
 
 updt_best <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx,
-                      normYs, W, BP, constraint, aggfun){
+                      normYs, W, BP, constraint, aggfun, ...){
 
   ## Verify that the necessary parameters exist.
   assertthat::assert_that(

@@ -45,18 +45,6 @@ variation_sbx <- function(X, P, etax, pc = 1, eps = 1e-6, ...){
     is.numeric(eps) && eps > 0)
   # ==========
 
-  # Standardize population matrix
-  dimX <- dim(X)
-  minP <- matrix(getminP(X),
-                 nrow  = dimX[1],
-                 ncol  = dimX[2],
-                 byrow = TRUE)
-  maxP <- matrix(getmaxP(X),
-                 nrow  = dimX[1],
-                 ncol  = dimX[2],
-                 byrow = TRUE)
-  X <- (X - minP) / (maxP - minP + eps)
-
   # Draw crossover pairs: for the i-th candidate solution, get two mutually
   # exclusive points according to the probabilities given in P[i, ].
   np <- nrow(X)
@@ -75,8 +63,8 @@ variation_sbx <- function(X, P, etax, pc = 1, eps = 1e-6, ...){
   R <- (randM(X) <= pc) & (abs(X1 - X2) > eps)
 
   # Initialize recombined solutions
-  V1 <- X1 * !R
-  V2 <- X2 * !R
+  Xp1 <- X1 * !R
+  Xp2 <- X2 * !R
 
   # Get ordered values
   U1 <- pmin(X1, X2)
@@ -89,8 +77,8 @@ variation_sbx <- function(X, P, etax, pc = 1, eps = 1e-6, ...){
   Betaq2 <- calc_Betaq(1 + 2 * (1 - U2) / Ur, etax)
 
   # Generate offspring
-  V1 <- V1 + 0.5 * R * (X1 + X2 - Betaq1 * Ur)
-  V2 <- V2 + 0.5 * R * (X1 + X2 + Betaq2 * Ur)
+  Xp1 <- Xp1 + 0.5 * R * (X1 + X2 - Betaq1 * Ur)
+  Xp2 <- Xp2 + 0.5 * R * (X1 + X2 + Betaq2 * Ur)
 
   # Indicator matrix to randomly return v1 or v2 in each row.
   S <- matrix(stats::runif(nrow(X)) <= 0.5,
@@ -99,10 +87,10 @@ variation_sbx <- function(X, P, etax, pc = 1, eps = 1e-6, ...){
               byrow = FALSE)
 
   # Update recombined population
-  V <- V1 * S + V2 * !S
+  Xp <- Xp1 * S + Xp2 * !S
 
-  # Return de-standardized results
-  return(minP + V * (maxP - minP + eps))
+  # Return
+  return(Xp)
 }
 
 

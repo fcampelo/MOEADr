@@ -222,8 +222,8 @@ update    <- list(name       = "standard")
 scaling   <- list(name       = "none")
 constraint<- list(name       = "none")
 stopcrit  <- list(list(name  = "maxiter",
-                    maxiter  = 100))
-showpars  <- list(show.iters = "numbers",
+                    maxiter  = 200))
+showpars  <- list(show.iters = "dots",
                   showevery  = 10)
 seed      <- NULL
 
@@ -235,13 +235,15 @@ out1 <- moead(problem, decomp,  aggfun, neighbors, variation, update,
 plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)
 
 
-# Rerun with standard DE variation operators (rand mutation + binomial
-# recombination), plus truncation to the [0, 1] interval
+# Rerun with MOEA/D-DE configuration and AWT scalarization
+aggfun    <- list(name       = "awt")
 variation <- list(list(name  = "diffmut",
                        basis = "rand",
                        Phi   = NULL),
                   list(name  = "binrec",
                        rho   = 0.8),
+                  list(name = "polymut",
+                       etam  = 20, pm = 0.1),
                   list(name  = "truncate"))
 
 out2 <- moead(problem, decomp,  aggfun, neighbors, variation, update,
