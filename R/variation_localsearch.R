@@ -17,8 +17,11 @@
 #' [get_localsearch_methods()]. Consult the documentation of the specific
 #' functions for details.
 #'
-#' @return Matrix \code{Xls} containing the modified points (points that did not
-#' undergo local search are indicated as NA in this output matrix).
+#' @return Either a matrix `Xls` containing the modified points (points
+#' that did not undergo local search are indicated as NA in this output matrix),
+#' or a list object containing the `Xls` matrix and an integer `nfe`, informing
+#' how many additional function evaluations were performed by the local search
+#' operator. The specific output is defined by the `ls_`**xyz**`()` method used.
 #'
 #' @export
 
@@ -39,9 +42,17 @@ variation_localsearch <- function(...){
                     args = vls.input.pars)
 
   # Truncate if required
-  if(vls.input.pars$ls.args$trunc.x) Xls <- matrix(pmax(0, pmin(Xls, 1)),
-                                                   nrow  = nrow(Xls),
-                                                   byrow = FALSE)
+  if(vls.input.pars$ls.args$trunc.x) {
+    if(is.matrix(Xls)) {
+      Xls <- matrix(pmax(0, pmin(Xls, 1)),
+                    nrow  = nrow(Xls),
+                    byrow = FALSE)
+    } else {
+      Xls$X <- matrix(pmax(0, pmin(Xls$X, 1)),
+                      nrow  = nrow(Xls$X),
+                      byrow = FALSE)
+    }
+  }
 
   # Return
   return(Xls)

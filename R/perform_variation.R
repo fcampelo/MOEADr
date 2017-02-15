@@ -74,7 +74,7 @@ perform_variation <- function(variation, X, iter, ...){
     if (iter == 1){
       # Define iteration for the first occurrence of local search (if tau.ls is
       # defined). It never happens in the very first iteration.
-      if (ls.args$unsync) {
+      if (ls.args$unsync && !is.infinite(ls.args$tau.ls)) {
         first.ls <- sample.int(n       = ls.args$tau.ls - 1,
                                size    = nrow(X),
                                replace = TRUE)
@@ -92,6 +92,7 @@ perform_variation <- function(variation, X, iter, ...){
 
 
   # ========= PERFORM VARIATION (EXCEPT LOCAL SEARCH) ========== #
+  var.nfe          <- 0
   X                <- var.input.pars$X
   var.input.pars$X <- NULL
   for (i in seq_along(variation.nols)){
@@ -104,6 +105,11 @@ perform_variation <- function(variation, X, iter, ...){
     # Perform i-th variation operator
     X <- do.call(opname,
                  args = var.args)
+
+    if (is.list(X)){
+      var.nfe <- var.nfe + X$nfe
+      X       <- X$X
+    }
   }
   # ============ END VARIATION (EXCEPT LOCAL SEARCH) ============= #
 
@@ -121,12 +127,17 @@ perform_variation <- function(variation, X, iter, ...){
 
     if(any(which.x)){
       # Prepare argument list for local search
-      ls.args          <- c(var.input.pars, ls.args)
-      ls.args$which.x  <- which.x
+      ls.args2          <- c(var.input.pars, ls.args)
+      ls.args2$which.x  <- which.x
 
       # Perform local search
       Xls <- do.call("variation_localsearch",
-                     args = ls.args)
+                     args = ls.args2)
+
+      if (is.list(Xls)){
+        var.nfe <- var.nfe + Xls$nfe
+        Xls     <- Xls$X
+      }
 
       # Replace points that underwent local search
       X[which.x, ] <- Xls[which.x, ]
@@ -135,5 +146,6 @@ perform_variation <- function(variation, X, iter, ...){
 
   # Output
   return(list (X       = X,
-               ls.args = ls.args))
+               ls.args = ls.args,
+               nfe     = var.nfe))
 }

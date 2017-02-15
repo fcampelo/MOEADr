@@ -116,6 +116,9 @@ variation  <- list(
                      etax     = 20, pc = 1),
                 list(name     = "polymut",
                      etam     = 20, pm = 0.1),
+                list(name     = "localsearch", 
+                     type     = "dvls",
+                     tau.ls   = 5), 
                 list(name     = "truncate"))
 update     <- list(name  = "standard")
 scaling    <- list(name  = "simple")
