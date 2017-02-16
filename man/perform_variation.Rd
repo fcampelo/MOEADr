@@ -19,8 +19,9 @@ operators (see documentation of the specific \code{variation_}\strong{xyz}\code{
 functions for details)}
 }
 \value{
-List object containing a modified population matrix \code{X} and a
-local search argument list \code{ls.arg}.
+List object containing a modified population matrix \code{X}, a
+local search argument list \code{ls.arg}, and the number of function evaluations
+used by the variation operators.
 }
 \description{
 Sequentially apply variation operators for the MOEADr package

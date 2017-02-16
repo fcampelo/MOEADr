@@ -19,8 +19,9 @@
 #' operators (see documentation of the specific `variation_`**xyz**`()`
 #' functions for details)
 #'
-#' @return List object containing a modified population matrix `X` and a
-#' local search argument list `ls.arg`.
+#' @return List object containing a modified population matrix `X`, a
+#' local search argument list `ls.arg`, and the number of function evaluations
+#' used by the variation operators, `var.nfe`.
 #'
 #' @export
 
@@ -147,5 +148,5 @@ perform_variation <- function(variation, X, iter, ...){
   # Output
   return(list (X       = X,
                ls.args = ls.args,
-               nfe     = var.nfe))
+               var.nfe = var.nfe))
 }

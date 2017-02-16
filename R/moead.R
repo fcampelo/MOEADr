@@ -291,6 +291,7 @@ moead <- function(problem,      # List:  MObj problem
                        args = as.list(environment()))
     X       <- Xv$X
     ls.args <- Xv$ls.args
+    nfe     <- nfe + Xv$var.nfe
 
     # ========== Evaluation
     # Evaluate offspring population on objectives
@@ -367,7 +368,7 @@ moead <- function(problem,      # List:  MObj problem
               nadir  = apply(Y, 2, max),
               nfe    = nfe,
               n.iter = iter,
-              time   = difftime(Sys.time(), time.start),
+              time   = difftime(Sys.time(), time.start, units = "secs"),
               seed   = seed))
   # ================================ End Output ============================== #
 }

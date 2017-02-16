@@ -68,7 +68,7 @@ define_neighborhood <- function(neighbors, v.matrix, iter){
                              b   = BP$B,
                              val = val))
     BP$fullP <- BP$P
-    BP$fullP[, ] <- 1/ncol(BP$fullP)
+    BP$fullP[, ] <- 1 / ncol(BP$fullP)
   } else {
     # just get the existing matrix
     call.env <- parent.frame()
