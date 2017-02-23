@@ -3,7 +3,15 @@
 #' Local search operators for the MOEA/D
 #'
 #' This routine calls the local search operator for the MOEADr package, as part
-#' of the call to [perform_variation()].
+#' of the call to [perform_variation()]. This operator requires its entry
+#' in the variation stack (see Section `Variation Operators` of [moead()])
+#' to contain the following fields:
+#' - `name = "localsearch"`
+#' - `type` (see [get_localsearch_methods()] for details)
+#' - `gamma.ls` (optional): probability of application of local search to a
+#' given subproblem at any given iteration (numeric between 0 and 1)
+#' - `tau.ls` (optional): period of application of local search to each
+#' subproblem (positive integer)
 #'
 #' Whenever local search is triggered for a given subproblem, it cancels
 #' all other variation operators _for that subproblem_ and is executed directly

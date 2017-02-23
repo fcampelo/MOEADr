@@ -24,7 +24,17 @@ Local search operators for the MOEA/D
 }
 \details{
 This routine calls the local search operator for the MOEADr package, as part
-of the call to \code{\link[=perform_variation]{perform_variation()}}.
+of the call to \code{\link[=perform_variation]{perform_variation()}}. This operator requires its entry
+in the variation stack (see Section \code{Variation Operators} of \code{\link[=moead]{moead()}})
+to contain the following fields:
+\itemize{
+\item \code{name = "localsearch"}
+\item \code{type} (see \code{\link[=get_localsearch_methods]{get_localsearch_methods()}} for details)
+\item \code{gamma.ls} (optional): probability of application of local search to a
+given subproblem at any given iteration (numeric between 0 and 1)
+\item \code{tau.ls} (optional): period of application of local search to each
+subproblem (positive integer)
+}
 
 Whenever local search is triggered for a given subproblem, it cancels
 all other variation operators \emph{for that subproblem} and is executed directly
