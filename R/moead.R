@@ -191,7 +191,7 @@
 #'                   list(name  = "polymut",
 #'                        etam  = 20, pm = 0.1),
 #'                   list(name  = "truncate"))
-#' update    <- list(name       = "standard")
+#' update    <- list(name       = "standard", UseArchive = FALSE)
 #' scaling   <- list(name       = "none")
 #' constraint<- list(name       = "none")
 #' stopcrit  <- list(list(name  = "maxiter",

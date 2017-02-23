@@ -67,11 +67,11 @@ The \code{problem} parameter consists of a list with all necessary
 definitions for the multiobjective optimization problem to be solved.
 \code{problem} must contain at least the following fields:
 \itemize{
-\item \code{problem$name}: name of the problem instance function, that is, a routine
-that calculates \strong{Y} = \strong{f}(\strong{X});
+\item \code{problem$name}: name of the problem instance function, that is, a
+routine that calculates \strong{Y} = \strong{f}(\strong{X});
 \item \code{problem$xmin}: vector of lower bounds of each variable
 \item \code{problem$xmax}: vector of upper bounds of each variable
-\item \code{problem$m}:  integer containing the number of objectives
+\item \code{problem$m}:  integer indicating the number of objectives
 }
 
 Besides these fields, \code{problem} should contain any other relevant inputs
@@ -158,13 +158,13 @@ available methods can be verified using \code{\link[=get_update_methods]{get_upd
 \code{\link[=get_update_methods]{get_update_methods()}} for more details.
 
 Another (optional) field of the \code{update} parameter is \code{update$UseArchive},
-which is a binary flag informing the algorithm whether it should keep an
+which is a binary flag defining whether the algorithm should keep an
 external solution archive (\code{TRUE}) or not (\code{FALSE}). Since it adds to the
 computational burden and memory requirements of the algorithm, the use of an
 archive population is recommended only in the case of constrained problems
-where the constraint handling method can occasionaly accept unfeasible
+with constraint handling method that can occasionaly accept unfeasible
 solutions, leading to the potential loss of feasible efficient solutions for
-certain subproblems (e.g., \code{\link[=constraint_vbr]{constraint_vbr()}} with \code{type = "sr"}).
+certain subproblems (e.g., \code{\link[=constraint_vbr]{constraint_vbr()}} with \code{type} = "sr" or "vt").
 }
 
 \section{Constraint Handling Methods}{
@@ -240,7 +240,7 @@ variation <- list(list(name  = "sbx",
                   list(name  = "polymut",
                        etam  = 20, pm = 0.1),
                   list(name  = "truncate"))
-update    <- list(name       = "standard")
+update    <- list(name       = "standard", UseArchive = FALSE)
 scaling   <- list(name       = "none")
 constraint<- list(name       = "none")
 stopcrit  <- list(list(name  = "maxiter",

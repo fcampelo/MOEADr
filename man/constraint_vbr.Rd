@@ -69,7 +69,7 @@ implemented. Three variants are currently implemented in the MOEADr package:
 
 \tabular{lll}{
 Method                                 \tab | ID            \tab | \code{c(x)} \cr
-Tournament Selection \code{[Deb2000]}       \tab | \code{$type = "ts"}\tab | \code{TRUE}\cr
+Tournament Selection \code{[Deb2000]}       \tab | \code{$type = "ts"}\tab | \code{FALSE}\cr
 Stochastic Ranking \code{[Runarsson2000]}   \tab | \code{$type = "sr"}\tab | \code{runif() < pf}\cr
 Violation Threshold \code{[Asafuddoula2014]}\tab | \code{$type = "vt"}\tab | \code{v(x) < eps_v^i}\cr
 }
@@ -77,6 +77,16 @@ Violation Threshold \code{[Asafuddoula2014]}\tab | \code{$type = "vt"}\tab | \co
 where \eqn{pf \in [0,1]} is a user-defined parameter for the "sr" method, and
 \code{eps_v^i} is subproblem-dependent, adaptive quantity calculated internally
 in the routine (see \code{[Asafuddoula2014]} and \code{[Campelo2017]} for details).
+}
+
+\section{Using an External Archive}{
+
+For types "sr" and "vt", it is possible for the algorithm to lose feasible
+solutions during its update step, since there is a non-zero probability of
+unfeasible solutions replacing feasible ones. In these cases, it is
+recommended to set the \code{\link[=moead]{moead()}} parameter \code{update$UseArchive = TRUE}, so
+that an external archive is built with the best feasible solutions found for
+each subproblem.
 }
 
 \section{References}{

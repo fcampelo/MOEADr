@@ -47,7 +47,7 @@
 #' `eps_v^i` is subproblem-dependent, adaptive quantity calculated internally
 #' in the routine (see `[Asafuddoula2014]` and `[Campelo2017]` for details).
 #'
-#' @section Using archive population
+#' @section Using an External Archive:
 #' For types "sr" and "vt", it is possible for the algorithm to lose feasible
 #' solutions during its update step, since there is a non-zero probability of
 #' unfeasible solutions replacing feasible ones. In these cases, it is
