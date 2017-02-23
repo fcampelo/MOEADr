@@ -1,7 +1,7 @@
 Package: MOEADr
 Type: Package
 Title: Component-Wise MOEA/D Implementation
-Version: 0.0.0.9202
+Version: 0.0.0.9203
 Date: 2017-2-23
 Imports:
     FNN,

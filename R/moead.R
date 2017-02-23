@@ -162,7 +162,7 @@
 #' - information on the final population (`X`), its objective values (`Y`) and
 #'  constraint information list (`V`) (see [evaluate_population()] for details);
 #' - Archive population list containing its corresponding `X`, `Y` and `V`
-#'  fields;
+#'  fields (only if `update$UseArchive = TRUE`).
 #' - Estimates of the _ideal_ and _nadir_ points, calculated for the final
 #' population;
 #' - Number of function evaluations, iterations, and total execution time;
@@ -261,6 +261,9 @@ moead <- function(problem,      # List:  MObj problem
   nfe        <- 0              # counter for function evaluations
   time.start <- Sys.time()     # Store initial time
   iter.times <- numeric(10000) # pre-allocate vector for iteration times.
+  if(is.null(update$UseArchive)){
+    update$UseArchive <- FALSE
+  }
   # =========================== End Algorithm setup ========================== #
 
   # =========================== Initial definitions ========================== #
@@ -378,8 +381,9 @@ moead <- function(problem,      # List:  MObj problem
 
   # ================================== Output ================================ #
   # Prepare output
-  X         <- denormalize_population(X, problem)
-  Archive$X <- denormalize_population(Archive$X, problem)
+  X <- denormalize_population(X, problem)
+
+  if(!is.null(Archive)) Archive$X <- denormalize_population(Archive$X, problem)
 
   # Output
   return(list(X       = X,

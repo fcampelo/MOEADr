@@ -47,7 +47,7 @@ List object containing :
 \item information on the final population (\code{X}), its objective values (\code{Y}) and
 constraint information list (\code{V}) (see \code{\link[=evaluate_population]{evaluate_population()}} for details);
 \item Archive population list containing its corresponding \code{X}, \code{Y} and \code{V}
-fields;
+fields (only if \code{update$UseArchive = TRUE}).
 \item Estimates of the \emph{ideal} and \emph{nadir} points, calculated for the final
 population;
 \item Number of function evaluations, iterations, and total execution time;

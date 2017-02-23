@@ -28,12 +28,15 @@ update_population <- function(update, ...){
                            args = updt.args)
 
   # ========== Update Archive Population and Related Info
-  arch.args <- updt.args
-  arch.args$update$name <- "best"
-  arch.args$update$Tr   <- nrow(arch.args$X)
-  arch.args$update$nr   <- nrow(arch.args$X)
-  NextPop$Archive       <- do.call("updt_best",
-                                   arch.args)
+  if(updt.args$update$UseArchive){
+    arch.args <- updt.args
+    arch.args$update$name <- "best"
+    arch.args$update$Tr   <- nrow(arch.args$X)
+    arch.args$update$nr   <- nrow(arch.args$X)
+    NextPop$Archive       <- do.call("updt_best",
+                                     arch.args)
+  } else NextPop$Archive <- NULL
+
   # ========== Return
   return(NextPop)
 }
