@@ -120,7 +120,7 @@ variation  <- list(
                      type     = "dvls",
                      tau.ls   = 5), 
                 list(name     = "truncate"))
-update     <- list(name  = "standard")
+update     <- list(name  = "standard", UseArchive = FALSE)
 scaling    <- list(name  = "simple")
 constraint <- list(name = "none")
 stopcrit   <- list(

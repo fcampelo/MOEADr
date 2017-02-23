@@ -9,11 +9,11 @@
 #' The `problem` parameter consists of a list with all necessary
 #' definitions for the multiobjective optimization problem to be solved.
 #' `problem` must contain at least the following fields:
-#'    - `problem$name`: name of the problem instance function, that is, a routine
-#'    that calculates **Y** = **f**(**X**);
+#'    - `problem$name`: name of the problem instance function, that is, a
+#'    routine that calculates **Y** = **f**(**X**);
 #'    - `problem$xmin`: vector of lower bounds of each variable
 #'    - `problem$xmax`: vector of upper bounds of each variable
-#'    - `problem$m`:  integer containing the number of objectives
+#'    - `problem$m`:  integer indicating the number of objectives
 #'
 #' Besides these fields, `problem` should contain any other relevant inputs
 #' for the routine listed in `$name`. `problem` may also contain the
@@ -86,13 +86,13 @@
 #' [get_update_methods()] for more details.
 #'
 #' Another (optional) field of the `update` parameter is `update$UseArchive`,
-#' which is a binary flag informing the algorithm whether it should keep an
+#' which is a binary flag defining whether the algorithm should keep an
 #' external solution archive (`TRUE`) or not (`FALSE`). Since it adds to the
 #' computational burden and memory requirements of the algorithm, the use of an
 #' archive population is recommended only in the case of constrained problems
-#' where the constraint handling method can occasionaly accept unfeasible
+#' with constraint handling method that can occasionaly accept unfeasible
 #' solutions, leading to the potential loss of feasible efficient solutions for
-#' certain subproblems (e.g., [constraint_vbr()] with `type = "sr"`).
+#' certain subproblems (e.g., [constraint_vbr()] with `type` = "sr" or "vt").
 #'
 #' @section Constraint Handling Methods:
 #' The `constraint` parameter is a list that defines the constraint-handling
