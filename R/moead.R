@@ -85,6 +85,15 @@
 #' [update_population()] and the information provided by
 #' [get_update_methods()] for more details.
 #'
+#' Another (optional) field of the `update` parameter is `update$UseArchive`,
+#' which is a binary flag informing the algorithm whether it should keep an
+#' external solution archive (`TRUE`) or not (`FALSE`). Since it adds to the
+#' computational burden and memory requirements of the algorithm, the use of an
+#' archive population is recommended only in the case of constrained problems
+#' where the constraint handling method can occasionaly accept unfeasible
+#' solutions, leading to the potential loss of feasible efficient solutions for
+#' certain subproblems (e.g., [constraint_vbr()] with `type = "sr"`).
+#'
 #' @section Constraint Handling Methods:
 #' The `constraint` parameter is a list that defines the constraint-handling
 #' technique to be used. `constraint` must have at least the `$name` parameter.
@@ -147,6 +156,17 @@
 #'    in which case \code{as.integer(Sys.time())} is used for the definition.
 #'
 #' @export
+#'
+#' @return List object containing :
+#'
+#' - information on the final population (`X`), its objective values (`Y`) and
+#'  constraint information list (`V`) (see [evaluate_population()] for details);
+#' - Archive population list containing its corresponding `X`, `Y` and `V`
+#'  fields;
+#' - Estimates of the _ideal_ and _nadir_ points, calculated for the final
+#' population;
+#' - Number of function evaluations, iterations, and total execution time;
+#' - Random seed employed in the run, for reproducibility
 #'
 #' @examples
 #'
@@ -332,9 +352,10 @@ moead <- function(problem,      # List:  MObj problem
     # Update population
     XY <- do.call(update_population,
                   args = as.list(environment()))
-    X  <- XY$X
-    Y  <- XY$Y
-    V  <- XY$V
+    X       <- XY$X
+    Y       <- XY$Y
+    V       <- XY$V
+    Archive <- XY$Archive
 
     # ========== Stop Criteria
     # Calculate iteration time
@@ -357,19 +378,21 @@ moead <- function(problem,      # List:  MObj problem
 
   # ================================== Output ================================ #
   # Prepare output
-  X <- denormalize_population(X, problem)
+  X         <- denormalize_population(X, problem)
+  Archive$X <- denormalize_population(Archive$X, problem)
 
   # Output
-  return(list(X      = X,
-              Y      = Y,
-              V      = V,
-              W      = W,
-              ideal  = apply(Y, 2, min),
-              nadir  = apply(Y, 2, max),
-              nfe    = nfe,
-              n.iter = iter,
-              time   = difftime(Sys.time(), time.start, units = "secs"),
-              seed   = seed))
+  return(list(X       = X,
+              Y       = Y,
+              V       = V,
+              W       = W,
+              Archive = Archive,
+              ideal   = apply(Y, 2, min),
+              nadir   = apply(Y, 2, max),
+              nfe     = nfe,
+              n.iter  = iter,
+              time    = difftime(Sys.time(), time.start, units = "secs"),
+              seed    = seed))
   # ================================ End Output ============================== #
 }
 

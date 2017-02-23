@@ -16,7 +16,9 @@ details.}
 }
 \value{
 List object containing the updated values of the population matrix
-\code{X}, objective function matrix \code{Y}, and constraint values list \code{V}.
+\code{X}, objective function matrix \code{Y}, and constraint values list \code{V}, as well
+as an updated Archive list containing its corresponding components \code{X}, \code{Y}
+and \code{V}.
 }
 \description{
 Selection and population update procedures for the MOEA/D

@@ -13,7 +13,9 @@
 #' `updt_`**xyz**`()` routines.
 #'
 #' @return List object containing the updated values of the population matrix
-#' `X`, objective function matrix `Y`, and constraint values list `V`.
+#' `X`, objective function matrix `Y`, and constraint values list `V`, as well
+#' as an updated Archive list containing its corresponding components `X`, `Y`
+#' and `V`.
 #'
 #' @export
 
@@ -21,9 +23,17 @@ update_population <- function(update, ...){
 
   # ========== Call specific update strategy
   function_name <- paste0("updt_", tolower(update$name))
-  NextPop <- do.call(function_name,
-                     args = as.list(sys.call())[-1])
+  updt.args     <- as.list(sys.call())[-1]
+  NextPop       <- do.call(function_name,
+                           args = updt.args)
 
-  # Return
+  # ========== Update Archive Population and Related Info
+  arch.args <- updt.args
+  arch.args$update$name <- "best"
+  arch.args$update$Tr   <- nrow(arch.args$X)
+  arch.args$update$nr   <- nrow(arch.args$X)
+  NextPop$Archive       <- do.call("updt_best",
+                                   arch.args)
+  # ========== Return
   return(NextPop)
 }

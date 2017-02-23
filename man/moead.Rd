@@ -41,6 +41,19 @@ See \code{\link[=print_progress]{print_progress()}} for details.}
 \item{seed}{seed for the pseudorandom number generator. Defaults to NULL,
 in which case \code{as.integer(Sys.time())} is used for the definition.}
 }
+\value{
+List object containing :
+\itemize{
+\item information on the final population (\code{X}), its objective values (\code{Y}) and
+constraint information list (\code{V}) (see \code{\link[=evaluate_population]{evaluate_population()}} for details);
+\item Archive population list containing its corresponding \code{X}, \code{Y} and \code{V}
+fields;
+\item Estimates of the \emph{ideal} and \emph{nadir} points, calculated for the final
+population;
+\item Number of function evaluations, iterations, and total execution time;
+\item Random seed employed in the run, for reproducibility
+}
+}
 \description{
 MOEA/D implementation in R
 }
@@ -143,6 +156,15 @@ to be used. \code{update} must have at least the \code{$name} parameter. Current
 available methods can be verified using \code{\link[=get_update_methods]{get_update_methods()}}. Check
 \code{\link[=update_population]{update_population()}} and the information provided by
 \code{\link[=get_update_methods]{get_update_methods()}} for more details.
+
+Another (optional) field of the \code{update} parameter is \code{update$UseArchive},
+which is a binary flag informing the algorithm whether it should keep an
+external solution archive (\code{TRUE}) or not (\code{FALSE}). Since it adds to the
+computational burden and memory requirements of the algorithm, the use of an
+archive population is recommended only in the case of constrained problems
+where the constraint handling method can occasionaly accept unfeasible
+solutions, leading to the potential loss of feasible efficient solutions for
+certain subproblems (e.g., \code{\link[=constraint_vbr]{constraint_vbr()}} with \code{type = "sr"}).
 }
 
 \section{Constraint Handling Methods}{

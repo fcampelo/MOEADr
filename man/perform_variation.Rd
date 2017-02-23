@@ -21,7 +21,7 @@ functions for details)}
 \value{
 List object containing a modified population matrix \code{X}, a
 local search argument list \code{ls.arg}, and the number of function evaluations
-used by the variation operators.
+used by the variation operators, \code{var.nfe}.
 }
 \description{
 Sequentially apply variation operators for the MOEADr package
