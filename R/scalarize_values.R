@@ -40,12 +40,12 @@ scalarize_values <- function(normYs, W, B, aggfun){
 
   # Get matrix of objective values for each neighborhood, ordered by
   # subproblem. It's a (nrow(X) * T) x m matrix
-  bigY <- normYs$Y[as.vector(t(B)), ]
+  bigY <- normYs$Y[as.vector(t(B)), , drop = FALSE]
 
   # Get matrix of weight vectors for each subproblem, replicated for the
   # neighborhoods. It's a (nrow(X) * T) x m matrix
   bigW <- W[rep(1:nrow(W),
-                each  = ncol(B)), ]
+                each  = ncol(B)), , drop = FALSE]
 
   # Prepare bigZ matrix
   bigZ <- matrix(numeric(),

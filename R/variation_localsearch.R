@@ -41,7 +41,7 @@ variation_localsearch <- function(...){
   # ==========
 
   # prepare arguments for calling ls_xyz() function
-  # vls.input.pars <- as.list(environment()) # <------ for debugging
+  # vls.input.pars <- c(as.list(environment()), ls.args) # <------ for debugging
   vls.input.pars <- as.list(sys.call())[-1]
 
   # Call local search method specified in "type"

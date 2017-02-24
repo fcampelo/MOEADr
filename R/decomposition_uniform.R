@@ -61,29 +61,39 @@ decomposition_uniform <- function(decomp, ...){
           sum(apply((1 + (abs(U - 0.5) - abs(U - 0.5) ^ 2) / 2), 1, prod))
 
     S2 <- (1 / nrow(U) ^ 2) *
-          sum(sapply(1:nrow(U), function(y) { tU <- matrix(U[y,], nrow = nrow(U), ncol = ncol(U), byrow = TRUE)
+          sum(sapply(1:nrow(U), function(y) { tU <- matrix(U[y, ],
+                                                           nrow  = nrow(U),
+                                                           ncol  = ncol(U),
+                                                           byrow = TRUE)
                                               apply(1 + (abs(U - 0.5) + abs(tU - 0.5)) / 2
                                                       - abs(U - tU) / 2,
-                                                    1,prod)}))
+                                                    MARGIN = 1,
+                                                    FUN    = prod)}))
 
     return (magic - S1 + S2)
   }
 
-  min_h <- H[which.min(apply(H, 1, function(x) {cd2(construct_un(x, N))})), ]
-  Un <- (construct_un(min_h, N) - 0.5) / N
+  min_h <- H[which.min(apply(H,
+                             MARGIN = 1,
+                             FUN    = function(x) {cd2(construct_un(x, N))})), ]
+  Un    <- (construct_un(min_h, N) - 0.5) / N
 
   # 4. Generate weights from U_N(h)
 
-  U_pow <- t(t(Un) ^ sapply(seq_len(nf - 1), function(x) {(nf - x) ^ -1}))
-  pow_prod <- t(apply(U_pow, 1,
-                      function(x) {sapply(seq_len(length(x)),
-                                          function(y) { prod(x[seq_len(y-1)]) }
-                )}))
+  U_pow <- t(t(Un) ^ sapply(seq_len(nf - 1),
+                            function(x) {(nf - x) ^ -1}))
+  pow_prod <- t(apply(U_pow,
+                      MARGIN = 1,
+                      FUN    = function(x) {
+                        sapply(seq_len(length(x)),
+                               FUN = function(y) { prod(x[seq_len(y-1)])})}))
 
   W <- (1 - U_pow) * pow_prod
   colnames(W) <- paste("Var", 1:ncol(W), sep="")
 
-  # Adding the final Column
-  W <- cbind(W, VarLast = apply(U_pow, 1, prod))
+  # Adding the final Column and returning
+  return(cbind(W, VarLast = apply(U_pow,
+                                  MARGIN = 1,
+                                  FUN    = prod)))
 
 }

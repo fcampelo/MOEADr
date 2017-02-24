@@ -72,8 +72,8 @@ variation_sbx <- function(X, P, etax, pc = 1, eps = 1e-6, ...){
                          p   = P))
 
   # Initialize recombination matrices
-  X1 <- X[Inds[, 1], ]
-  X2 <- X[Inds[, 2], ]
+  X1 <- X[Inds[, 1], , drop = FALSE]
+  X2 <- X[Inds[, 2], , drop = FALSE]
 
   # Define positions that will be recombined
   R <- (randM(X) <= pc) & (abs(X1 - X2) > eps)

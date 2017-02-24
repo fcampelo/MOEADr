@@ -175,8 +175,12 @@ test.showpars <- list(showpars1 = list(show.iters = "none"))
 
 # ====================
 
+# ====================
+# 11. seed
+seed = 12345
 
-# II: RUN ALL COMBINATIONS (UNCOMMENT TO RUN)
+
+## II: RUN ALL COMBINATIONS (UNCOMMENT TO RUN)
 # indx.vec <- numeric(10)
 # for (i.problem in seq_along(test.problems)){
 #   indx.vec[1]    <- i.problem
@@ -214,6 +218,7 @@ test.showpars <- list(showpars1 = list(show.iters = "none"))
 #                     var.ind      <- var.cmb[-nrow(var.cmb), i.variation]
 #                     ls.ind       <- var.cmb[nrow(var.cmb), i.variation]
 #                     variation    <- c(varops[var.ind], lsops[ls.ind])
+#                     seed         <- as.integer(Sys.time())
 #                     testthat::test_that(desc = "MOEADr runs without errors",
 #                                         code = is.list(moead(problem,
 #                                                              decomp,
@@ -224,7 +229,8 @@ test.showpars <- list(showpars1 = list(show.iters = "none"))
 #                                                              constraint,
 #                                                              scaling,
 #                                                              stopcrit,
-#                                                              showpars)))
+#                                                              showpars,
+#                                                              seed)))
 #                     if(!i.variation %% 10) cat(".")
 #                   }
 #                 }

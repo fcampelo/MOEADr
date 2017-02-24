@@ -70,19 +70,19 @@ ls_dvls <- function(Xt, Yt, Vt, B, W, which.x, trunc.x,
   # 4. Isolate points for local search
   dvls.B <- matrix(1:nls,
                    ncol = 1)
-  dvls.W  <- W[which.x, ]
-  dvls.Xt <- Xt[which.x, ]
+  dvls.W  <- W[which.x, , drop = FALSE]
+  dvls.Xt <- Xt[which.x, , drop = FALSE]
   dvls.Xo <- dvls.Xt
-  dvls.Yt <- Yt[which.x, ]
+  dvls.Yt <- Yt[which.x, , drop = FALSE]
   dvls.Vt <- Vt
-  dvls.Vt$Cmatrix <- dvls.Vt$Cmatrix[which.x, ]
-  dvls.Vt$Vmatrix <- dvls.Vt$Vmatrix[which.x, ]
+  dvls.Vt$Cmatrix <- dvls.Vt$Cmatrix[which.x, , drop = FALSE]
+  dvls.Vt$Vmatrix <- dvls.Vt$Vmatrix[which.x, , drop = FALSE]
   dvls.Vt$v       <- dvls.Vt$v[which.x]
 
   # ========== Evaluate X+, X-
   for (phi.m in c(-1, 1)){
     # 1. Generate candidate. Truncate if required
-    dvls.X  <- dvls.Xo + phi.m * Phi * (Xt[Inds[, 1], ] - Xt[Inds[, 2], ])
+    dvls.X  <- dvls.Xo + phi.m * Phi * (Xt[Inds[, 1], , drop = FALSE] - Xt[Inds[, 2], , drop = FALSE])
     if (trunc.x) dvls.X <- matrix(pmax(0, pmin(dvls.X, 1)),
                                   nrow  = nrow(dvls.X),
                                   byrow = FALSE)

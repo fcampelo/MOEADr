@@ -82,18 +82,18 @@ ls_tpqa <- function(Xt, Yt, W, B, Vt, scaling, aggfun,
                   ii     = nrow(tpqa.bigZ)))
 
   # Calculate matrix of q_{ij} coefficients
-  Q <- (Xt[sels[, 2], ] - Xt[sels[, 3], ]) +
-       (Xt[sels[, 3], ] - Xt[sels[, 1], ]) * 2 +
-       (Xt[sels[, 1], ] - Xt[sels[, 2], ]) * 3
+  Q <- (Xt[sels[, 2], , drop = FALSE] - Xt[sels[, 3], , drop = FALSE]) +
+       (Xt[sels[, 3], , drop = FALSE] - Xt[sels[, 1], , drop = FALSE]) * 2 +
+       (Xt[sels[, 1], , drop = FALSE] - Xt[sels[, 2], , drop = FALSE]) * 3
 
   # Calculate matrix of \hat{x}_{ij} values
-  Xhat <- ((Xt[sels[, 2], ] ^ 2 - Xt[sels[, 3], ] ^ 2) +
-           (Xt[sels[, 3], ] ^ 2 - Xt[sels[, 1], ] ^ 2) * 2 +
-           (Xt[sels[, 1], ] ^ 2 - Xt[sels[, 2], ] ^ 2) * 3) / (2 * Q + 1e-16)
+  Xhat <- ((Xt[sels[, 2], , drop = FALSE] ^ 2 - Xt[sels[, 3], , drop = FALSE] ^ 2) +
+           (Xt[sels[, 3], , drop = FALSE] ^ 2 - Xt[sels[, 1], , drop = FALSE] ^ 2) * 2 +
+           (Xt[sels[, 1], , drop = FALSE] ^ 2 - Xt[sels[, 2], , drop = FALSE] ^ 2) * 3) / (2 * Q + 1e-16)
 
 
   # Calculate output matrix
-  Xls             <- Xt[sels[, 1], ] * (Q < epsilon) + Xhat * (Q >= epsilon)
+  Xls             <- Xt[sels[, 1], , drop = FALSE] * (Q < epsilon) + Xhat * (Q >= epsilon)
   Xls[!which.x, ] <- NA
 
   # Return results

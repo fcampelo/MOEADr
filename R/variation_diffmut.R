@@ -78,11 +78,11 @@ variation_diffmut <- function(X, P, B, Phi, basis = 'rand', ...){
   }
 
   if (basis == "rand"){
-    Xb <- X[R[, 1], ]
+    Xb <- X[R[, 1], , drop = FALSE]
   } else if (basis == "mean"){
     Xb <- t(sapply(1:nrow(X),
                    FUN = function(i) {
-                     apply(X[B[i, ], ],
+                     apply(X[B[i, , drop = FALSE], ],
                            MARGIN = 2,
                            FUN    = mean) }))
   } else if (basis == "wgi"){
@@ -96,18 +96,18 @@ variation_diffmut <- function(X, P, B, Phi, basis = 'rand', ...){
                                aggfun  = input.pars$aggfun)
 
     # Remove the last row, which refers to x_i^{(t-1)}
-    bigZ <- t(bigZ[-nrow(bigZ), ])
+    bigZ <- t(bigZ[-nrow(bigZ), , drop = FALSE])
 
     # Calculate weights for WGI
     wgi.W <- log(ncol(bigZ) + 0.5) - log(1:ncol(bigZ))
 
     Xb <- t(sapply(1:dimX[1],
                    FUN = function(i){
-                     indx <- order(bigZ[i, ])
-                     colSums(wgi.W * X[B[i, indx], ])
+                     indx <- order(bigZ[i, , drop = FALSE])
+                     colSums(wgi.W * X[B[i, indx, drop = FALSE], ])
                    }))
   }
 
   # Perform mutations and return
-  return(Xb + Phi * (X[R[, 2], ] - X[R[, 3], ]))
+  return(Xb + Phi * (X[R[, 2], , drop = FALSE] - X[R[, 3], , drop = FALSE]))
 }

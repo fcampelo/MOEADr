@@ -70,7 +70,7 @@ updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
 
   # Find the problem in which each CANDIDATE solution (not incumbent) performs
   # best
-  best.indx <- apply(X      = fullZ[1:(nrow(fullZ) - 1), ],
+  best.indx <- apply(X      = fullZ[1:(nrow(fullZ) - 1), , drop = FALSE],
                      MARGIN = 1,
                      FUN    = which.min)
 
@@ -81,7 +81,7 @@ updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
 
   # Define restricted neighborhoods for best update (that is, the update
   # neighborhood of subproblem i is set as the neighborhood of best.subprob[i])
-  bestB    <- BP$fullB[best.subprob, 1:Tr]
+  bestB    <- BP$fullB[best.subprob, 1:Tr, drop = FALSE]
 
   # Assemble bigZ matrix according to neighborhood bestB
   bestZ <- scalarize_values(normYs = normYs,
@@ -106,11 +106,11 @@ updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
   # - B: matrix of neighborhoods
   do.update <- function(i, sel.indx, XY, XYt, B){
     for (j in sel.indx[i,]) {               #each element in b_i, in fitness order
-      if (j > ncol(B)) return(XYt[i, ])     # last row = incumbent solution
+      if (j > ncol(B)) return(XYt[i, , drop = FALSE])     # last row = incumbent solution
       else if (used[B[i, j]] < nr)          # tests if the current element is still available
       {
         used[B[i, j]] <<- used[B[i, j]] + 1 # modifies count matrix in parent env
-        return(XY[B[i, j], ])
+        return(XY[B[i, j], , drop = FALSE])
       }
     }
   }
