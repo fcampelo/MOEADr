@@ -32,8 +32,8 @@ check_stop_criteria <- function(stopcrit, call.env){
   # Check criteria
   for (i in seq_along(crits)){
     function_name <- paste0("stop_", tolower(crits[i]))
-    keep.running <- keep.running  & !do.call(function_name,
-                                             args = as.list(call.env))
+    keep.running  <- keep.running  & !do.call(function_name,
+                                              args = as.list(call.env))
   }
 
   # Output

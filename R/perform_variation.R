@@ -55,7 +55,7 @@ perform_variation <- function(variation, X, iter, ...){
       assertthat::assert_that(
         !is.null(ls.args$tau.ls)  | !is.null(ls.args$gamma.ls))
 
-      if(is.null(ls.args$tau.ls))   ls.args$tau.ls   <- Inf
+      if(is.null(ls.args$tau.ls))   ls.args$tau.ls   <- 1e9
       if(is.null(ls.args$gamma.ls)) ls.args$gamma.ls <- 0
       if(is.null(ls.args$unsync))   ls.args$unsync   <- TRUE
       if(is.null(ls.args$trunc.x))  ls.args$trunc.x  <- TRUE

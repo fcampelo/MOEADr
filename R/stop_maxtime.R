@@ -33,7 +33,7 @@ stop_maxtime <- function(stopcrit, iter.times, ...){
                           t.pars$maxtime > 0)
 
   elapsed.time       <- sum(iter.times)
-  mean.iter.time     <- mean(iter.times[iter.times > 0])
+  mean.iter.time     <- mean(iter.times)
 
   # return TRUE if there is not enough time remaining for another iteration to
   # be performed

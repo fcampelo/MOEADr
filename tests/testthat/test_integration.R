@@ -5,9 +5,15 @@ context("MOEADr Integration")
 # Tests in this file are intended to evaluate whether all components of the
 # MOEADr framework can be combined without throwing errors.
 #
-# These tests can take a while - they are NOT intended at validating the
+# These tests take a LONG time, so they are commented by default. Uncomment the
+# nested FOR loops to run the tests (and go have and extended lunch, or maybe
+# watch something on Netflix)
+#
+# These tests are NOT intended at validating the
 # technical correctness of implementations or the performance of the MOEADr
 # components, but simply to check the integrity of the code under correct use.
+
+
 # ====================
 
 
@@ -111,8 +117,10 @@ lsops <- list(
        type     = "tpqa",
        gamma.ls = .2))
 
-test.variations <- list(variation1 = c(varops, lsops[1]),
-                        variation2 = c(varops, lsops[2]))
+# Define all combinations of 3 variation operators + 1 local search:
+var.cmb <- utils::combn(8,3)
+var.cmb <- rbind(cbind(var.cmb, var.cmb),
+             rep(1:2, each = ncol(var.cmb)))
 
 # ====================
 
@@ -153,80 +161,78 @@ test.scalings <- list(scaling1 = list(name = "none"),
 # ====================
 # 9. stopcrit
 test.stopcrits <- list(stopcrit1 = list(list(name    = "maxiter",
-                                             maxiter = 10)),
+                                             maxiter = 3)),
                        stopcrit2 = list(list(name    = "maxeval",
-                                             maxeval = 200)),
-                       stopcrit3 = list(list(name    = "maxtime",
-                                             maxtime = 5)),
-                       stopcrit4 = list(list(name    = "maxtime",
-                                             maxtime = 5),
-                                        list(name    = "maxiter",
-                                             maxiter = 10),
+                                             maxeval = 100)),
+                       stopcrit3 = list(list(name    = "maxiter",
+                                             maxiter = 3),
                                         list(name    = "maxeval",
                                              maxeval = 100)))
 
 # ====================
 # 10. showpars
-test.showpars <- list(showpars1 = list(show.iters = "none"),
-                      showpars2 = list(show.iters = "numbers",
-                                       showevery  = 2),
-                      showpars3 = list(show.iters = "dots",
-                                       showevery  = 1))
+test.showpars <- list(showpars1 = list(show.iters = "none"))
 
 # ====================
 
 
-# II: RUN ALL COMBINATIONS
-# (Get ready for a BIG sequence of nested FOR's)
-
-for (i.problem in seq_along(test.problems)){
-  problem     <- test.problems[[i.problem]]
-  indx.vec    <- i.problem
-  for (i.decomp in seq_along(test.decomps)){
-    decomp      <- test.decomps[[i.decomp]]
-    indx.vec[2] <- i.decomp
-    for (i.aggfun in seq_along(test.aggfuns)){
-      aggfun      <- test.aggfuns[[i.aggfun]]
-      indx.vec[3] <- i.aggfun
-      for (i.neighbors in seq_along(test.neighbors)){
-        neighbors   <- test.neighbors[[i.neighbors]]
-        indx.vec[4] <- i.neighbors
-        for (i.update in seq_along(test.updates)){
-          update      <- test.updates[[i.update]]
-          indx.vec[5] <- i.update
-          for (i.constraint in seq_along(test.constraints)){
-            constraint  <- test.constraints[[i.constraint]]
-            indx.vec[6] <- i.constraint
-            for (i.scaling in seq_along(test.scalings)){
-              scaling     <- test.scalings[[i.scaling]]
-              indx.vec[7] <- i.scaling
-              for (i.stopcrit in seq_along(test.stopcrits)){
-                stopcrit    <- test.stopcrits[[i.stopcrit]]
-                indx.vec[8] <- i.stopcrit
-                for (i.showpars in seq_along(test.showpars)){
-                  showpars    <- test.showpars[[i.showpars]]
-                  indx.vec[9] <- i.showpars
-                  for (i.variation in seq_along(test.variations)){
-                    variation    <- test.variations[[i.variation]]
-                    indx.vec[10] <- i.variation
-                    # testthat::test_that(desc = "MOEADr runs without errors",
-                    #                     code = is.list(moead(problem,
-                    #                                          decomp,
-                    #                                          aggfun,
-                    #                                          neighbors,
-                    #                                          variation,
-                    #                                          update,
-                    #                                          constraint,
-                    #                                          scaling,
-                    #                                          stopcrit,
-                    #                                          showpars)))
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
+# II: RUN ALL COMBINATIONS (UNCOMMENT TO RUN)
+# indx.vec <- numeric(10)
+# for (i.problem in seq_along(test.problems)){
+#   indx.vec[1]    <- i.problem
+#   problem        <- test.problems[[i.problem]]
+#   for (i.decomp in seq_along(test.decomps)){
+#     indx.vec[2] <- i.decomp
+#     decomp      <- test.decomps[[i.decomp]]
+#     for (i.aggfun in seq_along(test.aggfuns)){
+#       indx.vec[3] <- i.aggfun
+#       aggfun      <- test.aggfuns[[i.aggfun]]
+#       for (i.neighbors in seq_along(test.neighbors)){
+#         indx.vec[4] <- i.neighbors
+#         neighbors   <- test.neighbors[[i.neighbors]]
+#         for (i.update in seq_along(test.updates)){
+#           indx.vec[5] <- i.update
+#           update      <- test.updates[[i.update]]
+#           for (i.constraint in seq_along(test.constraints)){
+#             indx.vec[6] <- i.constraint
+#             constraint  <- test.constraints[[i.constraint]]
+#             for (i.scaling in seq_along(test.scalings)){
+#               indx.vec[7] <- i.scaling
+#               scaling     <- test.scalings[[i.scaling]]
+#               for (i.stopcrit in seq_along(test.stopcrits)){
+#                 indx.vec[8] <- i.stopcrit
+#                 stopcrit    <- test.stopcrits[[i.stopcrit]]
+#                 for (i.showpars in seq_along(test.showpars)){
+#                   indx.vec[9] <- i.showpars
+#                   showpars    <- test.showpars[[i.showpars]]
+#                   cat("\nTesting ", ncol(var.cmb),
+#                       "combinations of ", nrow(var.cmb),
+#                       "operators. Index vec = [",
+#                       indx.vec[1:9], "]")
+#                   for (i.variation in 1:ncol(var.cmb)){
+#                     indx.vec[10] <- i.variation
+#                     var.ind      <- var.cmb[-nrow(var.cmb), i.variation]
+#                     ls.ind       <- var.cmb[nrow(var.cmb), i.variation]
+#                     variation    <- c(varops[var.ind], lsops[ls.ind])
+#                     testthat::test_that(desc = "MOEADr runs without errors",
+#                                         code = is.list(moead(problem,
+#                                                              decomp,
+#                                                              aggfun,
+#                                                              neighbors,
+#                                                              variation,
+#                                                              update,
+#                                                              constraint,
+#                                                              scaling,
+#                                                              stopcrit,
+#                                                              showpars)))
+#                     if(!i.variation %% 10) cat(".")
+#                   }
+#                 }
+#               }
+#             }
+#           }
+#         }
+#       }
+#     }
+#   }
+# }
