@@ -62,7 +62,7 @@ ls_dvls <- function(Xt, Yt, Vt, B, W, which.x, trunc.x,
 
   # 2. Calculate multipliers
   nls <- nrow(Inds)
-  Phi <- matrix(stats::rnorm(nls, mean = 0.5, sd = 0.1),
+  ls.Phi <- matrix(stats::rnorm(nls, mean = 0.5, sd = 0.1),
                 nrow  = nls,
                 ncol  = dimX[2],
                 byrow = FALSE)
@@ -75,6 +75,7 @@ ls_dvls <- function(Xt, Yt, Vt, B, W, which.x, trunc.x,
   dvls.Xo <- dvls.Xt
   dvls.Yt <- Yt[which.x, , drop = FALSE]
   dvls.Vt <- Vt
+
   dvls.Vt$Cmatrix <- dvls.Vt$Cmatrix[which.x, , drop = FALSE]
   dvls.Vt$Vmatrix <- dvls.Vt$Vmatrix[which.x, , drop = FALSE]
   dvls.Vt$v       <- dvls.Vt$v[which.x]
@@ -82,7 +83,7 @@ ls_dvls <- function(Xt, Yt, Vt, B, W, which.x, trunc.x,
   # ========== Evaluate X+, X-
   for (phi.m in c(-1, 1)){
     # 1. Generate candidate. Truncate if required
-    dvls.X  <- dvls.Xo + phi.m * Phi * (Xt[Inds[, 1], , drop = FALSE] - Xt[Inds[, 2], , drop = FALSE])
+    dvls.X  <- dvls.Xo + phi.m * ls.Phi * (Xt[Inds[, 1], , drop = FALSE] - Xt[Inds[, 2], , drop = FALSE])
     if (trunc.x) dvls.X <- matrix(pmax(0, pmin(dvls.X, 1)),
                                   nrow  = nrow(dvls.X),
                                   byrow = FALSE)

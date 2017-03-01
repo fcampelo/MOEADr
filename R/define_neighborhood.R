@@ -56,19 +56,27 @@ define_neighborhood <- function(neighbors, v.matrix, iter){
                                    k         = nrow(v.matrix) - 1)$nn.index)
     BP$B <- BP$fullB[, 1:neighbors$T]
     np  <- nrow(v.matrix)
-    BP$P   <- matrix((1 - neighbors$delta.p) / (np - neighbors$T),
-                     nrow = np,
-                     ncol = np)
-    val <- neighbors$delta.p / neighbors$T
-    BP$P   <- do.call(rbind,
-                      lapply(1:np,
-                             FUN = function(i, p, b, val){
-                               p[i, b[i, ]] <- val; p[i, ]},
-                             p   = BP$P,
-                             b   = BP$B,
-                             val = val))
+    if (np > neighbors$T){
+      BP$P   <- matrix((1 - neighbors$delta.p) / (np - neighbors$T),
+                       nrow = np,
+                       ncol = np)
+
+      val <- neighbors$delta.p / neighbors$T
+      BP$P   <- do.call(rbind,
+                        lapply(1:np,
+                               FUN = function(i, p, b, val){
+                                 p[i, b[i, ]] <- val; p[i, ]},
+                               p   = BP$P,
+                               b   = BP$B,
+                               val = val))
+    } else {
+      BP$P   <- matrix(1 / np,
+                       nrow = np,
+                       ncol = np)
+    }
     BP$fullP <- BP$P
     BP$fullP[, ] <- 1 / ncol(BP$fullP)
+
   } else {
     # just get the existing matrix
     call.env <- parent.frame()

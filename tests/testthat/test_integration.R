@@ -56,12 +56,12 @@ test.problems <- list(problem1 = list(name       = "my.dtlz1",
 # ====================
 # 2. decomp
 test.decomps <- list(decomp1 = list(name = "sld",
-                                    H    = 29),
+                                    H    = 19),
                      decomp2 = list(name = "msld",
-                                    H    = c(5, 3),
+                                    H    = c(4, 4),
                                     tau  = c(.9, .5)),
                      decomp3 = list(name = "uniform",
-                                    N    = 40))
+                                    N    = 20))
 # ====================
 
 
@@ -78,10 +78,10 @@ test.aggfuns <- list(aggfun1 = list(name = "wt"),
 # ====================
 # 4. neighbors
 test.neighbors <- list(neighbors1 = list(name    = "lambda",
-                                         T       = 8,
+                                         T       = 4,
                                          delta.p = 0.9),
                        neighbors2 = list(name    = "x",
-                                         T       = 10,
+                                         T       = 4,
                                          delta.p = 0.6))
 # ====================
 
@@ -128,7 +128,7 @@ var.cmb <- rbind(cbind(var.cmb, var.cmb),
 # ====================
 # 6. update
 test.updates <- list(update1 = list(name       = "best",
-                                    Tr         = 5,
+                                    Tr         = 3,
                                     nr         = 2),
                      update2 = list(name       = "restricted",
                                     nr         = 2),
@@ -163,11 +163,11 @@ test.scalings <- list(scaling1 = list(name = "none"),
 test.stopcrits <- list(stopcrit1 = list(list(name    = "maxiter",
                                              maxiter = 3)),
                        stopcrit2 = list(list(name    = "maxeval",
-                                             maxeval = 100)),
+                                             maxeval = 40)),
                        stopcrit3 = list(list(name    = "maxiter",
                                              maxiter = 3),
                                         list(name    = "maxeval",
-                                             maxeval = 100)))
+                                             maxeval = 40)))
 
 # ====================
 # 10. showpars
