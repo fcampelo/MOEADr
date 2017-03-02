@@ -56,12 +56,12 @@ test.problems <- list(problem1 = list(name       = "my.dtlz1",
 # ====================
 # 2. decomp
 test.decomps <- list(decomp1 = list(name = "sld",
-                                    H    = 19),
+                                    H    = 9),
                      decomp2 = list(name = "msld",
-                                    H    = c(4, 4),
+                                    H    = c(3, 3),
                                     tau  = c(.9, .5)),
                      decomp3 = list(name = "uniform",
-                                    N    = 20))
+                                    N    = 10))
 # ====================
 
 
@@ -78,10 +78,10 @@ test.aggfuns <- list(aggfun1 = list(name = "wt"),
 # ====================
 # 4. neighbors
 test.neighbors <- list(neighbors1 = list(name    = "lambda",
-                                         T       = 4,
+                                         T       = 3,
                                          delta.p = 0.9),
                        neighbors2 = list(name    = "x",
-                                         T       = 4,
+                                         T       = 3,
                                          delta.p = 0.6))
 # ====================
 
@@ -112,10 +112,10 @@ varops <- list(
 lsops <- list(
   list(name     = "localsearch",
        type     = "dvls",
-       tau.ls   = 4),
+       tau.ls   = 2),
   list(name     = "localsearch",
        type     = "tpqa",
-       gamma.ls = .2))
+       gamma.ls = .5))
 
 # Define all combinations of 3 variation operators + 1 local search:
 var.cmb <- utils::combn(8,3)
@@ -128,7 +128,7 @@ var.cmb <- rbind(cbind(var.cmb, var.cmb),
 # ====================
 # 6. update
 test.updates <- list(update1 = list(name       = "best",
-                                    Tr         = 3,
+                                    Tr         = 2,
                                     nr         = 2),
                      update2 = list(name       = "restricted",
                                     nr         = 2),
@@ -163,11 +163,11 @@ test.scalings <- list(scaling1 = list(name = "none"),
 test.stopcrits <- list(stopcrit1 = list(list(name    = "maxiter",
                                              maxiter = 3)),
                        stopcrit2 = list(list(name    = "maxeval",
-                                             maxeval = 40)),
+                                             maxeval = 30)),
                        stopcrit3 = list(list(name    = "maxiter",
                                              maxiter = 3),
                                         list(name    = "maxeval",
-                                             maxeval = 40)))
+                                             maxeval = 30)))
 
 # ====================
 # 10. showpars
