@@ -181,86 +181,66 @@ seed = 12345
 
 
 ## II: RUN ALL COMBINATIONS (UNCOMMENT TO RUN)
-require(parallel)
-
-indx.vec <- numeric(10)
-for (i.problem in seq_along(test.problems)){
-  indx.vec[1]    <- i.problem
-  problem        <- test.problems[[i.problem]]
-  for (i.decomp in seq_along(test.decomps)){
-    indx.vec[2] <- i.decomp
-    decomp      <- test.decomps[[i.decomp]]
-    for (i.aggfun in seq_along(test.aggfuns)){
-      indx.vec[3] <- i.aggfun
-      aggfun      <- test.aggfuns[[i.aggfun]]
-      for (i.neighbors in seq_along(test.neighbors)){
-        indx.vec[4] <- i.neighbors
-        neighbors   <- test.neighbors[[i.neighbors]]
-        for (i.update in seq_along(test.updates)){
-          indx.vec[5] <- i.update
-          update      <- test.updates[[i.update]]
-          for (i.constraint in seq_along(test.constraints)){
-            indx.vec[6] <- i.constraint
-            constraint  <- test.constraints[[i.constraint]]
-            for (i.scaling in seq_along(test.scalings)){
-              indx.vec[7] <- i.scaling
-              scaling     <- test.scalings[[i.scaling]]
-              for (i.stopcrit in seq_along(test.stopcrits)){
-                indx.vec[8] <- i.stopcrit
-                stopcrit    <- test.stopcrits[[i.stopcrit]]
-                for (i.showpars in seq_along(test.showpars)){
-                  indx.vec[9] <- i.showpars
-                  showpars    <- test.showpars[[i.showpars]]
-                  cat("\nTesting ", ncol(var.cmb),
-                      "combinations of ", nrow(var.cmb),
-                      "operators. Index vec = [",
-                      indx.vec[1:9], "]")
-                  ignore <- parallel::mclapply(1:ncol(var.cmb), mc.cores = 7,
-                                               FUN = function(i.variation){
-                                                 indx.vec[10] <- i.variation
-                                                 var.ind      <- var.cmb[-nrow(var.cmb), i.variation]
-                                                 ls.ind       <- var.cmb[nrow(var.cmb), i.variation]
-                                                 variation    <- c(varops[var.ind], lsops[ls.ind])
-                                                 seed         <- as.integer(Sys.time())
-                                                 testthat::test_that(desc = "MOEADr runs without errors",
-                                                                     code = is.list(moead(problem,
-                                                                                          decomp,
-                                                                                          aggfun,
-                                                                                          neighbors,
-                                                                                          variation,
-                                                                                          update,
-                                                                                          constraint,
-                                                                                          scaling,
-                                                                                          stopcrit,
-                                                                                          showpars,
-                                                                                          seed)))
-                                               })
-                  # for (i.variation in 1:ncol(var.cmb)){
-                  #   indx.vec[10] <- i.variation
-                  #   var.ind      <- var.cmb[-nrow(var.cmb), i.variation]
-                  #   ls.ind       <- var.cmb[nrow(var.cmb), i.variation]
-                  #   variation    <- c(varops[var.ind], lsops[ls.ind])
-                  #   seed         <- as.integer(Sys.time())
-                  #   testthat::test_that(desc = "MOEADr runs without errors",
-                  #                       code = is.list(moead(problem,
-                  #                                            decomp,
-                  #                                            aggfun,
-                  #                                            neighbors,
-                  #                                            variation,
-                  #                                            update,
-                  #                                            constraint,
-                  #                                            scaling,
-                  #                                            stopcrit,
-                  #                                            showpars,
-                  #                                            seed)))
-                  #   if(!i.variation %% 10) cat(".")
-                  # }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
+# require(parallel)
+#
+# indx.vec <- numeric(10)
+# for (i.problem in seq_along(test.problems)){
+#   indx.vec[1]    <- i.problem
+#   problem        <- test.problems[[i.problem]]
+#   for (i.decomp in seq_along(test.decomps)){
+#     indx.vec[2] <- i.decomp
+#     decomp      <- test.decomps[[i.decomp]]
+#     for (i.aggfun in seq_along(test.aggfuns)){
+#       indx.vec[3] <- i.aggfun
+#       aggfun      <- test.aggfuns[[i.aggfun]]
+#       for (i.neighbors in seq_along(test.neighbors)){
+#         indx.vec[4] <- i.neighbors
+#         neighbors   <- test.neighbors[[i.neighbors]]
+#         for (i.update in seq_along(test.updates)){
+#           indx.vec[5] <- i.update
+#           update      <- test.updates[[i.update]]
+#           for (i.constraint in seq_along(test.constraints)){
+#             indx.vec[6] <- i.constraint
+#             constraint  <- test.constraints[[i.constraint]]
+#             for (i.scaling in seq_along(test.scalings)){
+#               indx.vec[7] <- i.scaling
+#               scaling     <- test.scalings[[i.scaling]]
+#               for (i.stopcrit in seq_along(test.stopcrits)){
+#                 indx.vec[8] <- i.stopcrit
+#                 stopcrit    <- test.stopcrits[[i.stopcrit]]
+#                 for (i.showpars in seq_along(test.showpars)){
+#                   indx.vec[9] <- i.showpars
+#                   showpars    <- test.showpars[[i.showpars]]
+#                   cat("\nTesting ", ncol(var.cmb),
+#                       "combinations of ", nrow(var.cmb),
+#                       "operators. Index vec = [",
+#                       indx.vec[1:9], "]")
+#                   ignore <- parallel::mclapply(1:ncol(var.cmb), mc.cores = 7,
+#                                                FUN = function(i.variation){
+#                                                  indx.vec[10] <- i.variation
+#                                                  var.ind      <- var.cmb[-nrow(var.cmb), i.variation]
+#                                                  ls.ind       <- var.cmb[nrow(var.cmb), i.variation]
+#                                                  variation    <- c(varops[var.ind], lsops[ls.ind])
+#                                                  seed         <- as.integer(Sys.time())
+#                                                  testthat::test_that(desc = "MOEADr runs without errors",
+#                                                                      code = is.list(moead(problem,
+#                                                                                           decomp,
+#                                                                                           aggfun,
+#                                                                                           neighbors,
+#                                                                                           variation,
+#                                                                                           update,
+#                                                                                           constraint,
+#                                                                                           scaling,
+#                                                                                           stopcrit,
+#                                                                                           showpars,
+#                                                                                           seed)))
+#                                                })
+#                 }
+#               }
+#             }
+#           }
+#         }
+#       }
+#     }
+#   }
+# }
