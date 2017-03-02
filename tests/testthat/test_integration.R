@@ -215,26 +215,28 @@ seed = 12345
 #                       "combinations of ", nrow(var.cmb),
 #                       "operators. Index vec = [",
 #                       indx.vec[1:9], "]")
-#                   ignore <- parallel::mclapply(1:ncol(var.cmb), mc.cores = 7,
-#                                                FUN = function(i.variation){
-#                                                  indx.vec[10] <- i.variation
-#                                                  var.ind      <- var.cmb[-nrow(var.cmb), i.variation]
-#                                                  ls.ind       <- var.cmb[nrow(var.cmb), i.variation]
-#                                                  variation    <- c(varops[var.ind], lsops[ls.ind])
-#                                                  seed         <- as.integer(Sys.time())
-#                                                  testthat::test_that(desc = "MOEADr runs without errors",
-#                                                                      code = is.list(moead(problem,
-#                                                                                           decomp,
-#                                                                                           aggfun,
-#                                                                                           neighbors,
-#                                                                                           variation,
-#                                                                                           update,
-#                                                                                           constraint,
-#                                                                                           scaling,
-#                                                                                           stopcrit,
-#                                                                                           showpars,
-#                                                                                           seed)))
-#                                                })
+#                   mcout <- parallel::mclapply(1:ncol(var.cmb),
+#                                               mc.cores = 7,
+#                                               mc.preschedule = TRUE,
+#                                               FUN = function(i.variation){
+#                                                 indx.vec[10] <- i.variation
+#                                                 var.ind      <- var.cmb[-nrow(var.cmb), i.variation]
+#                                                 ls.ind       <- var.cmb[nrow(var.cmb), i.variation]
+#                                                 variation    <- c(varops[var.ind], lsops[ls.ind])
+#                                                 seed         <- as.integer(Sys.time())
+#                                                 a            <- moead(problem,
+#                                                                       decomp,
+#                                                                       aggfun,
+#                                                                       neighbors,
+#                                                                       variation,
+#                                                                       update,
+#                                                                       constraint,
+#                                                                       scaling,
+#                                                                       stopcrit,
+#                                                                       showpars,
+#                                                                       seed)
+#                                               })
+#                   if ("try-error" %in% class(mcout)) stop("Errored! Check mcout and indx.vec to pinpoint.")
 #                 }
 #               }
 #             }
