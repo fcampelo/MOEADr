@@ -208,6 +208,7 @@ seed = 12345
 #               for (i.stopcrit in seq_along(test.stopcrits)){
 #                 indx.vec[8] <- i.stopcrit
 #                 stopcrit    <- test.stopcrits[[i.stopcrit]]
+#                 mcout <- vector(mode = "list", length = length(test.showpars))
 #                 for (i.showpars in seq_along(test.showpars)){
 #                   indx.vec[9] <- i.showpars
 #                   showpars    <- test.showpars[[i.showpars]]
@@ -215,29 +216,35 @@ seed = 12345
 #                       "combinations of ", nrow(var.cmb),
 #                       "operators. Index vec = [",
 #                       indx.vec[1:9], "]")
-#                   mcout <- parallel::mclapply(1:ncol(var.cmb),
-#                                               mc.cores = 7,
-#                                               mc.preschedule = TRUE,
-#                                               FUN = function(i.variation){
-#                                                 indx.vec[10] <- i.variation
-#                                                 var.ind      <- var.cmb[-nrow(var.cmb), i.variation]
-#                                                 ls.ind       <- var.cmb[nrow(var.cmb), i.variation]
-#                                                 variation    <- c(varops[var.ind], lsops[ls.ind])
-#                                                 seed         <- as.integer(Sys.time())
-#                                                 a            <- moead(problem,
-#                                                                       decomp,
-#                                                                       aggfun,
-#                                                                       neighbors,
-#                                                                       variation,
-#                                                                       update,
-#                                                                       constraint,
-#                                                                       scaling,
-#                                                                       stopcrit,
-#                                                                       showpars,
-#                                                                       seed)
-#                                               })
-#                   if ("try-error" %in% class(mcout)) stop("Errored! Check mcout and indx.vec to pinpoint.")
+#                   mcout[[i.showpars]] <- parallel::mclapply(1:ncol(var.cmb),
+#                                                             mc.cores = 7,
+#                                                             mc.preschedule = TRUE,
+#                                                             FUN = function(i.variation){
+#                                                               var.ind      <- var.cmb[-nrow(var.cmb), i.variation]
+#                                                               ls.ind       <- var.cmb[nrow(var.cmb), i.variation]
+#                                                               variation    <- c(varops[var.ind], lsops[ls.ind])
+#                                                               seed         <- as.integer(Sys.time())
+#                                                               a            <- moead(problem,
+#                                                                                     decomp,
+#                                                                                     aggfun,
+#                                                                                     neighbors,
+#                                                                                     variation,
+#                                                                                     update,
+#                                                                                     constraint,
+#                                                                                     scaling,
+#                                                                                     stopcrit,
+#                                                                                     showpars,
+#                                                                                     seed)
+#                                                             })
 #                 }
+#                 b <- unlist(lapply(mcout, function(x){
+#                   a <- unlist(lapply(x, function(y){
+#                     if ("try-error" %in% class(y)){
+#                       return(FALSE)
+#                     } else return(TRUE)}))
+#                   return(a)
+#                 }))
+#                 if (any(!b)) stop("Error in indx.vec = ", indx.vec)
 #               }
 #             }
 #           }

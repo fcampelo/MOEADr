@@ -39,15 +39,14 @@ decomposition_uniform <- function(decomp, ...){
   nf <- decomp$.nobj
 
   # 1. Calculate the non-factors of N
-  div <- seq_len(N)
-  div <- div[sapply(div, is_coprime, N)]
+  div <- div[sapply(seq_len(N), is_coprime, N)]
 
   # 2. Generates H, matrix of all |nf-1| size subsets of div
-  H <- t(utils::combn(div, nf-1))
+  H <- t(utils::combn(x = div, m = nf-1))
 
   # 3. Generate matrixes U_N(h), and find one with lowest CD
   construct_un <- function(h, N) {
-    U <- t(sapply(seq_len(N), function(x) {(h * x)%% N}))
+    U <- t(sapply(seq_len(N), function(x) {(h * x) %% N}))
 
     # Authors redefine modulus as going from 1 to N
     U <- U + N * (1 - sign(U))
