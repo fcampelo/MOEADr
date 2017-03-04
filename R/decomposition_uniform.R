@@ -68,6 +68,9 @@ decomposition_uniform <- function(decomp, ...){
   min_h <- H[which.min(apply(H, 1, function(x) {cd2(construct_un(x, N))})), ]
   Un <- (construct_un(min_h, N) - 0.5) / N
 
+  if (nrow(Un) == 1) { Un <- t(Un) } # Fixes R arbitrarily choosing column major when (nf = 2) (iss 34)
+
+
   # 4. Generate weights from U_N(h)
 
   U_pow <- t(t(Un) ^ sapply(seq_len(nf - 1), function(x) {(nf - x) ^ -1}))
@@ -75,6 +78,9 @@ decomposition_uniform <- function(decomp, ...){
                       function(x) {sapply(seq_len(length(x)),
                                           function(y) { prod(x[seq_len(y-1)]) }
                 )}))
+
+  if (nrow(pow_prod) == 1) { pow_prod <- t(pow_prod) }
+  # Fixes R arbitrarily choosing column major when (nf = 2) (iss 34)
 
   W <- (1 - U_pow) * pow_prod
   colnames(W) <- paste("Var", 1:ncol(W), sep="")

@@ -34,8 +34,8 @@ testthat::test_that("SLD decomposition returns correct sizes", {
 })
 
 testthat::test_that("SLD decomposition returns unitary weight vectors", {
-  testthat::expect_true(rows_sums_one(generate_weights(decomp.sld1, m1)))
-  testthat::expect_true(rows_sums_one(generate_weights(decomp.sld2, m2)))
+  testthat::expect_true(rows_sum_one(generate_weights(decomp.sld1, m1)))
+  testthat::expect_true(rows_sum_one(generate_weights(decomp.sld2, m2)))
 })
 
 # 2: MSLD decomposition
@@ -77,7 +77,13 @@ testthat::test_that("Uniform returns unitary weight vectors", {
   testthat::expect_true(rows_sum_one(generate_weights(decomp.unif3, unif_obj)))
 })
 
+# Issue 34 on decomposition - Wrong matrix dimensions when number of subobjectives is 2
 testthat::test_that("Uniform returns correct dimensions", {
   testthat::expect_true(correct_dimensions(generate_weights(list(name = "uniform", N = 10), 3), 10, 3))
   testthat::expect_true(correct_dimensions(generate_weights(list(name = "uniform", N = 10), 2), 10, 2))
+})
+
+testthat::test_that("Uniform return matrix sum to one", {
+  testthat::expect_true(rows_sum_one(generate_weights(list(name = "uniform", N = 10), 3)))
+  testthat::expect_true(rows_sum_one(generate_weights(list(name = "uniform", N = 10), 2)))
 })
