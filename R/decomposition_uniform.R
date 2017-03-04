@@ -39,7 +39,7 @@ decomposition_uniform <- function(decomp, ...){
   nf <- decomp$.nobj
 
   # 1. Calculate the non-factors of N
-  div <- div[sapply(seq_len(N), is_coprime, N)]
+  div <- which(sapply(seq_len(N), is_coprime, N))
 
   # 2. Generates H, matrix of all |nf-1| size subsets of div
   H <- t(utils::combn(x = div, m = nf-1))
