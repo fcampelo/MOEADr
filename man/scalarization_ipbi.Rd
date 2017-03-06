@@ -18,11 +18,10 @@ contain the non-negative numeric constant \code{aggfun$theta}.}
 
 \item{eps}{tolerance value for avoiding divisions by zero.}
 
-\item{...}{other parameters (unused, included for compatibility with
-generic call)}
+\item{...}{other parameters (included for compatibility with generic call)}
 }
 \value{
-vector of scalarized performance values.
+Vector of scalarized performance values.
 }
 \description{
 Perform inverted PBI Scalarization for the MOEADr package.

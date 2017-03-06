@@ -4,8 +4,8 @@
 \alias{moead}
 \title{MOEA/D}
 \usage{
-moead(problem, decomp, aggfun, neighbors, variation, update, scaling, repair,
-  stopcrit, showpars, seed = NULL)
+moead(problem, decomp, aggfun, neighbors, variation, update, constraint,
+  scaling, stopcrit, showpars, seed = NULL)
 }
 \arguments{
 \item{problem}{List containing the problem parameters.
@@ -26,20 +26,33 @@ See \code{Variation operators} for details.}
 \item{update}{List containing the population update parameters
 See \code{Update strategies} for details.}
 
+\item{constraint}{List containing the constraint handing parameters
+See \code{Constraint operators} for details.}
+
 \item{scaling}{List containing the objective scaling parameters
 See \code{Objective scaling} for details.}
-
-\item{repair}{List containing the solution repair parameters
-See \code{Repair operators} for details.}
 
 \item{stopcrit}{list containing the stop criteria parameters.
 See \code{Stop criteria} for details.}
 
 \item{showpars}{list containing the echoing behavior parameters.
-Use \code{?print_progress} for details.}
+See \code{\link[=print_progress]{print_progress()}} for details.}
 
 \item{seed}{seed for the pseudorandom number generator. Defaults to NULL,
 in which case \code{as.integer(Sys.time())} is used for the definition.}
+}
+\value{
+List object containing :
+\itemize{
+\item information on the final population (\code{X}), its objective values (\code{Y}) and
+constraint information list (\code{V}) (see \code{\link[=evaluate_population]{evaluate_population()}} for details);
+\item Archive population list containing its corresponding \code{X}, \code{Y} and \code{V}
+fields (only if \code{update$UseArchive = TRUE}).
+\item Estimates of the \emph{ideal} and \emph{nadir} points, calculated for the final
+population;
+\item Number of function evaluations, iterations, and total execution time;
+\item Random seed employed in the run, for reproducibility
+}
 }
 \description{
 MOEA/D implementation in R
@@ -54,85 +67,147 @@ The \code{problem} parameter consists of a list with all necessary
 definitions for the multiobjective optimization problem to be solved.
 \code{problem} must contain at least the following fields:
 \itemize{
-   \item \code{$name} - name of the problem instance function, that is, a
-         routine that calculates Y = f(X);
-   \item \code{$xmin} - vector of lower bounds of each variable
-   \item \code{$xmax} - vector of upper bounds of each variable
-   \item \code{$m}    - integer containing the number of objectives
+\item \code{problem$name}: name of the problem instance function, that is, a
+routine that calculates \strong{Y} = \strong{f}(\strong{X});
+\item \code{problem$xmin}: vector of lower bounds of each variable
+\item \code{problem$xmax}: vector of upper bounds of each variable
+\item \code{problem$m}:  integer indicating the number of objectives
 }
 
-The function indicated in \code{problem$name} must be able to receive a
-matrix with each row representing one candidate solution, and return a matrix
-with each row representing the objective values for that solution. The name
-of the input argument that receives the population matrix must be either
-\code{X} or \code{x}.
+Besides these fields, \code{problem} should contain any other relevant inputs
+for the routine listed in \code{$name}. \code{problem} may also contain the
+(optional) field \code{problem$constraints}, which is a list object
+containing information about the problem constraints. If present, this list
+must have the following fields:
+\itemize{
+\item \code{problem$constraints$name} - (required) name of the function that
+calculates the constraint values (see below for details)
+\item \code{problem$constraints$epsilon} - (optional) a small non-negative value
+indicating the tolerance to be considered for equality constraints.
+Defaults to zero.
+}
+
+Besides these fields, \code{problem$constraint} should contain any other
+relevant inputs for the routine listed in \code{problem$constraint$name}.
+
+Detailed instructions for defining the routines for calculating the
+objective and constraint functions are provided in the vignette
+\emph{Defining Problems in the MOEADr Package}. Check that documentation for
+details.
 }
 
 \section{Decomposition Methods}{
 
-The \code{decomp} parameter defines the method to be used for the
+The \code{decomp} parameter is a list that defines the method to be used for the
 generation of the weight vectors. \code{decomp} must have
-at least the \code{$name} parameter. Currently implemented methods can be
-verified using \code{get_decomposition_methods()}. Check
-\code{\link{generate_weights}} and the information provided by
-\code{get_decomposition_methods()} for more details.
+at least the \code{$name} parameter. Currently available methods can be
+verified using \code{\link[=get_decomposition_methods]{get_decomposition_methods()}}. Check
+\code{\link[=generate_weights]{generate_weights()}} and the information provided by
+\code{\link[=get_decomposition_methods]{get_decomposition_methods()}} for more details.
 }
 
 \section{Neighborhood Strategies}{
 
-The \code{neighbors} parameter defines the method for defining the
+The \code{neighbors} parameter is a list that defines the method for defining the
 neighborhood relations among subproblems. \code{neighbors} must have
-at least three parameters: \code{neighbors$name}, \code{neighbors$T}, and
-\code{neighbors$delta.p}.
-\code{neighbors$name} defines the strategy used to define the neighborhoods.
-Currently available methods are:
+at least three parameters:
 \itemize{
-   \item \code{$name = "lambda"}: uses the distances between
-   weight vectors. The calculation is performed only once for the entire run,
-   since the weight vectors are assumed static.
-   \item \code{$name = "x"}: uses the distances between the
-   incumbent solutions associated with each subproblem. In this case the
-   calculation is performed at each iteration, since incumbent solutions may
-   change.
+\item \code{neighbors$name}, name of the strategy used to define the neighborhoods.
+Currently available methods are:
+- \code{$name = "lambda"}: uses the distances between weight vectors.
+The calculation is performed only once for the entire run,
+since the weight vectors are assumed static.
+- \code{$name = "x"}: uses the distances between the incumbent solutions
+associated with each subproblem. In this case the calculation is
+performed at each iteration, since incumbent solutions may change.
+\item \code{neighbors$T}: defines the neighborhood size. This parameter must receive
+a value smaller than the number of subproblems defined for the MOEA/D.
+\item \code{neighbors$delta.p}: parameter that defines the probability of sampling
+from the neighborhood when performing variation.
 }
 
-\code{neighbors$T} defines the neighborhood size. This parameter must receive
-a value smaller than the number of subproblems defined for the MOEA/D.
-
-Finally, \code{neightbors$delta.p} is the parameter that defines the
-probability of sampling from the neighborhood when performing variation.
-
-Check \code{\link{define_neighborhood}} for more details.
+Check \code{\link[=define_neighborhood]{define_neighborhood()}} for more details.
 }
 
 \section{Variation Operators}{
 
-TODO
+The \code{variation} parameter consists of a list vector, in which each
+sublist defines a variation operator to be used as part of the variation
+block. Each sublist must have at least a field \code{$name}, containing the name
+of the \code{i}-th variation operator to be applied. Use
+\code{\link[=get_variation_operators]{get_variation_operators()}} to generate a list of available operators, and
+consult the vignette \code{Variation Stack in the MOEADr Package} for more
+details.
 }
 
 \section{Scalar Aggregation Functions}{
 
-TODO
+The \code{aggfun} parameter is a list that defines the scalar aggregation function
+to be used. \code{aggfun} must have at least the \code{$name} parameter. Currently
+available methods can be verified using \code{\link[=get_scalarization_methods]{get_scalarization_methods()}}. Check
+\code{\link[=scalarize_values]{scalarize_values()}} and the information provided by
+\code{\link[=get_scalarization_methods]{get_scalarization_methods()}} for more details.
 }
 
 \section{Update Methods}{
 
-TODO
+The \code{update} parameter is a list that defines the population update strategy
+to be used. \code{update} must have at least the \code{$name} parameter. Currently
+available methods can be verified using \code{\link[=get_update_methods]{get_update_methods()}}. Check
+\code{\link[=update_population]{update_population()}} and the information provided by
+\code{\link[=get_update_methods]{get_update_methods()}} for more details.
+
+Another (optional) field of the \code{update} parameter is \code{update$UseArchive},
+which is a binary flag defining whether the algorithm should keep an
+external solution archive (\code{TRUE}) or not (\code{FALSE}). Since it adds to the
+computational burden and memory requirements of the algorithm, the use of an
+archive population is recommended only in the case of constrained problems
+with constraint handling method that can occasionaly accept unfeasible
+solutions, leading to the potential loss of feasible efficient solutions for
+certain subproblems (e.g., \code{\link[=constraint_vbr]{constraint_vbr()}} with \code{type} = "sr" or "vt").
+}
+
+\section{Constraint Handling Methods}{
+
+The \code{constraint} parameter is a list that defines the constraint-handling
+technique to be used. \code{constraint} must have at least the \code{$name} parameter.
+Currently available methods can be verified using \code{\link[=get_constraint_methods]{get_constraint_methods()}}.
+Check \code{\link[=update_population]{update_population()}} and the information provided by
+\code{\link[=get_constraint_methods]{get_constraint_methods()}} for more details.
 }
 
 \section{Objective Scaling}{
 
-TODO
+Objective scaling refers to the re-scaling of the objective values at each
+iteration, which is generally considered to prevent problems arising from
+differently-scaled objective functions. \code{scaling} is a list that must have
+at least the \code{$name} parameter. Currently available options are
+\code{$name = "none"}, which does not perform any scaling, and \code{$name = "simple"},
+which performs a simple linear scaling of the objectives to the interval
+\code{[0, 1]}.
 }
 
 \section{Stop Criteria}{
 
-TODO
+The \code{stopcrit} parameter consists of a list vector, in which each
+sublist defines a termination criterion to be used for the MOEA/D. Each
+sublist must have at least a field \code{$name}, containing the name of the
+\code{i}-th criterion to be verified. The iterative cycle of the MOEA/D is
+terminated whenever any criterion is met. Use \code{\link[=get_stop_criteria]{get_stop_criteria()}} to
+generate a list of available criteria, and check the information provided by
+that function for more details.
 }
 
 \section{Echoing Options}{
 
-TODO
+The \code{showpars} parameter is a list that defines the echoing options of the
+MOEA/D. \code{showpars} must contain two fields:
+\itemize{
+\item \code{showpars$show.iters}, defining the type of echoing output. \code{$show.iters}
+can be set as \code{"none"}, \code{"numbers"}, or \code{"dots"}.
+\item \code{showpars$showevery}, defining the period of echoing (in iterations).
+\code{$showevery} must be a positive integer.
+}
 }
 
 \section{References}{
@@ -141,6 +216,7 @@ F. Campelo, L.S. Batista, C. Aranha:
 "A Component-Wise Perspective on Multiobjective Evolutionary Algorithms
 based on Decomposition". In preparation, 2016.
 }
+
 \examples{
 
 # MOEA/D as in Zhang and Li (2007) (sec. V-E, p.721-722)
@@ -162,33 +238,37 @@ aggfun    <- list(name       = "wt")
 variation <- list(list(name  = "sbx",
                        etax  = 20, pc = 1),
                   list(name  = "polymut",
-                       etam  = 20, pm = 0.1))
-update    <- list(name       = "standard")
+                       etam  = 20, pm = 0.1),
+                  list(name  = "truncate"))
+update    <- list(name       = "standard", UseArchive = FALSE)
 scaling   <- list(name       = "none")
-repair    <- list(name       = "truncate")
+constraint<- list(name       = "none")
 stopcrit  <- list(list(name  = "maxiter",
                     maxiter  = 200))
-showpars  <- list(show.iters = "numbers",
+showpars  <- list(show.iters = "dots",
                   showevery  = 10)
+seed      <- NULL
 
 ## 3: run MOEA/D
-out1 <- moead(problem, decomp,  aggfun, neighbors, variation,
-             update,  scaling, repair, stopcrit,  showpars)
+out1 <- moead(problem, decomp,  aggfun, neighbors, variation, update,
+              constraint, scaling, stopcrit, showpars, seed)
 
-# 4: Plot output using:
-# plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)
+# 4: Plot output:
+plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)
 
 
-# Rerun with standard DE variation operators (rand mutation + binomial
-# recombination)
+# Rerun with MOEA/D-DE configuration and AWT scalarization
+aggfun    <- list(name       = "awt")
 variation <- list(list(name  = "diffmut",
                        basis = "rand",
                        Phi   = NULL),
                   list(name  = "binrec",
-                       rho   = 0.8))
+                       rho   = 0.8),
+                  list(name = "polymut",
+                       etam  = 20, pm = 0.1),
+                  list(name  = "truncate"))
 
-out2 <- moead(problem, decomp,  aggfun, neighbors, variation,
-              update,  scaling, repair, stopcrit,  showpars)
-# plot(out2$Y[,1], out2$Y[,2], type = "p", pch = 20)
+out2 <- moead(problem, decomp,  aggfun, neighbors, variation, update,
+              constraint, scaling, stopcrit, showpars, seed)
+plot(out2$Y[,1], out2$Y[,2], type = "p", pch = 20)
 }
-

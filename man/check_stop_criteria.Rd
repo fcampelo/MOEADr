@@ -4,29 +4,24 @@
 \alias{check_stop_criteria}
 \title{Stop criteria for MOEA/D}
 \usage{
-check_stop_criteria()
+check_stop_criteria(stopcrit, call.env)
+}
+\arguments{
+\item{stopcrit}{list containing the parameters defining the stop
+handling method. See Section \code{Constraint Handling} of the \code{\link[=moead]{moead()}}
+documentation for details.}
+
+\item{call.env}{List vector containing the stop criteria to be used.
+See \code{\link[=moead]{moead()}} for details.}
 }
 \value{
-The function does not return any value. However, it modifies the
-state of the calling environment, updating the iteration flag
-\code{keep.running}.
+Flag \code{keep.running}, indicating whether the algorithm should continue
+(\code{TRUE}) or terminate (\code{FALSE}).
 }
 \description{
-Verifies stop criteria for the MOEADr package
+Verifies stop criteria for the MOEADr package.
 }
-\section{Parameters}{
-
-This routine accesses all variables defined in the calling environment using
-\code{parent.frame()}, so it does not require any explicit input parameters.
-
-However, the calling environment must containat least a variable named
-\code{stopcrit}, which is a list vector containing the stop criteria to be
-used. Each element of this list vector must have at least a
-parameter \code{stopcrit$name}, containing the name of the
-criterion to be used, as well any other criterion-specific values
-required. The list of available variation operators can be
-generated using \code{get_stop_criteria()}. Other variables may also be
-required (e.g., \code{iter} counter for iterations or \code{nfe} counter for
-number of candidate solutions evaluated), depending on the criteria used.
+\details{
+This routine is intended to be used internally by \code{\link[=moead]{moead()}},
+and should not be called directly by the user.
 }
-

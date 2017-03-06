@@ -4,7 +4,7 @@
 \alias{variation_polymut}
 \title{Polynomial mutation}
 \usage{
-variation_polymut(X, etam, pm, ...)
+variation_polymut(X, etam, pm, eps = 1e-06, ...)
 }
 \arguments{
 \item{X}{Population matrix}
@@ -13,8 +13,9 @@ variation_polymut(X, etam, pm, ...)
 
 \item{pm}{variable-wise probability of mutation}
 
-\item{...}{other parameters (unused, included for compatibility with
-generic call)}
+\item{eps}{small constant used to prevent divisions by zero}
+
+\item{...}{other parameters (included for compatibility with generic call)}
 }
 \value{
 Matrix \code{X}' containing the mutated population
@@ -24,13 +25,13 @@ Polynomial mutation implementation for the MOEA/D
 }
 \details{
 This R implementation of the Polynomial Mutation reproduces the C code
-implementation available in package "emoa", version 0.5-0, by Olaf Mersmann.
+implementation available in the R package \strong{emoa} 0.5-0, by Olaf Mersmann.
 The differences between the present version and the original one are:
 \itemize{
-   \item All variables are considered bounded in the (0, 1) interval, which
-         simplifies the calculations.
-   \item Calculations are vectorized over variables, which also simplifies
-         the operator.
+\item The operator is performed on the variables scaled to the \code{[0, 1]}
+interval, which simplifies the calculations.
+\item Calculations are vectorized over variables, which also simplifies
+the implementation.
 }
 }
 \section{References}{

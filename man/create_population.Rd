@@ -4,14 +4,13 @@
 \alias{create_population}
 \title{Create population}
 \usage{
-create_population(N, problem = NULL)
+create_population(N, problem)
 }
 \arguments{
 \item{N}{population size}
 
-\item{problem}{list of named problem parameters. See \code{\link{moead}} for
-details. If NULL the function searches for \code{problem} in the calling
-environment.}
+\item{problem}{list of named problem parameters. See Section
+\code{Problem Description} of the \code{\link[=moead]{moead()}} documentation for details.}
 }
 \value{
 A population matrix X for the MOEA/D.
@@ -21,7 +20,6 @@ Create a population for the MOEADr package
 }
 \details{
 This routine creates a population matrix for the MOEA/D. Currently only a
-multivariate uniform distribution is implemented. The points are created
-within the space 0 <= x_i <= 1, i = 1,...,n_v.
+multivariate uniform distribution is implemented. All points are created
+within the standardized space \eqn{0 \le x_i \le 1, i = 1,...,n_v}.
 }
-

@@ -1,13 +1,20 @@
 # Test decomposition methods
 context("Decomposition methods")
 
+# Assisting Tests
 # Checks if all the rows sum to 1
-is_valid_decomposition <- function(W) {
+rows_sum_one <- function(W) {
   sums <- rowSums(W)
   names(sums) <- NULL
   ones <- rep(1, nrow(W))
   all.equal(sums, ones)
 }
+
+# Checks if number of dimensions is correct
+correct_dimensions <- function(W, rows, cols) {
+  nrow(W) == rows && ncol(W) == cols
+}
+
 
 # 1: SLD decomposition
 decomp.sld1 <- list(name = "sld", H = 99)
@@ -27,8 +34,8 @@ testthat::test_that("SLD decomposition returns correct sizes", {
 })
 
 testthat::test_that("SLD decomposition returns unitary weight vectors", {
-  testthat::expect_true(is_valid_decomposition(generate_weights(decomp.sld1, m1)))
-  testthat::expect_true(is_valid_decomposition(generate_weights(decomp.sld2, m2)))
+  testthat::expect_true(rows_sum_one(generate_weights(decomp.sld1, m1)))
+  testthat::expect_true(rows_sum_one(generate_weights(decomp.sld2, m2)))
 })
 
 # 2: MSLD decomposition
@@ -54,8 +61,8 @@ testthat::test_that("MSDL returns correct values", {
 })
 
 testthat::test_that("MSLD returns unitary weight vectors", {
-  testthat::expect_true(is_valid_decomposition(generate_weights(decomp.msld2, msld2)))
-  testthat::expect_true(is_valid_decomposition(generate_weights(decomp.msld3, msld3)))
+  testthat::expect_true(rows_sum_one(generate_weights(decomp.msld2, msld2)))
+  testthat::expect_true(rows_sum_one(generate_weights(decomp.msld3, msld3)))
 })
 
 # 3: Uniform decomposition
@@ -64,8 +71,19 @@ decomp.unif1 <- list(name = "uniform", N = 10)
 decomp.unif3 <- list(name = "uniform", N = 32)
 unif_obj <- 4
 
-testthat::test_that("MSLD returns unitary weight vectors", {
-  testthat::expect_true(is_valid_decomposition(generate_weights(decomp.unif1, unif_obj)))
+testthat::test_that("Uniform returns unitary weight vectors", {
+  testthat::expect_true(rows_sum_one(generate_weights(decomp.unif1, unif_obj)))
   # testthat::expect_true(is_valid_decomposition(generate_weights(decomp.unif2, unif_obj)))
-  testthat::expect_true(is_valid_decomposition(generate_weights(decomp.unif3, unif_obj)))
+  testthat::expect_true(rows_sum_one(generate_weights(decomp.unif3, unif_obj)))
+})
+
+# Issue 34 on decomposition - Wrong matrix dimensions when number of subobjectives is 2
+testthat::test_that("Uniform returns correct dimensions", {
+  testthat::expect_true(correct_dimensions(generate_weights(list(name = "uniform", N = 10), 3), 10, 3))
+  testthat::expect_true(correct_dimensions(generate_weights(list(name = "uniform", N = 10), 2), 10, 2))
+})
+
+testthat::test_that("Uniform return matrix sum to one", {
+  testthat::expect_true(rows_sum_one(generate_weights(list(name = "uniform", N = 10), 3)))
+  testthat::expect_true(rows_sum_one(generate_weights(list(name = "uniform", N = 10), 2)))
 })

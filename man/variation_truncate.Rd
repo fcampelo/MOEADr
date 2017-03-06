@@ -9,22 +9,14 @@ variation_truncate(X, ...)
 \arguments{
 \item{X}{Population matrix}
 
-\item{...}{other parameters (unused, included for compatibility with
-generic call)}
+\item{...}{other parameters (included for compatibility with generic call)}
 }
 \value{
-Matrix \code{X}
+Truncated matrix \code{X}'.
 }
 \description{
 Truncation variation operator
 }
 \details{
-Truncate the solution matrix X to guarantee that all values are in the
-[0, 1] interval.
+Truncate the solution matrix \code{X} to the \code{[0, 1]} interval.
 }
-\section{References}{
-
-Code reused from https://github.com/fcampelo/ExpDE/blob/master/R/ExpDE.R
-Lines 240-242
-}
-

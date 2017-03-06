@@ -4,14 +4,20 @@
 \alias{stop_maxiter}
 \title{Stop criterion: maximum number of iterations}
 \usage{
-stop_maxiter(moead.env)
+stop_maxiter(stopcrit, iter, ...)
 }
 \arguments{
-\item{moead.env}{list representing the environment of the base function
-\code{moead}.}
+\item{stopcrit}{list containing the parameters defining the stop
+handling method. See Section \code{Constraint Handling} of the \code{\link[=moead]{moead()}}
+documentation for details.}
+
+\item{iter}{iterations counter of \code{\link[=moead]{moead()}}.}
+
+\item{...}{other parameters (included for compatibility with generic call)}
 }
 \value{
-boolean value: TRUE if this criterion has been met, FALSE otherwise.
+boolean value: \code{TRUE} if this criterion has been met, \code{FALSE}
+otherwise.
 }
 \description{
 Verifies stop criterion "maximum number of iterations" for the MOEADr
@@ -19,10 +25,10 @@ package. For internal use only, not to be called directly by the user.
 }
 \details{
 When this stop criterion is used, one element of the \code{stopcrit}
-parameter (see \code{\link{moead}}) must have the following structure:
+parameter (see \code{\link[=moead]{moead()}}) must have the following structure:
 \itemize{
-   \item \code{stopcrit$name = "maxiter"}
-   \item \code{stopcrit$maxiter = K}, where \code{K} is a positive integer.
+\item \code{stopcrit$name = "maxiter"}
+\item \code{stopcrit$maxiter}, containing a positive integer representing the
+desired maximum number of iterations.
 }
 }
-

@@ -6,14 +6,12 @@
 #' simplify the use of automated tuning / design tools such as Iterated Racing.
 #'
 #' @param X Population matrix
-#' @param ... other parameters (unused, included for compatibility with
-#' generic call)
+#' @param ... other parameters (included for compatibility with generic call)
 #'
-#' @return Matrix \code{X}
+#' @return Input matrix `X`
 #'
 #' @export
 
 variation_none <- function(X, ...){
-
   return(X)
 }

@@ -4,31 +4,24 @@
 \alias{perform_variation}
 \title{Run variation operators}
 \usage{
-perform_variation(X = NULL, P = NULL, B = NULL, variation = NULL,
-  repair = NULL)
+perform_variation(variation, X, iter, ...)
 }
 \arguments{
-\item{X}{Population matrix of the MOEA/D (each row is a candidate solution).
-If \code{NULL} the function searches for \code{X} in the calling environment.}
-
-\item{P}{Matrix of probabilities of selection for variation (created by
-\code{define_neighborhoods}). If \code{NULL} the function searches for
-\code{P} in the calling environment.}
-
-\item{B}{Matrix of neighborhood indexes (created by
-\code{define_neighborhoods}). If \code{NULL} the function searches for
-\code{B} in the calling environment.}
-
 \item{variation}{List vector containing the variation operators to be used.
-See \code{\link{moead}} for details. If \code{NULL} the function searches
-for \code{variation} in the calling environment.}
+See \code{\link[=moead]{moead()}} for details.}
 
-\item{repair}{List vector containing the repair operator to be used.
-See \code{\link{moead}} for details. If \code{NULL} the function searches
-for \code{repair} in the calling environment.}
+\item{X}{Population matrix of the MOEA/D (each row is a candidate solution).}
+
+\item{iter}{iterations counter of the \code{\link[=moead]{moead()}} function.}
+
+\item{...}{other parameters to be passed down to the individual variation
+operators (see documentation of the specific \code{variation_}\strong{xyz}\code{()}
+functions for details)}
 }
 \value{
-Modified population matrix X
+List object containing a modified population matrix \code{X}, a
+local search argument list \code{ls.arg}, and the number of function evaluations
+used by the variation operators, \code{var.nfe}.
 }
 \description{
 Sequentially apply variation operators for the MOEADr package
@@ -36,6 +29,9 @@ Sequentially apply variation operators for the MOEADr package
 \details{
 This routine performs the variation block for the MOEA/D. The
 list of available variation operators can be generated using
-\code{get_variation_operators()}.
-}
+\code{\link[=get_variation_operators]{get_variation_operators()}}.
 
+If the \code{localsearch} operator is included, it is executed whenever its
+conditions (period of occurrence or probability of occurrence) are verified.
+See \code{\link[=variation_localsearch]{variation_localsearch()}} for details.
+}

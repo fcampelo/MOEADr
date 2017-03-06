@@ -3,26 +3,28 @@
 #' Problem Decomposition using Simplex-lattice Design for MOEADr package
 #'
 #' This routine calculates the weight vectors for the MOEA/D using the
-#' Simplex-lattice Design. Besides \code{decomp$name = "SLD"}, this method
-#' requires the definition of a decomposition constant \code{decomp$H}.
-#'#' Suggested values for \code{decomp$H} are (use with caution):
+#' Simplex-lattice Design.
 #'
-#' \tabular{cccc}{
-#' \code{m}\tab \code{method}\tab \code{H}\tab N\cr
+#' @param decomp list containing the relevant decomposition parameters.
+#'  Besides `decomp$name = "sld"`, this method requires the definition of the
+#'  following key-value pairs:
+#' \itemize{
+#'   \item `decomp$H`, decomposition constant. Suggested values for `decomp$H`
+#'          are (use with caution):
+#'          \tabular{ccccc}{
+#'              `m`\tab |\tab`H`\tab |\tab`N`\cr
+#'              `2`    \tab  |\tab`99`      \tab |\tab`100`\cr
+#'              `3`    \tab  |\tab`12`      \tab |\tab`91`\cr
+#'              `5`    \tab  |\tab`6`       \tab |\tab`210`\cr
+#'          }
+#'          It is important to highlight that the number of vectors generated (`N`) must
+#'          be greater than the number of neighbors declared in `neighbors$T`
+#'          (see [moead()] for details).
+#'   \item \code{decomp$.nobj}: integer value, `decomp$.nobj > 1`. Number of
+#'         objectives of the problem.
+#' }
 #'
-#' 2    \tab "SLD" \tab  \code{99}      \tab 100\cr
-#' 3    \tab "SLD" \tab  \code{12}      \tab 91\cr
-#' 5    \tab "SLD" \tab  \code{6}       \tab 210\cr
-#'}
-#'
-#' It is important to highlight that the number of vectors generated must be
-#' greater than the number of neighbors declared in \code{neighbors$T}
-#' (see \code{\link{moead}} for details).
-#'
-#'
-#' @param decomp TODO
-#' @param ... other parameters (unused, included for compatibility with
-#' generic call)
+#' @param ... other parameters (included for compatibility with generic call)
 #'
 #' @section References:
 #' I. Das, J. Dennis (1998), "Normal Boundary Intersection - A New Method

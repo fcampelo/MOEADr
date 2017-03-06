@@ -5,8 +5,6 @@ randM <- function(M) {
          ncol = ncol(M))
 }
 
-
-
 # Denormalize population
 # X is a matrix of row vectors
 denormalize_population <- function(X, problem){

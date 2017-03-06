@@ -8,11 +8,10 @@
 #'
 #' @param X Population matrix
 #' @param rho mutation probability
-#' @param Xc Original population matrix
-#' @param ... other parameters (unused, included for compatibility with
-#' generic call)
+#' @param Xt Original population matrix
+#' @param ... other parameters (included for compatibility with generic call)
 #'
-#' @return Matrix \code{X}' containing the recombined population
+#' @return Matrix `X`' containing the recombined population
 #'
 #' @section References:
 #' K. Price, R.M. Storn, J.A. Lampinen, "Differential Evolution: A
@@ -20,13 +19,13 @@
 #'
 #' @export
 
-variation_binrec <- function(X, Xc, rho, ...){
+variation_binrec <- function(X, Xt, rho, ...){
 
   # ========== Error catching and default value definitions
   assertthat::assert_that(
     is.numeric(X) && is.matrix(X),
-    is.numeric(Xc) && is.matrix(Xc),
-    identical(dim(X), dim(Xc)),
+    is.numeric(Xt) && is.matrix(Xt),
+    identical(dim(X), dim(Xt)),
     is.numeric(rho) && is_within(rho, 0, 1, strict = FALSE))
   # ==========
 
@@ -42,5 +41,5 @@ variation_binrec <- function(X, Xc, rho, ...){
   R <- R | (rowSums(R) == 0 & K)
 
   # Perform recombination and return
-  return(R * X + (!R) * Xc)
+  return(R * X + (!R) * Xt)
 }

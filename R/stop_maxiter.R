@@ -3,24 +3,29 @@
 #' Verifies stop criterion "maximum number of iterations" for the MOEADr
 #' package. For internal use only, not to be called directly by the user.
 #'
-#' When this stop criterion is used, one element of the \code{stopcrit}
-#' parameter (see \code{\link{moead}}) must have the following structure:
+#' When this stop criterion is used, one element of the `stopcrit`
+#' parameter (see [moead()]) must have the following structure:
 #' \itemize{
-#'    \item \code{stopcrit$name = "maxiter"}
-#'    \item \code{stopcrit$maxiter = K}, where \code{K} is a positive integer.
+#'    \item `stopcrit$name = "maxiter"`
+#'    \item `stopcrit$maxiter`, containing a positive integer representing the
+#'    desired maximum number of iterations.
 #' }
 #'
-#' @param moead.env list representing the environment of the base function
-#' \code{moead}.
+#' @param stopcrit list containing the parameters defining the stop
+#' handling method. See Section `Constraint Handling` of the [moead()]
+#' documentation for details.
+#' @param iter iterations counter of [moead()].
+#' @param ... other parameters (included for compatibility with generic call)
 #'
-#' @return boolean value: TRUE if this criterion has been met, FALSE otherwise.
+#' @return boolean value: `TRUE` if this criterion has been met, `FALSE`
+#' otherwise.
 #'
 #' @export
-stop_maxiter <- function(moead.env){
-  maxiter.i <- which(sapply(moead.env$stopcrit,
+stop_maxiter <- function(stopcrit, iter, ...){
+  maxiter.i <- which(sapply(stopcrit,
                             function(x) x$name) == "maxiter")
-  maxiter   <- moead.env$stopcrit[[maxiter.i]]$maxiter
+  maxiter   <- stopcrit[[maxiter.i]]$maxiter
   assertthat::assert_that(assertthat::is.count(maxiter))
 
-  return(moead.env$iter >= maxiter)
+  return(iter >= maxiter)
 }

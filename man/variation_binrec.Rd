@@ -4,17 +4,16 @@
 \alias{variation_binrec}
 \title{Binomial Recombination}
 \usage{
-variation_binrec(X, Xc, rho, ...)
+variation_binrec(X, Xt, rho, ...)
 }
 \arguments{
 \item{X}{Population matrix}
 
-\item{Xc}{Original population matrix}
+\item{Xt}{Original population matrix}
 
 \item{rho}{mutation probability}
 
-\item{...}{other parameters (unused, included for compatibility with
-generic call)}
+\item{...}{other parameters (included for compatibility with generic call)}
 }
 \value{
 Matrix \code{X}' containing the recombined population

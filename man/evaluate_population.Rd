@@ -4,17 +4,22 @@
 \alias{evaluate_population}
 \title{Evaluate population}
 \usage{
-evaluate_population(X = NULL, problem = NULL)
+evaluate_population(X, problem, nfe)
 }
 \arguments{
-\item{X}{Population matrix of the MOEA/D (each row is a candidate solution).
-If \code{NULL} the function searches for \code{X} in the calling environment.}
+\item{X}{Population matrix of the MOEA/D (each row is a candidate solution).}
 
-\item{problem}{list of named problem parameters. If NULL the function
-searches for \code{problem} in the calling environment.}
+\item{problem}{list of named problem parameters. See Section
+\code{Problem Description} of the \code{\link[=moead]{moead()}} documentation for details.}
+
+\item{nfe}{counter of function evaluations from the \code{\link[=moead]{moead()}} routine.}
 }
 \value{
-[N x m] matrix of objective function values.
+List object containing the matrix of objective function values,
+a list object containing information about the constraint violations (a
+matrix of constraint values \code{Cmatrix}, a matrix of constraint violations
+\code{Vmatrix}, and a vector of total violations \code{v}), and the updated counter
+\code{nfe}.
 }
 \description{
 Evaluate a population matrix on the objective functions for the MOEADr
@@ -23,29 +28,11 @@ package
 \details{
 This routine evaluates a population matrix for the MOEA/D. Each row of the
 matrix is considered as a candidate solution. This routine expects the
-candidate solutions to be expressed in the [0,1] interval.
+candidate solutions to be standardized, i.e., that the variable limits given
+in \code{problem$xmin} and \code{problem$xmax} are mapped to \code{0} and
+\code{1}, respectively.
 
-WARNING: The calling environment must have a counter variable \code{nfe},
+\strong{Warning}: The calling environment must have a counter variable \code{nfe},
 which tracks the total number of function evaluations. This routine
 accesses and updates that \code{nfe} variable.
 }
-\section{Problem Description}{
-
-The \code{problem} parameter consists of a list with all necessary
-definitions for the multiobjective optimization problem to be solved.
-\code{problem} must contain at least the following fields:
-\itemize{
-   \item \code{$name} - name of the problem instance function, that is, a
-         routine that calculates Y = f(X);
-   \item \code{$xmin} - vector of lower bounds of each variable
-   \item \code{$xmax} - vector of upper bounds of each variable
-   \item \code{$m}    - integer containing the number of objectives
-}
-
-The function indicated in \code{problem$name} must be able to receive a
-matrix with each row representing one candidate solution, and return a matrix
-with each row representing the objective values for that solution. The name
-of the input argument that receives the population matrix must be either
-\code{X} or \code{x}.
-}
-
