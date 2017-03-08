@@ -44,7 +44,7 @@
 #'
 #' @export
 
-variation_diffmut <- function(X, P, B, Phi, basis = 'rand', ...){
+variation_diffmut <- function(X, P, B, Phi = NULL, basis = 'rand', ...){
 
   input.pars <- as.list(sys.call())[-1]
 

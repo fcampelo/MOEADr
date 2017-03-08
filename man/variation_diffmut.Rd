@@ -4,7 +4,7 @@
 \alias{variation_diffmut}
 \title{Differential Mutation}
 \usage{
-variation_diffmut(X, P, B, Phi, basis = "rand", ...)
+variation_diffmut(X, P, B, Phi = NULL, basis = "rand", ...)
 }
 \arguments{
 \item{X}{Population matrix}
