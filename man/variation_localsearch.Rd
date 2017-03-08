@@ -34,6 +34,9 @@ to contain the following fields:
 given subproblem at any given iteration (numeric between 0 and 1)
 \item \code{tau.ls} (optional): period of application of local search to each
 subproblem (positive integer)
+\item \code{trunc.x} (optional): logical flag for truncating the results of the
+local search operator to the limits defined by \code{problem$xmin},
+\code{problem$xmax} (logical). Defaults to \code{TRUE}.
 }
 
 Whenever local search is triggered for a given subproblem, it cancels

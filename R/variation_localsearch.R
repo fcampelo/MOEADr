@@ -12,6 +12,9 @@
 #' given subproblem at any given iteration (numeric between 0 and 1)
 #' - `tau.ls` (optional): period of application of local search to each
 #' subproblem (positive integer)
+#' - `trunc.x` (optional): logical flag for truncating the results of the
+#' local search operator to the limits defined by `problem$xmin`,
+#' `problem$xmax` (logical). Defaults to `TRUE`.
 #'
 #' Whenever local search is triggered for a given subproblem, it cancels
 #' all other variation operators _for that subproblem_ and is executed directly
