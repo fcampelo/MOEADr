@@ -8,3 +8,6 @@
 
 R CMD check succeeded
 
+## Changes
+* removed unnecessary dependency from Imports
+* attempted solution of a spurious, Solaris-specific NOTE

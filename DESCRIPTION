@@ -8,16 +8,13 @@ Suggests: smoof, testthat, knitr, rmarkdown, irace
 Depends: R (>= 3.3.0)
 Authors@R: c(person("Felipe", "Campelo",
     email   = "fcampelo@ufmg.br",
-    role    = c("aut", "cre"),
-    comment = "Original concept; organization; coding"),
+    role    = c("aut", "cre")),
     person("Lucas", "Batista",
     email   = "lusoba@ufmg.br",
-    role    = "com",
-    comment = "Literature review; initial formalization of operators"),
+    role    = "com"),
     person("Claus", "Aranha",
     email   = "caranha@cs.tsukuba.ac.jp",
-    role    = "aut",
-    comment = "Coding; testing"))
+    role    = "aut"))
 Author: Felipe Campelo [aut, cre],
   Lucas Batista [com],
   Claus Aranha [aut]
