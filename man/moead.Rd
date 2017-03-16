@@ -5,7 +5,7 @@
 \title{MOEA/D}
 \usage{
 moead(problem, decomp, aggfun, neighbors, variation, update, constraint,
-  scaling, stopcrit, showpars, seed = NULL)
+  scaling, stopcrit, showpars, seed = NULL, ...)
 }
 \arguments{
 \item{problem}{List containing the problem parameters.
@@ -40,6 +40,9 @@ See \code{\link[=print_progress]{print_progress()}} for details.}
 
 \item{seed}{seed for the pseudorandom number generator. Defaults to NULL,
 in which case \code{as.integer(Sys.time())} is used for the definition.}
+
+\item{...}{Other parameters (useful for development and debugging, not
+necessary in regular use)}
 }
 \value{
 List object containing :

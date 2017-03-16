@@ -58,3 +58,4 @@ getminP <- function(X){
 getmaxP <- function(X){
   apply(X, MARGIN = 2, FUN = max, na.rm = TRUE)
 }
+

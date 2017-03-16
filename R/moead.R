@@ -154,6 +154,8 @@
 #'    See [print_progress()] for details.
 #' @param seed seed for the pseudorandom number generator. Defaults to NULL,
 #'    in which case \code{as.integer(Sys.time())} is used for the definition.
+#' @param ... Other parameters (useful for development and debugging, not
+#' necessary in regular use)
 #'
 #' @export
 #'
@@ -233,8 +235,14 @@ moead <- function(problem,      # List:  MObj problem
                   scaling,      # List:  objective scaling strategy
                   stopcrit,     # List:  stop criteria
                   showpars,     # List:  echoing behavior
-                  seed = NULL)  # Seed for PRNG
+                  seed = NULL,  # Seed for PRNG
+                  ...)          # other parameters
 {
+  moead.input.pars <- as.list(sys.call())[-1]
+  if ("save.env" %in% names(moead.input.pars)) {
+    if (moead.input.pars$save.env == TRUE) saveRDS(as.list(environment()),
+                                                   "moead_env.rds")
+  }
 
   # ============== Error catching and default value definitions ============== #
   # "problem"     checked in "create_population(...)"
@@ -292,6 +300,11 @@ moead <- function(problem,      # List:  MObj problem
   while(keep.running){
     # Update iteration counter
     iter <- iter + 1
+
+    if ("save.iters" %in% names(moead.input.pars)) {
+      if (moead.input.pars$save.iters == TRUE) saveRDS(as.list(environment()),
+                                                       "moead_env.rds")
+    }
 
     # ========== Neighborhoods
     # Define/update neighborhood probability matrix
