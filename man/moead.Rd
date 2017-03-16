@@ -221,7 +221,7 @@ based on Decomposition". In preparation, 2016.
 }
 
 \examples{
-
+\dontrun{
 # MOEA/D as in Zhang and Li (2007) (sec. V-E, p.721-722)
 ## 1: prepare test problem
 library(smoof)
@@ -274,4 +274,5 @@ variation <- list(list(name  = "diffmut",
 out2 <- moead(problem, decomp,  aggfun, neighbors, variation, update,
               constraint, scaling, stopcrit, showpars, seed)
 plot(out2$Y[,1], out2$Y[,2], type = "p", pch = 20)
+}
 }
