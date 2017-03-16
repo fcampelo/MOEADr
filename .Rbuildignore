@@ -3,4 +3,3 @@
 ^.*\.Rmd$
 ^.*\.yml$
 ^cran-comments.md$
-^NEWS\.md$
