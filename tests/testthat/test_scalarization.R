@@ -57,7 +57,7 @@ for (i in 1:nrow(f)){
 
 # Run tests
 testthat::test_that("Scalarization returns correct values", {
-  skip_on_cran()
+  skip_on_os("solaris")
   testthat::expect_equal(scalarization_pbi(f, w, z, aggfun1), res1)
   testthat::expect_equal(scalarization_ws(f, w, z), res2)
   testthat::expect_equal(scalarization_wt(f, w, z), res3)
