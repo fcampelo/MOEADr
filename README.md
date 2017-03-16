@@ -1,5 +1,6 @@
 ## MOEADr package
-[![Build Status](https://api.travis-ci.org/fcampelo/MOEADr.png)](https://travis-ci.org/fcampelo/MOEADr)
+[![Build Status](https://api.travis-ci.org/fcampelo/MOEADr.png)](https://travis-ci.org/fcampelo/MOEADr) [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/MOEADr)](https://cran.r-project.org/package=MOEADr)
+[![CRAN Downloads](https://cranlogs.r-pkg.org/badges/MOEADr)](https://cran.rstudio.com/web/packages/MOEADr/index.html)
 
 ***
 
