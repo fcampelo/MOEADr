@@ -18,7 +18,7 @@ correct_dimensions <- function(W, rows, cols) {
 
 # 1: SLD decomposition
 decomp.sld1 <- list(name = "sld", H = 99)
-m1          <- 4
+m1          <- 2
 decomp.sld2 <- list(name = "sld", H = 2)
 m2          <- 10
 
