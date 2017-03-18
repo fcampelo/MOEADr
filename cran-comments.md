@@ -1,7 +1,6 @@
 ## Changes and notes
-* updating just after initial submission (sorry for that) to correct solaris-specific ERROR due to numeric types, as pointed by Uwe Ligges and Kurt Hornik.
-* solved (hopefully) said Solaris-specific ERROR.
-* removed unnecessary dependency from Imports (was generating NOTEs)
+* fixed _CRAN URL not in canonical form_ problem, as requested by Uwe Ligges.
+* added a simple example of use to README.md
 
 ## Test environments
 * local OS X install, R 3.3.1
