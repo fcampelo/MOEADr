@@ -1,8 +1,13 @@
 Package: MOEADr
 Type: Package
 Title: Component-Wise MOEA/D Implementation
+Description: Modular implementation of Multiobjective Evolutionary Algorithms 
+              based on Decomposition (MOEA/D) [Zhang and Li (2007), 
+              DOI: 10.1109/TEVC.2007.892759] for quick assembling and 
+              testing of new algorithmic components, as well as easy 
+              replication of published MOEA/D proposals.
 Version: 0.2.1
-Date: 2017-3-17
+Date: 2017-3-19
 Imports: FNN, assertthat
 Suggests: smoof, testthat, knitr, rmarkdown, irace
 Depends: R (>= 3.3.0)
@@ -19,11 +24,10 @@ Author: Felipe Campelo [aut, cre],
   Lucas Batista [com],
   Claus Aranha [aut]
 Maintainer: Felipe Campelo <fcampelo@ufmg.br>
-Description: Modular implementation of MOEA/D approaches for multiobjective
-    optimization.
 License: GPL-2
 LazyData: TRUE
 Encoding: UTF-8
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
+URL: https://github.com/fcampelo/MOEADr
