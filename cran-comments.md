@@ -1,6 +1,5 @@
 ## Changes and notes
-* fixed _CRAN URL not in canonical form_ problem, as requested by Uwe Ligges.
-* added a simple example of use to README.md
+* Added a more descriptive _Description_ field in DESCRIPTION, as requested by Uwe Ligges.
 
 ## Test environments
 * local OS X install, R 3.3.1
