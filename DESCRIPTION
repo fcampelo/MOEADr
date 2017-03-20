@@ -3,7 +3,7 @@ Type: Package
 Title: Component-Wise MOEA/D Implementation
 Description: Modular implementation of Multiobjective Evolutionary Algorithms 
               based on Decomposition (MOEA/D) [Zhang and Li (2007), 
-              DOI: 10.1109/TEVC.2007.892759] for quick assembling and 
+              <DOI:10.1109/TEVC.2007.892759>] for quick assembling and 
               testing of new algorithmic components, as well as easy 
               replication of published MOEA/D proposals.
 Version: 0.2.1
