@@ -1,5 +1,6 @@
 ## Changes and notes
-* Added a more descriptive _Description_ field in DESCRIPTION, as requested by Uwe Ligges.
+* fixed DOI format in description, as requested by Uwe Ligges.
+* this upload also addresses the problem reported by Brian Ripley: the offending test was changed so that integers are compared instead of doubles, and the values compared are much smaller (without compromising the validity of the test).
 
 ## Test environments
 * local OS X install, R 3.3.1

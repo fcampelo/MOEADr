@@ -19,26 +19,22 @@ correct_dimensions <- function(W, rows, cols) {
 # 1: SLD decomposition
 decomp.sld1 <- list(name = "sld", H = 99)
 m1          <- 2
+tr1         <- choose(decomp.sld1$H + m1 - 1, m1 - 1)
+W1          <- generate_weights(decomp.sld1, m1)
+
 decomp.sld2 <- list(name = "sld", H = 2)
 m2          <- 10
+tr2         <- choose(decomp.sld2$H + m2 - 1, m2 - 1)
+W2          <- generate_weights(decomp.sld2, m2)
 
 testthat::test_that("SLD decomposition returns correct sizes", {
-
-  testthat::expect_true(correct_dimensions(generate_weights(decomp.sld1, m1),
-                                           rows = choose(decomp.sld1$H + m1 - 1,
-                                                         m1 - 1),
-                                           cols = m1))
-
-  testthat::expect_true(correct_dimensions(generate_weights(decomp.sld2, m2),
-                                           rows = choose(decomp.sld2$H + m2 - 1,
-                                                         m2 - 1),
-                                           cols = m2))
+  testthat::expect_true(correct_dimensions(W1, tr1,  m1))
+  testthat::expect_true(correct_dimensions(W2, tr2,  m2))
 })
 
 testthat::test_that("SLD decomposition returns unitary weight vectors", {
-
-  testthat::expect_true(rows_sum_one(generate_weights(decomp.sld1, m1)))
-  testthat::expect_true(rows_sum_one(generate_weights(decomp.sld2, m2)))
+  testthat::expect_true(rows_sum_one(W1))
+  testthat::expect_true(rows_sum_one(W2))
 })
 
 # 2: MSLD decomposition
@@ -56,7 +52,7 @@ testthat::test_that("MSDL rejects invalid inputs", {
 })
 testthat::test_that("MSDL returns correct size", {
   testthat::expect_equal(dim(generate_weights(decomp.msld2, msld2)),
-                         c(34,4))
+                         c(34, 4))
 })
 testthat::test_that("MSDL returns correct values", {
   testthat::expect_equal(generate_weights(decomp.msld3, msld3),
@@ -76,7 +72,6 @@ unif_obj <- 4
 
 testthat::test_that("Uniform returns unitary weight vectors", {
   testthat::expect_true(rows_sum_one(generate_weights(decomp.unif1, unif_obj)))
-  # testthat::expect_true(is_valid_decomposition(generate_weights(decomp.unif2, unif_obj)))
   testthat::expect_true(rows_sum_one(generate_weights(decomp.unif3, unif_obj)))
 })
 
