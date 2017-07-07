@@ -6,11 +6,11 @@ Description: Modular implementation of Multiobjective Evolutionary Algorithms
               <DOI:10.1109/TEVC.2007.892759>] for quick assembling and 
               testing of new algorithmic components, as well as easy 
               replication of published MOEA/D proposals.
-Version: 0.2.1
-Date: 2017-3-19
-Imports: FNN, assertthat
-Suggests: smoof, testthat, knitr, rmarkdown, irace
-Depends: R (>= 3.3.0)
+Version: 0.2.2
+Date: 2017-6-25
+Imports: FNN, assertthat, smoof
+Suggests: testthat, knitr, rmarkdown, devtools, irace
+Depends: R (>= 3.4.0)
 Authors@R: c(person("Felipe", "Campelo",
     email   = "fcampelo@ufmg.br",
     role    = c("aut", "cre")),

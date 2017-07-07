@@ -1,3 +1,8 @@
+# MOEADr 0.2.2
+* Moved package **smoof** from _Suggestions_ to _Imports_
+* _Depends_ updated to R (>= 3.4.0)
+* 
+
 # MOEADr 0.2.1
 
 * Added `NEWS.md` to track changes to the package.
