@@ -226,24 +226,40 @@
 #' plot(out2$Y[,1], out2$Y[,2], type = "p", pch = 20)
 #' }
 
-moead <- function(problem,      # List:  MObj problem
-                  decomp,       # List:  decomposition strategy
-                  aggfun,       # List:  scalar aggregation function
-                  neighbors,    # List:  neighborhood assignment strategy
-                  variation,    # List:  variation operators
-                  update,       # List:  update method
-                  constraint,   # List:  constraint handling method
-                  scaling,      # List:  objective scaling strategy
-                  stopcrit,     # List:  stop criteria
-                  showpars,     # List:  echoing behavior
-                  seed = NULL,  # Seed for PRNG
-                  ...)          # other parameters
+moead <- function(problem,           # List:  MObj problem
+                  preset = NULL,     # List:  Set of strategy/components
+
+                  decomp = NULL,     # List:  decomposition strategy
+                  aggfun = NULL,     # List:  scalar aggregation function
+                  neighbors = NULL,  # List:  neighborhood assignment strategy
+                  variation = NULL,  # List:  variation operators
+                  update = NULL,     # List:  update method
+                  constraint = NULL, # List:  constraint handling method
+                  scaling = NULL,    # List:  objective scaling strategy
+                  stopcrit = NULL,   # List:  stop criteria
+
+                  showpars = NULL,   # List:  echoing behavior
+                  seed = NULL,       # Seed for PRNG
+                  ...)               # other parameters
 {
   moead.input.pars <- as.list(sys.call())[-1]
   if ("save.env" %in% names(moead.input.pars)) {
     if (moead.input.pars$save.env == TRUE) saveRDS(as.list(environment()),
                                                    "moead_env.rds")
   }
+
+  # ============================ Set parameters ============================== #
+  if (!is.null(preset)) {
+    if (is.null(problem))   problem   = preset$problem
+    if (is.null(decomp))    decomp    = preset$decomp
+    if (is.null(aggfun))    aggfun    = preset$aggfun
+    if (is.null(neighbors)) neighbors = preset$neighbors
+    if (is.null(variation)) variation = preset$variation
+    if (is.null(update))    update    = preset$update
+    if (is.null(scaling))   scaling   = preset$scaling
+    if (is.null(stopcrit))  stopcrit  = preset$stopcrit
+  }
+
 
   # ============== Error catching and default value definitions ============== #
   # "problem"     checked in "create_population(...)"
