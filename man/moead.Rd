@@ -4,8 +4,9 @@
 \alias{moead}
 \title{MOEA/D}
 \usage{
-moead(problem, decomp, aggfun, neighbors, variation, update, constraint,
-  scaling, stopcrit, showpars, seed = NULL, ...)
+moead(problem, preset = NULL, decomp = NULL, aggfun = NULL,
+  neighbors = NULL, variation = NULL, update = NULL, constraint = NULL,
+  scaling = NULL, stopcrit = NULL, showpars = NULL, seed = NULL, ...)
 }
 \arguments{
 \item{problem}{List containing the problem parameters.

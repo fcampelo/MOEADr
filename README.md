@@ -45,14 +45,6 @@ For the most up-to-date development version, install the github version using:
 devtools::install_github("fcampelo/MOEADr")
 ```
 
-Or, if you are interested in the specific version used to generate the results reported in our paper (Name and journal to be included here as soon as they are decided), use:
-
-```
-devtools::install_github("fcampelo/MOEADr/MOEADr@Manuscript-Version")
-```
-
-and follow the instructions provided in the README section of the [Manuscript-Version](https://github.com/fcampelo/MOEADr/tree/Manuscript-Version).
-
 ## Example
 
 As a simple example, we can reproduce the original MOEA/D (Zhang and Li, 2007) and run it on a 30-variable ZDT1 function:
@@ -89,8 +81,18 @@ As a simple example, we can reproduce the original MOEA/D (Zhang and Li, 2007) a
  seed      <- NULL
 
  ## 3: run MOEA/D
- out1 <- moead(problem, decomp,  aggfun, neighbors, variation, update,
-               constraint, scaling, stopcrit, showpars, seed)
+ out1 <- moead(problem = problem, 
+               decomp = decomp, aggfun = aggfun, neighbors = neighbors, variation = variation, 
+               update = update, constraint = constraint, scaling = scaling, stopcrit = stopcrit,
+               showpars = showpars, seed = seed)
+
+ ## 3.1: For your convenience, you can also use the preset_moead() function to reproduce the above setup, 
+ ##      and only modify the desired parts:
+ 
+ out2 <- moead(problem = problem,
+               preset = preset_moead(), stopcrit = list(list(name = "maxiter", maxiter = 1000)),
+               showpars = showpars, seed = 42
+              )
 
  # 4: Plot output:
  plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)

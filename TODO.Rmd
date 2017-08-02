@@ -5,10 +5,9 @@ date: "30/01/2016"
 output: html_document
 ---
 
-
-## For the package itself
-### Features needed for paper experiments
-- OUTPUT: Opcoes de output para logfile
+## For the Package:
+### Needed Features 
+- Logfile output options (log verbosity options)
 
 ### Code Issues
 - Asserts that test the validity and existence of parameters need to give better return messages
@@ -17,15 +16,23 @@ output: html_document
 
 
 ## For the paper:
-- Having the complete package: Define a search space of algorithms, 
-  and use the irace to find a well adjusted MOEAD variation
-- Comment about the utility of the package for the reproducibility
+- Scripts that execute the case studies, along with necessary data, should be in a 
+  "Case Studies" directory. The script should check for R version and Package version, and 
+  complain when appropriate.
 
-- Finish thinking the experiments.
-- Perform and document experiments.
-- Finish documenting the modules.
+### Case Study 1: basic usage
+- Have a way to output Pareto Front, list of best individuals, list of objective results, pair of objective results
 
-## Wishlist (can be done after paper is out)
+### Case Study 2: irace comparative analysis
+- "Weekend script" to analyse two methods using irace package
+- Short script showing the irace data and comparing the resulting configurations
+
+### Case Study 3: Contributing:
+- Similar to case Study 1, but a hand-crafted variation operator is used
+- Possible to load hand-crafted variation operator from environment? From work dir file?
+
+
+## Wishlist
 - VARIATION: more variation operators
 - DEFINE NEIGHBORHOOD: Make it un-hardcoded
 - GENERATE POPULATION: Make it un-hardcoded
