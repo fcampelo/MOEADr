@@ -3,3 +3,4 @@
 ^.*\.Rmd$
 ^.*\.yml$
 ^cran-comments.md$
+casestudy/
