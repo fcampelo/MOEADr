@@ -18,8 +18,9 @@ seed      <- 42
 
 # Running the program -- add explanation, add details about preset_moead()
 out1 <- moead(problem = problem,
-              preset = preset_moead(), stopcrit = list(list(name = "maxiter", maxiter = 1000)),
+              preset = preset_moead("original"), stopcrit = list(list(name = "maxiter", maxiter = 1000)),
               showpars = showpars, seed = seed)
 
 # Output -- add explanation, more output information
-plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)
+summary(out1)
+plot(out1)

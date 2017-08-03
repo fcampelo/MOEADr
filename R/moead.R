@@ -419,7 +419,7 @@ moead <- function(preset = NULL,     # List:  Set of strategy/components
   if(!is.null(Archive)) Archive$X <- denormalize_population(Archive$X, problem)
 
   # Output
-  return(list(X       = X,
+  out <- list(X       = X,
               Y       = Y,
               V       = V,
               W       = W,
@@ -429,7 +429,10 @@ moead <- function(preset = NULL,     # List:  Set of strategy/components
               nfe     = nfe,
               n.iter  = iter,
               time    = difftime(Sys.time(), time.start, units = "secs"),
-              seed    = seed))
+              seed    = seed)
+  class(out) <- "moeadoutput"
+
+  return(out)
   # ================================ End Output ============================== #
 }
 

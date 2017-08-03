@@ -64,6 +64,6 @@ preset_moead <- function(name = NULL) {
     format(output, justify = "left")
   }
   else {
-    return(presets[name])
+    return(presets[[name]])
   }
 }
