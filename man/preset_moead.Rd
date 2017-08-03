@@ -4,14 +4,20 @@
 \alias{preset_moead}
 \title{preset_moead}
 \usage{
-preset_moead(name = NULL)
+preset_moead(name = NULL)               -- returns the list of available preset names
+preset_moead(name = "preset_name")      -- returns the specific preset as a configuration list
 }
 \description{
-Standard MOEA/D Preset (Zhang and Li 2007)
+Library of configuration presets for use in the MOEADr package.
 }
 \details{
-Returns a configuration object that replicates the
-MOEA/D as in Zhang and Li (2007) (sec. V-E, p.721-722)
+This function contains a list of configuration presets taken from
+the literature to be used with the \link{moead} function in the moeadr
+package.
+
+Use these configurations as a starting point, but we strongly
+recommend that you play around with the particular configurations
+(see example).
 }
 \examples{
 configuration <- preset_moead(name = "original")

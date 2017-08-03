@@ -1,9 +1,19 @@
 #' preset_moead
 #'
-#' Standard MOEA/D Preset (Zhang and Li 2007)
+#' Library of configuration presets for use in the MOEADr package.
 #'
-#' Returns a configuration object that replicates the
-#' MOEA/D as in Zhang and Li (2007) (sec. V-E, p.721-722)
+#' This function contains a list of configuration presets taken from
+#' the literature to be used with the [moead] function in the moeadr
+#' package.
+#'
+#' Use these configurations as a starting point, but we strongly
+#' recommend that you play around with the particular configurations
+#' (see example).
+#'
+#' @usage
+#'
+#' preset_moead(name = NULL)               -- returns the list of available preset names
+#' preset_moead(name = "preset_name")      -- returns the specific preset as a configuration list
 #'
 #' @examples
 #' configuration <- preset_moead(name = "original")
@@ -47,7 +57,7 @@ preset_moead <- function(name = NULL) {
 
   if (is.null(name)) {
     output <- data.frame(name = c("\"original\"","\"dummy\""),
-                         description = c("Original MOEA/D by Zhang and Li (2007)",
+                         description = c("Original MOEA/D by Zhang and Li (2007) (sec. V-E, p.721-722)",
                                          "A non-existing MOEA/D configuration"))
     cat("Use `preset_moead([\"name\"])` to generate a standard MOEAD composition\n\n")
 
