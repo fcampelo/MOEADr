@@ -208,7 +208,8 @@
 #' seed      <- NULL
 #'
 #' ## 3: run MOEA/D
-#' out1 <- moead(problem, decomp,  aggfun, neighbors, variation, update,
+#' out1 <- moead(preset = NULL,
+#'               problem, decomp,  aggfun, neighbors, variation, update,
 #'               constraint, scaling, stopcrit, showpars, seed)
 #'
 #' # 4: Plot output:
@@ -226,7 +227,8 @@
 #'                        etam  = 20, pm = 0.1),
 #'                   list(name  = "truncate"))
 #'
-#' out2 <- moead(problem, decomp,  aggfun, neighbors, variation, update,
+#' out2 <- moead(preset = NULL,
+#'               problem, decomp,  aggfun, neighbors, variation, update,
 #'               constraint, scaling, stopcrit, showpars, seed)
 #' plot(out2$Y[,1], out2$Y[,2], type = "p", pch = 20)
 #' }
@@ -415,8 +417,14 @@ moead <- function(preset = NULL,     # List:  Set of strategy/components
   # ================================== Output ================================ #
   # Prepare output
   X <- denormalize_population(X, problem)
+  colnames(Y) <- paste0("f", 1:ncol(Y))
+  colnames(W) <- paste0("f", 1:ncol(W))
 
-  if(!is.null(Archive)) Archive$X <- denormalize_population(Archive$X, problem)
+  if(!is.null(Archive)) {
+    Archive$X <- denormalize_population(Archive$X, problem)
+    colnames(Archive$Y) <- paste0("f", 1:ncol(Archive$Y))
+    colnames(Archive$W) <- paste0("f", 1:ncol(Archive$W))
+  }
 
   # Output
   out <- list(X       = X,
@@ -430,7 +438,7 @@ moead <- function(preset = NULL,     # List:  Set of strategy/components
               n.iter  = iter,
               time    = difftime(Sys.time(), time.start, units = "secs"),
               seed    = seed)
-  class(out) <- "moeadoutput"
+  class(out) <- c("moeadoutput", "list")
 
   return(out)
   # ================================ End Output ============================== #

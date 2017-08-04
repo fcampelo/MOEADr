@@ -260,7 +260,8 @@ showpars  <- list(show.iters = "dots",
 seed      <- NULL
 
 ## 3: run MOEA/D
-out1 <- moead(problem, decomp,  aggfun, neighbors, variation, update,
+out1 <- moead(preset = NULL,
+              problem, decomp,  aggfun, neighbors, variation, update,
               constraint, scaling, stopcrit, showpars, seed)
 
 # 4: Plot output:
@@ -278,7 +279,8 @@ variation <- list(list(name  = "diffmut",
                        etam  = 20, pm = 0.1),
                   list(name  = "truncate"))
 
-out2 <- moead(problem, decomp,  aggfun, neighbors, variation, update,
+out2 <- moead(preset = NULL,
+              problem, decomp,  aggfun, neighbors, variation, update,
               constraint, scaling, stopcrit, showpars, seed)
 plot(out2$Y[,1], out2$Y[,2], type = "p", pch = 20)
 }

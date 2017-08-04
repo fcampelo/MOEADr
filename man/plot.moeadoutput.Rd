@@ -4,10 +4,12 @@
 \alias{plot.moeadoutput}
 \title{plot.moeadoutput}
 \usage{
-\method{plot}{moeadoutput}(output, d = c(1, 2), ...)
+\method{plot}{moeadoutput}(moead.output, useArchive = FALSE,
+  feasible.only = TRUE, nondominated.only = TRUE, plot.weights = FALSE,
+  which.objectives = NULL, ...)
 }
 \description{
-S3 method for plotting the output of an moead run
+S3 method for plotting \emph{moeadoutput} objects (the output of \code{\link[=moead]{moead()}}).
 }
 \details{
 This function plots the pareto front of the solution set found by moead.
