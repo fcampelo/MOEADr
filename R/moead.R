@@ -164,7 +164,7 @@
 #'
 #' @export
 #'
-#' @return List object containing :
+#' @return List object of class _moeadoutput_ containing:
 #'
 #' - information on the final population (`X`), its objective values (`Y`) and
 #'  constraint information list (`V`) (see [evaluate_population()] for details);
