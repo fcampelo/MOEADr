@@ -5,14 +5,9 @@
 \title{plot.moeadoutput}
 \usage{
 \method{plot}{moeadoutput}(moead.output, useArchive = FALSE,
-  feasible.only = TRUE, nondominated.only = TRUE, plot.weights = FALSE,
-  which.objectives = NULL, ...)
+  feasible.only = TRUE, viol.threshold = 1e-06, nondominated.only = TRUE,
+  plot.weights = FALSE, which.objectives = NULL, color.by.obj = 1, ...)
 }
 \description{
 S3 method for plotting \emph{moeadoutput} objects (the output of \code{\link[=moead]{moead()}}).
-}
-\details{
-This function plots the pareto front of the solution set found by moead.
-By default, the first and second objectives are plotted, but other objectives
-can be specified as parameters.
 }

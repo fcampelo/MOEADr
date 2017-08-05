@@ -9,7 +9,9 @@ Description: Modular implementation of Multiobjective Evolutionary Algorithms
 Version: 0.2.2.9005
 Date: 2017-8-04
 Imports: FNN, assertthat, smoof
-Suggests: scatterplot3d, MASS, grDevices, irace, testthat
+Suggests: scatterplot3d, MASS, grDevices, irace, testthat,
+    knitr,
+    rmarkdown
 Depends: R (>= 3.4.0)
 Authors@R: c(person("Felipe", "Campelo",
     email   = "fcampelo@ufmg.br",
