@@ -12,8 +12,10 @@
 #'
 #' @usage
 #'
-#' preset_moead(name = NULL)               -- returns the list of available preset names
-#' preset_moead(name = "preset_name")      -- returns the specific preset as a configuration list
+#' preset_moead(name = NULL)               -- returns the list of available
+#'                                            preset names
+#' preset_moead(name = "preset_name")      -- returns the specific preset as a
+#'                                            configuration list
 #'
 #' @examples
 #' configuration <- preset_moead(name = "original")

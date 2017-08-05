@@ -4,8 +4,10 @@
 \alias{preset_moead}
 \title{preset_moead}
 \usage{
-preset_moead(name = NULL)               -- returns the list of available preset names
-preset_moead(name = "preset_name")      -- returns the specific preset as a configuration list
+preset_moead(name = NULL)               -- returns the list of available
+                                           preset names
+preset_moead(name = "preset_name")      -- returns the specific preset as a
+                                           configuration list
 }
 \description{
 Library of configuration presets for use in the MOEADr package.
