@@ -105,6 +105,7 @@ plot.moeadoutput <- function(moead.output,
       }
     }
     grDevices::dev.flush()
+    invisible(readline(prompt="Press [enter] to continue"))
   }
 
   # for 3-objectives, plot points (+ weights, if needed - looks bad though)
@@ -125,6 +126,7 @@ plot.moeadoutput <- function(moead.output,
         }
       }
       grDevices::dev.flush()
+      invisible(readline(prompt="Press [enter] to continue"))
     } else {
       warning("Package 'scatterplot3d' not found. Scatter plot not generated.")
     }
@@ -144,6 +146,7 @@ plot.moeadoutput <- function(moead.output,
                      col = cols,
                      main = "Parallel coordinates plot")
       grDevices::dev.flush()
+      invisible(readline(prompt="Press [enter] to continue"))
     } else {
       warning("Package 'MASS' not found. Parallel coordinates plot not generated.")
     }
@@ -155,4 +158,5 @@ plot.moeadoutput <- function(moead.output,
                     main = "2-objective projections")
     grDevices::dev.flush()
   }
+  invisible()
 }
