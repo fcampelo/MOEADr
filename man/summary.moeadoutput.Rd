@@ -5,7 +5,7 @@
 \title{summary.moeadoutput}
 \usage{
 \method{summary}{moeadoutput}(moead.output, useArchive = FALSE,
-  viol.threshold = 1e-06, ndigits = 3, ...)
+  viol.threshold = 1e-06, ndigits = 3)
 }
 \arguments{
 \item{moead.output}{list object of class \emph{moeadoutput}

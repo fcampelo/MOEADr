@@ -15,8 +15,8 @@
 summary.moeadoutput <- function(moead.output,
                                 useArchive        = FALSE,
                                 viol.threshold    = 1e-6,
-                                ndigits           = 3,
-                                ...) {
+                                ndigits           = 3)
+  {
 
   # Error checking
   assertthat::assert_that(
