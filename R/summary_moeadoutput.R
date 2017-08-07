@@ -49,7 +49,7 @@ summary.moeadoutput <- function(moead.output,
 
 
   # ===========================================================================
-  # Preprocess data for summarization
+  # Plot summary list
 
   cat("\nSummary of MOEA/D run")
   cat("\n#====================================")
