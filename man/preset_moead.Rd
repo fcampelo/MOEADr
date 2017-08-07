@@ -4,27 +4,28 @@
 \alias{preset_moead}
 \title{preset_moead}
 \usage{
-preset_moead(name = NULL)               -- returns the list of available
+-- returns the list of available
                                            preset names
 preset_moead(name = "preset_name")      -- returns the specific preset as a
                                            configuration list
 }
 \description{
-Library of configuration presets for use in the MOEADr package.
+Generate a preset configuration for \code{\link[=moead]{moead()}}.
 }
 \details{
-This function contains a list of configuration presets taken from
-the literature to be used with the \link{moead} function in the moeadr
-package.
+This function returns a list of configuration presets taken from
+the literature to be used with the \code{\link[=moead]{moead()}} function in package \code{MOEADr}.
 
-Use these configurations as a starting point, but we strongly
+Use these configurations as a starting point. We strongly
 recommend that you play around with the particular configurations
 (see example).
 }
 \examples{
-configuration <- preset_moead(name = "original")
-configuration$stopcrit = list(list(name = "maxiter", maxiter = 50))
 
+# Generate list of available presets
+preset_moead(name = NULL)
+
+\dontrun{
 library(smoof)
 ZDT1 <- make_vectorized_smoof(prob.name  = "ZDT1",
                               dimensions = 30)
@@ -32,11 +33,20 @@ ZDT1 <- make_vectorized_smoof(prob.name  = "ZDT1",
                                                 xmin       = rep(0, 30),
                                                 xmax       = rep(1, 30),
                                                 m          = 2)
-showpars  <- list(show.iters = "dots", showevery  = 10)
-seed      <- 42
+
+# Get preset configuration for original MOEA/D
+configuration <- preset_moead("original")
+
+# Modify whatever you fancy:
+stopcrit <- list(list(name = "maxiter", maxiter = 50))
+showpars <- list(show.iters = "dots", showevery  = 10)
+seed     <- 42
 
 output <- moead(problem = problem,
                 preset = configuration,
-                showpars = showpars, seed = seed)
+                showpars = showpars,
+                stopcrit = stopcrit,
+                seed = seed)
+}
 
 }

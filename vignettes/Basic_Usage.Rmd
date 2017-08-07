@@ -1,6 +1,6 @@
 ---
 title: "Basic Usage of the MOEADr Package"
-author: "Claus Aranha, "
+author: "Claus Aranha, Felipe Campelo"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -58,9 +58,10 @@ To load the package and run the problem using the original MOEA/D variant, we us
 
 ```{r, collapse = TRUE, comment = "#>"}
 library(MOEADr)
-results <- moead(problem = problem.1,
-                 preset = preset_moead("original"),
-                 showpars = NULL, seed = 42)
+results <- moead(problem  = problem.1,
+                 preset   = preset_moead("original"),
+                 showpars = list(show.iters = "none"), 
+                 seed     = 42)
 ```
 
 The *moead* command requires a problem definition (discussed in the previous section), an algorithm preset, and
@@ -83,7 +84,7 @@ to implement versions of *plot* and *summary* for this object.
 objectives is 3 or more, the parallel coordinates plot is also produced (see the next example). 
 *Summary* produces **blah blah blah blah**
 
-```{r,collapse = TRUE, comment = "#>"}
+```{r,collapse = TRUE, comment = "#>", fig.align="center", fig.width=6, fig.height=6}
 summary(results)
 plot(results)
 ```

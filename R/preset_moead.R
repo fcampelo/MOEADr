@@ -1,26 +1,27 @@
 #' preset_moead
 #'
-#' Library of configuration presets for use in the MOEADr package.
+#' Generate a preset configuration for [moead()].
 #'
-#' This function contains a list of configuration presets taken from
-#' the literature to be used with the [moead] function in the moeadr
-#' package.
+#' This function returns a list of configuration presets taken from
+#' the literature to be used with the [moead()] function in package `MOEADr`.
 #'
-#' Use these configurations as a starting point, but we strongly
+#' Use these configurations as a starting point. We strongly
 #' recommend that you play around with the particular configurations
 #' (see example).
 #'
 #' @usage
 #'
-#' preset_moead(name = NULL)               -- returns the list of available
+#'               -- returns the list of available
 #'                                            preset names
 #' preset_moead(name = "preset_name")      -- returns the specific preset as a
 #'                                            configuration list
 #'
 #' @examples
-#' configuration <- preset_moead(name = "original")
-#' configuration$stopcrit = list(list(name = "maxiter", maxiter = 50))
 #'
+#' # Generate list of available presets
+#' preset_moead(name = NULL)
+#'
+#' \dontrun{
 #' library(smoof)
 #' ZDT1 <- make_vectorized_smoof(prob.name  = "ZDT1",
 #'                               dimensions = 30)
@@ -28,44 +29,141 @@
 #'                                                 xmin       = rep(0, 30),
 #'                                                 xmax       = rep(1, 30),
 #'                                                 m          = 2)
-#' showpars  <- list(show.iters = "dots", showevery  = 10)
-#' seed      <- 42
+#'
+#' # Get preset configuration for original MOEA/D
+#' configuration <- preset_moead("original")
+#'
+#' # Modify whatever you fancy:
+#' stopcrit <- list(list(name = "maxiter", maxiter = 50))
+#' showpars <- list(show.iters = "dots", showevery  = 10)
+#' seed     <- 42
 #'
 #' output <- moead(problem = problem,
 #'                 preset = configuration,
-#'                 showpars = showpars, seed = seed)
+#'                 showpars = showpars,
+#'                 stopcrit = stopcrit,
+#'                 seed = seed)
+#' }
 #'
 #' @export
 preset_moead <- function(name = NULL) {
 
-  presets <- list(
-    original = list(
-      decomp     = list(name       = "SLD", H = 99),
-      neighbors  = list(name       = "lambda",
-                        T          = 20,
-                        delta.p    = 1),
-      aggfun     = list(name       = "wt"),
-      variation  = list(list(name  = "sbx",
-                             etax  = 20, pc = 1),
-                        list(name  = "polymut",
-                             etam  = 20, pm = 0.1),
-                        list(name  = "truncate")),
-      update     = list(name       = "standard", UseArchive = FALSE),
-      scaling    = list(name       = "none"),
-      constraint = list(name       = "none"),
-      stopcrit   = list(list(name  = "maxiter",
-                             maxiter  = 200)))
-  )
+  # ===========================================================================
+  # 1. Enter preset definitions below.
+
+  # Original MOEA/D: Zhang and Li (2007), Sec. V-E, p.721-722
+  original <- list(
+    description = "Original MOEA/D: Zhang and Li (2007) (sec. V-E, p.721-722)",
+    decomp      = list(name          = "SLD", H = 99),
+    neighbors   = list(name          = "lambda",
+                       T             = 20,
+                       delta.p       = 1),
+    aggfun      = list(name          = "wt"),
+    variation   = list(list(name     = "sbx",
+                            etax     = 20, pc = 1),
+                       list(name     = "polymut",
+                            etam     = 20, pm = 0.1),
+                       list(name     = "truncate")),
+    update      = list(name          = "standard", UseArchive = FALSE),
+    scaling     = list(name          = "none"),
+    constraint  = list(name          = "none"),
+    stopcrit    = list(list(name     = "maxiter",
+                            maxiter  = 200)))
+
+  # ========================================
+  # Original MOEA/D-DE: Zhang and Li (2007), Sec. V-E, p.721-722
+  original <- list(
+    description = "Original MOEA/D: Zhang and Li (2007), Sec. V-E, p.721-722",
+    decomp      = list(name          = "SLD",
+                       H             = 99),
+    neighbors   = list(name          = "lambda",
+                       T             = 20,
+                       delta.p       = 1),
+    aggfun      = list(name          = "wt"),
+    variation   = list(list(name     = "sbx",
+                            etax     = 20,
+                            pc       = 1),
+                       list(name     = "polymut",
+                            etam     = 20,
+                            pm       = 0.1),
+                       list(name     = "truncate")),
+    update      = list(name          = "standard",
+                       UseArchive    = FALSE),
+    scaling     = list(name          = "none"),
+    constraint  = list(name          = "none"),
+    stopcrit    = list(list(name     = "maxiter",
+                            maxiter  = 200)))
+
+
+  # ========================================
+  original2 <- list(
+    description = "Original MOEA/D, v2: Zhang and Li (2007), Sec. V-F, p.724",
+    decomp      = list(name          = "SLD",
+                       H             = 99),
+    neighbors   = list(name          = "lambda",
+                       T             = 20,
+                       delta.p       = 1),
+    aggfun      = list(name          = "PBI",
+                       theta         = 5),
+    variation   = list(list(name     = "sbx",
+                            etax     = 20,
+                            pc       = 1),
+                       list(name     = "polymut",
+                            etam     = 20,
+                            pm       = 0.1),
+                       list(name     = "truncate")),
+    update      = list(name          = "standard",
+                       UseArchive    = FALSE),
+    scaling     = list(name          = "simple"),
+    constraint  = list(name          = "none"),
+    stopcrit    = list(list(name     = "maxiter",
+                            maxiter  = 200)))
+
+
+  # ========================================
+  moead.de <- list(
+    description = "MOEA/D-DE: Li and Zhang (2009)",
+    decomp      = list(name          = "SLD",
+                       H             = 299),
+    neighbors   = list(name          = "lambda",
+                       T             = 20,
+                       delta.p       = 0.9),
+    aggfun      = list(name          = "wt"),
+    variation   = list(list(name     = "diffmut",
+                            basis    = "rand",
+                            phi      = 0.5),
+                       list(name     = "polymut",
+                            etam     = 20,
+                            pm       = 1/30),
+                       list(name     = "truncate")),
+    update      = list(name          = "restricted",
+                       nr            = 2,
+                       UseArchive    = FALSE),
+    scaling     = list(name          = "none"),
+    constraint  = list(name          = "none"),
+    stopcrit    = list(list(name     = "maxiter",
+                            maxiter  = 300)))
+
+  # ===========================================================================
+  # 2. Get all preset names
+  var.names <- names(as.list(environment()))
+  var.names <- var.names[(length(var.names) - 1):1]
 
   if (is.null(name)) {
-    output <- data.frame(name = c("\"original\"","\"dummy\""),
-                         description = c("Original MOEA/D by Zhang and Li (2007) (sec. V-E, p.721-722)",
-                                         "A non-existing MOEA/D configuration"))
-    cat("Use `preset_moead([\"name\"])` to generate a standard MOEAD composition\n\n")
+    descriptions <- unlist(lapply(X   = var.names,
+                                  FUN = function(x){get(x)$description}))
 
-    format(output, justify = "left")
+    output <- data.frame(name        = var.names,
+                         x           = rep("|", length(var.names)),
+                         description = descriptions)
+    print(format(output, justify = "left"))
+    cat("\n\nUse preset_moead(\"name\") to generate a standard MOEAD composition\n\n")
   }
   else {
-    return(presets[[name]])
+    if(name %in% var.names){
+      preset <- get(name)
+      preset$description <- NULL
+      return(preset)
+    } else stop("Preset ", name, "not defined.")
   }
 }
