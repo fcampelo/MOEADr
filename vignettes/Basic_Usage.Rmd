@@ -121,7 +121,7 @@ results.dtlz <- moead(problem = problem.dtlz1,
 
 Notice on the figure below that MOEADr plots extra information when the number of objectives in 
 a problem is bigger than 2:
-```{r,collapse = TRUE, comment = "#>"}
+```{r,collapse = TRUE, comment = "#>", fig.align="center", fig.width=6, fig.height=6}
 summary(results.dtlz)
 plot(results.dtlz)
 ```
@@ -131,7 +131,3 @@ For example, the standard value of 100 for $H$ in the *SLD* component is appropr
 objectives, but exceeds the available memory for $m > 3$. Therefore, we strongly recommend that the 
 user explore the meta-parameter space. The next case study shows one way to perform this task 
 semi-automatically.
-
-
-
-
