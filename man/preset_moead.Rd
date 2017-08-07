@@ -4,10 +4,7 @@
 \alias{preset_moead}
 \title{preset_moead}
 \usage{
--- returns the list of available
-                                           preset names
-preset_moead(name = "preset_name")      -- returns the specific preset as a
-                                           configuration list
+preset_moead(name = NULL)
 }
 \description{
 Generate a preset configuration for \code{\link[=moead]{moead()}}.

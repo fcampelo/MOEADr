@@ -9,13 +9,6 @@
 #' recommend that you play around with the particular configurations
 #' (see example).
 #'
-#' @usage
-#'
-#'               -- returns the list of available
-#'                                            preset names
-#' preset_moead(name = "preset_name")      -- returns the specific preset as a
-#'                                            configuration list
-#'
 #' @examples
 #'
 #' # Generate list of available presets
