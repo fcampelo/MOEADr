@@ -1,6 +1,6 @@
 #' preset_moead
 #'
-#' Generate a preset configuration for [moead()].
+#' Generate a preset configuration for moead()].
 #'
 #' This function returns a list of configuration presets taken from
 #' the literature to be used with the [moead()] function in package `MOEADr`.
@@ -8,6 +8,12 @@
 #' Use these configurations as a starting point. We strongly
 #' recommend that you play around with the particular configurations
 #' (see example).
+#'
+#' @param name name of the preset to be generated. Use `preset_moead()` to obtain
+#'             the list of available options.
+#'
+#' @return List object containing the preset, to be used as an input to [moead()];
+#'         or, if `name == NULL` (the default), returns a logical flag invisibly.
 #'
 #' @examples
 #'
@@ -151,6 +157,7 @@ preset_moead <- function(name = NULL) {
                          description = descriptions)
     print(format(output, justify = "left"))
     cat("\n\nUse preset_moead(\"name\") to generate a standard MOEAD composition\n\n")
+    invisible(TRUE)
   }
   else {
     if(name %in% var.names){

@@ -6,8 +6,16 @@
 \usage{
 preset_moead(name = NULL)
 }
+\arguments{
+\item{name}{name of the preset to be generated. Use \code{preset_moead()} to obtain
+the list of available options.}
+}
+\value{
+List object containing the preset, to be used as an input to \code{\link[=moead]{moead()}};
+or, if \code{name == NULL} (the default), returns a logical flag invisibly.
+}
 \description{
-Generate a preset configuration for \code{\link[=moead]{moead()}}.
+Generate a preset configuration for moead()].
 }
 \details{
 This function returns a list of configuration presets taken from
