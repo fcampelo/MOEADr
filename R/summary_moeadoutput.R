@@ -22,9 +22,8 @@ summary.moeadoutput <- function(moead.output,
   assertthat::assert_that(
     "moeadoutput" %in% class(moead.output),
     is.logical(useArchive),
-    is.logical(feasible.only),
-    is.logical(nondominated.only),
-    is.numeric(viol.threshold) && viol.threshold >= 0)
+    is.numeric(viol.threshold) && viol.threshold >= 0,
+    assertthat::is.count(ndigits))
 
   # ===========================================================================
   # Calculate information for summary
