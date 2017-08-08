@@ -9,9 +9,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-We use MOEADr to optimize a simple 2-objective problem composed of the Sphere
-function and the Rastrigin function in  $X = \{x_1,x_2,\dots,x_D |
-x\in\mathbb{R} \}$.
+We use **MOEADr** to optimize a simple 2-objective problem composed of the Sphere
+function and the Rastrigin function in  $X = \{x_1,x_2,\dots,x_D\} \in\mathbb{R}^D$.
 
 ## Setting up the Target Problem:
 
@@ -33,7 +32,7 @@ rastringin <- function(X) {
   sum((X.shift)**2 - 10 * cos(2 * pi * X.shift) + 10) }
 ```
 
-The MOEADr package requires the multi objective problem to be defined as a
+The **MOEADr** package requires the multi objective problem to be defined as a
 function that receives the entire solution set as a matrix, and return the
 objective values also as a matrix. For details see the [Problem
 Definition](problem-definition.html) vignette. We will achieve this requirement
@@ -57,7 +56,7 @@ problem.1 <- list(name       = "problem.sr",  # function that executes the MOP
                   m          = 2)             # number of objectives
 ```
 
-## Setting up MOEADr
+## Setting up **MOEADr**
 
 To load the package and run the problem using the original MOEA/D variant, we
 use the following commands:
@@ -70,13 +69,11 @@ results <- moead(problem  = problem.1,
                  seed     = 42)
 ```
 
-The *moead* command requires a problem definition (discussed in the previous
-section), an algorithm preset, and optionally changes to the preset, logging
-parameters and a seed. The *preset_moead*  command produces a number of
+The *moead()* function requires a problem definition (discussed in the previous
+section) and an algorithm configuration (in this case, an algorithm preset, and optional changes to the preset), logging parameters, and a seed. The *preset_moead()*  function can output a number of
 different presets based on combinations found on the literature. In this
-example, *preset_moead("original")* produces the original MOEAD/R composition
-proposed by Zhang and Li (2007). You can get a list of available presets by
-running:
+example, *preset_moead("original")* returns the original MOEA/D configuration, as
+proposed by Zhang and Li (2007)^[[IEEE Trans. Evol. Comp. 11(6): 712-731, 2007](http://ieeexplore.ieee.org/document/4358754/).]. You can get a list of available presets by running:
 
 ```{r, collapse = TRUE, comment = "#>"}
 preset_moead()
@@ -84,16 +81,13 @@ preset_moead()
 
 ## Visualizing the results
 
-The moead command returns an object containing the final solution set, objective
-values for each solution, and other information about the optimization process.
-The *MOEADr* package uses S3 to implement versions of *plot* and *summary* for
-this object.
+The *moead()* function returns a list object of class _moeadoutput_, containing the final solution set, objective values for each solution, and other information about the optimization process.
+The **MOEADr** package uses S3 to implement versions of *plot()* and *summary()* for this object.
 
-*Plot* will show the pareto front for the objectives, as in the figure below.
-When the number of objectives is 3 or more, the parallel coordinates plot is
-also produced (see the next example). *Summary* produces information about 
-the number of non-dominated and feasible solution points, the estimated ideal and 
-nadir values (when available), and the IDR (when available).
+*plot()* will show the pareto front for the objectives, as in the figure below.
+When the number of objectives is greater than 2, a parallel coordinates plot is
+also produced (see the next example). *summary()* displays information about 
+the number of non-dominated and feasible solution points, the estimated ideal and nadir values (when available), and (optionally) the IDR and hypervolume yielded by the feasible, nondominated set.
 
 ```{r,collapse = TRUE, comment = "#>", fig.align="center", fig.width=6, fig.height=6}
 summary(results)
@@ -102,11 +96,11 @@ plot(results)
 
 ## A more complex example
 
-The *smoof*^[Single and Multi Objective Optimization Test Functions] package provides generators
-for a high number of single and multi objective test functions. The *MOEADr* package provides a 
-wrapper to easily convert *smoof* functions to the format required by the *moead* function. The 
-code snipped below generates a MOP with five objective functions from *smoof*, and the necessary 
-problem definition for *moead*.
+The **smoof** package^[[https://CRAN.R-project.org/package=smoof](https://CRAN.R-project.org/package=smoof)] provides generators
+for a large number of single and multi objective test functions. The **MOEADr** package provides a 
+wrapper (function *make_vectorized_smoof()*) to easily convert **smoof** functions to the format required by the *moead()* function. The 
+code snipped below generates a MOP with five objective functions from **smoof**, and the necessary 
+problem definition for *moead()*.
 
 ```{r,collapse = TRUE, comment = "#>"}
 library(smoof)
@@ -127,18 +121,16 @@ used by the preset from 100 to 7:
 results.dtlz <- moead(problem = problem.dtlz1,
                 preset = preset_moead("original"),
                 decomp = list(name = "SLD", H = 7), 
-                showpars = list(show.iters = "dots"), seed = 42)
+                showpars = list(show.iters = "dots"), 
+                seed = 42)
 ```
 
-Notice on the figure below that MOEADr plots extra information when the number of objectives in 
-a problem is bigger than 2:
+Notice on the figure below that **MOEADr** plots extra information when the number of objectives in a problem is greater than 2:
 ```{r,collapse = TRUE, comment = "#>", fig.align="center", fig.width=6, fig.height=6}
 summary(results.dtlz)
 plot(results.dtlz)
 ```
 
-Note that for more complex MOPs, the preset values suggested by *preset_moead* might not be effective. 
-For example, the standard value of 100 for $H$ in the *SLD* component is appropriate for 2 
-objectives, but exceeds the available memory for $m > 3$. Therefore, we strongly recommend that the 
-user explore the meta-parameter space. The next case study shows one way to perform this task 
-semi-automatically.
+Note that for more complex MOPs, the preset values suggested by *preset_moead()* might not be effective. 
+For example, the standard value of 100 for $H$ in the *SLD* component is appropriate for 2 objectives, but exceeds the available memory for $m > 3$. Therefore, we strongly recommend that the 
+user explore the meta-parameter space. The next case study shows one way to perform this task semi-automatically.

@@ -49,7 +49,12 @@ decomposition_sld <- function(decomp, ...){
 
     # Calculate number of weight vectors
     N <- choose(H + m - 1, m - 1)
-
+    if (N > 1000) {
+      isOK <- readline(paste0("\nThis configuration (H = ", H, ", m = ", m,
+                       ") will generate a very large\nnumber of subproblems (N = ", N,
+                       ").\nPress <S> to proceed anyway (memory may be insufficient): "))
+      if(tolower(isOK) != "s") stop("Operation stopped by user.\nRun choose(H + m - 1, m - 1) to investigate\nthe number of subproblems in SLD.")
+    }
 
 
     # Generate decomposition vectors: first (m - 1) columns
