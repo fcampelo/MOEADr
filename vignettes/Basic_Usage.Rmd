@@ -9,7 +9,9 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-We use MOEADr to optimize a simple 2-objective problem composed of the Sphere function and the Rastrigin function in  $X = \{x_1,x_2,\dots,x_D | x\in\mathbb{R} \}$. 
+We use MOEADr to optimize a simple 2-objective problem composed of the Sphere
+function and the Rastrigin function in  $X = \{x_1,x_2,\dots,x_D |
+x\in\mathbb{R} \}$.
 
 ## Setting up the Target Problem:
 
@@ -18,8 +20,9 @@ $$
 \text{sphere}(X) = \sum_{i=1}^D x_i^2\\
 \text{rastrigin}(X) = \sum_{i=1}^D (x_i^2 - 10 \text{cos}(2\pi x_i) + 10)
 $$
-Their R implementation is as follows. Because both functions have the optimum at the zero, we apply a simple displacement 
-on the input parameters to make the output of the example problem more interesting.
+Their R implementation is as follows. Because both functions have the optimum at
+the zero, we apply a simple displacement on the input parameters to make the
+output of the example problem more interesting.
 
 ```{r}
 sphere <- function(X) {
@@ -30,9 +33,11 @@ rastringin <- function(X) {
   sum((X.shift)**2 - 10 * cos(2 * pi * X.shift) + 10) }
 ```
 
-The MOEADr package requires the multi objective problem to be defined as a function that receives the entire solution set as 
-a matrix, and return the objective values also as a matrix. For details see the [Problem Definition](problem-definition.html) vignette. 
-We will achieve this requirement by wraping the sphere function and the rastrigin function as follows:
+The MOEADr package requires the multi objective problem to be defined as a
+function that receives the entire solution set as a matrix, and return the
+objective values also as a matrix. For details see the [Problem
+Definition](problem-definition.html) vignette. We will achieve this requirement
+by wraping the sphere function and the rastrigin function as follows:
 
 ```{r}
 problem.sr <- function(X) {
@@ -42,8 +47,8 @@ problem.sr <- function(X) {
 }
 ```
 
-Finally, we need to create a problem definition list that specifies the number of objectives, and the minimum and maximum 
-parameter values for each dimension:
+Finally, we need to create a problem definition list that specifies the number
+of objectives, and the minimum and maximum parameter values for each dimension:
 
 ```{r}
 problem.1 <- list(name       = "problem.sr",  # function that executes the MOP
@@ -54,7 +59,8 @@ problem.1 <- list(name       = "problem.sr",  # function that executes the MOP
 
 ## Setting up MOEADr
 
-To load the package and run the problem using the original MOEA/D variant, we use the following commands:
+To load the package and run the problem using the original MOEA/D variant, we
+use the following commands:
 
 ```{r, collapse = TRUE, comment = "#>"}
 library(MOEADr)
@@ -64,11 +70,13 @@ results <- moead(problem  = problem.1,
                  seed     = 42)
 ```
 
-The *moead* command requires a problem definition (discussed in the previous section), an algorithm preset, and
-optionally changes to the preset, logging parameters and a seed. The *preset_moead*  command produces a number 
-of different presets based on combinations found on the literature. In this example, *preset_moead("original")*
-produces the original MOEAD/R composition proposed by Zhang and Li (2007). You can get a list of available 
-presets by running:
+The *moead* command requires a problem definition (discussed in the previous
+section), an algorithm preset, and optionally changes to the preset, logging
+parameters and a seed. The *preset_moead*  command produces a number of
+different presets based on combinations found on the literature. In this
+example, *preset_moead("original")* produces the original MOEAD/R composition
+proposed by Zhang and Li (2007). You can get a list of available presets by
+running:
 
 ```{r, collapse = TRUE, comment = "#>"}
 preset_moead()
@@ -76,13 +84,16 @@ preset_moead()
 
 ## Visualizing the results
 
-The moead command returns an object containing the final solution set, objective values for each 
-solution, and other information about the optimization process. The *MOEADr* package uses S3
-to implement versions of *plot* and *summary* for this object.
+The moead command returns an object containing the final solution set, objective
+values for each solution, and other information about the optimization process.
+The *MOEADr* package uses S3 to implement versions of *plot* and *summary* for
+this object.
 
-*Plot* will show the pareto front for the objectives, as in the figure below. When the number of 
-objectives is 3 or more, the parallel coordinates plot is also produced (see the next example). 
-*Summary* produces **blah blah blah blah**
+*Plot* will show the pareto front for the objectives, as in the figure below.
+When the number of objectives is 3 or more, the parallel coordinates plot is
+also produced (see the next example). *Summary* produces information about 
+the number of non-dominated and feasible solution points, the estimated ideal and 
+nadir values (when available), and the IDR (when available).
 
 ```{r,collapse = TRUE, comment = "#>", fig.align="center", fig.width=6, fig.height=6}
 summary(results)
@@ -95,7 +106,7 @@ The *smoof*^[Single and Multi Objective Optimization Test Functions] package pro
 for a high number of single and multi objective test functions. The *MOEADr* package provides a 
 wrapper to easily convert *smoof* functions to the format required by the *moead* function. The 
 code snipped below generates a MOP with five objective functions from *smoof*, and the necessary 
-problem definition for *moad*.
+problem definition for *moead*.
 
 ```{r,collapse = TRUE, comment = "#>"}
 library(smoof)
