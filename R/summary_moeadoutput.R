@@ -55,7 +55,7 @@ summary.moeadoutput <- function(object,
   cat("\nSummary of MOEA/D run")
   cat("\n#====================================")
   cat("\nTotal function evaluations: ", object$nfe)
-  cat("\nTotal iterations: ", object$niter)
+  cat("\nTotal iterations: ", object$n.iter)
   cat("\nPopulation size: ", npts)
   cat("\nFeasible points found: ", nfeas,
       paste0("(", signif(100 * nfeas / npts, 3), "%"),

@@ -41,7 +41,8 @@ plot.moeadoutput <- function(x,
     is.numeric(viol.threshold) && viol.threshold >= 0,
     is.numeric(color.by.obj),
     color.by.obj %in% seq(1, ncol(x$Y)),
-    is.null(which.objectives) || assertthat::is.count(which.objectives))
+    is.null(which.objectives) || all(which.objectives > 0),
+    is.null(which.objectives) || all(which.objectives == round(which.objectives)))
 
   # ===========================================================================
   # Preprocess data for plotting
@@ -81,6 +82,7 @@ plot.moeadoutput <- function(x,
 
   if (!is.null(which.objectives)){
     Y <- Y[, which.objectives]
+    W <- W[, which.objectives]
   }
 
   ideal <- apply(Y, 2, min)
