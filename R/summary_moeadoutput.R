@@ -9,23 +9,36 @@
 #' @param viol.threshold threshold of tolerated constraint violation, used to
 #'                       determine feasibility of points in `object`.
 #' @param ndigits number of decimal places to use for the ideal and nadir estimates
+#' @param ref.point reference point for calculating the dominated hypervolume
+#'                  (only if package `emoa` is available). If `NULL` the estimated nadir
+#'                  point is used instead.
+#' @param ref.front `Np x Nobj` matrix containing a sample of the true Pareto-optimal
+#'                  front, for calculating IGD.
 #' @param ... other parameters to be passed down to specific summary functions (currently unused)
 #'
 #' @export
 #'
 summary.moeadoutput <- function(object,
                                 ...,
-                                useArchive        = FALSE,
-                                viol.threshold    = 1e-6,
-                                ndigits           = 3)
-  {
+                                useArchive      = FALSE,
+                                viol.threshold  = 1e-6,
+                                ndigits         = 3,
+                                ref.point       = NULL,
+                                ref.front       = NULL)
+{
 
   # Error checking
+  nullRP <- is.null(ref.point)
+  nullRF <- is.null(ref.front)
   assertthat::assert_that(
     "moeadoutput" %in% class(object),
     is.logical(useArchive),
     is.numeric(viol.threshold) && viol.threshold >= 0,
-    assertthat::is.count(ndigits))
+    assertthat::is.count(ndigits),
+    nullRP || is.numeric(ref.point),
+    nullRP || length(ref.point) == ncol(Y),
+    nullRF || is.numeric(ref.front),
+    nullRF || ncol(ref.front) == ncol(Y))
 
   # ===========================================================================
   # Calculate information for summary
@@ -48,6 +61,17 @@ summary.moeadoutput <- function(object,
   ideal.est <- apply(Y[feas.idx, ], 2, min)
   nadir.est <- apply(Y[feas.idx, ], 2, max)
 
+  if (!nullRF) igd <- calcIGD(Y, Yref = ref.front)
+
+  if("emoa" %in% rownames(utils::installed.packages())){
+    if(nullRP) {
+      cat("Warning: reference point not provided:\n
+          using the maximum in each dimension instead.")
+      ref.point <- nadir.est
+    }
+    hv <- emoa::dominated_hypervolume(points = t(Y), ref = ref.point)
+  }
+
 
   # ===========================================================================
   # Plot summary list
@@ -65,6 +89,10 @@ summary.moeadoutput <- function(object,
       "of total)")
   cat("\nEstimated ideal point: ", round(ideal.est, ndigits))
   cat("\nEstimated nadir point: ", round(nadir.est, ndigits))
+  if(!nullRF) cat("\nEstimated IGD: ", igd)
+  if("emoa" %in% rownames(utils::installed.packages())) {
+    cat("\nEstimated HV: ", hv)
+    cat("\nRef point used for HV: ", ref.point)
+  }
   cat("\n#====================================")
-
 }

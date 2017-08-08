@@ -5,7 +5,8 @@
 \title{summary.moeadoutput}
 \usage{
 \method{summary}{moeadoutput}(object, ..., useArchive = FALSE,
-  viol.threshold = 1e-06, ndigits = 3)
+  viol.threshold = 1e-06, ndigits = 3, ref.point = NULL,
+  ref.front = NULL)
 }
 \arguments{
 \item{object}{list object of class \emph{moeadoutput}
@@ -20,6 +21,13 @@ Only used if object$Archive is not \code{NULL}.}
 determine feasibility of points in \code{object}.}
 
 \item{ndigits}{number of decimal places to use for the ideal and nadir estimates}
+
+\item{ref.point}{reference point for calculating the dominated hypervolume
+(only if package \code{emoa} is available). If \code{NULL} the estimated nadir
+point is used instead.}
+
+\item{ref.front}{\code{Np x Nobj} matrix containing a sample of the true Pareto-optimal
+front, for calculating IGD.}
 }
 \description{
 S3 method for summarizing \emph{moeadoutput} objects (the output of \code{\link[=moead]{moead()}}).
