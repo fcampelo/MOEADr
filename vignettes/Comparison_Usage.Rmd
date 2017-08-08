@@ -1,0 +1,365 @@
+--- 
+title: "Fine tuning MOEAD/r configurations using the MOEADr package" 
+author: "Claus Aranha" 
+date: "`r Sys.Date()`" 
+output: rmarkdown::html_vignette 
+vignette: > 
+  %\VignetteIndexEntry{Vignette Title} 
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8} 
+---
+
+For this example, we adapt the tuning protocol proposed by Bezerra et. al 
+(2016), employing the *Iterated Racing* procedure by Lopes-Ibanes et. al (2016).
+Using the *irace* package, we automatically assemble and fine-tune an MOEA/D 
+configuration based on the components available in the *MOEADr* package.
+
+## Fine tuning setup
+
+Ten unconstrained test problems^[Functions UF1 to UF10, using the standard 
+implementation available in the *smoof* package] from the CEC2009 competition 
+are used, with dimensions ranging from 20 to 60. Dimensions 30, 40 and 50 were 
+reserved for testing, while all others were used for the training effort. To 
+quantify the quality of the set of solutions returned by a candidate 
+configuration we use the Inverted Generational Distance (IGD). The number of 
+subproblems was fixed as $100$ for $m=2$ and $150$ for $m=3$^[For the Simplex
+Lattice Design the actual number was 153 for $m = 3$, given the specifics of
+this method. Please refer to the manual of the SLD function for details].
+
+We define a tuning budget of 20,000 runs. The possible configurations are 
+composed from the following choices:
+
+- Decomposition Strategy: SLD or Uniform; 
+- Scalar Aggregation function: WT, PBI or AWB; 
+- Type of neighborhood: By weights or by incumbent solutions; 
+- Type of Update: Standard, Restricted or Best Subproblem; 
+- Variation Stack: See below;
+
+For every combination, the parameters of each component (e.g. $\theta$pbi for 
+the PBI aggregation function) were also included as part of the tuning 
+experiment. Objective scaling was employed in all cases. No constraint handling 
+was required, and the stop criterion was set as 100,000 evaluations.
+
+The variation stack was composed of three to five operators, using the following
+rules: the first and second operators could be any of the "traditional" 
+operators currently available in the *MOEADr* package: SBX, Polynomial Mutation,
+Differential Mutation, and Binomial Recombination. The third operator could be 
+any of these, or "none" (i.e., not present). The fourth operator could be either
+a local search operator or "none". Finally, the variation stack always finished 
+with the truncation repair operator (mainly to avoid numerical problems). No 
+restrictions were placed on repeats of the variation operators, and the specific
+conditional parameters for each operator were allowed to be tuned independently 
+for each position in the variation stack.
+
+## *irace* configuration
+
+Here we describe the necessary setup to run the experiment above. First, loading 
+the necessary packages and basic configuration of *irace*. (*parameters.txt*, 
+*forbidden.txt* and other files are only included in the source version of the 
+*MOEADr* package)
+
+```{r} 
+suppressPackageStartupMessages(library(irace))
+suppressPackageStartupMessages(library(parallel))
+suppressPackageStartupMessages(library(smoof))
+suppressPackageStartupMessages(library(MOEADr))
+
+scenario                <- irace::defaultScenario()
+scenario$seed           <- 123456 # Seed for the experiment
+scenario$targetRunner   <- "target.runner" # Runner function (def. below)
+scenario$forbiddenFile  <- "../data-raw/forbidden.txt" # forbidden configs
+scenario$debugLevel     <- 1
+scenario$maxExperiments <- 20000 # Tuning budget
+scenario$testNbElites   <- 7     # test all final elite configurations
+
+# Number of cores to be used by irace (set with caution!)
+nc                      <- parallel::detectCores() - 1
+scenario$parallel       <- nc
+
+# Read tunable parameter list from file
+parameters <- readParameters("../data-raw/parameters.txt")
+```
+
+Second, it is necessary to generate the training instances 
+based on the *smoof* benchmark functions:
+
+```{r}
+#===============
+### Build training instances
+fname   <- paste0("UF_", 1:10)
+dims    <- c(20:29,
+             31:39,
+             41:49,
+             51:60)
+
+allfuns            <- expand.grid(fname, dims, stringsAsFactors = FALSE)
+scenario$instances <- paste0(allfuns[,1], "_", allfuns[,2])
+
+for (i in 1:nrow(allfuns)){
+  assign(x     = scenario$instances[i],
+         value = make_vectorized_smoof(prob.name  = "UF",
+                                       dimensions = allfuns[i, 2],
+                                       id         = as.numeric(strsplit(allfuns[i, 1], "_")
+                                                               [[1]][2]))) }
+
+### Build test instances
+dims                   <- c(30, 40, 50)
+allfuns                <- expand.grid(fname, dims, stringsAsFactors = FALSE)
+scenario$testInstances <- paste0(allfuns[,1], "_", allfuns[,2])
+
+for (i in 1:nrow(allfuns)){
+  assign(x     = scenario$testInstances[i],
+         value = make_vectorized_smoof(prob.name  = "UF",
+                                       dimensions = allfuns[i, 2],
+                                       id         = as.numeric(strsplit(allfuns[i, 1], "_")
+                                                               [[1]][2]))) }
+```
+
+Third, we need to specify the code that will generate a *MOEADr* configuration
+based on the parameter string created by *irace*:
+
+```{r}
+target.runner <- function(experiment, scenario){
+  force(experiment)
+  conf <- experiment$configuration
+  inst <- experiment$instance
+
+  # Assemble moead input lists
+  ## 1. Problem
+  fdef    <- unlist(strsplit(inst, split = "_"))
+  uffun   <- smoof::makeUFFunction(dimensions = as.numeric(fdef[3]),
+                                   id         = as.numeric(fdef[2]))
+  fattr   <- attr(uffun, "par.set")
+  problem <- list(name       = inst,
+                  xmin       = fattr$pars$x$lower,
+                  xmax       = fattr$pars$x$upper,
+                  m          = attr(uffun, "n.objectives"))
+
+  ## 2. Decomp
+  decomp <- list(name = conf$decomp.name)
+  if (problem$m == 2){ # <-- 2 objectives
+    if(decomp$name == "SLD") decomp$H <- 99 # <-- yields N = 100
+    if(decomp$name == "Uniform") decomp$N <- 100
+  } else { # <-- 3 objectives
+    if(decomp$name == "SLD") decomp$H <- 16 # <-- yields N = 153
+    if(decomp$name == "Uniform") decomp$N <- 150
+  }
+
+  ## 3. Neighbors
+  neighbors <- list(name    = conf$neighbor.name,
+                    T       = conf$T,
+                    delta.p = conf$delta.p)
+
+  ## 4. Aggfun
+  aggfun <- list(name = conf$aggfun.name)
+  if (aggfun$name == "PBI") aggfun$theta <- conf$aggfun.theta
+
+  ## 5. Update
+  update <- list(name       = conf$update.name,
+                 UseArchive = conf$UseArchive)
+  if (update$name != "standard") update$nr <- conf$nr
+  if (update$name == "best")     update$Tr <- conf$Tr
+
+  ## 6. Scaling
+  scaling <- list(name = "simple")
+
+  ## 7. Constraint
+  constraint<- list(name = "none")
+
+  ## 8. Stop criterion
+  stopcrit  <- list(list(name    = "maxeval",
+                         maxeval = 100000))
+
+  ## 9. Echoing
+  showpars  <- list(show.iters = "none")
+
+  ## 10. Variation stack
+  variation <- list(list(name = conf$varop1),
+                    list(name = conf$varop2),
+                    list(name = conf$varop3),
+                    list(name = conf$varop4),
+                    list(name = "truncate"))
+
+  for (i in seq_along(variation)){
+    if (variation[[i]]$name == "binrec") {
+      variation[[i]]$rho <- get(paste0("binrec.rho", i), conf)
+    }
+    if (variation[[i]]$name == "diffmut") {
+      variation[[i]]$basis <- get(paste0("diffmut.basis", i), conf)
+      variation[[i]]$Phi   <- NULL
+    }
+    if (variation[[i]]$name == "polymut") {
+      variation[[i]]$etam <- get(paste0("polymut.eta", i), conf)
+      variation[[i]]$pm   <- get(paste0("polymut.pm", i), conf)
+    }
+    if (variation[[i]]$name == "sbx") {
+      variation[[i]]$etax <- get(paste0("sbx.eta", i), conf)
+      variation[[i]]$pc   <- get(paste0("sbx.pc", i), conf)
+    }
+    if (variation[[i]]$name == "localsearch") {
+      variation[[i]]$type     <- conf$ls.type
+      variation[[i]]$gamma.ls <- conf$gamma.ls
+    }
+  }
+
+  ## 11. Seed
+  seed <- conf$seed
+  
+  # Run MOEA/D
+  out <- moead(problem, decomp,  aggfun, neighbors, variation, update,
+               constraint, scaling, stopcrit, showpars, seed)
+
+  # return IGD based on reference data
+  Yref <- as.matrix(read.table(paste0("../data-raw/pf_data/",
+                                      fdef[1], fdef[2], ".dat")))
+  return(list(cost = calcIGD(Y = out$Y, Yref = Yref)))
+}
+```
+
+Finally, we run the experiment, and save the outputs. Note that this experiment
+will take a long time to run (24 hours in a 24 cluster machine), so take that
+into account when reproducing these results. For more details on the code above,
+check the documentation of the *irace* package.
+
+```{r, eval = FALSE}
+## Running the experiment
+irace.output <- irace::irace(scenario, parameters)
+saveRDS(irace.output, "../data-raw/RESULTS.rds")
+file.copy(from = "irace.Rdata", to = "../data-raw/irace-tuning.Rdata")
+
+
+## Test returned configurations on test instances
+testing.main(logFile = "../data-raw/irace-tuning.Rdata")
+file.copy(from = "irace.Rdata", to = "../data-raw/irace-testing.Rdata")
+```
+
+
+
+## Results
+
+First let's plot the IGD value achieved by the final configurations over the
+test problems:
+
+```{r, reshape2, ggplot2, echo = FALSE, fig.width = 7, fig.height = 3}
+### Loading results
+load("../data-raw/irace-testing.Rdata")
+
+### Precondition results
+results <- iraceResults$testing$experiments
+res.df <- data.frame(do.call(rbind, strsplit(rownames(results), "_")), 
+                     results, 
+                     stringsAsFactors = FALSE)[, -1]
+colnames(res.df)  <- c("Problem", "Dimension", 1:(ncol(res.df)-2))
+res.df$Problem <- sprintf("%02d", as.numeric(res.df$Problem))
+res.df$Objectives <- ifelse(res.df$Problem %in% c("08", "09", "10"),
+                            yes = "3 obj.",
+                            no  = "2 obj")
+res.df$Dimension <- paste0("Dim = ", res.df$Dimension)
+res.df <- reshape2::melt(res.df, value.name = "IGD")
+names(res.df)[4] <- "Configuration"
+
+## Plot resulting IGD of best configurations returned, by problem and dimension
+#require(ggplot2)
+
+ml2 <- ggplot2::theme(axis.title  = ggplot2::element_text(size = 18),
+                      axis.text   = ggplot2::element_text(size = 10),
+                      legend.text = ggplot2::element_text(size = 18))
+
+mp <- ggplot2::ggplot(res.df, ggplot2::aes(x      = Problem,        y      = IGD, 
+                                           colour = Configuration,  group  = Configuration))
+mp + 
+  ggplot2::geom_boxplot(ggplot2::aes(fill   = NULL, colour = NULL, group  = Problem), 
+               alpha = 0.6, lwd   = 0.1) +
+  ggplot2::geom_point() + ggplot2::geom_line() + ggplot2::facet_grid(.~Dimension) + ml2
+```
+
+The final MOEA/D configuration obtained by this experiment is described in the
+table below. The best configuration is presented in the first two columns. The
+third column, together with the figure following, provides the consensus value
+of each component, measured as the rate of occurrence of each component in the
+seven final configurations returned by the Iterated Racing procedure. These
+results suggest that the automated assembling and tuning method reached a
+reasonably solit consensus, in terms of the components used as well as the
+values returned for the numeric parameters.
+
+|**Component**|**Value**|**Consensus**|
+|-------------|---------|-------------|
+|Decomposition|SLD      | 1.00        |
+|Aggregation Function | AWT | 1.00 |
+|Objective Scaling | simple | Fixed |
+|Neighborhood | by $x$<br>$T = 11$<br>$\delta_p = 0.909$ | 1.00<br>see Figure<br>see Figure |
+|Variation Stack (1) | Differential Mutation<br>$basis = "rand"$<br>$\phi \sim U(0,1)$ | 1.00<br>1.00<br>Fixed |
+|Variation Stack (2) | Binomial Recombination<br>$\rho_1 = 0.495$ | <br>1.00<br>see Figure |
+|Variation Stack (3) | Binomial Recombination<br>$\rho_2 = 0.899$ | <br>1.00<br>see Figure |
+|Variation Stack (4) | Truncate | Fixed |
+|Update | Restricted<br>$nr=1$ | 1.00<br>1.00 |
+
+```{r, ggplot2, echo = FALSE, fig.width = 7, fig.height = 7}
+## Plot relevant parameter frequency:
+### Select output "elite" variables
+indx <- iraceResults$allElites[[length(iraceResults$allElites)]]
+finalConfs <- iraceResults$allConfigurations[indx,]
+
+### change internal structure of "parameters" to allow using function 
+### irace::parameterFrequency() 
+mypars <- iraceResults$parameters
+mypars$names      <- c("T", "delta.p", "binrec.rho2", "binrec.rho3")
+mypars$nbVariable <- 4
+
+### Plot
+parameterFrequency(finalConfs, mypars, cols = 2)
+```
+
+A feature that may seem surprising at first glance is the two sequential
+applications of Binomial Recombination in the Variation Stack. This means that
+the results of a Differential Mutation operator are recombined with the
+incumbent solutions at the (reasonably low) recombination rate $\rho_1 = 0.495$;
+and then the resulting vectors are again recombined with the incumbent
+solutions, at a (much higher) rate $\rho_2 = 0.899$. However, a quick review of
+the Binomial Recombination and some elementary probability shows that these two
+sequential applications of binomial recombinations can be expressed as a single
+application with $\rho = \rho_1\rho_2 = 0.445$. The fact that Iterated Racing
+converged to two operators instead of a single one can be explained by the fact
+that these situations are equivalent, coupled with the absence of any pressure
+towards more parsimonious expressions of the Variation Stack in the setup.
+
+Another seemingly counterintuitive aspect of the final configurations reached is
+the absence of local search. A possible explanation lies in the interaction
+between the variation operators chosen (differential mutation + binomial
+recombination) with the type of neighborhood (by $x$, with a very strong bias
+towards using points from the neighborhood for the variant operators - $\delta_p
+= 0.909$). The use of points that are relatively similar in the space of
+decision variables may result in local exploration in this case, since the
+magnitude of the differential vectors tends to become relatively small. As the
+iterations progress, this Variation Stack would tend to perform local search
+movements, with larger pertubations potentially occurring whenever points are
+sampled from outside the neighborhoods (i.e., about 10% of the cases). It is
+therefore possible that this local exploration characteristic may have resulted
+in a MOEA/D configuration that does not benefit from an explicit local search
+operator.
+
+Besides these considerations, the configurations returned by the Iterated Racing
+procedure present a few other interesting points. First, the use of a smaller
+neighborhood than is usually practiced in the literature (T = 11), with the
+neighborhood relations being defined at each iteration by the similarities
+between the incumbent solutions of each subproblem. Second, the use of a very
+strict Restricted Neighborhood Update, with $n_r = 1$, which suggests an
+advantage in trying to maintain diversity instead of accelerating convergence.
+The use of the variation operators of the MOEAD/D-De *without* Polynomial
+Mutation (as is usually practiced in the MOEA/D-DE) is also curious, as it may
+indicate a more parsimonious variation stack than is usually practiced in the
+literature.
+
+## Recommendations
+
+As can be seen, exploring the space of possible component configurations and
+parameter values can render improved algorithmic configurations and new insights
+into the roles of specific components and parameter values.
+
+Thus, we highly recommend that a similar approach is used when developing new
+components, in order to observe not only the individual performance of the novel
+component, but also its interaction with components which already exist in the 
+MOEA/D environment.
+
+
+

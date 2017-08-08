@@ -4,3 +4,4 @@
 ^.*\.yml$
 ^cran-comments.md$
 casestudy/
+^data-raw$

@@ -1,0 +1,36 @@
+### Parameter file
+# name		      switch	type	values [conditions (using R syntax)]
+decomp.name     " "     c     (SLD,Uniform)
+aggfun.name     " "     c     (WT,AWT,PBI)
+aggfun.theta    " "     i     (2,20) | aggfun.name == "PBI"
+neighbor.name   " "     c     (lambda,x)
+T               " "     i     (10,40)
+delta.p         " "     r     (0.1,1)
+update.name     " "     c     (standard,best,restricted)
+UseArchive      " "     i     (0,1)
+Tr              " "     i     (4,20) | update.name == "best"
+nr              " "     i     (1,10) | update.name != "standard"
+varop1          " "     c     (binrec,diffmut,polymut,sbx)
+varop2          " "     c     (binrec,diffmut,polymut,sbx)
+varop3          " "     c     (binrec,diffmut,polymut,sbx,none)
+varop4          " "     c     (localsearch,none)
+binrec.rho1     " "     r     (0,1) | varop1 == "binrec"
+binrec.rho2     " "     r     (0,1) | varop2 == "binrec"
+binrec.rho3     " "     r     (0,1) | varop3 == "binrec"
+diffmut.basis1  " "     c     (rand,mean,wgi) | varop1 == "diffmut"
+diffmut.basis2  " "     c     (rand,mean,wgi) | varop2 == "diffmut"
+diffmut.basis3  " "     c     (rand,mean,wgi) | varop3 == "diffmut"
+polymut.eta1    " "     r     (1,100) | varop1 == "polymut"
+polymut.eta2    " "     r     (1,100) | varop2 == "polymut"
+polymut.eta3    " "     r     (1,100) | varop3 == "polymut"
+polymut.pm1     " "     r     (0,1) | varop1 == "polymut"
+polymut.pm2     " "     r     (0,1) | varop2 == "polymut"
+polymut.pm3     " "     r     (0,1) | varop3 == "polymut"
+sbx.eta1        " "     r     (1,100) | varop1 == "sbx"
+sbx.eta2        " "     r     (1,100) | varop2 == "sbx"
+sbx.eta3        " "     r     (1,100) | varop3 == "sbx"
+sbx.pc1         " "     r     (0,1) | varop1 == "sbx"
+sbx.pc2         " "     r     (0,1) | varop2 == "sbx"
+sbx.pc3         " "     r     (0,1) | varop3 == "sbx"
+ls.type         " "     c     (tpqa,dvls) | varop4 == "localsearch"
+gamma.ls        " "     r     (0,.5) | varop4 == "localsearch"
