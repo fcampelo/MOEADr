@@ -93,6 +93,6 @@ summary.moeadoutput <- function(object,
   if("emoa" %in% rownames(utils::installed.packages())) {
     cat("\nEstimated HV: ", hv)
     cat("\nRef point used for HV: ", ref.point)
-  }
+  } else cat("\n\nPlease install package 'emoa' to calculate hypervolume.")
   cat("\n#====================================")
 }

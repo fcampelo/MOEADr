@@ -133,7 +133,7 @@ plot.moeadoutput <- function(x,
       grDevices::dev.flush()
       invisible(readline(prompt = "Press [enter] to continue"))
     } else {
-      warning("Please install package 'scatterplot3d' to generate scatter plot.")
+      cat("Please install package 'scatterplot3d' to generate scatter plot.")
     }
   }
 
@@ -153,7 +153,7 @@ plot.moeadoutput <- function(x,
       grDevices::dev.flush()
       invisible(readline(prompt = "Press [enter] to continue"))
     } else {
-      warning("Please install package 'MASS' to generate parallel coordinates plot.")
+      cat("Please install package 'MASS' to generate parallel coordinates plot.")
     }
 
     grDevices::dev.hold()
