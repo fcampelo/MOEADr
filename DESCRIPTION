@@ -18,7 +18,8 @@ Suggests: scatterplot3d,
           testthat,
           knitr,
           rmarkdown, 
-          emoa
+          emoa,
+          ggplot2
 Depends: R (>= 3.4.0)
 Authors@R: c(person("Felipe", "Campelo",
     email   = "fcampelo@ufmg.br",

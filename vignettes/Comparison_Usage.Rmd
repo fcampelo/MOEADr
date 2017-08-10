@@ -1,64 +1,62 @@
 --- 
-title: "Fine tuning MOEAD/r configurations using the MOEADr package" 
-author: "Claus Aranha" 
+title: "Fine tuning MOEA/D configurations using MOEADr and irace" 
+author: "Claus Aranha, Felipe Campelo" 
 date: "`r Sys.Date()`" 
 output: rmarkdown::html_vignette 
 vignette: > 
-  %\VignetteIndexEntry{Vignette Title} 
+  %\VignetteIndexEntry{Fine tuning MOEA/D configurations using MOEADr and irace} 
   %\VignetteEngine{knitr::rmarkdown} 
   %\VignetteEncoding{UTF-8} 
 ---
 
-For this example, we adapt the tuning protocol proposed by Bezerra et. al 
-(2016), employing the *Iterated Racing* procedure by Lopes-Ibanes et. al (2016).
-Using the *irace* package, we automatically assemble and fine-tune an MOEA/D 
-configuration based on the components available in the *MOEADr* package.
+For this example, we adapt the tuning protocol proposed by Bezerra _et al._ 
+(2016)^[Lecture Notes in Computer Science 9018:48–63, 2016.], employing the *Iterated Racing* procedure by Lopez-Ibanez _et al._ (2016)^[Operations Research Perspectives 3:43-58, 2016].
+Using the **irace** package, we automatically assemble and fine-tune a MOEA/D configuration based on the components available in the **MOEADr** package.
 
 ## Fine tuning setup
 
-Ten unconstrained test problems^[Functions UF1 to UF10, using the standard 
-implementation available in the *smoof* package] from the CEC2009 competition 
-are used, with dimensions ranging from 20 to 60. Dimensions 30, 40 and 50 were 
+Ten unconstrained test problems from the CEC2009 competition^[Functions UF1 to UF10 ([http://dces.essex.ac.uk/staff/qzhang/moeacompetition09.htm](http://dces.essex.ac.uk/staff/qzhang/moeacompetition09.htm)), using the standard implementation available in the **smoof** package.] are used, with dimensions ranging from 20 to 60. Dimensions 30, 40 and 50 were 
 reserved for testing, while all others were used for the training effort. To 
 quantify the quality of the set of solutions returned by a candidate 
 configuration we use the Inverted Generational Distance (IGD). The number of 
 subproblems was fixed as $100$ for $m=2$ and $150$ for $m=3$^[For the Simplex
 Lattice Design the actual number was 153 for $m = 3$, given the specifics of
-this method. Please refer to the manual of the SLD function for details].
+this method. Please refer to the documentation of function *decomposition_sld()* for details].
 
 We define a tuning budget of 20,000 runs. The possible configurations are 
 composed from the following choices:
 
 - Decomposition Strategy: SLD or Uniform; 
 - Scalar Aggregation function: WT, PBI or AWB; 
-- Type of neighborhood: By weights or by incumbent solutions; 
-- Type of Update: Standard, Restricted or Best Subproblem; 
+- Type of neighborhood: by weights or by incumbent solutions; 
+- Type of Update: Standard, Restricted, or Best Subproblem; 
 - Variation Stack: See below;
 
-For every combination, the parameters of each component (e.g. $\theta$pbi for 
+For every combination, the parameters of each component (e.g. $\theta^{pbi}$ for 
 the PBI aggregation function) were also included as part of the tuning 
 experiment. Objective scaling was employed in all cases. No constraint handling 
 was required, and the stop criterion was set as 100,000 evaluations.
 
 The variation stack was composed of three to five operators, using the following
 rules: the first and second operators could be any of the "traditional" 
-operators currently available in the *MOEADr* package: SBX, Polynomial Mutation,
+operators currently available in the **MOEADr** package: SBX, Polynomial Mutation,
 Differential Mutation, and Binomial Recombination. The third operator could be 
 any of these, or "none" (i.e., not present). The fourth operator could be either
 a local search operator or "none". Finally, the variation stack always finished 
-with the truncation repair operator (mainly to avoid numerical problems). No 
+with the truncation repair operator (mainly to avoid errors with the 
+implementation of the test functions). No 
 restrictions were placed on repeats of the variation operators, and the specific
 conditional parameters for each operator were allowed to be tuned independently 
 for each position in the variation stack.
 
-## *irace* configuration
+## **irace** configuration
 
 Here we describe the necessary setup to run the experiment above. First, loading 
 the necessary packages and basic configuration of *irace*. (*parameters.txt*, 
 *forbidden.txt* and other files are only included in the source version of the 
 *MOEADr* package)
 
-```{r} 
+```{r, eval = FALSE} 
 suppressPackageStartupMessages(library(irace))
 suppressPackageStartupMessages(library(parallel))
 suppressPackageStartupMessages(library(smoof))
@@ -81,7 +79,7 @@ parameters <- readParameters("../data-raw/parameters.txt")
 ```
 
 Second, it is necessary to generate the training instances 
-based on the *smoof* benchmark functions:
+based on the benchmark function implementations in package **smoof**:
 
 ```{r}
 #===============
@@ -115,8 +113,8 @@ for (i in 1:nrow(allfuns)){
                                                                [[1]][2]))) }
 ```
 
-Third, we need to specify the code that will generate a *MOEADr* configuration
-based on the parameter string created by *irace*:
+Third, we need to specify the code that will generate a MOEA/D configuration
+based on the parameter string created by the *irace* routine:
 
 ```{r}
 target.runner <- function(experiment, scenario){
@@ -219,7 +217,7 @@ target.runner <- function(experiment, scenario){
 Finally, we run the experiment, and save the outputs. Note that this experiment
 will take a long time to run (24 hours in a 24 cluster machine), so take that
 into account when reproducing these results. For more details on the code above,
-check the documentation of the *irace* package.
+check the documentation of the **irace** package.
 
 ```{r, eval = FALSE}
 ## Running the experiment
@@ -259,17 +257,21 @@ res.df <- reshape2::melt(res.df, value.name = "IGD")
 names(res.df)[4] <- "Configuration"
 
 ## Plot resulting IGD of best configurations returned, by problem and dimension
-#require(ggplot2)
-
+require(ggplot2)
 ml2 <- ggplot2::theme(axis.title  = ggplot2::element_text(size = 18),
                       axis.text   = ggplot2::element_text(size = 10),
                       legend.text = ggplot2::element_text(size = 18))
 
-mp <- ggplot2::ggplot(res.df, ggplot2::aes(x      = Problem,        y      = IGD, 
-                                           colour = Configuration,  group  = Configuration))
+mp <- ggplot2::ggplot(res.df, ggplot2::aes(x      = Problem,        
+                                           y      = IGD, 
+                                           colour = Configuration,  
+                                           group  = Configuration))
 mp + 
-  ggplot2::geom_boxplot(ggplot2::aes(fill   = NULL, colour = NULL, group  = Problem), 
-               alpha = 0.6, lwd   = 0.1) +
+  ggplot2::geom_boxplot(ggplot2::aes(fill   = NULL, 
+                                     colour = NULL, 
+                                     group  = Problem), 
+                        alpha = 0.6, 
+                        lwd   = 0.1) +
   ggplot2::geom_point() + ggplot2::geom_line() + ggplot2::facet_grid(.~Dimension) + ml2
 ```
 
@@ -307,7 +309,7 @@ mypars$names      <- c("T", "delta.p", "binrec.rho2", "binrec.rho3")
 mypars$nbVariable <- 4
 
 ### Plot
-parameterFrequency(finalConfs, mypars, cols = 2)
+irace::parameterFrequency(finalConfs, mypars, cols = 2)
 ```
 
 A feature that may seem surprising at first glance is the two sequential
@@ -316,7 +318,7 @@ the results of a Differential Mutation operator are recombined with the
 incumbent solutions at the (reasonably low) recombination rate $\rho_1 = 0.495$;
 and then the resulting vectors are again recombined with the incumbent
 solutions, at a (much higher) rate $\rho_2 = 0.899$. However, a quick review of
-the Binomial Recombination and some elementary probability shows that these two
+the definition of Binomial Recombination and some elementary probability shows that these two
 sequential applications of binomial recombinations can be expressed as a single
 application with $\rho = \rho_1\rho_2 = 0.445$. The fact that Iterated Racing
 converged to two operators instead of a single one can be explained by the fact
