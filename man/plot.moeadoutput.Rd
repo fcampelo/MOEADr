@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{moeadoutput}(x, ..., useArchive = FALSE, feasible.only = TRUE,
   viol.threshold = 1e-06, nondominated.only = TRUE, plot.weights = FALSE,
-  which.objectives = NULL, color.by.obj = 1)
+  which.objectives = NULL, suppress.pause = FALSE, color.by.obj = 1)
 }
 \arguments{
 \item{x}{list object of class \emph{moeadoutput}
@@ -30,6 +30,9 @@ plots.}
 
 \item{which.objectives}{integer vector of which objectives to plot.
 Defaults to \code{NULL} (use all objectives)}
+
+\item{suppress.pause}{logical flag to prevent pause messages from being show after every image.
+Defaults to \code{FALSE} (show pause messages)}
 
 \item{color.by.obj}{integer, determines which objective is used as the basis
 for coloring the parallel coordinates plot.}

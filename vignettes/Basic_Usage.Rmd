@@ -91,7 +91,7 @@ the number of non-dominated and feasible solution points, the estimated ideal an
 
 ```{r,collapse = TRUE, comment = "#>", fig.align="center", fig.width=6, fig.height=6}
 summary(results)
-plot(results)
+plot(results, suppress.pause = TRUE)
 ```
 
 ## A more complex example
@@ -128,7 +128,7 @@ results.dtlz <- moead(problem = problem.dtlz1,
 Notice on the figure below that **MOEADr** plots extra information when the number of objectives in a problem is greater than 2:
 ```{r,collapse = TRUE, comment = "#>", fig.align="center", fig.width=6, fig.height=6}
 summary(results.dtlz)
-plot(results.dtlz)
+plot(results.dtlz, suppress.pause = TRUE)
 ```
 
 Note that for more complex MOPs, the preset values suggested by *preset_moead()* might not be effective. 

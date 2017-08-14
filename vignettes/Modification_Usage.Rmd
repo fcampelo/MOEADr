@@ -1,0 +1,120 @@
+---
+title: "Testing New Operators using the MOEADr Package"
+author: "Claus Aranha"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Basic Usage of the MOEADr Package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Let us show how to prepare a new component for the MOEADr framework, 
+add it to an existing algorithmic composition, and perform some basic comparisons. 
+For this example, we will create a simple variation operator that does not 
+exist in the package in its current state, but the same principle works 
+for adding components of other classes.
+
+## Creating a new operator
+
+Consider the following "*Gaussian Mutation*" operator: given a set $X$ of
+solutions $\mathbf{x_i} \in X$ we add, with probability $p$, a gaussian noise
+$r_{ij} = N(\mu, \sigma)$ to each $x_{ij} \in \mathbf{x_i} \in X$. The *R* code 
+for this operator is ass follows:
+
+```{r}
+variation_gaussmut <- function(X, mean = 0, sd = 0.1, p = 0.1, ...) {
+  # You want to do some error checking on the parameters here
+  # But for the sake of brevity in this case study, we are skipping it.
+  
+  R <- rnorm(length(X), mean = mean, sd = sd)       # Matrix of normal samples 
+  R <- R * (runif(length(X)) <= p)                  # Removing with prob (1 - p)
+  return (X + R)                                    # Adding them to the solutions
+  
+}
+```
+
+We would like to highlight a few characteristics of the code sample above.
+First, the name of the function must be in the form *variation_functionname*.
+The MOEADr package uses the function name prefixes to perform some automated
+functions such as listing existing components and error checking. The list of
+current function prefixes and their meaning is:
+
+- *constraint*: Constraint handling components
+- *decomposition*: Decomposition functions
+- *ls*: Local search operators
+- *scalarization*: Scalarization functions
+- *stop*: Stop criteria components
+- *uptd*: Update components
+- *variation*: Variation operators
+
+Second, the parameters in the function definition must include: the solution set
+matrix $X$, the local parameters for the function, and finally an ellipsis to
+catch other arguments passed by the main **moead** call, such as objective
+values and former solution sets. If you want examples of using these parameters
+please look at the code for some of the variation operators included, such as the 
+Binary Recombination operator (*variation_binrec*)
+
+Other component classes follow similar rules. Please look at existing
+implementations as basis for new ideas.
+
+## Testing the new operator
+
+The moeadr package first search for operators in the base R environment.
+Therefore, if you have named your component correctly, all you need to do is add
+it to the appropriate parameter in the moead call.
+
+For example, let us compare our Gaussian Mutation variation operator with the
+original MOEA/D, on a standard benchmark from the smoof package:
+
+```{r,echo=FALSE,message=FALSE}
+library(MOEADr)
+library(smoof)
+```
+
+```{r}
+ZDT1 <- make_vectorized_smoof(prob.name  = "ZDT1",
+                              dimensions = 30)
+problem.zdt1  <- list(name       = "ZDT1",
+                      xmin       = rep(0, 30),
+                      xmax       = rep(1, 30),
+                      m          = 2)
+
+
+myvar <- list()                                   # Variation Stack
+myvar[[1]] <- list(name = "gaussmut", p = 0.5)    # Our new operator
+myvar[[2]] <- list(name = "truncate")             # Truncation repair operator
+
+results.orig  <- moead(problem  = problem.zdt1,
+                       preset   = preset_moead("original"),
+                       showpars = list(show.iters = "none"), 
+                       seed     = 42)
+results.myvar <- moead(problem  = problem.zdt1,
+                       preset   = preset_moead("original"),
+                       variation = myvar,
+                       showpars = list(show.iters = "none"), 
+                       seed     = 42)
+```
+
+Since the function that implements the Gaussian Mutation operator was defined in
+the main environment, and has the required *variation_* prefix, all that we need
+to do to use it in the **moead** function is to add the necessary parameters to
+the variation stack. The figure below shows the final Pareto front for the 
+standard MOEA/D and the Gaussian Mutation operator. From these images, it seems
+that the new operator still needs some work.
+
+```{r, eval=FALSE}
+plot(results.orig, suppress.pause = TRUE)
+plot(results.myvar, suppress.pause = TRUE)
+```
+
+```{r, echo=FALSE}
+plot(results.orig, suppress.pause = TRUE)
+plot(results.myvar, suppress.pause = TRUE)
+```
+
+We welcome new contributions to **MOEADr**'s component library, so the reader is
+invited and encouraged to contact us to add their published contributions to the
+package.
+
+
