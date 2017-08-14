@@ -81,7 +81,7 @@ parameters <- readParameters("../data-raw/parameters.txt")
 Second, it is necessary to generate the training instances 
 based on the benchmark function implementations in package **smoof**:
 
-```{r}
+```{r, eval = FALSE}
 #===============
 ### Build training instances
 fname   <- paste0("UF_", 1:10)
@@ -116,7 +116,7 @@ for (i in 1:nrow(allfuns)){
 Third, we need to specify the code that will generate a MOEA/D configuration
 based on the parameter string created by the *irace* routine:
 
-```{r}
+```{r, eval = FALSE}
 target.runner <- function(experiment, scenario){
   force(experiment)
   conf <- experiment$configuration
