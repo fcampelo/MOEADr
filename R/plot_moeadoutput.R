@@ -17,6 +17,8 @@
 #'                         Defaults to `NULL` (use all objectives)
 #' @param color.by.obj integer, determines which objective is used as the basis
 #'                     for coloring the parallel coordinates plot.
+#' @param suppress.pause logical flag to prevent pause messages from being show after every image.
+#'                         Defaults to `FALSE` (show pause messages)
 #' @param ... other parameters to be passed down to specific plotting functions (currently unused)
 #'
 #' @export
@@ -28,6 +30,7 @@ plot.moeadoutput <- function(x,
                              nondominated.only = TRUE,
                              plot.weights      = FALSE,
                              which.objectives  = NULL,
+                             suppress.pause    = FALSE,
                              color.by.obj      = 1)
   {
 
@@ -110,7 +113,8 @@ plot.moeadoutput <- function(x,
       }
     }
     grDevices::dev.flush()
-    invisible(readline(prompt = "Press [enter] to continue"))
+
+    if (!suppress.pause) invisible(readline(prompt = "Press [enter] to continue"))
   }
 
   # for 3-objectives, plot points (+ weights, if needed - looks bad though)
@@ -131,7 +135,7 @@ plot.moeadoutput <- function(x,
         }
       }
       grDevices::dev.flush()
-      invisible(readline(prompt = "Press [enter] to continue"))
+      if (!suppress.pause) invisible(readline(prompt = "Press [enter] to continue"))
     } else {
       cat("Please install package 'scatterplot3d' to generate scatter plot.")
     }
@@ -151,7 +155,7 @@ plot.moeadoutput <- function(x,
                      col = cols,
                      main = "Parallel coordinates plot")
       grDevices::dev.flush()
-      invisible(readline(prompt = "Press [enter] to continue"))
+      if (!suppress.pause) invisible(readline(prompt = "Press [enter] to continue"))
     } else {
       cat("Please install package 'MASS' to generate parallel coordinates plot.")
     }
@@ -163,5 +167,5 @@ plot.moeadoutput <- function(x,
                     main = "2-objective projections")
     grDevices::dev.flush()
   }
-  invisible()
+  if (!suppress.pause) invisible()
 }
