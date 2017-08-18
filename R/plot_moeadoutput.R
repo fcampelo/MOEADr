@@ -98,18 +98,21 @@ plot.moeadoutput <- function(x,
   # for 2-objectives, plot points (+ weights, if needed)
   if (nobj == 2){
     grDevices::dev.hold()
-    graphics::plot(Y[, 1], Y[, 2], type = "p",
-                   xlab = colnames(Y)[1], ylab = colnames(Y)[2],
-                   pch = 16,
-                   main = "Objectives plot")
+    graphics::plot(Y[, 1], Y[, 2],
+                   type = "p",
+                   xlab = colnames(Y)[1],
+                   ylab = colnames(Y)[2],
+                   pch  = 16,
+                   main = "Objectives plot",
+                   las  = 1)
 
     if(plot.weights){
       for (i in 1:nrow(W)){
         termpt <- 1.1 * W[i, ] * (nadir - ideal)
-        graphics::points(x = c(ideal[1], termpt[1]),
-                         y = c(ideal[2], termpt[2]),
+        graphics::points(x    = c(ideal[1], termpt[1]),
+                         y    = c(ideal[2], termpt[2]),
                          type = "l",
-                         lwd = 0.5)
+                         lwd  = 0.5)
       }
     }
     grDevices::dev.flush()
@@ -122,8 +125,9 @@ plot.moeadoutput <- function(x,
     if("scatterplot3d" %in% rownames(utils::installed.packages())){
       grDevices::dev.hold()
       s3d <- scatterplot3d::scatterplot3d(Y,
-                                          pch = 20,
-                                          main = "Objectives plot")
+                                          pch  = 20,
+                                          main = "Objectives plot",
+                                          las  = 1)
       if(plot.weights){
         for (i in 1:nrow(W)){
           termpt <- 1.1 * W[i, ] * (nadir - ideal)
@@ -150,10 +154,11 @@ plot.moeadoutput <- function(x,
       cols  <- rbPal(nrow(Y))
 
       MASS::parcoord(Y[order(Y[, color.by.obj]), ],
-                     lwd = 0.6,
+                     lwd       = 0.6,
                      var.label = TRUE,
-                     col = cols,
-                     main = "Parallel coordinates plot")
+                     col       = cols,
+                     main      = "Parallel coordinates plot",
+                     las       = 1)
       grDevices::dev.flush()
       if (!suppress.pause) invisible(readline(prompt = "Press [enter] to continue"))
     } else {
@@ -163,8 +168,8 @@ plot.moeadoutput <- function(x,
     grDevices::dev.hold()
     graphics::pairs(Y,
                     upper.panel = NULL,
-                    pch = 20,
-                    main = "2-objective projections")
+                    pch         = 20,
+                    main        = "2-objective projections")
     grDevices::dev.flush()
   }
   if (!suppress.pause) invisible()
