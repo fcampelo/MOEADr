@@ -4,12 +4,54 @@
 \alias{preset_moead}
 \title{preset_moead}
 \usage{
-preset_moead()
+preset_moead(name = NULL)
+}
+\arguments{
+\item{name}{name of the preset to be generated. Use \code{preset_moead()} to obtain
+the list of available options.}
+}
+\value{
+List object containing the preset, to be used as an input to \code{\link[=moead]{moead()}};
+or, if \code{name == NULL} (the default), returns a logical flag invisibly.
 }
 \description{
-Standard MOEA/D Preset (Zhang and Li 2007)
+Generate a preset configuration for moead()].
 }
 \details{
-Returns a configuration object that replicates the
-MOEA/D as in Zhang and Li (2007) (sec. V-E, p.721-722)
+This function returns a list of configuration presets taken from
+the literature to be used with the \code{\link[=moead]{moead()}} function in package \code{MOEADr}.
+
+Use these configurations as a starting point. We strongly
+recommend that you play around with the particular configurations
+(see example).
+}
+\examples{
+
+# Generate list of available presets
+preset_moead(name = NULL)
+
+\dontrun{
+  library(smoof) # < Install package smoof if needed
+  ZDT1 <- make_vectorized_smoof(prob.name  = "ZDT1",
+                                dimensions = 30)
+                                problem   <- list(name       = "ZDT1",
+                                                  xmin       = rep(0, 30),
+                                                  xmax       = rep(1, 30),
+                                                  m          = 2)
+
+  # Get preset configuration for original MOEA/D
+  configuration <- preset_moead("original")
+
+  # Modify whatever you fancy:
+  stopcrit <- list(list(name = "maxiter", maxiter = 50))
+  showpars <- list(show.iters = "dots", showevery  = 10)
+  seed     <- 42
+
+  output <- moead(problem  = problem,
+                  preset   = configuration,
+                  showpars = showpars,
+                  stopcrit = stopcrit,
+                  seed     = seed)
+}
+
 }

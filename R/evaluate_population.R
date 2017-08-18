@@ -9,10 +9,6 @@
 #' in \code{problem$xmin} and \code{problem$xmax} are mapped to \code{0} and
 #' \code{1}, respectively.
 #'
-#' **Warning**: The calling environment must have a counter variable \code{nfe},
-#' which tracks the total number of function evaluations. This routine
-#' accesses and updates that \code{nfe} variable.
-#'
 #' @param X Population matrix of the MOEA/D (each row is a candidate solution).
 #' @param problem list of named problem parameters. See Section
 #' `Problem Description` of the [moead()] documentation for details.

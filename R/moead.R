@@ -129,9 +129,8 @@
 #'
 #' @section References:
 #' F. Campelo, L.S. Batista, C. Aranha:
-#' "The MOEADr Package - Component-Oriented Design of
-#' Multiobjective Evolutionary Algorithms Based on Decomposition".
-#' In preparation, 2017.
+#' "The MOEADr Package - A Component-Based Framework for Multiobjective
+#' Evolutionary Algorithms Based on Decomposition". In preparation, 2017.
 #'
 #' @param preset List object containing preset values for one or more
 #'    of the other parameters of the `moead` function. Values provided in
@@ -164,7 +163,7 @@
 #'
 #' @export
 #'
-#' @return List object containing :
+#' @return List object of class _moeadoutput_ containing:
 #'
 #' - information on the final population (`X`), its objective values (`Y`) and
 #'  constraint information list (`V`) (see [evaluate_population()] for details);
@@ -176,19 +175,25 @@
 #' - Random seed employed in the run, for reproducibility
 #'
 #' @examples
-#'\dontrun{
-#' # MOEA/D as in Zhang and Li (2007) (sec. V-E, p.721-722)
-#' ## 1: prepare test problem
-#' library(smoof)
-#' ZDT1 <- make_vectorized_smoof(prob.name  = "ZDT1",
-#'                               dimensions = 30)
+#' ## Prepare a test problem composed of minimization of the (shifted)
+#' ## sphere and Rastrigin functions
+#' sphere     <- function(x){sum((x + seq_along(x) * 0.1) ^ 2)}
+#' rastringin <- function(x){
+#'                 x.shift <- x - seq_along(x) * 0.1
+#'                 sum((x.shift) ^ 2 - 10 * cos(2 * pi * x.shift) + 10)}
+#' problem.sr <- function(X){
+#'                 t(apply(X, MARGIN = 1,
+#'                 FUN = function(X){c(sphere(X), rastringin(X))}))}
 #'
-#' ## 2: set input parameters
-#' problem   <- list(name       = "ZDT1",
-#'                   xmin       = rep(0, 30),
+#'
+#' ## Set the input parameters for the moead() routine
+#' ## This reproduces the Original MOEA/D of Zhang and Li (2007)
+#' ## (with a few changes in the computational budget, to make it run faster)
+#' problem   <- list(name       = "problem.sr",
+#'                   xmin       = rep(-1, 30),
 #'                   xmax       = rep(1, 30),
 #'                   m          = 2)
-#' decomp    <- list(name       = "SLD", H = 99)
+#' decomp    <- list(name       = "SLD", H = 49) # <-- H = 99 in the original
 #' neighbors <- list(name       = "lambda",
 #'                   T          = 20,
 #'                   delta.p    = 1)
@@ -202,34 +207,41 @@
 #' scaling   <- list(name       = "none")
 #' constraint<- list(name       = "none")
 #' stopcrit  <- list(list(name  = "maxiter",
-#'                     maxiter  = 200))
+#'                     maxiter  = 50))      # <-- maxiter = 200 in the original
 #' showpars  <- list(show.iters = "dots",
 #'                   showevery  = 10)
-#' seed      <- NULL
+#' seed      <- 42
 #'
-#' ## 3: run MOEA/D
-#' out1 <- moead(problem, decomp,  aggfun, neighbors, variation, update,
+#' ## Run MOEA/D
+#' out1 <- moead(preset = NULL,
+#'               problem, decomp, aggfun, neighbors, variation, update,
 #'               constraint, scaling, stopcrit, showpars, seed)
 #'
-#' # 4: Plot output:
-#' plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)
+#' ## Examine the output:
+#' summary(out1)
 #'
+#' ## Alternatively, the standard MOEA/D could also be set up using the
+#' ## preset_moead() function. The code below runs the original MOEA/D with
+#' ## exactly the same configurations as in Zhang and Li (2007).
+#' \dontrun{
+#'   out2 <- moead(preset   = preset_moead("original"),
+#'                 problem  = problem,
+#'                 showpars = showpars,
+#'                 seed     = 42)
+#'
+#'   ## Examine the output:
+#'   summary(out2)
+#'   plot(out2, suppress.pause = TRUE)
+#' }
 #'
 #' # Rerun with MOEA/D-DE configuration and AWT scalarization
-#' aggfun    <- list(name       = "awt")
-#' variation <- list(list(name  = "diffmut",
-#'                        basis = "rand",
-#'                        Phi   = NULL),
-#'                   list(name  = "binrec",
-#'                        rho   = 0.8),
-#'                   list(name = "polymut",
-#'                        etam  = 20, pm = 0.1),
-#'                   list(name  = "truncate"))
-#'
-#' out2 <- moead(problem, decomp,  aggfun, neighbors, variation, update,
-#'               constraint, scaling, stopcrit, showpars, seed)
-#' plot(out2$Y[,1], out2$Y[,2], type = "p", pch = 20)
-#' }
+#' out3 <- moead(preset   = preset_moead("moead.de"),
+#'               problem  = problem,
+#'               aggfun   = list(name = "awt"),
+#'               stopcrit = list(list(name    = "maxiter",
+#'                                    maxiter = 50)),
+#'               seed    = seed)
+#' plot(out3, suppress.pause = TRUE)
 
 moead <- function(preset = NULL,     # List:  Set of strategy/components
                   problem = NULL,    # List:  MObj problem
@@ -415,11 +427,17 @@ moead <- function(preset = NULL,     # List:  Set of strategy/components
   # ================================== Output ================================ #
   # Prepare output
   X <- denormalize_population(X, problem)
+  colnames(Y) <- paste0("f", 1:ncol(Y))
+  colnames(W) <- paste0("f", 1:ncol(W))
 
-  if(!is.null(Archive)) Archive$X <- denormalize_population(Archive$X, problem)
+  if(!is.null(Archive)) {
+    Archive$X <- denormalize_population(Archive$X, problem)
+    colnames(Archive$Y) <- paste0("f", 1:ncol(Archive$Y))
+    colnames(Archive$W) <- paste0("f", 1:ncol(Archive$W))
+  }
 
   # Output
-  return(list(X       = X,
+  out <- list(X       = X,
               Y       = Y,
               V       = V,
               W       = W,
@@ -429,7 +447,10 @@ moead <- function(preset = NULL,     # List:  Set of strategy/components
               nfe     = nfe,
               n.iter  = iter,
               time    = difftime(Sys.time(), time.start, units = "secs"),
-              seed    = seed))
+              seed    = seed)
+  class(out) <- c("moeadoutput", "list")
+
+  return(out)
   # ================================ End Output ============================== #
 }
 

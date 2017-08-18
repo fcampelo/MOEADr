@@ -31,8 +31,4 @@ matrix is considered as a candidate solution. This routine expects the
 candidate solutions to be standardized, i.e., that the variable limits given
 in \code{problem$xmin} and \code{problem$xmax} are mapped to \code{0} and
 \code{1}, respectively.
-
-\strong{Warning}: The calling environment must have a counter variable \code{nfe},
-which tracks the total number of function evaluations. This routine
-accesses and updates that \code{nfe} variable.
 }

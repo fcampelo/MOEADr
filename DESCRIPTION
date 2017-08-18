@@ -1,15 +1,25 @@
 Package: MOEADr
-Type: Package
-Title: Component-Wise MOEA/D Implementation
+Type:    Package
+Title:   Component-Wise MOEA/D Implementation
 Description: Modular implementation of Multiobjective Evolutionary Algorithms 
               based on Decomposition (MOEA/D) [Zhang and Li (2007), 
               <DOI:10.1109/TEVC.2007.892759>] for quick assembling and 
               testing of new algorithmic components, as well as easy 
               replication of published MOEA/D proposals.
-Version: 0.2.2
-Date: 2017-6-25
-Imports: FNN, assertthat, smoof
-Suggests: testthat, knitr, rmarkdown, devtools, irace
+Version:  1.0.0
+Date:     2017-8-18
+Imports:  FNN, 
+          assertthat
+Suggests: smoof,
+          scatterplot3d, 
+          MASS, 
+          grDevices, 
+          irace, 
+          testthat,
+          knitr,
+          rmarkdown, 
+          emoa,
+          ggplot2
 Depends: R (>= 3.4.0)
 Authors@R: c(person("Felipe", "Campelo",
     email   = "fcampelo@ufmg.br",

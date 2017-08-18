@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -12,7 +12,7 @@
 
 <meta name="author" content="Felipe Campelo" />
 
-<meta name="date" content="2017-03-16" />
+<meta name="date" content="2017-08-18" />
 
 <title>Defining Problems in the MOEADr Package</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Defining Problems in the MOEADr Package</h1>
 <h4 class="author"><em>Felipe Campelo</em></h4>
-<h4 class="date"><em>2017-03-16</em></h4>
+<h4 class="date"><em>2017-08-18</em></h4>
 
 
 
@@ -121,7 +121,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The routine indicated in <code>problem$name</code> must be able to receive a [ N x n<sub>v</sub> ] matrix, where each row represents one candidate solution. The name of the input argument that receives the population matrix must be either  or .</p>
 <p>This routine must return a [ N x n<sub>f</sub> ] matrix, where each row contains the n<sub>f</sub> objective function values for one solution.</p>
 <p>To illustrate these requirements, we provide below the example function <code>moeadr_dtlz1</code>.<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a> This function is simply a MOEADr-compliant wrapper for the DTLZ1 implementation available in the <code>smoof</code> package.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">moeadr_dtlz1 &lt;-<span class="st"> </span>function(X,     <span class="co"># population matrix</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">moeadr_dtlz1 &lt;-<span class="st"> </span><span class="cf">function</span>(X,     <span class="co"># population matrix</span>
                          ...    <span class="co"># allow function to receive extra parameters. </span>
                                 <span class="co"># These are unused in most cases, but it is useful </span>
                                 <span class="co"># for preventng errors due to unwanted parameters </span>
@@ -130,12 +130,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
   <span class="co"># &quot;smoof&quot; is listed in the Suggests field MOEADr's DESCRIPTION, but we need to </span>
   <span class="co"># be sure that it is available, so:</span>
-  if(!(<span class="st">&quot;smoof&quot;</span> %in%<span class="st"> </span><span class="kw">rownames</span>(utils::<span class="kw">installed.packages</span>()))){
+  <span class="cf">if</span>(<span class="op">!</span>(<span class="st">&quot;smoof&quot;</span> <span class="op">%in%</span><span class="st"> </span><span class="kw">rownames</span>(utils<span class="op">::</span><span class="kw">installed.packages</span>()))){
     <span class="kw">stop</span>(<span class="st">&quot;Please install package 'smoof' to continue&quot;</span>)
   }
   
   <span class="co"># make 10-variable, 2-objective DTLZ1</span>
-  smoof_dtlz1 &lt;-<span class="st"> </span>smoof::<span class="kw">makeDTLZ1Function</span>(<span class="dt">dimensions   =</span> <span class="dv">10</span>, 
+  smoof_dtlz1 &lt;-<span class="st"> </span>smoof<span class="op">::</span><span class="kw">makeDTLZ1Function</span>(<span class="dt">dimensions   =</span> <span class="dv">10</span>, 
                                           <span class="dt">n.objectives =</span> <span class="dv">2</span>)
   
   <span class="co"># Evaluate points in a vectorized manner:</span>
@@ -166,7 +166,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>1 inequality constraint <span class="math inline">\(g_1(\mathbf{x}) = x_1^2 + 2x_2^2 - 1.2 \leq 0\)</span></li>
 <li>1 equality constraint <span class="math inline">\(h_1(\mathbf{x}) = x_3x_4 - 0.5 = 0\)</span></li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_constraints &lt;-<span class="st"> </span>function(X,           <span class="co"># population matrix</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_constraints &lt;-<span class="st"> </span><span class="cf">function</span>(X,           <span class="co"># population matrix</span>
                            <span class="dt">epsilon =</span> <span class="dv">0</span>, <span class="co"># tolerance for equality constraints</span>
                                         <span class="co"># (defaults to zero if not provided)</span>
                            ...)
@@ -177,11 +177,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   <span class="co"># Prepare output matrix of constraint function values</span>
   Cmatrix &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">numeric</span>(), 
                     <span class="dt">nrow =</span> <span class="kw">nrow</span>(X),
-                    <span class="dt">ncol =</span> <span class="dv">2</span> *<span class="st"> </span>nv +<span class="st"> </span><span class="dv">2</span>) <span class="co"># 20 inequality box constraints, plus g1 and h1</span>
+                    <span class="dt">ncol =</span> <span class="dv">2</span> <span class="op">*</span><span class="st"> </span>nv <span class="op">+</span><span class="st"> </span><span class="dv">2</span>) <span class="co"># 20 inequality box constraints, plus g1 and h1</span>
   
   <span class="co"># Set informative column names (be nice to your users!)</span>
   <span class="kw">colnames</span>(Cmatrix) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">paste0</span>(<span class="st">&quot;x&quot;</span>, 
-                                <span class="kw">rep</span>(<span class="dv">1</span>:nv, <span class="dt">times =</span> <span class="dv">2</span>), 
+                                <span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span>nv, <span class="dt">times =</span> <span class="dv">2</span>), 
                                 <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;min&quot;</span>,<span class="st">&quot;max&quot;</span>), <span class="dt">each =</span> nv)),
                          <span class="st">&quot;g1&quot;</span>,
                          <span class="st">&quot;h1&quot;</span>)
@@ -191,25 +191,25 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   Xmax &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span>, <span class="dt">nrow =</span> <span class="kw">nrow</span>(X), <span class="dt">ncol =</span> nv)
   
   <span class="co"># Calculate &quot;x_i &gt;= 0&quot; and &quot;x_i &lt;= 1&quot; constraints</span>
-  Cmatrix[, <span class="dv">1</span>:nv]              &lt;-<span class="st"> </span>Xmin -<span class="st"> </span>X
-  Cmatrix[, (nv +<span class="st"> </span><span class="dv">1</span>):(<span class="dv">2</span> *<span class="st"> </span>nv)] &lt;-<span class="st"> </span>X -<span class="st"> </span>Xmax
+  Cmatrix[, <span class="dv">1</span><span class="op">:</span>nv]              &lt;-<span class="st"> </span>Xmin <span class="op">-</span><span class="st"> </span>X
+  Cmatrix[, (nv <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)<span class="op">:</span>(<span class="dv">2</span> <span class="op">*</span><span class="st"> </span>nv)] &lt;-<span class="st"> </span>X <span class="op">-</span><span class="st"> </span>Xmax
   
   <span class="co"># g1 and h1 functions</span>
-  g1 &lt;-<span class="st"> </span>function(X){
-    <span class="kw">return</span>(X[, <span class="dv">1</span>] ^<span class="st"> </span><span class="dv">2</span> +<span class="st"> </span><span class="dv">2</span> *<span class="st"> </span>X[, <span class="dv">2</span>] ^<span class="st"> </span><span class="dv">2</span> -<span class="st"> </span><span class="fl">1.2</span>)
+  g1 &lt;-<span class="st"> </span><span class="cf">function</span>(X){
+    <span class="kw">return</span>(X[, <span class="dv">1</span>] <span class="op">^</span><span class="st"> </span><span class="dv">2</span> <span class="op">+</span><span class="st"> </span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>X[, <span class="dv">2</span>] <span class="op">^</span><span class="st"> </span><span class="dv">2</span> <span class="op">-</span><span class="st"> </span><span class="fl">1.2</span>)
   }
-  h1 &lt;-<span class="st"> </span>function(X){
-    <span class="kw">return</span>(X[, <span class="dv">3</span>] *<span class="st"> </span>X[, <span class="dv">4</span>] -<span class="st"> </span><span class="fl">0.5</span>)
+  h1 &lt;-<span class="st"> </span><span class="cf">function</span>(X){
+    <span class="kw">return</span>(X[, <span class="dv">3</span>] <span class="op">*</span><span class="st"> </span>X[, <span class="dv">4</span>] <span class="op">-</span><span class="st"> </span><span class="fl">0.5</span>)
   }
   
   <span class="co"># Calculate g1(x) and h1(x)</span>
-  Cmatrix[, <span class="dv">2</span> *<span class="st"> </span>nv +<span class="st"> </span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="kw">g1</span>(X)
-  <span class="kw">Cmatrix</span>(, <span class="dv">2</span> *<span class="st"> </span>nv +<span class="st"> </span><span class="dv">2</span>) &lt;-<span class="st"> </span><span class="kw">h1</span>(X)
+  Cmatrix[, <span class="dv">2</span> <span class="op">*</span><span class="st"> </span>nv <span class="op">+</span><span class="st"> </span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="kw">g1</span>(X)
+  <span class="kw">Cmatrix</span>(, <span class="dv">2</span> <span class="op">*</span><span class="st"> </span>nv <span class="op">+</span><span class="st"> </span><span class="dv">2</span>) &lt;-<span class="st"> </span><span class="kw">h1</span>(X)
   
   <span class="co"># Assemble matrix of *violations*</span>
   Vmatrix &lt;-<span class="st"> </span>Cmatrix
-  Vmatrix[, <span class="dv">1</span>:(<span class="dv">2</span> *<span class="st"> </span>nv +<span class="st"> </span><span class="dv">1</span>)] &lt;-<span class="st"> </span><span class="kw">pmax</span>(Vmatrix[, <span class="dv">1</span>:(<span class="dv">2</span> *<span class="st"> </span>nv +<span class="st"> </span><span class="dv">1</span>)], <span class="dv">0</span>)        <span class="co"># inequality constraints</span>
-  Vmatrix[, <span class="dv">2</span> *<span class="st"> </span>nv +<span class="st"> </span><span class="dv">2</span>] &lt;-<span class="st"> </span><span class="kw">pmax</span>(<span class="kw">abs</span>(Vmatrix[, <span class="dv">2</span> *<span class="st"> </span>nv +<span class="st"> </span><span class="dv">2</span>]) -<span class="st"> </span>epsilon, <span class="dv">0</span>) <span class="co"># equality constraint h1</span>
+  Vmatrix[, <span class="dv">1</span><span class="op">:</span>(<span class="dv">2</span> <span class="op">*</span><span class="st"> </span>nv <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)] &lt;-<span class="st"> </span><span class="kw">pmax</span>(Vmatrix[, <span class="dv">1</span><span class="op">:</span>(<span class="dv">2</span> <span class="op">*</span><span class="st"> </span>nv <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)], <span class="dv">0</span>)        <span class="co"># inequality constraints</span>
+  Vmatrix[, <span class="dv">2</span> <span class="op">*</span><span class="st"> </span>nv <span class="op">+</span><span class="st"> </span><span class="dv">2</span>] &lt;-<span class="st"> </span><span class="kw">pmax</span>(<span class="kw">abs</span>(Vmatrix[, <span class="dv">2</span> <span class="op">*</span><span class="st"> </span>nv <span class="op">+</span><span class="st"> </span><span class="dv">2</span>]) <span class="op">-</span><span class="st"> </span>epsilon, <span class="dv">0</span>) <span class="co"># equality constraint h1</span>
   
   <span class="co"># Return necessary variables</span>
   <span class="kw">return</span>(<span class="kw">list</span>(<span class="dt">Cmatrix =</span> Cmatrix,
@@ -243,7 +243,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>

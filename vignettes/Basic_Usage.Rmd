@@ -1,0 +1,136 @@
+---
+title: "Basic Usage of the MOEADr Package"
+author: "Claus Aranha, Felipe Campelo"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Basic Usage of the MOEADr Package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+We use **MOEADr** to optimize a simple 2-objective problem composed of the Sphere
+function and the Rastrigin function in  $X = \{x_1,x_2,\dots,x_D\} \in\mathbb{R}^D$.
+
+## Setting up the Target Problem:
+
+For this example, we define the sphere and rastrigin function in $\mathbb{R}$ as:
+$$
+\text{sphere}(X) = \sum_{i=1}^D x_i^2\\
+\text{rastrigin}(X) = \sum_{i=1}^D (x_i^2 - 10 \text{cos}(2\pi x_i) + 10)
+$$
+Their R implementation is as follows. Because both functions have the optimum at
+the zero, we apply a simple displacement on the input parameters to make the
+output of the example problem more interesting.
+
+```{r}
+sphere <- function(X) {
+  X.shift <- X + seq_along(X)*0.1     # displace input parameters
+  sum(X.shift**2) }
+rastringin <- function(X) {
+  X.shift <- X - seq_along(X)*0.1     # displace input parameters in the opposite direction
+  sum((X.shift)**2 - 10 * cos(2 * pi * X.shift) + 10) }
+```
+
+The **MOEADr** package requires the multi objective problem to be defined as a
+function that receives the entire solution set as a matrix, and return the
+objective values also as a matrix. For details see the [Problem
+Definition](problem-definition.html) vignette. We will achieve this requirement
+by wraping the sphere function and the rastrigin function as follows:
+
+```{r}
+problem.sr <- function(X) {
+  t(apply(X, MARGIN = 1,
+          FUN = function(X) { c(sphere(X), rastringin(X)) } 
+   ))
+}
+```
+
+Finally, we need to create a problem definition list that specifies the number
+of objectives, and the minimum and maximum parameter values for each dimension:
+
+```{r}
+problem.1 <- list(name       = "problem.sr",  # function that executes the MOP
+                  xmin       = rep(-1,30),    # minimum parameter value for each dimension
+                  xmax       = rep(1,30),     # maximum parameter value for each dimension
+                  m          = 2)             # number of objectives
+```
+
+## Setting up **MOEADr**
+
+To load the package and run the problem using the original MOEA/D variant, we
+use the following commands:
+
+```{r, collapse = TRUE, comment = "#>"}
+library(MOEADr)
+results <- moead(problem  = problem.1,
+                 preset   = preset_moead("original"),
+                 showpars = list(show.iters = "none"), 
+                 seed     = 42)
+```
+
+The *moead()* function requires a problem definition (discussed in the previous
+section) and an algorithm configuration (in this case, an algorithm preset, and optional changes to the preset), logging parameters, and a seed. The *preset_moead()*  function can output a number of
+different presets based on combinations found on the literature. In this
+example, *preset_moead("original")* returns the original MOEA/D configuration, as
+proposed by Zhang and Li (2007)^[[IEEE Trans. Evol. Comp. 11(6): 712-731, 2007](http://ieeexplore.ieee.org/document/4358754/).]. You can get a list of available presets by running:
+
+```{r, collapse = TRUE, comment = "#>"}
+preset_moead()
+```
+
+## Visualizing the results
+
+The *moead()* function returns a list object of class _moeadoutput_, containing the final solution set, objective values for each solution, and other information about the optimization process.
+The **MOEADr** package uses S3 to implement versions of *plot()* and *summary()* for this object.
+
+*plot()* will show the pareto front for the objectives, as in the figure below.
+When the number of objectives is greater than 2, a parallel coordinates plot is
+also produced (see the next example). *summary()* displays information about 
+the number of non-dominated and feasible solution points, the estimated ideal and nadir values (when available), and (optionally) the IDR and hypervolume yielded by the feasible, nondominated set.
+
+```{r,collapse = TRUE, comment = "#>", fig.align="center", fig.width=6, fig.height=6}
+summary(results)
+plot(results, suppress.pause = TRUE)
+```
+
+## A more complex example
+
+The **smoof** package^[[https://CRAN.R-project.org/package=smoof](https://CRAN.R-project.org/package=smoof)] provides generators
+for a large number of single and multi objective test functions. The **MOEADr** package provides a 
+wrapper (function *make_vectorized_smoof()*) to easily convert **smoof** functions to the format required by the *moead()* function. The 
+code snipped below generates a MOP with five objective functions from **smoof**, and the necessary 
+problem definition for *moead()*.
+
+```{r,collapse = TRUE, comment = "#>"}
+library(smoof)
+DTLZ2 <- make_vectorized_smoof(prob.name  = "DTLZ2",
+                               dimensions = 20,
+                               n.objectives = 5)
+problem.dtlz2  <- list(name       = "DTLZ2",
+                       xmin       = rep(0, 20),
+                       xmax       = rep(1, 20),
+                       m          = 5)
+```
+
+In this example we will also show how to modify an algorithm preset. Because of the higher number
+of objectives, we want to reduce the value of the parameter $H$ in the decomposition component *SLD*
+used by the preset from 100 to 8:
+
+```{r, collapse = TRUE, comment = "#>"}
+results.dtlz <- moead(problem = problem.dtlz2,
+                preset = preset_moead("original"),
+                decomp = list(name = "SLD", H = 8), 
+                showpars = list(show.iters = "dots"), 
+                seed = 42)
+```
+
+Notice on the figure below that **MOEADr** plots extra information when the number of objectives in a problem is greater than 2:
+```{r,collapse = TRUE, comment = "#>", fig.align="center", fig.width=6, fig.height=6}
+summary(results.dtlz)
+plot(results.dtlz, suppress.pause = TRUE)
+```
+
+Note that for more complex MOPs, the preset values suggested by *preset_moead()* might not be effective. 
+For example, the standard value of 100 for $H$ in the *SLD* component is appropriate for 2 objectives, but exceeds the available memory for $m > 3$. Therefore, we strongly recommend that the 
+user explore the meta-parameter space. The next case study shows one way to perform this task semi-automatically.
