@@ -240,11 +240,12 @@ problem.sr <- function(X){
 
 ## Set the input parameters for the moead() routine
 ## This reproduces the Original MOEA/D of Zhang and Li (2007)
+## (with a few changes in the computational budget, to make it run faster)
 problem   <- list(name       = "problem.sr",
                   xmin       = rep(-1, 30),
                   xmax       = rep(1, 30),
                   m          = 2)
-decomp    <- list(name       = "SLD", H = 99)
+decomp    <- list(name       = "SLD", H = 49) # <-- H = 99 in the original
 neighbors <- list(name       = "lambda",
                   T          = 20,
                   delta.p    = 1)
@@ -258,7 +259,7 @@ update    <- list(name       = "standard", UseArchive = FALSE)
 scaling   <- list(name       = "none")
 constraint<- list(name       = "none")
 stopcrit  <- list(list(name  = "maxiter",
-                    maxiter  = 200))
+                    maxiter  = 50))      # <-- maxiter = 200 in the original
 showpars  <- list(show.iters = "dots",
                   showevery  = 10)
 seed      <- 42
@@ -272,21 +273,25 @@ out1 <- moead(preset = NULL,
 summary(out1)
 
 ## Alternatively, the standard MOEA/D could also be set up using the
-## preset_moead() function
-out2 <- moead(preset   = preset_moead("original"),
-              problem  = problem,
-              showpars = showpars,
-              seed     = 42)
+## preset_moead() function. The code below runs the original MOEA/D with
+## exactly the same configurations as in Zhang and Li (2007).
+\dontrun{
+  out2 <- moead(preset   = preset_moead("original"),
+                problem  = problem,
+                showpars = showpars,
+                seed     = 42)
 
-## Examine the output:
-summary(out2)
-plot(out2, suppress.pause = TRUE)
+  ## Examine the output:
+  summary(out2)
+  plot(out2, suppress.pause = TRUE)
+}
 
 # Rerun with MOEA/D-DE configuration and AWT scalarization
-awt  <- list(name = "awt")
-out3 <- moead(preset  = preset_moead("moead.de"),
-              problem = problem,
-              aggfun  = awt,
+out3 <- moead(preset   = preset_moead("moead.de"),
+              problem  = problem,
+              aggfun   = list(name = "awt"),
+              stopcrit = list(list(name    = "maxiter",
+                                   maxiter = 50)),
               seed    = seed)
 plot(out3, suppress.pause = TRUE)
 }
