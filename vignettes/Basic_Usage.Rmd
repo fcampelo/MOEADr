@@ -104,23 +104,23 @@ problem definition for *moead()*.
 
 ```{r,collapse = TRUE, comment = "#>"}
 library(smoof)
-DTLZ1 <- make_vectorized_smoof(prob.name  = "DTLZ1",
-                               dimensions = 30,
+DTLZ2 <- make_vectorized_smoof(prob.name  = "DTLZ2",
+                               dimensions = 20,
                                n.objectives = 5)
-problem.dtlz1  <- list(name       = "DTLZ1",
-                       xmin       = rep(0, 30),
-                       xmax       = rep(1, 30),
+problem.dtlz2  <- list(name       = "DTLZ2",
+                       xmin       = rep(0, 20),
+                       xmax       = rep(1, 20),
                        m          = 5)
 ```
 
 In this example we will also show how to modify an algorithm preset. Because of the higher number
 of objectives, we want to reduce the value of the parameter $H$ in the decomposition component *SLD*
-used by the preset from 100 to 7:
+used by the preset from 100 to 8:
 
 ```{r, collapse = TRUE, comment = "#>"}
-results.dtlz <- moead(problem = problem.dtlz1,
+results.dtlz <- moead(problem = problem.dtlz2,
                 preset = preset_moead("original"),
-                decomp = list(name = "SLD", H = 7), 
+                decomp = list(name = "SLD", H = 8), 
                 showpars = list(show.iters = "dots"), 
                 seed = 42)
 ```
