@@ -31,27 +31,27 @@ recommend that you play around with the particular configurations
 preset_moead(name = NULL)
 
 \dontrun{
-library(smoof)
-ZDT1 <- make_vectorized_smoof(prob.name  = "ZDT1",
-                              dimensions = 30)
-                              problem   <- list(name       = "ZDT1",
-                                                xmin       = rep(0, 30),
-                                                xmax       = rep(1, 30),
-                                                m          = 2)
+  library(smoof) # < Install package smoof if needed
+  ZDT1 <- make_vectorized_smoof(prob.name  = "ZDT1",
+                                dimensions = 30)
+                                problem   <- list(name       = "ZDT1",
+                                                  xmin       = rep(0, 30),
+                                                  xmax       = rep(1, 30),
+                                                  m          = 2)
 
-# Get preset configuration for original MOEA/D
-configuration <- preset_moead("original")
+  # Get preset configuration for original MOEA/D
+  configuration <- preset_moead("original")
 
-# Modify whatever you fancy:
-stopcrit <- list(list(name = "maxiter", maxiter = 50))
-showpars <- list(show.iters = "dots", showevery  = 10)
-seed     <- 42
+  # Modify whatever you fancy:
+  stopcrit <- list(list(name = "maxiter", maxiter = 50))
+  showpars <- list(show.iters = "dots", showevery  = 10)
+  seed     <- 42
 
-output <- moead(problem = problem,
-                preset = configuration,
-                showpars = showpars,
-                stopcrit = stopcrit,
-                seed = seed)
+  output <- moead(problem  = problem,
+                  preset   = configuration,
+                  showpars = showpars,
+                  stopcrit = stopcrit,
+                  seed     = seed)
 }
 
 }

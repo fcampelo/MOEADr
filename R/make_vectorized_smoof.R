@@ -25,22 +25,23 @@ make_vectorized_smoof <- function(prob.name, ...){
 
   if(!("smoof" %in% rownames(utils::installed.packages()))){
     stop("Please install package 'smoof' to continue")
-  }
+  } else {
 
-  my.args            <- as.list(sys.call())[-1]
-  my.args$prob.name  <- NULL
-  if (length(my.args) == 0) my.args <- list()
+    my.args            <- as.list(sys.call())[-1]
+    my.args$prob.name  <- NULL
+    if (length(my.args) == 0) my.args <- list()
 
-  myfun <- do.call(utils::getFromNamespace(x = paste0("make",
-                                                      toupper(prob.name),
-                                                      "Function"),
-                                           ns = "smoof"),
-                   args = my.args)
-  myfun2 <- function(X, ...){
-    t(apply(X,
-            MARGIN = 1,
-            FUN = myfun))
+    myfun <- do.call(utils::getFromNamespace(x = paste0("make",
+                                                        toupper(prob.name),
+                                                        "Function"),
+                                             ns = "smoof"),
+                     args = my.args)
+    myfun2 <- function(X, ...){
+      t(apply(X,
+              MARGIN = 1,
+              FUN = myfun))
+    }
+    return(myfun2)
   }
-  return(myfun2)
 }
 
