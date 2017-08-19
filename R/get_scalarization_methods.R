@@ -10,6 +10,9 @@
 #' @return Formatted data frame containing reference name (for
 #' \code{aggfun$name}) and instructions for More Info about each method.
 #'
+#' @examples
+#' get_scalarization_methods()
+#'
 #' @export
 
 get_scalarization_methods <- function(){

@@ -19,3 +19,7 @@ the MOEADr package, to be used as the \code{update$name} parameter in the
 \code{moead(...)} call. Instructions for obtaining more info on each
 operator are also returned.
 }
+\examples{
+get_update_methods()
+
+}

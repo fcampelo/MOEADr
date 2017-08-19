@@ -24,6 +24,13 @@
 #' Pareto Sets, MOEA/D and NSGA-II", IEEE. Trans. Evol. Comp. 12(2):284-302,
 #' 2009.
 #'
+#' @examples
+#' W      <- generate_weights(decomp = list(name = "sld", H = 19), m = 2)
+#' Y      <- matrix(runif(40), ncol = 2)
+#' minP   <- apply(Y, 2, min)
+#' aggfun <- aggfun    <- list(name = "pbi", theta = 5)
+#' Z      <- scalarization_pbi(Y, W, minP, aggfun)
+#'
 #' @export
 
 scalarization_pbi <- function(Y, W, minP, aggfun, eps = 1e-16, ...){

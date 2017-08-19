@@ -14,6 +14,10 @@
 #'
 #' @return Weight matrix \code{W}
 #'
+#' @examples
+#' decomp <- list(name = "sld", H = 99)
+#' W <- generate_weights(decomp, m = 2)
+#'
 #' @export
 
 generate_weights <- function(decomp, m, ...)

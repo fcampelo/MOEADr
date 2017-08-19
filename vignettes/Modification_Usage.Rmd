@@ -4,7 +4,7 @@ author: "Claus Aranha"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Basic Usage of the MOEADr Package}
+  %\VignetteIndexEntry{Testing-operators}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

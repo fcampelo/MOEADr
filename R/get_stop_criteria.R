@@ -11,6 +11,9 @@
 #' \code{stopcrit[[i]]$name}) and instructions for More Info about each
 #' criterion.
 #'
+#' @examples
+#' get_stop_criteria()
+#'
 #' @export
 
 get_stop_criteria <- function(){

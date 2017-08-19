@@ -30,3 +30,13 @@ additional parameters \code{dimensions} (positive integer) and
 \code{id} (= 1, ..., 10).
 }
 }
+\examples{
+\dontrun{
+  library(smoof)
+  DTLZ2 <- make_vectorized_smoof(prob.name    = "DTLZ2",
+                                 dimensions   = 10,
+                                 n.objectives = 2)
+  DTLZ2(X = matrix(runif(100), ncol = 10))
+}
+
+}

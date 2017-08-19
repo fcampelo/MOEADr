@@ -1,4 +1,6 @@
 ## Changes and notes
+* Solved the "Package has a VignetteBuilder field but no prebuilt vignette index." issue (as requested by Swetlana Herbrandt)
+* Added more small examples to the documentation of specific functions (as requested by Swetlana Herbrandt)
 * Moved package _smoof_ from Imports to Suggests
 * Added summary and plot functions (S3);
 * Updated package examples;

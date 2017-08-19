@@ -10,6 +10,9 @@
 #' @return Formatted data frame containing reference name (for
 #' \code{constraint$name}) and instructions for More Info about each method.
 #'
+#' @examples
+#' get_constraint_methods()
+#'
 #' @export
 
 get_constraint_methods <- function(){

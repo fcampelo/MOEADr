@@ -4,7 +4,7 @@ author: "Claus Aranha, Felipe Campelo"
 date: "`r Sys.Date()`" 
 output: rmarkdown::html_vignette 
 vignette: > 
-  %\VignetteIndexEntry{Fine tuning MOEA/D configurations using MOEADr and irace} 
+  %\VignetteIndexEntry{MOEADr-tuning} 
   %\VignetteEngine{knitr::rmarkdown} 
   %\VignetteEncoding{UTF-8} 
 ---
@@ -65,7 +65,7 @@ suppressPackageStartupMessages(library(MOEADr))
 scenario                <- irace::defaultScenario()
 scenario$seed           <- 123456 # Seed for the experiment
 scenario$targetRunner   <- "target.runner" # Runner function (def. below)
-scenario$forbiddenFile  <- "../data-raw/forbidden.txt" # forbidden configs
+scenario$forbiddenFile  <- "../inst/extdata/forbidden.txt" # forbidden configs
 scenario$debugLevel     <- 1
 scenario$maxExperiments <- 20000 # Tuning budget
 scenario$testNbElites   <- 7     # test all final elite configurations
@@ -75,7 +75,7 @@ nc                      <- parallel::detectCores() - 1
 scenario$parallel       <- nc
 
 # Read tunable parameter list from file
-parameters <- readParameters("../data-raw/parameters.txt")
+parameters <- readParameters("../inst/extdata/parameters.txt")
 ```
 
 Second, it is necessary to generate the training instances 
@@ -208,7 +208,7 @@ target.runner <- function(experiment, scenario){
                constraint, scaling, stopcrit, showpars, seed)
 
   # return IGD based on reference data
-  Yref <- as.matrix(read.table(paste0("../data-raw/pf_data/",
+  Yref <- as.matrix(read.table(paste0("../inst/extdata/pf_data/",
                                       fdef[1], fdef[2], ".dat")))
   return(list(cost = calcIGD(Y = out$Y, Yref = Yref)))
 }
@@ -222,13 +222,13 @@ check the documentation of the **irace** package.
 ```{r, eval = FALSE}
 ## Running the experiment
 irace.output <- irace::irace(scenario, parameters)
-saveRDS(irace.output, "../data-raw/RESULTS.rds")
-file.copy(from = "irace.Rdata", to = "../data-raw/irace-tuning.Rdata")
+saveRDS(irace.output, "../inst/extdata/RESULTS.rds")
+file.copy(from = "irace.Rdata", to = "../inst/extdata/irace-tuning.Rdata")
 
 
 ## Test returned configurations on test instances
-testing.main(logFile = "../data-raw/irace-tuning.Rdata")
-file.copy(from = "irace.Rdata", to = "../data-raw/irace-testing.Rdata")
+testing.main(logFile = "../inst/extdata/irace-tuning.Rdata")
+file.copy(from = "irace.Rdata", to = "../inst/extdata/irace-testing.Rdata")
 ```
 
 
@@ -240,7 +240,7 @@ test problems:
 
 ```{r, reshape2, ggplot2, echo = FALSE, fig.width = 7, fig.height = 3}
 ### Loading results
-load("../data-raw/irace-testing.Rdata")
+load("../inst/extdata/irace-testing.Rdata")
 
 ### Precondition results
 results <- iraceResults$testing$experiments
@@ -250,9 +250,10 @@ res.df <- data.frame(do.call(rbind, strsplit(rownames(results), "_")),
 colnames(res.df)  <- c("Problem", "Dimension", 1:(ncol(res.df)-2))
 res.df$Problem <- sprintf("%02d", as.numeric(res.df$Problem))
 res.df$Objectives <- ifelse(res.df$Problem %in% c("08", "09", "10"),
-                            yes = "3 obj.",
+                            yes = "3 obj",
                             no  = "2 obj")
 res.df$Dimension <- paste0("Dim = ", res.df$Dimension)
+require(reshape2)
 res.df <- reshape2::melt(res.df, value.name = "IGD")
 names(res.df)[4] <- "Configuration"
 

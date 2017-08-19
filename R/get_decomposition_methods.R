@@ -10,6 +10,9 @@
 #' @return Formatted data frame containing reference name (for
 #' \code{decomp$name}) and instructions for More Info about each method.
 #'
+#' @examples
+#' get_decomposition_methods()
+#'
 #' @export
 
 get_decomposition_methods <- function(){

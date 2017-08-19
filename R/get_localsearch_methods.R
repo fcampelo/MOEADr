@@ -11,6 +11,9 @@
 #' \code{variation$localsearch$type}) and instructions for More Info about
 #' each method.
 #'
+#' @examples
+#' get_localsearch_methods()
+#'
 #' @export
 
 get_localsearch_methods <- function(){

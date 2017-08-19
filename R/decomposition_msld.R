@@ -28,6 +28,10 @@
 #' Algorithm Based on Dominance and Decomposition",
 #' IEEE Trans. Evol. Comp. 19(5):694-716, 2015. DOI: 10.1109/TEVC.2014.2373386
 #'
+#' @examples
+#' decomp <- list(name = "msld", H = c(5, 3), tau = c(.9, .5), .nobj = 4)
+#' W <- decomposition_msld(decomp)
+#'
 #' @export
 
 decomposition_msld <- function(decomp, ...){

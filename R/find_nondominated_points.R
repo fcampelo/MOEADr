@@ -11,6 +11,12 @@
 #' @return logical vector of length `nrow(Y)` indicating the nondominated points
 #' as `TRUE`.
 #'
+#' @examples
+#' Y  <- matrix(runif(200), ncol = 2)
+#' nd <- find_nondominated_points(Y)
+#' plot(Y[, 1], Y[, 2], type = "p", pch = 20, las = 1)
+#' points(Y[nd, 1], Y[nd, 2], type = "p", pch = 16, col = 2, cex = 1.5)
+#'
 #' @export
 
 find_nondominated_points <- function(Y) {

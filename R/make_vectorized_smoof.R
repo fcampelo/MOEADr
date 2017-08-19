@@ -20,6 +20,15 @@
 #' @param prob.name name of the problem to build
 #' @param ... other parameters passed to each specific function
 #'
+#' @examples
+#' \dontrun{
+#'   library(smoof)
+#'   DTLZ2 <- make_vectorized_smoof(prob.name    = "DTLZ2",
+#'                                  dimensions   = 10,
+#'                                  n.objectives = 2)
+#'   DTLZ2(X = matrix(runif(100), ncol = 10))
+#' }
+#'
 #' @export
 make_vectorized_smoof <- function(prob.name, ...){
 

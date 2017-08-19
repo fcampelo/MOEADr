@@ -10,6 +10,9 @@
 #' @return Formatted data frame containing reference name (for
 #' \code{variation$name}) and instructions for More Info about each operator.
 #'
+#' @examples
+#' get_variation_operators()
+#'
 #' @export
 
 get_variation_operators <- function(){

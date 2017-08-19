@@ -12,6 +12,13 @@
 #'
 #' @return A population matrix X for the MOEA/D.
 #'
+#' @examples
+#' ex.problem <- list(name = "example_problem",
+#'                    xmin = rep(-1, 5),
+#'                    xmax = rep(1, 5),
+#'                    m    = 2)
+#' X <- create_population(20, ex.problem)
+#'
 #' @export
 
 create_population <- function(N,       # population size

@@ -22,11 +22,12 @@
 #' R. Wang, T. Zhang, B. Guo, "An enhanced MOEA/D using uniform directions
 #' and a pre-organization procedure". Proc. IEEE Congress on Evolutionary
 #' Computation, Cancun, Mexico, 2013, pp. 2390–2397.
+#'
+#' @examples
+#' decomp <- list(name = "uniform", N = 50, .nobj = 3)
+#' W <- decomposition_uniform(decomp)
+#' @export
 
-# ==========
-# RETURN TO DOCUMENTATION AFTER FIXING
-# @export
-# ==========
 
 decomposition_uniform <- function(decomp, ...){
 

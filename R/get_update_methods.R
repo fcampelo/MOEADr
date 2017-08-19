@@ -10,6 +10,9 @@
 #' @return Formatted data frame containing reference name (for
 #' \code{update$name}) and instructions for More Info about each method.
 #'
+#' @examples
+#' get_update_methods()
+#'
 #' @export
 
 get_update_methods <- function(){

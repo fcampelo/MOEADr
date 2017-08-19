@@ -23,3 +23,11 @@ This routine creates a population matrix for the MOEA/D. Currently only a
 multivariate uniform distribution is implemented. All points are created
 within the standardized space \eqn{0 \le x_i \le 1, i = 1,...,n_v}.
 }
+\examples{
+ex.problem <- list(name = "example_problem",
+                   xmin = rep(-1, 5),
+                   xmax = rep(1, 5),
+                   m    = 2)
+X <- create_population(20, ex.problem)
+
+}
