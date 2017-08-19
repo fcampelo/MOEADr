@@ -4,7 +4,7 @@ author: "Claus Aranha, Felipe Campelo"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Basic-Usage}
+  %\VignetteIndexEntry{Basic Usage of the MOEADr Package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
