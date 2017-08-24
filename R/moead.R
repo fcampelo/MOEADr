@@ -438,17 +438,18 @@ moead <- function(preset = NULL,     # List:  Set of strategy/components
   }
 
   # Output
-  out <- list(X       = X,
-              Y       = Y,
-              V       = V,
-              W       = W,
-              Archive = Archive,
-              ideal   = apply(Y, 2, min),
-              nadir   = apply(Y, 2, max),
-              nfe     = nfe,
-              n.iter  = iter,
-              time    = difftime(Sys.time(), time.start, units = "secs"),
-              seed    = seed)
+  out <- list(X           = X,
+              Y           = Y,
+              V           = V,
+              W           = W,
+              Archive     = Archive,
+              ideal       = apply(Y, 2, min),
+              nadir       = apply(Y, 2, max),
+              nfe         = nfe,
+              n.iter      = iter,
+              time        = difftime(Sys.time(), time.start, units = "secs"),
+              seed        = seed,
+              inputConfig = moead.input.pars)
   class(out) <- c("moeadoutput", "list")
 
   return(out)
