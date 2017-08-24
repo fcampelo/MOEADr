@@ -204,7 +204,8 @@ target.runner <- function(experiment, scenario){
   seed <- conf$seed
   
   # Run MOEA/D
-  out <- moead(problem, decomp,  aggfun, neighbors, variation, update,
+  out <- moead(preset = NULL,
+               problem, decomp,  aggfun, neighbors, variation, update,
                constraint, scaling, stopcrit, showpars, seed)
 
   # return IGD based on reference data
@@ -235,7 +236,7 @@ file.copy(from = "irace.Rdata", to = "../inst/extdata/irace-testing.Rdata")
 
 ## Results
 
-First let's plot the IGD value achieved by the final configurations over the
+First let's plot the IGD value achieved by the final configurations over the 
 test problems:
 
 ```{r, reshape2, ggplot2, echo = FALSE, fig.width = 7, fig.height = 3}

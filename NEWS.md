@@ -1,3 +1,7 @@
+# MOEADr 1.0.1 
+* Fixed minor error in vignette "Fine tuning MOEADr using irace";
+* Fixed minor error in final Archive composition in `moead()`;
+
 # MOEADr 1.0.0  
 * Moved package **smoof** back to _Suggestions_;
 * Updated package examples to reflect looser dependency on **smoof**;
@@ -9,6 +13,7 @@
   population sizes due to mis-specification of a user parameter;
 * Added preset_moead() to provide fast access to standard configurations from 
   the MOEA/D literature (two "standard MOEA/D" versions and one "MOEA/D-DE");
+
 
 # MOEADr 0.2.2  
 * Moved package **smoof** from _Suggestions_ to _Imports_
@@ -22,5 +27,4 @@
 
 
 # MOEADr 0.2.0
-
 * Initial release on CRAN
