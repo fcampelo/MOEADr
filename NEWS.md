@@ -1,6 +1,8 @@
 # MOEADr 1.0.1 
 * Fixed minor error in vignette "Fine tuning MOEADr using irace";
 * Fixed minor error in final Archive composition in `moead()`;
+* `moead()` output objects now contain the input configuration used 
+  for running the algorithm.
 
 # MOEADr 1.0.0  
 * Moved package **smoof** back to _Suggestions_;
