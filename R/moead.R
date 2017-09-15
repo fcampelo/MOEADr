@@ -290,14 +290,14 @@ moead <- function(preset = NULL,     # List:  Set of strategy/components
 
   # Check seed
   if (is.null(seed)) {
-    seed <- as.integer(Sys.time())
+    seed <- .Random.seed
   } else {
     assertthat::assert_that(assertthat::is.count(seed))
+    set.seed(seed)               # set PRNG seed
   }
   # ============ End Error catching and default value definitions ============ #
 
   # ============================= Algorithm setup ============================ #
-  set.seed(seed)               # set PRNG seed
   nfe        <- 0              # counter for function evaluations
   time.start <- Sys.time()     # Store initial time
   iter.times <- numeric(10000) # pre-allocate vector for iteration times.
