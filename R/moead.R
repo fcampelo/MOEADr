@@ -290,6 +290,7 @@ moead <- function(preset = NULL,     # List:  Set of strategy/components
 
   # Check seed
   if (is.null(seed)) {
+    if (!exists(".Random.seed")) stats::runif(1)
     seed <- .Random.seed
   } else {
     assertthat::assert_that(assertthat::is.count(seed))
