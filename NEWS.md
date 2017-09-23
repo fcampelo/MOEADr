@@ -1,10 +1,13 @@
+# MOEADr 1.0.2
+* Corrected the version for the two fixes below;
+* `moead()` output objects now contain the input configuration used 
+  for running the algorithm, for easier reproducibility;
+* Fixed problem in `moead()` that was compromising reproducibility when running
+  with `irace`;
+  
 # MOEADr 1.0.1 
 * Fixed minor error in vignette "Fine tuning MOEADr using irace";
 * Fixed minor error in final Archive composition in `moead()`;
-* `moead()` output objects now contain the input configuration used 
-  for running the algorithm, for easier reproducibility
-* Fixed problem in `moead()` that was compromising reproducibility when running
-  with `irace`.
 
 # MOEADr 1.0.0  
 * Moved package **smoof** back to _Suggestions_;
