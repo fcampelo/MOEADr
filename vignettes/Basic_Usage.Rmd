@@ -81,7 +81,7 @@ preset_moead()
 
 ## Visualizing the results
 
-The *moead()* function returns a list object of class _moeadoutput_, containing the final solution set, objective values for each solution, and other information about the optimization process.
+The *moead()* function returns a list object of class _moead_, containing the final solution set, objective values for each solution, and other information about the optimization process.
 The **MOEADr** package uses S3 to implement versions of *plot()* and *summary()* for this object.
 
 *plot()* will show the pareto front for the objectives, as in the figure below.

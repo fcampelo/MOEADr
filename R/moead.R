@@ -163,7 +163,7 @@
 #'
 #' @export
 #'
-#' @return List object of class _moeadoutput_ containing:
+#' @return List object of class _moead_ containing:
 #'
 #' - information on the final population (`X`), its objective values (`Y`) and
 #'  constraint information list (`V`) (see [evaluate_population()] for details);
@@ -451,7 +451,7 @@ moead <- function(preset = NULL,     # List:  Set of strategy/components
               time        = difftime(Sys.time(), time.start, units = "secs"),
               seed        = seed,
               inputConfig = moead.input.pars)
-  class(out) <- c("moeadoutput", "list")
+  class(out) <- c("moead", "list")
 
   return(out)
   # ================================ End Output ============================== #

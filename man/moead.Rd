@@ -51,7 +51,7 @@ in which case \code{as.integer(Sys.time())} is used for the definition.}
 necessary in regular use)}
 }
 \value{
-List object of class \emph{moeadoutput} containing:
+List object of class \emph{moead} containing:
 \itemize{
 \item information on the final population (\code{X}), its objective values (\code{Y}) and
 constraint information list (\code{V}) (see \code{\link[=evaluate_population]{evaluate_population()}} for details);

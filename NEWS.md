@@ -1,3 +1,8 @@
+# MOEADr 1.0.3
+* Changed output class of moead() to _moead_ (instead of _moeadoutput_). All 
+  related functions (plot, summary) and documentation were updated.
+* Added S3 print function for _moead_ objects
+
 # MOEADr 1.0.2
 * Corrected the version for the two fixes below;
 * `moead()` output objects now contain the input configuration used 
