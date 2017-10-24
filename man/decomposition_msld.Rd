@@ -18,7 +18,7 @@ at each layer (see \code{\link[=decomposition_sld]{decomposition_sld()}} for
 details).
 \item \code{decomp$tau}: array of scale multipliers for each layer,
 \eqn{0 < \tau_i \le 1}, \eqn{\tau_i != \tau_j} for all \eqn{i != j}.
-Must have the same lenght as \code{decomp$H}.
+Must have the same length as \code{decomp$H}.
 \item \code{decomp$.nobj}: integer value, \code{decomp$.nobj > 1}. Number of
 objectives of the problem.
 }}

@@ -7,7 +7,7 @@
 calcIGD(Y, Yref)
 }
 \arguments{
-\item{Y}{Matrix of points in the objctive space}
+\item{Y}{Matrix of points in the objective space}
 
 \item{Yref}{Matrix of Pareto-optimal reference points}
 }

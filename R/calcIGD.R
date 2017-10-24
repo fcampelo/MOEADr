@@ -2,7 +2,7 @@
 #'
 #' Calculate IGD
 #'
-#' @param Y Matrix of points in the objctive space
+#' @param Y Matrix of points in the objective space
 #' @param Yref Matrix of Pareto-optimal reference points
 #'
 #' @return igd value (scalar)

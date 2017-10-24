@@ -171,7 +171,7 @@ which is a binary flag defining whether the algorithm should keep an
 external solution archive (\code{TRUE}) or not (\code{FALSE}). Since it adds to the
 computational burden and memory requirements of the algorithm, the use of an
 archive population is recommended only in the case of constrained problems
-with constraint handling method that can occasionaly accept unfeasible
+with constraint handling method that can occasionally accept unfeasible
 solutions, leading to the potential loss of feasible efficient solutions for
 certain subproblems (e.g., \code{\link[=constraint_vbr]{constraint_vbr()}} with \code{type} = "sr" or "vt").
 }

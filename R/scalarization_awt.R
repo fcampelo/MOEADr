@@ -21,7 +21,7 @@
 #'
 #' R. Wang, T. Zhang, and B. Guo, “An enhanced MOEA/D using uniform
 #' directions and a pre-organization procedure,” in IEEE Congress on
-#' Evolutionary Computation, Cancun, Mxico, 2013, pp. 2390–2397.
+#' Evolutionary Computation, Cancun, Mexico, 2013, pp. 2390–2397.
 #'
 #' @examples
 #' W    <- generate_weights(decomp = list(name = "sld", H = 19), m = 2)

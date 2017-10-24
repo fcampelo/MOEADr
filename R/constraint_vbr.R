@@ -76,7 +76,7 @@
 #' @section References:
 #' `[Deb2000]` K. Deb,
 #' "An efficient constraint handling method for genetic algorithm",
-#' Computer Methods in Applied Mechanics and Engieering 186(2–4):311–338, 2000.
+#' Computer Methods in Applied Mechanics and Engineering 186(2–4):311–338, 2000.
 #'
 #' `[Runarsson2000]` T. Runarsson, X. Yao,
 #' "Stochastic ranking for constrained evolutionary optimization",

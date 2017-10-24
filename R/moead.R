@@ -90,7 +90,7 @@
 #' external solution archive (`TRUE`) or not (`FALSE`). Since it adds to the
 #' computational burden and memory requirements of the algorithm, the use of an
 #' archive population is recommended only in the case of constrained problems
-#' with constraint handling method that can occasionaly accept unfeasible
+#' with constraint handling method that can occasionally accept unfeasible
 #' solutions, leading to the potential loss of feasible efficient solutions for
 #' certain subproblems (e.g., [constraint_vbr()] with `type` = "sr" or "vt").
 #'
