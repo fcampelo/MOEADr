@@ -90,9 +90,9 @@ As a simple example, we can reproduce the original MOEA/D (Zhang and Li, 2007) a
  ##      and only modify the desired parts:
  
  out2 <- moead(problem = problem,
-               preset = preset_moead(), stopcrit = list(list(name = "maxiter", maxiter = 1000)),
-               showpars = showpars, seed = 42
-              )
+               preset = preset_moead("original"), 
+               stopcrit = list(list(name = "maxiter", maxiter = 1000)),
+               showpars = showpars, seed = 42)
 
  # 4: Plot output:
  plot(out1$Y[,1], out1$Y[,2], type = "p", pch = 20)
