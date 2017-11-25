@@ -6,7 +6,7 @@
 #' and should not be called directly by the user.
 #'
 #' @param stopcrit list containing the parameters defining the stop
-#' handling method. See Section `Constraint Handling` of the [moead()]
+#' handling method. See Section `Stop Criteria` of the [moead()]
 #' documentation for details.
 #' @param call.env List vector containing the stop criteria to be used.
 #' See [moead()] for details.
