@@ -375,7 +375,7 @@ moead <-
           neighbors$name,
           lambda = W,
           x      = X,
-          acga = X
+          cga = X
         ),
         iter      = iter
       )
