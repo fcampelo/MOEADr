@@ -32,31 +32,35 @@
 #' @export
 #'
 summary.moead <- function(object,
-                                ...,
-                                useArchive      = FALSE,
-                                viol.threshold  = 1e-6,
-                                ndigits         = 3,
-                                ref.point       = NULL,
-                                ref.front       = NULL)
+                          ...,
+                          useArchive      = FALSE,
+                          viol.threshold  = 1e-6,
+                          ndigits         = 3,
+                          ref.point       = NULL,
+                          ref.front       = NULL)
 {
-
   # Error checking
   nullRP <- is.null(ref.point)
   nullRF <- is.null(ref.front)
+  nullH <- is.null(object$H)
+  nullN.PROBLEMS <- is.null(object$n.problems)
   assertthat::assert_that(
     "moead" %in% class(object),
     is.logical(useArchive),
     is.numeric(viol.threshold) && viol.threshold >= 0,
     assertthat::is.count(ndigits),
     nullRP || is.numeric(ref.point),
-    nullRP || length(ref.point) == ncol(Y),
+    nullRP || length(ref.point) == ncol(object$Y),
     nullRF || is.numeric(ref.front),
-    nullRF || ncol(ref.front) == ncol(Y))
+    nullRF || ncol(ref.front) == ncol(object$Y),
+    nullH || is.numeric(object$H),
+    nullN.PROBLEMS || is.numeric(object$n.problems)
+  )
 
   # ===========================================================================
   # Calculate information for summary
 
-  if(useArchive && !is.null(object$Archive)){
+  if (useArchive && !is.null(object$Archive)) {
     Y <- object$Archive$Y
     V <- object$Archive$V
   } else {
@@ -65,24 +69,33 @@ summary.moead <- function(object,
   }
 
   feas.idx <- rep(TRUE, nrow(Y))
-  if(!is.null(V)) feas.idx <- (rowSums(V$Vmatrix > viol.threshold) == 0)
+  if (!is.null(V))
+    feas.idx <- (rowSums(V$Vmatrix > viol.threshold) == 0)
 
   npts  <- nrow(Y)
   nfeas <- sum(feas.idx)
-  nndom <- sum(find_nondominated_points(Y[feas.idx, ]))
+  nndom <- sum(find_nondominated_points(Y[feas.idx,]))
 
-  ideal.est <- apply(Y[feas.idx, ], 2, min)
-  nadir.est <- apply(Y[feas.idx, ], 2, max)
+  ideal.est <- apply(Y[feas.idx,], 2, min)
+  nadir.est <- apply(Y[feas.idx,], 2, max)
 
-  if (!nullRF) igd <- calcIGD(Y, Yref = ref.front)
+  if (!nullRF)
+    igd <- calcIGD(Y, Yref = ref.front)
 
-  if("emoa" %in% rownames(utils::installed.packages())){
-    if(nullRP) {
-      cat("Warning: reference point not provided:\n
-          using the maximum in each dimension instead.")
+  if ("emoa" %in% rownames(utils::installed.packages())) {
+    if (nullRP) {
+      cat(
+        "Warning: reference point not provided:\n
+        using the maximum in each dimension instead."
+      )
       ref.point <- nadir.est
     }
-    hv <- emoa::dominated_hypervolume(points = t(Y), ref = ref.point)
+    if (!nullH && !nullN.PROBLEMS) {
+      Y <- apply(object$Y, MARGIN = 2, scale_vector)
+      ref.point <- create_ref.points(object$H, object$n.problems)
+    }
+    hv <-
+      emoa::dominated_hypervolume(points = t(Y), ref = ref.point)
   }
 
 
@@ -94,18 +107,22 @@ summary.moead <- function(object,
   cat("\nTotal function evaluations: ", object$nfe)
   cat("\nTotal iterations: ", object$n.iter)
   cat("\nPopulation size: ", npts)
-  cat("\nFeasible points found: ", nfeas,
+  cat("\nFeasible points found: ",
+      nfeas,
       paste0("(", signif(100 * nfeas / npts, 3), "%"),
       "of total)")
-  cat("\nNondominated points found: ", nndom,
+  cat("\nNondominated points found: ",
+      nndom,
       paste0("(", signif(100 * nndom / npts, 3), "%"),
       "of total)")
   cat("\nEstimated ideal point: ", round(ideal.est, ndigits))
   cat("\nEstimated nadir point: ", round(nadir.est, ndigits))
-  if(!nullRF) cat("\nEstimated IGD: ", igd)
-  if("emoa" %in% rownames(utils::installed.packages())) {
+  if (!nullRF)
+    cat("\nEstimated IGD: ", igd)
+  if ("emoa" %in% rownames(utils::installed.packages())) {
     cat("\nEstimated HV: ", hv)
     cat("\nRef point used for HV: ", ref.point)
-  } else cat("\n\nPlease install package 'emoa' to calculate hypervolume.")
+  } else
+    cat("\n\nPlease install package 'emoa' to calculate hypervolume.")
   cat("\n#====================================")
-}
+  }
