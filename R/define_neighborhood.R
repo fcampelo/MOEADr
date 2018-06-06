@@ -37,11 +37,12 @@
 define_neighborhood <- function(neighbors, v.matrix, iter){
 
   # ========== Error catching and default value definitions
-  valid.methods <- c("lambda", "x")
+  valid.methods <- c("lambda", "x", "cga")
   assertthat::assert_that(
     all(assertthat::has_name(neighbors, c("name", "T"))),
     neighbors$name %in% valid.methods,
     assertthat::is.count(neighbors$T),
+    # assertthat::is.count(neighbors$LR),
     neighbors$T <= nrow(v.matrix),
     is.numeric(neighbors$delta.p),
     length(neighbors$delta.p) == 1,
@@ -83,6 +84,5 @@ define_neighborhood <- function(neighbors, v.matrix, iter){
     assertthat::assert_that("BP" %in% names(call.env))
     BP <- call.env$BP
   }
-
   return(BP)
 }

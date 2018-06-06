@@ -22,8 +22,8 @@
 #' @export
 
 create_population <- function(N,       # population size
-                              problem  # list of named problem parameters
-                              , increments = NULL)
+                              problem,  # list of named problem parameters
+                              increments = NULL)
 {
 
     # ========== Error catching and default value definitions

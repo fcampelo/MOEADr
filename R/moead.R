@@ -379,7 +379,7 @@ moead <-
         ),
         iter      = iter
       )
-      B  <- BP$B.variation
+      B  <- BP$B
       P  <- BP$P
       # ========== Variation
       # Store current population
@@ -418,7 +418,7 @@ moead <-
       bigZ <- scalarize_values(
         normYs  = normYs,
         W       = W,
-        B       = BP$B.scalarize,
+        B       = BP$B,
         aggfun  = aggfun
       )
 
@@ -429,7 +429,7 @@ moead <-
       #performance value and constraint handling policy, if any)
       sel.indx <- order_neighborhood(
         bigZ       = bigZ,
-        B          = BP$B.order,
+        B          = BP$B,
         V          = V,
         Vt         = Vt,
         constraint = constraint
@@ -437,7 +437,7 @@ moead <-
 
       # ========== Update
       # Update population
-      B  <- BP$B.order
+      B  <- BP$B
       XY <- do.call(update_population,
                     args = as.list(environment()))
       X       <- XY$X
