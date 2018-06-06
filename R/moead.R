@@ -243,127 +243,107 @@
 #'               seed    = seed)
 #' plot(out3, suppress.pause = TRUE)
 
-moead <- function(preset = NULL,     # List:  Set of strategy/components
-                  problem = NULL,    # List:  MObj problem
-                  decomp = NULL,     # List:  decomposition strategy
-                  aggfun = NULL,     # List:  scalar aggregation function
-                  neighbors = NULL,  # List:  neighborhood assignment strategy
-                  variation = NULL,  # List:  variation operators
-                  update = NULL,     # List:  update method
-                  constraint = NULL, # List:  constraint handling method
-                  scaling = NULL,    # List:  objective scaling strategy
-                  stopcrit = NULL,   # List:  stop criteria
-                  showpars = NULL,   # List:  echoing behavior
-                  seed = NULL,       # Seed for PRNG
-                  ...)               # other parameters
-{
-  moead.input.pars <- as.list(sys.call())[-1]
-  if ("save.env" %in% names(moead.input.pars)) {
-    if (moead.input.pars$save.env == TRUE) saveRDS(as.list(environment()),
-                                                   "moead_env.rds")
-  }
-
-  # ============================ Set parameters ============================== #
-  if (!is.null(preset)) {
-    if (is.null(problem))   problem   = preset$problem
-    if (is.null(decomp))    decomp    = preset$decomp
-    if (is.null(aggfun))    aggfun    = preset$aggfun
-    if (is.null(neighbors)) neighbors = preset$neighbors
-    if (is.null(variation)) variation = preset$variation
-    if (is.null(update))    update    = preset$update
-    if (is.null(scaling))   scaling   = preset$scaling
-    if (is.null(stopcrit))  stopcrit  = preset$stopcrit
-  }
-
-
-  # ============== Error catching and default value definitions ============== #
-  # "problem"     checked in "create_population(...)"
-  # "decomp"      checked in "decompose_problem(...)"
-  # "aggfun"      checked in "scalarize_values(...)"
-  # "neighbors"   checked in "define_neighborhood(...)"
-  # "variation"   checked in "perform_variation(...)"
-  # "update"      checked in "update_population(...)"
-  # "scaling"     checked in
-  # "repair"      checked in
-  # "stopcrit"    checked in
-  # "showpars"    checked in
-
-  # Check seed
-  if (is.null(seed)) {
-    if (!exists(".Random.seed")) stats::runif(1)
-    seed <- .Random.seed
-  } else {
-    assertthat::assert_that(assertthat::is.count(seed))
-    set.seed(seed)               # set PRNG seed
-  }
-  # ============ End Error catching and default value definitions ============ #
-
-  # ============================= Algorithm setup ============================ #
-  nfe        <- 0              # counter for function evaluations
-  time.start <- Sys.time()     # Store initial time
-  iter.times <- numeric(10000) # pre-allocate vector for iteration times.
-  if(is.null(update$UseArchive)){
-    update$UseArchive <- FALSE
-  }
-  # =========================== End Algorithm setup ========================== #
-
-  # =========================== Initial definitions ========================== #
-  # Generate weigth vectors
-  W  <- generate_weights(decomp = decomp,
-                         m      = problem$m)
-
-  # Generate initial population
-  X  <- create_population(N       = nrow(W),
-                          problem = problem)
-
-  # Evaluate population on objectives
-  YV <- evaluate_population(X       = X,
-                            problem = problem,
-                            nfe     = nfe)
-  Y   <- YV$Y
-  V   <- YV$V
-  nfe <- YV$nfe
-
-  # ========================= End Initial definitions ======================== #
-
-  # ============================= Iterative cycle ============================ #
-  keep.running  <- TRUE      # stop criteria flag
-  iter          <- 0         # counter: iterations
-
-  while(keep.running){
-    # Update iteration counter
-    iter <- iter + 1
-
-    if ("save.iters" %in% names(moead.input.pars)) {
-      if (moead.input.pars$save.iters == TRUE) saveRDS(as.list(environment()),
-                                                       "moead_env.rds")
+moead <-
+  function(preset = NULL,
+           # List:  Set of strategy/components
+           problem = NULL,
+           # List:  MObj problem
+           decomp = NULL,
+           # List:  decomposition strategy
+           aggfun = NULL,
+           # List:  scalar aggregation function
+           neighbors = NULL,
+           # List:  neighborhood assignment strategy
+           variation = NULL,
+           # List:  variation operators
+           update = NULL,
+           # List:  update method
+           constraint = NULL,
+           # List:  constraint handling method
+           scaling = NULL,
+           # List:  objective scaling strategy
+           stopcrit = NULL,
+           # List:  stop criteria
+           showpars = NULL,
+           # List:  echoing behavior
+           seed = NULL,
+           # Seed for PRNG
+           increments = NULL,
+           ...)
+# other parameters
+  {
+    moead.input.pars <- as.list(sys.call())[-1]
+    if ("save.env" %in% names(moead.input.pars)) {
+      if (moead.input.pars$save.env == TRUE)
+        saveRDS(as.list(environment()),
+                "moead_env.rds")
+    }
+    # ============================ Set parameters ============================== #
+    if (!is.null(preset)) {
+      if (is.null(problem))
+        problem   = preset$problem
+      if (is.null(decomp))
+        decomp    = preset$decomp
+      if (is.null(aggfun))
+        aggfun    = preset$aggfun
+      if (is.null(neighbors))
+        neighbors = preset$neighbors
+      if (is.null(variation))
+        variation = preset$variation
+      if (is.null(update))
+        update    = preset$update
+      if (is.null(scaling))
+        scaling   = preset$scaling
+      if (is.null(stopcrit))
+        stopcrit  = preset$stopcrit
     }
 
-    # ========== Neighborhoods
-    # Define/update neighborhood probability matrix
-    BP <- define_neighborhood(neighbors = neighbors,
-                              v.matrix  = switch(neighbors$name,
-                                                 lambda = W,
-                                                 x      = X),
-                              iter      = iter)
-    B  <- BP$B
-    P  <- BP$P
+    # ============== Error catching and default value definitions ============== #
+    # "problem"     checked in "create_population(...)"
+    # "decomp"      checked in "decompose_problem(...)"
+    # "aggfun"      checked in "scalarize_values(...)"
+    # "neighbors"   checked in "define_neighborhood(...)"
+    # "variation"   checked in "perform_variation(...)"
+    # "update"      checked in "update_population(...)"
+    # "scaling"     checked in
+    # "repair"      checked in
+    # "stopcrit"    checked in
+    # "showpars"    checked in
 
-    # ========== Variation
-    # Store current population
-    Xt <- X
-    Yt <- Y
-    Vt <- V
+    # Check seed
+    if (is.null(seed)) {
+      if (!exists(".Random.seed"))
+        stats::runif(1)
+      seed <- .Random.seed
+    } else {
+      assertthat::assert_that(assertthat::is.count(seed))
+      set.seed(seed)               # set PRNG seed
+    }
+    # ============ End Error catching and default value definitions ============ #
 
-    # Perform variation
-    Xv      <- do.call(perform_variation,
-                       args = as.list(environment()))
-    X       <- Xv$X
-    ls.args <- Xv$ls.args
-    nfe     <- nfe + Xv$var.nfe
+    # ============================= Algorithm setup ============================ #
+    nfe        <- 0              # counter for function evaluations
+    time.start <- Sys.time()     # Store initial time
+    iter.times <-
+      numeric(10000) # pre-allocate vector for iteration times.
 
-    # ========== Evaluation
-    # Evaluate offspring population on objectives
+    if (is.null(update$UseArchive)) {
+      update$UseArchive <- FALSE
+    }
+    # =========================== End Algorithm setup ========================== #
+
+    # =========================== Initial definitions ========================== #
+    # Generate weigth vectors
+    W  <- generate_weights(decomp = decomp,
+                           m      = problem$m)
+
+    # Generate initial population
+    X  <-
+      create_population(N = nrow(W),
+                        problem = problem,
+                        increments = increments)
+
+    # Evaluate population on objectives
     YV <- evaluate_population(X       = X,
                               problem = problem,
                               nfe     = nfe)
@@ -371,89 +351,157 @@ moead <- function(preset = NULL,     # List:  Set of strategy/components
     V   <- YV$V
     nfe <- YV$nfe
 
-    # ========== Scalarization
-    # Objective scaling and estimation of 'ideal' and 'nadir' points
-    normYs <- scale_objectives(Y       = Y,
-                               Yt      = Yt,
-                               scaling = scaling)
+    # ========================= End Initial definitions ======================== #
 
-    # Scalarization by neighborhood.
-    # bigZ is an [(T+1) x N] matrix, in which each column has the T scalarized
-    # values for the solutions in the neighborhood of one subproblem, plus the
-    # scalarized value for the incumbent solution for that subproblem.
-    bigZ <- scalarize_values(normYs  = normYs,
-                             W       = W,
-                             B       = B,
-                             aggfun  = aggfun)
+    # ============================= Iterative cycle ============================ #
+    keep.running  <- TRUE      # stop criteria flag
+    iter          <- 0         # counter: iterations
 
-    # Calculate selection indices
-    # sel.indx is an [N x (T+1)] matrix, in which each row contains the indices
-    # of one neighborhood (plus incumbent), sorted by their "selection quality"
-    # (which takes into account both the performance value and constraint
-    # handling policy, if any)
-    sel.indx <- order_neighborhood(bigZ       = bigZ,
-                                   B          = B,
-                                   V          = V,
-                                   Vt         = Vt,
-                                   constraint = constraint)
 
-    # ========== Update
-    # Update population
-    XY <- do.call(update_population,
-                  args = as.list(environment()))
-    X       <- XY$X
-    Y       <- XY$Y
-    V       <- XY$V
-    Archive <- XY$Archive
+    while (keep.running) {
+      # Update iteration counter
+      iter <- iter + 1
 
-    # ========== Stop Criteria
-    # Calculate iteration time
-    elapsed.time <- as.numeric(difftime(time1 = Sys.time(),
-                                        time2 = time.start,
-                                        units = "secs"))
-    iter.times[iter] <- ifelse(iter == 1,
-                               yes = as.numeric(elapsed.time),
-                               no  = as.numeric(elapsed.time) - sum(iter.times))
+      if ("save.iters" %in% names(moead.input.pars)) {
+        if (moead.input.pars$save.iters == TRUE)
+          saveRDS(as.list(environment()),
+                  "moead_env.rds")
+      }
+      # ========== Neighborhoods
+      # Define/update neighborhood probability matrix
+      BP <- define_neighborhood(
+        neighbors = neighbors,
+        v.matrix  = switch(
+          neighbors$name,
+          lambda = W,
+          x      = X,
+          acga = X
+        ),
+        iter      = iter
+      )
+      B  <- BP$B.variation
+      P  <- BP$P
+      # ========== Variation
+      # Store current population
+      Xt <- X
+      Yt <- Y
+      Vt <- V
 
-    # Verify stop criteria
-    keep.running <- check_stop_criteria(stopcrit = stopcrit,
-                                        call.env = environment())
+      Xv      <- do.call(perform_variation,
+                         args = as.list(environment()))
+      X       <- Xv$X
+      ls.args <- Xv$ls.args
+      nfe     <- nfe + Xv$var.nfe
 
-    # ========== Print
-    # Echo whatever is demanded
-    print_progress(iter.times, showpars)
+
+      # Evaluate offspring population on objectives
+      YV <- evaluate_population(X       = X,
+                                problem = problem,
+                                nfe     = nfe)
+
+      Y <- YV$Y
+      V   <- YV$V
+      nfe <- YV$nfe
+
+
+      # ========== Scalarization
+      # Objective scaling and estimation of 'ideal' and 'nadir' points
+      normYs <- scale_objectives(Y       = Y,
+                                 Yt      = Yt,
+                                 scaling = scaling)
+
+      # Scalarization by neighborhood.
+      # bigZ is an [(T+1) x N] matrix (or [N x (LR+1)] if using a_GA), in which each column has the T (LR) scalarized
+      # values for the solutions in the neighborhood of one subproblem, plus the
+      # scalarized value for the incumbent solution for that subproblem.
+
+      bigZ <- scalarize_values(
+        normYs  = normYs,
+        W       = W,
+        B       = BP$B.scalarize,
+        aggfun  = aggfun
+      )
+
+      # Calculate selection indices
+      # sel.indx is an [N x (T+1)] matrix (or [N x (LR+1)] if using a_GA), in
+      # which each row contains the indices of one neighborhood (plus incumbent),
+      # sorted by their "selection quality" (which takes into account both the
+      #performance value and constraint handling policy, if any)
+      sel.indx <- order_neighborhood(
+        bigZ       = bigZ,
+        B          = BP$B.order,
+        V          = V,
+        Vt         = Vt,
+        constraint = constraint
+      )
+
+      # ========== Update
+      # Update population
+      B  <- BP$B.order
+      XY <- do.call(update_population,
+                    args = as.list(environment()))
+      X       <- XY$X
+
+
+      Y       <- XY$Y
+      V       <- XY$V
+      Archive <- XY$Archive
+
+
+      # ========== Stop Criteria
+      # Calculate iteration time
+      elapsed.time <- as.numeric(difftime(
+        time1 = Sys.time(),
+        time2 = time.start,
+        units = "secs"
+      ))
+      iter.times[iter] <- ifelse(
+        iter == 1,
+        yes = as.numeric(elapsed.time),
+        no  = as.numeric(elapsed.time) - sum(iter.times)
+      )
+
+      # Verify stop criteria
+      keep.running <- check_stop_criteria(stopcrit = stopcrit,
+                                          call.env = environment())
+
+      # ========== Print
+      # Echo whatever is demanded
+      print_progress(iter.times, showpars)
+    }
+    # =========================== End Iterative cycle ========================== #
+
+    # ================================== Output ================================ #
+    # Prepare output
+    X <- denormalize_population(X, problem)
+    colnames(Y) <- paste0("f", 1:ncol(Y))
+    colnames(W) <- paste0("f", 1:ncol(W))
+
+    if (!is.null(Archive)) {
+      Archive$X <- denormalize_population(Archive$X, problem)
+      colnames(Archive$Y) <- paste0("f", 1:ncol(Archive$Y))
+      Archive$W           <- W
+      colnames(Archive$W) <- paste0("f", 1:ncol(Archive$W))
+    }
+
+    # Output
+    out <- list(
+      X           = X,
+      Y           = Y,
+      V           = V,
+      W           = W,
+      H           = decomp$H,
+      n.problems  = problem$m,
+      Archive     = Archive,
+      ideal       = apply(Y, 2, min),
+      nadir       = apply(Y, 2, max),
+      nfe         = nfe,
+      n.iter      = iter,
+      time        = difftime(Sys.time(), time.start, units = "secs"),
+      seed        = seed,
+      inputConfig = moead.input.pars
+    )
+    class(out) <- c("moead", "list")
+    return(out)
+    # ================================ End Output ============================== #
   }
-  # =========================== End Iterative cycle ========================== #
-
-  # ================================== Output ================================ #
-  # Prepare output
-  X <- denormalize_population(X, problem)
-  colnames(Y) <- paste0("f", 1:ncol(Y))
-  colnames(W) <- paste0("f", 1:ncol(W))
-
-  if(!is.null(Archive)) {
-    Archive$X <- denormalize_population(Archive$X, problem)
-    colnames(Archive$Y) <- paste0("f", 1:ncol(Archive$Y))
-    Archive$W           <- W
-    colnames(Archive$W) <- paste0("f", 1:ncol(Archive$W))
-  }
-
-  # Output
-  out <- list(X           = X,
-              Y           = Y,
-              V           = V,
-              W           = W,
-              Archive     = Archive,
-              ideal       = apply(Y, 2, min),
-              nadir       = apply(Y, 2, max),
-              nfe         = nfe,
-              n.iter      = iter,
-              time        = difftime(Sys.time(), time.start, units = "secs"),
-              seed        = seed,
-              inputConfig = moead.input.pars)
-  class(out) <- c("moead", "list")
-
-  return(out)
-  # ================================ End Output ============================== #
-}
-
