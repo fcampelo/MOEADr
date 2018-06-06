@@ -22,7 +22,8 @@
 #' @export
 
 create_population <- function(N,       # population size
-                              problem) # list of named problem parameters
+                              problem  # list of named problem parameters
+                              , increments = NULL)
 {
 
     # ========== Error catching and default value definitions
@@ -42,6 +43,11 @@ create_population <- function(N,       # population size
     # get problem dimension
     prob.dim <- length(problem$xmax)
 
-    return (matrix(stats::runif(N * prob.dim),
-                   nrow = N))
+    if (is.null(increments) && is.null(increments$lhs)) {
+      return(matrix(stats::runif(N * prob.dim),
+                    nrow = N))
+    }
+    else {
+      return(lhs::randomLHS(N, prob.dim))
+    }
 }
