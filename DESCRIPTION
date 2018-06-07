@@ -20,7 +20,8 @@ Suggests: smoof,
           rmarkdown, 
           emoa,
           ggplot2,
-          reshape2
+          reshape2,
+	  lhs
 Depends: R (>= 3.4.0)
 Authors@R: c(person("Felipe", "Campelo",
     email   = "fcampelo@ufmg.br",

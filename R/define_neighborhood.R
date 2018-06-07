@@ -37,52 +37,60 @@
 define_neighborhood <- function(neighbors, v.matrix, iter){
 
   # ========== Error catching and default value definitions
-  valid.methods <- c("lambda", "x")
+  valid.methods <- c("lambda", "x", "cga")
   assertthat::assert_that(
     all(assertthat::has_name(neighbors, c("name", "T"))),
     neighbors$name %in% valid.methods,
     assertthat::is.count(neighbors$T),
+    # assertthat::is.count(neighbors$LR),
     neighbors$T <= nrow(v.matrix),
     is.numeric(neighbors$delta.p),
     length(neighbors$delta.p) == 1,
     is_within(neighbors$delta.p, 0, 1, strict = FALSE))
 
-  if (iter == 1 || neighbors$name != "lambda"){
-    BP <- list(B = NULL, P = NULL, fullB = NULL, fullP = NULL)
-
-    # Calculate neighborhood matrix
-    BP$fullB <- cbind(1:nrow(v.matrix),
-                      FNN::get.knn(data      = v.matrix,
-                                   k         = nrow(v.matrix) - 1)$nn.index)
-    BP$B <- BP$fullB[, 1:neighbors$T]
-    np  <- nrow(v.matrix)
-    if (np > neighbors$T){
-      BP$P   <- matrix((1 - neighbors$delta.p) / (np - neighbors$T),
-                       nrow = np,
-                       ncol = np)
-
-      val <- neighbors$delta.p / neighbors$T
-      BP$P   <- do.call(rbind,
-                        lapply(1:np,
-                               FUN = function(i, p, b, val){
-                                 p[i, b[i, ]] <- val; p[i, ]},
-                               p   = BP$P,
-                               b   = BP$B,
-                               val = val))
-    } else {
-      BP$P   <- matrix(1 / np,
-                       nrow = np,
-                       ncol = np)
-    }
-    BP$fullP <- BP$P
-    BP$fullP[, ] <- 1 / ncol(BP$fullP)
-
-  } else {
-    # just get the existing matrix
-    call.env <- parent.frame()
-    assertthat::assert_that("BP" %in% names(call.env))
-    BP <- call.env$BP
+  if (neighbors$name == "cga"){
+    opname <- paste0("neighborhood_", neighbors$name)
+    BP <- do.call(opname, list(neighbors, v.matrix, iter))
   }
+  else {
+    if (iter == 1 || neighbors$name != "lambda"){
+      BP <- list(B = NULL, P = NULL, fullB = NULL, fullP = NULL)
 
+      # Calculate neighborhood matrix
+      BP$fullB <- cbind(1:nrow(v.matrix),
+                        FNN::get.knn(data      = v.matrix,
+                                     k         = nrow(v.matrix) - 1)$nn.index)
+      BP$B.variation <- BP$fullB[, 1:neighbors$T]
+      np  <- nrow(v.matrix)
+      if (np > neighbors$T){
+        BP$P   <- matrix((1 - neighbors$delta.p) / (np - neighbors$T),
+                         nrow = np,
+                         ncol = np)
+
+        val <- neighbors$delta.p / neighbors$T
+        BP$P   <- do.call(rbind,
+                          lapply(1:np,
+                                 FUN = function(i, p, b, val){
+                                   p[i, b[i, ]] <- val; p[i, ]},
+                                 p   = BP$P,
+                                 b   = BP$B.variation,
+                                 val = val))
+      } else {
+        BP$P   <- matrix(1 / np,
+                         nrow = np,
+                         ncol = np)
+      }
+      BP$fullP <- BP$P
+      BP$fullP[, ] <- 1 / ncol(BP$fullP)
+
+    } else {
+      # just get the existing matrix
+      call.env <- parent.frame()
+      assertthat::assert_that("BP" %in% names(call.env))
+      BP <- call.env$BP
+    }
+    BP$B.order <- BP$B.variation
+    BP$B.scalarize <- BP$B.variation
+  }
   return(BP)
 }
