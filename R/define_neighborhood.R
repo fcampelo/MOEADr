@@ -73,7 +73,7 @@ define_neighborhood <- function(neighbors, v.matrix, iter){
                                  FUN = function(i, p, b, val){
                                    p[i, b[i, ]] <- val; p[i, ]},
                                  p   = BP$P,
-                                 b   = BP$B,
+                                 b   = BP$B.variation,
                                  val = val))
       } else {
         BP$P   <- matrix(1 / np,
