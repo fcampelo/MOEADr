@@ -6,8 +6,8 @@ Description: Modular implementation of Multiobjective Evolutionary Algorithms
               <DOI:10.1109/TEVC.2007.892759>] for quick assembling and 
               testing of new algorithmic components, as well as easy 
               replication of published MOEA/D proposals.
-Version:  1.1.0
-Date:     2017-10-21
+Version:  1.1.1
+Date:     2018-07-01
 Imports:  FNN, 
           assertthat
 Suggests: smoof,
@@ -20,7 +20,8 @@ Suggests: smoof,
           rmarkdown, 
           emoa,
           ggplot2,
-          reshape2
+          reshape2,
+          pkgdown
 Depends: R (>= 3.4.0)
 Authors@R: c(person("Felipe", "Campelo",
     email   = "fcampelo@ufmg.br",
@@ -41,4 +42,5 @@ Encoding: UTF-8
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
-URL: https://github.com/fcampelo/MOEADr
+URL: https://fcampelo.github.io/MOEADr/
+BugReports: https://github.com/fcampelo/MOEADr/issues

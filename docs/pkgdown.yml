@@ -1,0 +1,10 @@
+pandoc: 1.19.2.1
+pkgdown: 1.1.0
+pkgdown_sha: ~
+articles:
+  Basic_Usage: Basic_Usage.html
+  Comparison_Usage: Comparison_Usage.html
+  Modification_Usage: Modification_Usage.html
+  problem-definition: problem-definition.html
+  writing-functions-for-moeadr: writing-functions-for-moeadr.html
+

@@ -8,7 +8,7 @@ check_stop_criteria(stopcrit, call.env)
 }
 \arguments{
 \item{stopcrit}{list containing the parameters defining the stop
-handling method. See Section \code{Constraint Handling} of the \code{\link[=moead]{moead()}}
+handling method. See Section \code{Stop Criteria} of the \code{\link[=moead]{moead()}}
 documentation for details.}
 
 \item{call.env}{List vector containing the stop criteria to be used.
