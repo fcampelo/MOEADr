@@ -30,7 +30,7 @@ The MOEA/D framework is seen as a combination of specific design decisions regar
 - Constraint handling method;  
 - Termination criteria.
 
-This package provides several options for each module, as explained in the documentation of its main function, `MOEADr::moead()`. The input structure of this function is also explained in its documentation.
+This package provides several options for each module, as explained in the documentation of its main function, `MOEADr::moead()`. The input structure of this function is also explained in its documentation. More details on the component-based approach behind the `MOEADr` package are available in our paper, _The MOEADr Package - A Component-Based Framework for Multiobjective Evolutionary Algorithms Based on Decomposition_, available on the ArXiv: [https://arxiv.org/abs/1807.06731](https://arxiv.org/abs/1807.06731).
 
 To install the current release version in your system, simply use:
 
