@@ -80,6 +80,8 @@ decomposition_uniform <- function(decomp, ...){
   min_h <- H[which.min(apply(H,
                              MARGIN = 1,
                              FUN    = function(x) {cd2(construct_un(x, N))})), ]
+
+  # TODO: change this scaling to *before* calculating Un / CD2
   Un    <- (construct_un(min_h, N) - 0.5) / N
 
   if (nrow(Un) == 1) { Un <- t(Un) } # Fixes R arbitrarily choosing column major when (nf = 2) (iss 34)
