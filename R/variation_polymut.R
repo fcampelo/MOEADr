@@ -63,7 +63,7 @@ variation_polymut <- function(X, etam, pm, eps = 1e-6, ...){
   Deltaq <- calc_Deltaq(X, etam)
 
   # Update mutated population
-  Xp <- X * (!R) + (X + Deltaq) * R
+  Xp <- X * (!R) + (X * Deltaq) * R
 
   # Return (de-standardized, if needed) results
   if (nflag){
