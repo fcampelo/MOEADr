@@ -33,6 +33,18 @@ is_within <- function(x, xmin = 0, xmax = 1, strict = c(FALSE, FALSE)){
   return(out)
 }
 
+# scale Y on a scale of 0 to 1.
+scale_vector <- function(Y, ideal, nadir) {
+  Y <- (Y - ideal)/(nadir-ideal)
+  return(Y)
+}
+
+# create ref.points for fair HV - can only be used if Y is scaled
+create_ref.points <- function(H, n){
+  ref.points <- rep(1 + 1/H, n)
+  return(ref.points)
+}
+
 # Check if two numeric values are coprime
 is_coprime <- function(x, y){
   a <- x
@@ -59,3 +71,13 @@ getmaxP <- function(X){
   apply(X, MARGIN = 2, FUN = max, na.rm = TRUE)
 }
 
+
+
+init_p <- function(W, value = 0.5){
+  p <- rep(value, length(W[,1]))
+  return(p)
+}
+
+subsetting <- function(var, rand.seq, p){
+  return(var[rand.seq < p,])
+}
