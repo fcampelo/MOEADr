@@ -34,7 +34,7 @@ scaling$name <- "simple"
 update2 <- list(name  = "onra")
 # update2$UseArchive = TRUE
 
-n.objs <- c(3)
+n.objs <- c(2, 3)
 
 stopcrit  <- list(list(name    = "maxeval",
                        maxeval = 30000))
@@ -52,7 +52,7 @@ for (n.obj in n.objs) {
     for (fun in fun.names1) {
       print(fun)
       if (n.obj == 2) {
-        decomp$H <- 199
+        decomp$H <- 299
         k = 2 * (n.obj - 1)
         L = 20
         d = k + L
@@ -181,7 +181,7 @@ for (n.obj in n.objs) {
           odim = n.obj,
           lower.bounds = as.numeric(getLower(par.set)),
           upper.bounds = as.numeric(getUpper(par.set)),
-          popsize = 200
+          popsize = 300
         )
         
         
