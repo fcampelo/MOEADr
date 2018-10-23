@@ -168,7 +168,7 @@ for (n.obj in n.objs) {
           odim = n.obj,
           lower.bounds = as.numeric(getLower(par.set)),
           upper.bounds = as.numeric(getUpper(par.set)),
-          popsize = 200
+          popsize = 300
         )
         
         
