@@ -22,26 +22,32 @@
 #' @export
 
 create_population <- function(N,       # population size
-                              problem) # list of named problem parameters
+                              problem,  # list of named problem parameters
+                              increments = NULL)
 {
-
-    # ========== Error catching and default value definitions
-    assertthat::assert_that(
-        all(assertthat::has_name(problem, c("xmax", "xmin", "m", "name"))),
-        all(problem$xmin < problem$xmax),
-        identical(length(problem$xmax), length(problem$xmin)),
-        assertthat::is.count(N),
-        assertthat::is.count(problem$m))
-
-    if("constraint" %in% names(problem)){
-      con <- problem$constraint
-      assertthat::assert_that(assertthat::has_name(con, "name"))
-    }
-
-
-    # get problem dimension
-    prob.dim <- length(problem$xmax)
-
-    return (matrix(stats::runif(N * prob.dim),
-                   nrow = N))
+  
+  # ========== Error catching and default value definitions
+  assertthat::assert_that(
+    all(assertthat::has_name(problem, c("xmax", "xmin", "m", "name"))),
+    all(problem$xmin < problem$xmax),
+    identical(length(problem$xmax), length(problem$xmin)),
+    assertthat::is.count(N),
+    assertthat::is.count(problem$m))
+  
+  if("constraint" %in% names(problem)){
+    con <- problem$constraint
+    assertthat::assert_that(assertthat::has_name(con, "name"))
+  }
+  
+  
+  # get problem dimension
+  prob.dim <- length(problem$xmax)
+  
+  if (is.null(increments) || is.null(increments$lhs)) {
+    return(matrix(stats::runif(N * prob.dim),
+                  nrow = N))
+  }
+  else {
+    return(lhs::randomLHS(N, prob.dim))
+  }
 }

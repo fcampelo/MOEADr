@@ -15,7 +15,7 @@ increments2 <- list(lhs = NULL,
                     ONRA = list(onra = NULL, dt = 20, ondb = TRUE))
 
 decomp <- list(name = "SLD")
-decomp$H <- 199
+decomp$H <- 299
 aggfun <- list(name = "AWT")
 
 scaling <- list()
@@ -73,7 +73,7 @@ for (n.obj in n.objs) {
       for (j in 1:repetitions) {
         moead.de.data <- list()
         # moead.de.ls.data <- list()
-        onra.data <- list()
+        # onra.data <- list()
         gra.awt.data <- list()
         # gra.awt.ls.data <- list()
         ondb.data <- list()
@@ -106,18 +106,18 @@ for (n.obj in n.objs) {
         # )
         
         # onra
-        onra <- moead(
-          problem  = problem.zdt1,
-          preset   = preset_moead(algo),
-          decomp = decomp,
-          increments = increments,
-          # update = update,
-          scaling = scaling,
-          stopcrit = stopcrit,
-          # variation = variation,
-          showpars = list(show.iters = "none", showevery = 100),
-          seed = j
-        )
+        # onra <- moead(
+        #   problem  = problem.zdt1,
+        #   preset   = preset_moead(algo),
+        #   decomp = decomp,
+        #   increments = increments,
+        #   # update = update,
+        #   scaling = scaling,
+        #   stopcrit = stopcrit,
+        #   # variation = variation,
+        #   showpars = list(show.iters = "none", showevery = 100),
+        #   seed = j
+        # )
         
         # gra.awt
         gra.awt <- moead(
@@ -180,7 +180,7 @@ for (n.obj in n.objs) {
         y.nadir <- apply(moead.de$Y[feas.idx, ], 2, max)
         ondb$Y.norm <- ondb$Y / (1.1 * y.nadir)
         # ondb.ls$Y.norm <- ondb$Archive$Y/(1.1*y.nadir)
-        onra$Y.norm <- onra$Y / (1.1 * y.nadir)
+        # onra$Y.norm <- onra$Y / (1.1 * y.nadir)
         gra.awt$Y.norm <- gra.awt$Y / (1.1 * y.nadir)
         # moead.de.ls$Y.norm <- moead.de.ls$Archive$Y/(1.1*y.nadir)
         moead.de$Y.norm <- moead.de$Y / (1.1 * y.nadir)
@@ -200,10 +200,10 @@ for (n.obj in n.objs) {
         #                               ref = ref.points)
         
         
-        #onra
-        onra.non.d <- find_nondominated_points(onra$Y.norm)
-        onra.hv <-
-          emoa::dominated_hypervolume(points = t(onra$Y.norm[onra.non.d,]),
+        # #onra
+        # onra.non.d <- find_nondominated_points(onra$Y.norm)
+        # onra.hv <-
+        #   emoa::dominated_hypervolume(points = t(onra$Y.norm[onra.non.d,]),
                                       ref = ref.points)
         
         # gra.awt
@@ -236,9 +236,9 @@ for (n.obj in n.objs) {
         #   rbind(moead.de.ls.data,
         #         moead.de.ls.hv,
         #         moead.de.ls.IGD)
-        onra.data <-
-          rbind(onra.data,
-                onra.hv)#,
+        # onra.data <-
+        #   rbind(onra.data,
+        #         onra.hv)#,
         # onra.IGD)
         #gra.awt
         gra.awt.data <-
@@ -262,7 +262,7 @@ for (n.obj in n.objs) {
           rbind(
             unlist(moead.de.data),
             # unlist(moead.de.ls.data),
-            unlist(onra.data),
+            # unlist(onra.data),
             unlist(gra.awt.data),
             unlist(ondb.data),
             unlist(nsga.2.data)
@@ -272,7 +272,7 @@ for (n.obj in n.objs) {
         names <-
           c(algo,
             # 'MOEA/D-DE.ls',
-            'ONRA',
+            # 'ONRA',
             'GRA.AWT',
             'ONDB',
             'NSGA-2')
