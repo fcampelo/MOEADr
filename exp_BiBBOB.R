@@ -204,7 +204,7 @@ for (n.obj in n.objs) {
         # onra.non.d <- find_nondominated_points(onra$Y.norm)
         # onra.hv <-
         #   emoa::dominated_hypervolume(points = t(onra$Y.norm[onra.non.d,]),
-                                      ref = ref.points)
+                                      # ref = ref.points)
         
         # gra.awt
         gra.awt.non.d <- find_nondominated_points(gra.awt$Y.norm)
