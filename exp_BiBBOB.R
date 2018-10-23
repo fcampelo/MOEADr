@@ -1,6 +1,6 @@
 rm(list = ls(all = TRUE))
-setwd("~/MOEADr 22.46.01/R/")
-library(moobench)
+setwd("~/MOEADr/R/")
+library(smoof)
 library(MOEADr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 

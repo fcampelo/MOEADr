@@ -1,6 +1,6 @@
 rm(list = ls(all = TRUE))
-setwd("~/MOEADr 22.46.01/R/")
-library(moobench)
+setwd("~/MOEADr/R/")
+library(smoof)
 library(MOEADr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
@@ -52,7 +52,7 @@ for (n.obj in n.objs) {
     for (fun in fun.names1) {
       print(fun)
       if (n.obj == 2) {
-        decomp$H <- 299
+        decomp$H <- 199
         k = 2 * (n.obj - 1)
         L = 20
         d = k + L
@@ -174,14 +174,14 @@ for (n.obj in n.objs) {
         #   seed = j
         # )
         
-        par.set = ParamHelpers::getParamSet(fn)
+        par.set = ParamHelpers::getParamSet(problem)
         nsga.2 = mco::nsga2(
-          fn,
-          idim = getNumberOfParameters(fn),
-          odim = n.objectives,
+          problem,
+          idim = getNumberOfParameters(problem),
+          odim = n.obj,
           lower.bounds = as.numeric(getLower(par.set)),
           upper.bounds = as.numeric(getUpper(par.set)),
-          popsize = 300
+          popsize = 200
         )
         
         
