@@ -15,18 +15,18 @@ increments2 <- list(lhs = NULL,
                     ONRA = list(onra = NULL, dt = 20, ondb = TRUE))
 
 decomp <- list(name = "SLD")
-decomp$H <- 299
+decomp$H <- 199
 aggfun <- list(name = "AWT")
 
 scaling <- list()
 scaling$name <- "simple"
 
-variation <- preset_moead("moead.de")$variation
-variation[[4]] <- variation[[3]]
-variation[[3]] <-
-  list(name = "localsearch",
-       type = "dvls",
-       gamma.ls = 0.5)
+# variation <- preset_moead("moead.de")$variation
+# variation[[4]] <- variation[[3]]
+# variation[[3]] <-
+#   list(name = "localsearch",
+#        type = "dvls",
+#        gamma.ls = 0.5)
 
 # update <- preset_moead("moead.de")$update
 # update$UseArchive = TRUE
@@ -114,7 +114,7 @@ for (n.obj in n.objs) {
           # update = update,
           scaling = scaling,
           stopcrit = stopcrit,
-          variation = variation,
+          # variation = variation,
           showpars = list(show.iters = "none", showevery = 100),
           seed = j
         )
@@ -161,14 +161,14 @@ for (n.obj in n.objs) {
         #   seed = j
         # )
         
-        par.set = ParamHelpers::getParamSet(fn)
+        par.set = ParamHelpers::getParamSet(problem)
         nsga.2 = mco::nsga2(
-          fn,
-          idim = getNumberOfParameters(fn),
-          odim = n.objectives,
+          problem,
+          idim = getNumberOfParameters(problem),
+          odim = n.obj,
           lower.bounds = as.numeric(getLower(par.set)),
           upper.bounds = as.numeric(getUpper(par.set)),
-          popsize = 300
+          popsize = 200
         )
         
         
@@ -240,13 +240,11 @@ for (n.obj in n.objs) {
           rbind(onra.data,
                 onra.hv)#,
         # onra.IGD)
+        #gra.awt
         gra.awt.data <-
           rbind(gra.awt.data,
                 gra.awt.hv)#,
         # gra.awt.IGD)
-        onra.data <-
-          rbind(onra.data,
-                onra.hv)#,
         # onra.IGD)
         ondb.data <-
           rbind(ondb.data,
@@ -270,7 +268,7 @@ for (n.obj in n.objs) {
             unlist(nsga.2.data)
             # unlist(ondb.ls.data)
           )
-        colnames(metrics) <- c("HV", "IGD")
+        colnames(metrics) <- c("HV")
         names <-
           c(algo,
             # 'MOEA/D-DE.ls',
@@ -282,7 +280,6 @@ for (n.obj in n.objs) {
             temp <- data.frame(metrics, fun, algo, names)
             colnames(temp) <-
               c("HV",
-                "IGD",
                 "function",
                 "base.algorithm",
                 "variation.name")

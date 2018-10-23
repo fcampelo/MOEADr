@@ -21,12 +21,12 @@ aggfun <- list(name = "AWT")
 scaling <- list()
 scaling$name <- "simple"
 
-variation <- preset_moead("moead.de")$variation
-variation[[4]] <- variation[[3]]
-variation[[3]] <-
-  list(name = "localsearch",
-       type = "dvls",
-       gamma.ls = 0.5)
+# variation <- preset_moead("moead.de")$variation
+# variation[[4]] <- variation[[3]]
+# variation[[3]] <-
+#   list(name = "localsearch",
+#        type = "dvls",
+#        gamma.ls = 0.5)
 
 # update <- preset_moead("moead.de")$update
 # update$UseArchive = TRUE
@@ -42,7 +42,7 @@ stopcrit  <- list(list(name    = "maxeval",
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  for (i in 1:9) {
+  for (i in 3:9) {
     fun.names1[[length(fun.names1) + 1]] = paste0("WFG", i)
   }
   
@@ -52,7 +52,7 @@ for (n.obj in n.objs) {
     for (fun in fun.names1) {
       print(fun)
       if (n.obj == 2) {
-        decomp$H <- 199
+        decomp$H <- 299
         k = 2 * (n.obj - 1)
         L = 20
         d = k + L
@@ -127,7 +127,7 @@ for (n.obj in n.objs) {
           # update = update,
           scaling = scaling,
           stopcrit = stopcrit,
-          variation = variation,
+          # variation = variation,
           showpars = list(show.iters = "none", showevery = 100),
           seed = j
         )
@@ -257,10 +257,6 @@ for (n.obj in n.objs) {
           rbind(gra.awt.data,
                 gra.awt.hv)#,
         # gra.awt.IGD)
-        onra.data <-
-          rbind(onra.data,
-                onra.hv)#,
-        # onra.IGD)
         ondb.data <-
           rbind(ondb.data,
                 ondb.hv)#,
@@ -283,7 +279,7 @@ for (n.obj in n.objs) {
             unlist(nsga.2.data)
             # unlist(ondb.ls.data)
           )
-        colnames(metrics) <- c("HV", "IGD")
+        colnames(metrics) <- c("HV")
         names <-
           c(algo,
             # 'MOEA/D-DE.ls',
@@ -295,7 +291,6 @@ for (n.obj in n.objs) {
             temp <- data.frame(metrics, fun, algo, names)
             colnames(temp) <-
               c("HV",
-                "IGD",
                 "function",
                 "base.algorithm",
                 "variation.name")
