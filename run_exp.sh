@@ -1,5 +1,5 @@
 
-nohup Rscript restart_exp.R&> 1.txt &
-nohup Rscript restart_expWFG.R&> 2.txt &
+nohup Rscript exp_BiBBOB.R&> bibbob.txt &
+nohup Rscript exp_WFG.R&> wfg.txt &
 
 
