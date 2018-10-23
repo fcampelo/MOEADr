@@ -28,8 +28,8 @@ scaling$name <- "simple"
 #        type = "dvls",
 #        gamma.ls = 0.5)
 
-# update <- preset_moead("moead.de")$update
-# update$UseArchive = TRUE
+update <- preset_moead("moead.de")$update
+update$UseArchive = TRUE
 
 update2 <- list(name  = "onra")
 # update2$UseArchive = TRUE
@@ -37,7 +37,7 @@ update2 <- list(name  = "onra")
 n.objs <- c(2)
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 30000))
+                       maxeval = 3000))
 
 for (n.obj in n.objs) {
   print(n.obj)
@@ -49,14 +49,14 @@ for (n.obj in n.objs) {
   my.data <- data.frame()
   for (algo in algorithms) {
     print(algo)
-    j = 1
+    id = 1
     for (fun in fun.names1) {
       print(fun)
       problem <-
         makeBiObjBBOBFunction(dimension = 20,
-                              fid = j,
+                              fid = id,
                               iid = 1)
-      j = j + 1
+      id = id + 1
       problem.BiBBOB <- function(X) {
         t(apply(X, MARGIN = 1,
                 FUN = problem))
@@ -142,7 +142,7 @@ for (n.obj in n.objs) {
           increments = increments2,
           stopcrit = stopcrit,
           # variation = variation,
-          # update = update,
+          update = update,
           scaling = scaling,
           showpars = list(show.iters = "none", showevery = 10),
           seed = j
@@ -178,7 +178,8 @@ for (n.obj in n.objs) {
         # instead of using nadir of pareto front using from estimation on the most basic algorithm tested
         feas.idx <- rep(TRUE, nrow(moead.de$Y))
         y.nadir <- apply(moead.de$Y[feas.idx, ], 2, max)
-        ondb$Y.norm <- ondb$Y / (1.1 * y.nadir)
+        # ondb$Y.norm <- ondb$Y / (1.1 * y.nadir)
+        ondb$Y.norm <- ondb$Archive$Y / (1.1 * y.nadir)
         # ondb.ls$Y.norm <- ondb$Archive$Y/(1.1*y.nadir)
         # onra$Y.norm <- onra$Y / (1.1 * y.nadir)
         gra.awt$Y.norm <- gra.awt$Y / (1.1 * y.nadir)
