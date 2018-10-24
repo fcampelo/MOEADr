@@ -2,8 +2,6 @@ rm(list = ls(all = TRUE))
 setwd("~/MOEADr/R/")
 library(smoof)
 library(MOEADr)
-library(foreach)
-library(doParallel)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
 repetitions <-  21
@@ -39,7 +37,7 @@ update2 <- list(name  = "onra")
 n.objs <- c(2)
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 30000))
+                       maxeval = 15000))
 
 for (n.obj in n.objs) {
   print(n.obj)
