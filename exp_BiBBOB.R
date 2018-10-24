@@ -42,7 +42,7 @@ stopcrit  <- list(list(name    = "maxeval",
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  for (i in 2:2) {
+  for (i in 2:55) {
     fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
   }
   
@@ -165,7 +165,7 @@ for (n.obj in n.objs) {
         nsga.2 = mco::nsga2(
           problem,
           idim = getNumberOfParameters(problem),
-          generations = 26,
+          generations = 99,
           odim = n.obj,
           lower.bounds = as.numeric(getLower(par.set)),
           upper.bounds = as.numeric(getUpper(par.set)),
