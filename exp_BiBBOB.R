@@ -2,6 +2,8 @@ rm(list = ls(all = TRUE))
 setwd("~/MOEADr/R/")
 library(smoof)
 library(MOEADr)
+library(foreach)
+library(doParallel)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
 repetitions <-  21
@@ -143,7 +145,7 @@ for (n.obj in n.objs) {
           stopcrit = stopcrit,
           # variation = variation,
           # update = update,
-          scaling = scaling,
+          # scaling = scaling,
           showpars = list(show.iters = "none", showevery = 10),
           seed = j
         )
@@ -165,7 +167,7 @@ for (n.obj in n.objs) {
         nsga.2 = mco::nsga2(
           problem,
           idim = getNumberOfParameters(problem),
-          generations = 99,
+          generations = moead.de$n.iter,
           odim = n.obj,
           lower.bounds = as.numeric(getLower(par.set)),
           upper.bounds = as.numeric(getUpper(par.set)),
