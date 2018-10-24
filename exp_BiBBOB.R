@@ -42,7 +42,7 @@ stopcrit  <- list(list(name    = "maxeval",
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  for (i in 1:55) {
+  for (i in 2:2) {
     fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
   }
   
@@ -125,7 +125,7 @@ for (n.obj in n.objs) {
           preset   = preset_moead(algo),
           decomp = decomp,
           aggfun = aggfun,
-          # update = update2,
+          update = update2,
           increments = increments,
           stopcrit = stopcrit,
           # scaling = scaling,
@@ -142,7 +142,7 @@ for (n.obj in n.objs) {
           increments = increments2,
           stopcrit = stopcrit,
           # variation = variation,
-          update = update,
+          # update = update,
           scaling = scaling,
           showpars = list(show.iters = "none", showevery = 10),
           seed = j
@@ -165,6 +165,7 @@ for (n.obj in n.objs) {
         nsga.2 = mco::nsga2(
           problem,
           idim = getNumberOfParameters(problem),
+          generations = 26,
           odim = n.obj,
           lower.bounds = as.numeric(getLower(par.set)),
           upper.bounds = as.numeric(getUpper(par.set)),
@@ -179,7 +180,7 @@ for (n.obj in n.objs) {
         feas.idx <- rep(TRUE, nrow(moead.de$Y))
         y.nadir <- apply(moead.de$Y[feas.idx, ], 2, max)
         # ondb$Y.norm <- ondb$Y / (1.1 * y.nadir)
-        ondb$Y.norm <- ondb$Archive$Y / (1.1 * y.nadir)
+        ondb$Y.norm <- ondb$Y / (1.1 * y.nadir)
         # ondb.ls$Y.norm <- ondb$Archive$Y/(1.1*y.nadir)
         # onra$Y.norm <- onra$Y / (1.1 * y.nadir)
         gra.awt$Y.norm <- gra.awt$Y / (1.1 * y.nadir)
