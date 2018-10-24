@@ -37,12 +37,15 @@ update2 <- list(name  = "onra")
 n.objs <- c(2, 3)
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 30000))
+                       maxeval = 15000))
 
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  for (i in 3:9) {
+  for (i in 1:6) {
+    fun.names1[[length(fun.names1) + 1]] = paste0("WFG", i)
+  }
+  for (i in 9:9) {
     fun.names1[[length(fun.names1) + 1]] = paste0("WFG", i)
   }
   
