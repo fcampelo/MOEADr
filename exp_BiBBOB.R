@@ -73,7 +73,7 @@ for (n.obj in n.objs) {
         xmax       = as.numeric(getUpper(par.set)),
         m          = n.obj
       )
-      ref.points <- rep(1 + (1 / decomp$H), problem.zdt1$m)
+      ref.points <- rep(1, problem.zdt1$m)
       
       for (j in 1:repetitions) {
         moead.de.data <- list()

@@ -44,7 +44,7 @@ stopcrit  <- list(list(name    = "maxeval",
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  for (i in 3:6) {
+  for (i in 1:6) {
     fun.names1[[length(fun.names1) + 1]] = paste0("WFG", i)
   }
   for (i in 9:9) {
@@ -94,7 +94,7 @@ for (n.obj in n.objs) {
         xmax       = as.numeric(getUpper(par.set)),
         m          = n.obj
       )
-      ref.points <- rep(1 + (1 / decomp$H), problem.zdt1$m)
+      ref.points <- rep(1, problem.zdt1$m)
       for (j in 1:repetitions) {
         moead.de.data <- list()
         moead.dra.data <- list()
@@ -202,7 +202,7 @@ for (n.obj in n.objs) {
           unlist(sapply(z, function(i, apf, y.nadir) {
             (apf[, i] - y.ideal[i]) / (y.nadir[i] - y.ideal[i])
           }, apf = moead.de$Y, y.nadir = y.nadir))
-      
+        
         moead.dra$Y.norm <-
           unlist(sapply(z, function(i, apf, y.nadir) {
             (apf[, i] - y.ideal[i]) / (y.nadir[i] - y.ideal[i])

@@ -1,5 +1,5 @@
 rm(list = ls(all = TRUE))
-setwd("~/MOEADr_22.46.01/R/")
+setwd("~/MOEADr/R/")
 library(moobench)
 library(MOEADr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
@@ -67,10 +67,10 @@ for (n.obj in n.objs) {
       f.num <- f.num + 1
       print(fun)
         if (n.obj == 2) {
-          decomp$H <- 299
+          decomp$H <- 199
         }
         if (n.obj == 3) {
-          decomp$H <- 23
+          decomp$H <- 29
         }
         if (n.obj == 4) {
           decomp$H <- 9
@@ -80,10 +80,10 @@ for (n.obj in n.objs) {
         pareto.front <- problem$pf
         problem.uf <- problem$problem
         problem.zdt1 <- list(
-          name       = "problem.uf",
-          xmin       = rep(0, d),
-          xmax       = rep(1, d),
-          m          = n.obj
+          name       = "problem.moon",
+          xmin       = rep(0, 2),
+          xmax       = rep(1, 2),
+          m          = 3
         )
       
       for (j in 1:21) {
@@ -103,11 +103,13 @@ for (n.obj in n.objs) {
         # # moead
         moead.de <- moead(
           problem  = problem.zdt1,
-          preset   = preset_moead(algo),
+          preset   = preset_moead("moead.de"),
           decomp = decomp,
           stopcrit = stopcrit,
+          constraint = list(name = "penalty"),
+          moon.prob = TRUE,
           showpars = list(show.iters = "none", showevery = 100),
-          seed = j
+          seed = 42
         )
         
         # moead.de.ls <- moead(
@@ -132,6 +134,7 @@ for (n.obj in n.objs) {
           scaling = scaling,
           stopcrit = stopcrit,
           variation = variation,
+          moon.prob = TRUE,
           showpars = list(show.iters = "none", showevery = 100),
           seed = j
         )
@@ -145,6 +148,7 @@ for (n.obj in n.objs) {
           # update = update2,
           increments = increments,
           stopcrit = stopcrit,
+          moon.prob = TRUE,
           # scaling = scaling,
           # variation = variation,
           showpars = list(show.iters = "none", showevery = 100),
@@ -158,6 +162,7 @@ for (n.obj in n.objs) {
           decomp = decomp,
           increments = increments2,
           stopcrit = stopcrit,
+          moon.prob = TRUE,
           # variation = variation,
           # update = update,
           scaling = scaling,
