@@ -2,31 +2,34 @@ rm(list = ls(all = TRUE))
 setwd("~/MOEADr/R/")
 library(smoof)
 library(MOEADr)
+library(emoa)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
 repetitions <-  21
 
 algorithms <- c("moead.de")
 
-increments <- list(lhs = NULL,
-                   ONRA = list(onra = TRUE, dt = 20, ondb = NULL))
+#uniform weight
+resource.allocation.DRA <- list(name = "DRA", dt = 50)
+resource.allocation.GRA <- list(name = "GRA", dt = 20)
+resource.allocation.RAD <- list(name = "RAD", dt = 20)
 
-increments2 <- list(lhs = NULL,
-                    ONRA = list(onra = NULL, dt = 20, ondb = TRUE))
 
-decomp <- list(name = "SLD")
-decomp$H <- 299
-aggfun <- list(name = "AWT")
+decomp <- list(name = "SLD", H = 149)
+decomp2 <- list(name = "uniform", N = 150)
+
+# neighbors <- preset_moead("original")$neighbors
+# neighbors$delta.p <- 0.9
 
 scaling <- list()
 scaling$name <- "simple"
 
-# variation <- preset_moead("moead.de")$variation
-# variation[[4]] <- variation[[3]]
-# variation[[3]] <-
-#   list(name = "localsearch",
-#        type = "dvls",
-#        gamma.ls = 0.5)
+variation <- preset_moead("moead.de")$variation
+variation[[4]] <- variation[[3]]
+variation[[3]] <-
+  list(name = "localsearch",
+       type = "dvls",
+       gamma.ls = 0.5)
 
 update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
@@ -36,13 +39,14 @@ update2 <- list(name  = "onra")
 
 n.objs <- c(2)
 
-stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 15000))
+
+stopcrit  <- list(list(name    = "maxiter",
+                       maxiter = 30000))
 
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  for (i in 2:55) {
+  for (i in 1:55) {
     fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
   }
   
@@ -69,21 +73,20 @@ for (n.obj in n.objs) {
         xmax       = as.numeric(getUpper(par.set)),
         m          = n.obj
       )
+      ref.points <- rep(1 + (1 / decomp$H), problem.zdt1$m)
       
       for (j in 1:repetitions) {
         moead.de.data <- list()
-        # moead.de.ls.data <- list()
-        # onra.data <- list()
-        gra.awt.data <- list()
-        # gra.awt.ls.data <- list()
-        ondb.data <- list()
+        moead.dra.data <- list()
+        moead.gra.data <- list()
+        moead.rad.data <- list()
         nsga.2.data <- list()
-        # ondb.ls.data <- list()
+        
         
         cat("rep:", j)
         
         
-        # # moead
+        # # moead.de
         moead.de <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
@@ -93,73 +96,40 @@ for (n.obj in n.objs) {
           seed = j
         )
         
-        # moead.de.ls <- moead(
-        #   problem  = problem.zdt1,
-        #   preset   = preset_moead(algo),
-        #   decomp = decomp,
-        #   stopcrit = stopcrit,
-        #   update = update,
-        #   scaling = scaling,
-        #   variation = variation,
-        #   showpars = list(show.iters = "none", showevery = 100),
-        #   seed = j
-        # )
-        
-        # onra
-        # onra <- moead(
-        #   problem  = problem.zdt1,
-        #   preset   = preset_moead(algo),
-        #   decomp = decomp,
-        #   increments = increments,
-        #   # update = update,
-        #   scaling = scaling,
-        #   stopcrit = stopcrit,
-        #   # variation = variation,
-        #   showpars = list(show.iters = "none", showevery = 100),
-        #   seed = j
-        # )
-        
-        # gra.awt
-        gra.awt <- moead(
+        moead.dra <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
-          decomp = decomp,
-          aggfun = aggfun,
-          update = update2,
-          increments = increments,
+          decomp = decomp2,
           stopcrit = stopcrit,
-          # scaling = scaling,
-          # variation = variation,
           showpars = list(show.iters = "none", showevery = 100),
-          seed = j
+          seed = j,
+          resource.allocation = resource.allocation.DRA
+        )
+        
+        # gra.awt
+        moead.gra <- moead(
+          problem  = problem.zdt1,
+          preset   = preset_moead(algo),
+          decomp = decomp2,
+          update = update2,
+          stopcrit = stopcrit,
+          showpars = list(show.iters = "none", showevery = 100),
+          seed = j,
+          resource.allocation = resource.allocation.GRA
         )
         
         # ondb
-        ondb <- moead(
+        moead.rad <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
-          decomp = decomp,
+          decomp = decomp2,
           increments = increments2,
           stopcrit = stopcrit,
-          # variation = variation,
-          # update = update,
-          # scaling = scaling,
           showpars = list(show.iters = "none", showevery = 10),
-          seed = j
+          seed = j,
+          
+          resource.allocation = resource.allocation.RAD
         )
-        # ondb.ls
-        # ondb.ls <- moead(
-        #   problem  = problem.zdt1,
-        #   preset   = preset_moead(algo),
-        #   decomp = decomp,
-        #   increments = increments2,
-        #   stopcrit = stopcrit,
-        #   update = update,
-        #   scaling = scaling,
-        #   variation = variation,
-        #   showpars = list(show.iters = "none", showevery = 100),
-        #   seed = j
-        # )
         
         par.set = ParamHelpers::getParamSet(problem)
         nsga.2 = mco::nsga2(
@@ -169,93 +139,102 @@ for (n.obj in n.objs) {
           odim = n.obj,
           lower.bounds = as.numeric(getLower(par.set)),
           upper.bounds = as.numeric(getUpper(par.set)),
-          popsize = 300
+          popsize = (floor(dim(moead.de$W)[1]/4))*4
         )
-        
         
         
         # scaling based on https://www.dora.dmu.ac.uk/xmlui/bitstream/handle/2086/15157/TR-CEC2018-MaOO-Competition.pdf?sequence=1
         # Benchmark Functions for CEC’2018 Competition on Many-Objective Optimization
         # instead of using nadir of pareto front using from estimation on the most basic algorithm tested
-        feas.idx <- rep(TRUE, nrow(moead.de$Y))
-        y.nadir <- apply(moead.de$Y[feas.idx, ], 2, max)
-        # ondb$Y.norm <- ondb$Y / (1.1 * y.nadir)
-        ondb$Y.norm <- ondb$Y / (1.1 * y.nadir)
-        # ondb.ls$Y.norm <- ondb$Archive$Y/(1.1*y.nadir)
-        # onra$Y.norm <- onra$Y / (1.1 * y.nadir)
-        gra.awt$Y.norm <- gra.awt$Y / (1.1 * y.nadir)
-        # moead.de.ls$Y.norm <- moead.de.ls$Archive$Y/(1.1*y.nadir)
-        moead.de$Y.norm <- moead.de$Y / (1.1 * y.nadir)
-        nsga.2$Y.norm <- nsga.2$value / (1.1 * y.nadir)
-        ref.points <- rep(1 + (1 / decomp$H), problem.zdt1$m)
+        
+        nsga.2$nadir <- apply(nsga.2$value, 2, max)
+        nsga.2$ideal <- apply(nsga.2$value, 2, min)
+        
+        all.nadir <-
+          rbind(moead.de$nadir,
+                moead.dra$nadir,
+                moead.rad$nadir,
+                moead.gra$nadir,
+                nsga.2$nadir)
+        
+        y.nadir <- apply(all.nadir, 2, max)
+        
+        all.ideal <-
+          rbind(moead.de$ideal,
+                moead.dra$ideal,
+                moead.rad$ideal,
+                moead.gra$ideal,
+                nsga.2$ideal)
+        y.ideal <- apply(all.ideal, 2, min)
+        # for (i in 1:length(y.nadir)){
+        #   if (y.nadir[i]<0) y.nadir[i] <- 1e-50
+        # }
+        z <- 1:problem.zdt1$m
+        moead.rad$Y.norm <-
+          unlist(sapply(z, function(i, apf, y.nadir, y.ideal) {
+            (apf[, i] - y.ideal[i]) / (y.nadir[i] - y.ideal[i])
+          }, apf = moead.rad$Y, y.nadir = y.nadir, y.ideal = y.ideal))
+        
+        moead.gra$Y.norm <-
+          unlist(sapply(z, function(i, apf, y.nadir) {
+            (apf[, i] - y.ideal[i]) / (y.nadir[i] - y.ideal[i])
+          }, apf = moead.gra$Y, y.nadir = y.nadir))
+        
+        moead.de$Y.norm <-
+          unlist(sapply(z, function(i, apf, y.nadir) {
+            (apf[, i] - y.ideal[i]) / (y.nadir[i] - y.ideal[i])
+          }, apf = moead.de$Y, y.nadir = y.nadir))
+        
+        moead.dra$Y.norm <-
+          unlist(sapply(z, function(i, apf, y.nadir) {
+            (apf[, i] - y.ideal[i]) / (y.nadir[i] - y.ideal[i])
+          }, apf = moead.dra$Y, y.nadir = y.nadir))
+        
+        nsga.2$Y.norm <-
+          unlist(sapply(z, function(i, apf, y.nadir) {
+            (apf[, i] - y.ideal[i]) / (y.nadir[i] - y.ideal[i])
+          }, apf = nsga.2$value, y.nadir = y.nadir))
         
         # moead
         moead.de.non.d <- find_nondominated_points(moead.de$Y.norm)
         moead.de.hv <-
-          emoa::dominated_hypervolume(points = t(moead.de$Y.norm[moead.de.non.d,]),
+          emoa::dominated_hypervolume(points = t(moead.de$Y.norm[moead.de.non.d, ]),
                                       ref = ref.points)
         
-        # moead.ls
-        # moead.de.ls.non.d <- find_nondominated_points(moead.de.ls$Y.norm)
-        # moead.de.ls.hv <-
-        #   emoa::dominated_hypervolume(points = t(moead.de.ls$Y.norm[moead.de.ls.non.d, ]),
-        #                               ref = ref.points)
+        moead.dra.non.d <- find_nondominated_points(moead.dra$Y.norm)
+        moead.dra.hv <-
+          emoa::dominated_hypervolume(points = t(moead.dra$Y.norm[moead.dra.non.d, ]),
+                                      ref = ref.points)
         
-        
-        # #onra
-        # onra.non.d <- find_nondominated_points(onra$Y.norm)
-        # onra.hv <-
-        #   emoa::dominated_hypervolume(points = t(onra$Y.norm[onra.non.d,]),
-                                      # ref = ref.points)
+        moead.rad.non.d <- find_nondominated_points(moead.rad$Y.norm)
+        moead.rad.hv <-
+          emoa::dominated_hypervolume(points = t(moead.rad$Y.norm[moead.rad.non.d, ]),
+                                      ref = ref.points)
         
         # gra.awt
-        gra.awt.non.d <- find_nondominated_points(gra.awt$Y.norm)
-        gra.awt.hv <-
-          emoa::dominated_hypervolume(points = t(gra.awt$Y.norm[gra.awt.non.d,]),
+        moead.gra.non.d <- find_nondominated_points(moead.gra$Y.norm)
+        moead.gra.hv <-
+          emoa::dominated_hypervolume(points = t(moead.gra$Y.norm[moead.gra.non.d, ]),
                                       ref = ref.points)
-        # ondb
-        ondb.non.d <- find_nondominated_points(ondb$Y.norm)
-        ondb.hv <-
-          emoa::dominated_hypervolume(points = t(ondb$Y.norm[ondb.non.d,]),
-                                      ref = ref.points)
-        # ondb
-        # ondb.ls.non.d <- find_nondominated_points(ondb.ls$Y.norm)
-        # ondb.ls.hv <-
-        #   emoa::dominated_hypervolume(points = t(ondb.ls$Y.norm[ondb.ls.non.d, ]),
-        #                               ref = ref.points)
         
         nsga.2.non.d <- find_nondominated_points(nsga.2$Y.norm)
         nsga.2.hv <-
-          emoa::dominated_hypervolume(points = t(nsga.2$Y.norm[nsga.2.non.d,]),
+          emoa::dominated_hypervolume(points = t(nsga.2$Y.norm[nsga.2.non.d, ]),
                                       ref = ref.points)
         
         
         moead.de.data <-
           rbind(moead.de.data,
-                moead.de.hv)#,
-        # moead.de.IGD)
-        # moead.de.ls.data <-
-        #   rbind(moead.de.ls.data,
-        #         moead.de.ls.hv,
-        #         moead.de.ls.IGD)
-        # onra.data <-
-        #   rbind(onra.data,
-        #         onra.hv)#,
-        # onra.IGD)
-        #gra.awt
-        gra.awt.data <-
-          rbind(gra.awt.data,
-                gra.awt.hv)#,
-        # gra.awt.IGD)
-        # onra.IGD)
-        ondb.data <-
-          rbind(ondb.data,
-                ondb.hv)#,
-        # ondb.IGD)
-        # ondb.ls.data <-
-        #   rbind(ondb.ls.data,
-        #         ondb.ls.hv,
-        #         ondb.ls.IGD)
+                moead.de.hv)
+        moead.dra.data <-
+          rbind(moead.dra.data,
+                moead.dra.hv)
+        moead.gra.data <-
+          rbind(moead.gra.data,
+                moead.gra.hv)
+        moead.rad.data <-
+          rbind(moead.rad.data,
+                moead.rad.hv)
         nsga.2.data <-
           rbind(nsga.2.data,
                 nsga.2.hv)
@@ -263,34 +242,30 @@ for (n.obj in n.objs) {
         metrics <-
           rbind(
             unlist(moead.de.data),
-            # unlist(moead.de.ls.data),
-            # unlist(onra.data),
-            unlist(gra.awt.data),
-            unlist(ondb.data),
+            unlist(moead.dra.data),
+            unlist(moead.gra.data),
+            unlist(moead.rad.data),
             unlist(nsga.2.data)
-            # unlist(ondb.ls.data)
           )
         colnames(metrics) <- c("HV")
         names <-
-          c(algo,
-            # 'MOEA/D-DE.ls',
-            # 'ONRA',
-            'GRA.AWT',
-            'ONDB',
+          c('MOEA/D-DE',
+            'MOEA/D-DRA',
+            'MOEA/D-GRA',
+            'MOEA/D-RAD',
             'NSGA-2')
-            # 'ONDB.ls')
-            temp <- data.frame(metrics, fun, algo, names)
-            colnames(temp) <-
-              c("HV",
-                "function",
-                "base.algorithm",
-                "variation.name")
-            if (exists("my.data")) {
-              my.data <- rbind(my.data, temp)
-            }
-            else {
-              my.data <- temp
-            }
+        temp <- data.frame(metrics, fun, algo, names)
+        colnames(temp) <-
+          c("HV",
+            "fun",
+            "base.algorithm",
+            "variation.name")
+        if (exists("my.data")) {
+          my.data <- rbind(my.data, temp)
+        }
+        else {
+          my.data <- temp
+        }
       }
       save(my.data, file = paste0(fun, "_", problem.zdt1$m))
     }
