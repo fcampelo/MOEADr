@@ -40,8 +40,8 @@ update2 <- list(name  = "onra")
 n.objs <- c(2)
 
 
-stopcrit  <- list(list(name    = "maxiter",
-                       maxiter = 30000))
+stopcrit  <- list(list(name    = "maxeval",
+                       maxeval = 30000))
 
 for (n.obj in n.objs) {
   print(n.obj)
