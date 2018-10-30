@@ -143,6 +143,7 @@ for (n.obj in n.objs) {
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
           decomp = decomp2,
+          update = update2,
           stopcrit = stopcrit,
           showpars = list(show.iters = "none", showevery = 10),
           seed = j,
