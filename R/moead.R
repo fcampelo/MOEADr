@@ -269,8 +269,8 @@ moead <-
            # List:  echoing behavior
            seed = NULL,
            # Seed for PRNG
-           increments = NULL,
-           population = NULL,
+           resource.allocation = NULL,
+           # List:  resource
            ...)
 # other parameters
   {
@@ -280,6 +280,7 @@ moead <-
         saveRDS(as.list(environment()),
                 "moead_env.rds")
     }
+    
     # ============================ Set parameters ============================== #
     if (!is.null(preset)) {
       if (is.null(problem))
@@ -298,7 +299,11 @@ moead <-
         scaling   = preset$scaling
       if (is.null(stopcrit))
         stopcrit  = preset$stopcrit
+      if (is.null(resource.allocation))
+        nullRA  = TRUE
     }
+    
+    
     
     # ============== Error catching and default value definitions ============== #
     # "problem"     checked in "create_population(...)"
@@ -321,15 +326,19 @@ moead <-
       assertthat::assert_that(assertthat::is.count(seed))
       set.seed(seed)               # set PRNG seed
     }
+    # check resource allocation
+    if (!is.null(resource.allocation)) {
+      nullRA <- FALSE
+    }
+    
+    
     # ============ End Error catching and default value definitions ============ #
     
     # ============================= Algorithm setup ============================ #
-    nfe        <-
-      0              # counter for function evaluations
+    nfe        <- 0              # counter for function evaluations
     time.start <- Sys.time()     # Store initial time
     iter.times <-
       numeric(10000) # pre-allocate vector for iteration times.
-    
     if (is.null(update$UseArchive)) {
       update$UseArchive <- FALSE
     }
@@ -339,275 +348,207 @@ moead <-
     # Generate weigth vectors
     W  <- generate_weights(decomp = decomp,
                            m      = problem$m)
-    
     # Generate initial population
-    if (is.null(population)) {
-      X  <-
-        create_population(N = nrow(W),
-                          problem = problem,
-                          increments = increments)
-    }
-    else {
-      X <- population
-    }
+    X  <- create_population(N       = nrow(W),
+                            problem = problem)
+    
     # Evaluate population on objectives
     YV <- evaluate_population(X       = X,
                               problem = problem,
                               nfe     = nfe)
-    # Y <- BBmisc::normalize(YV$Y, method = "range", margin = 2)
     Y   <- YV$Y
     V   <- YV$V
     nfe <- YV$nfe
     
-    #mudar para ser um so
-    nullONRA <- is.null(increments$ONRA$onra)
-    nullONDB <- is.null(increments$ONRA$ondb)
-    if (!nullONRA) {
-      p <- init_p(W, 0.5)
-      dt.bigZ <- list()
-      dt.size <- increments$ONRA$dt
-      variation.pop <- list(list(name = "diffmut"),
-                            list(name = "polymut"),
-                            list(name = "truncate"))
-      variation.ls <- list(list(name = "localsearch"),
-                           list(name = "truncate"))
-      for (i in seq_along(variation)){
-        if (variation[[i]]$name == "diffmut") {
-          variation.pop[[1]] <- variation[[i]]
-        }
-        if (variation[[i]]$name == "polymut") {
-          variation.pop[[2]] <- variation[[i]]
-        }
-        if (variation[[i]]$name == "truncate") {
-          variation.pop[[3]] <- variation[[i]]
-        }
-        if (variation[[i]]$name == "localsearch") {
-          ls = TRUE
-          variation.ls[[1]] <- variation[[i]]
-        }
+    # fixed neighbours
+    if (!nullRA) {
+      if (resource.allocation$name == "DRA") {
+        ra <- init_dra(neighbors, aggfun, X, W, Y)
+        Pi <- ra$Pi
+        oldObj <- ra$oldObj
+        idx.bounday <- ra$idx.bounday
+        BP <- ra$BP
+      }
+      else if (resource.allocation$name == "GRA") {
+        dt.bigZ <- list()
+        ra <- init_gra(neighbors, aggfun, X, W, Y)
+        Pi <- ra$Pi
+        BP <- ra$BP
+      }
+      if (resource.allocation$name == "RAD") {
+        ra <- init_rad(neighbors, aggfun, X, W, Y)
+        Pi <- ra$Pi
+        BP <- ra$BP
       }
     }
-    else if (!nullONDB) {
-      p <- init_p(W, 0.5)
-      dt.size <- increments$ONRA$dt
-      variation.pop <- list(list(name = "diffmut"),
-                            list(name = "polymut"),
-                            list(name = "truncate"))
-      variation.ls <- list(list(name = "localsearch"),
-                           list(name = "truncate"))
-      for (i in seq_along(variation)){
-        if (variation[[i]]$name == "diffmut") {
-          variation.pop[[1]] <- variation[[i]]
-        }
-        if (variation[[i]]$name == "de") {
-          variation.pop[[1]] <- variation[[i]]
-        }
-        if (variation[[i]]$name == "polymut") {
-          variation.pop[[2]] <- variation[[i]]
-        }
-        if (variation[[i]]$name == "truncate") {
-          variation.pop[[3]] <- variation[[i]]
-        }
-        if (variation[[i]]$name == "localsearch") {
-          ls = TRUE
-          variation.ls[[1]] <- variation[[i]]
-        }
-      }
-    }
-    else {
-      p <- init_p(W, 1)
-      ls = FALSE
-    }
+    
+    indexes <- seq.int(1, dim(W)[1])
+    
     # ========================= End Initial definitions ======================== #
     
     # ============================= Iterative cycle ============================ #
     keep.running  <- TRUE      # stop criteria flag
     iter          <- 0         # counter: iterations
+    
     while (keep.running) {
       # Update iteration counter
       iter <- iter + 1
+      # print(iter)
       if ("save.iters" %in% names(moead.input.pars)) {
         if (moead.input.pars$save.iters == TRUE)
           saveRDS(as.list(environment()),
                   "moead_env.rds")
       }
       
-      # ========== resource allocation
-      # isso tem como por em funcao, com um if, se ter resource se nao so retorna sem fazer nada
-      
-      # ========== Variation
-      # Store current population
-      if (nullONRA && nullONDB) {
+      # ========== Neighborhoods
+      # Define/update neighborhood probability matrix
+      # DRA skips this step
+      if (nullRA) {
+        BP <- define_neighborhood(neighbors = neighbors,
+                                  v.matrix  = switch(neighbors$name,
+                                                     lambda = W,
+                                                     x      = X),
+                                  iter      = iter)
+        # ========== Variation
+        # Store current population
         Xt <- X
         Yt <- Y
         Vt <- V
       }
       else{
-        rand.seq <- runif(length(p))
-        if (sum(rand.seq < p) <= 3) {
-          p <- init_p(W, 1)
+        if (resource.allocation$name == "DRA") {
+          size <- floor(dim(W)[1] / 5) - problem$m
+          # for (ii in 1:5){
+            idx.tour <-
+              ecr::selTournament(
+                fitness = -Pi,
+                n.select = size,
+                k = 10
+              )
+            indexes <- append(idx.bounday, idx.tour)
         }
-        temp.X <- X
-        temp.V <- V
-        X <- subsetting(var = X,
-                        rand.seq = rand.seq,
-                        p = p)
+        else{
+          rand.seq <- runif(length(Pi))
+          indexes <- which(rand.seq < Pi)
+          if (length(indexes) < 3){
+            indexes <- which(rand.seq <= 1)
+          }
+        }
         Xt <- X
+        temp.X <- X
+        X <- X[indexes, ]
         Yt <- Y
+        temp.Y <- Y
+        Y <- Y[indexes, ]
         Vt <- V
       }
-      # ========== Neighborhoods
-      # Define/update neighborhood probability matrix
-      BP <- define_neighborhood(neighbors = neighbors,
-                                v.matrix  = switch(
-                                  neighbors$name,
-                                  lambda = W,
-                                  x      = X,
-                                  cga    = X
-                                ),
-                                iter      = iter)
       
-      P  <- BP$P
-      B  <- BP$B.variation
-      if (!nullONRA || !nullONDB) {
-        P <- subsetting(var = P,
-                        rand.seq = rand.seq,
-                        p = p)
-        P <- P[, rand.seq < p]
-        B  <- subsetting(var = B,
-                         rand.seq = rand.seq,
-                         p = p)
-        if (isTRUE(ls)) {
-          variation <- variation.pop
-        }
-      }
+      B  <- BP$B.variation[indexes,]
+      P  <- BP$P[indexes, indexes]
+      
+      # Perform variation
       Xv      <- do.call(perform_variation,
                          args = as.list(environment()))
       X       <- Xv$X
+      ls.args <- Xv$ls.args
       nfe     <- nfe + Xv$var.nfe
       
-      if (!nullONRA || !nullONDB) {
-        if (iter > 1 && isTRUE(ls)) {
-          variation <- variation.ls
-          Xv      <- do.call(perform_variation,
-                             args = as.list(environment()))
-          X       <- Xv$X
-          ls.args <- Xv$ls.args
-          nfe     <- nfe + Xv$var.nfe
-        }
-      }
-      
+      # ========== Evaluation
       # Evaluate offspring population on objectives
       YV <- evaluate_population(X       = X,
                                 problem = problem,
                                 nfe     = nfe)
+      Y   <- YV$Y
+      V   <- YV$V
       nfe <- YV$nfe
-      # so pode e deve ficar em funcoes so checar se tem resource allocation e mandar bala
-      # aqui tb como logo antes
-      if (!nullONRA || !nullONDB) {
-        temp.X[rand.seq < p,] <- X
+      
+      if (!nullRA) {
+        temp.X[indexes, ] <- X
         X <- temp.X
-        temp.V[rand.seq < p,] <- V
-        V <- temp.V
-        Y[rand.seq < p,]   <- YV$Y
-        V[rand.seq < p,]   <- YV$V
-        Xt <- temp.X
-        Vt <- temp.V
         
+        temp.Y[indexes, ] <- Y
+        Y <- temp.Y
       }
-      else{
-        Y   <- YV$Y
-        V   <- YV$V
-      }
+      
+      
+      
       # ========== Scalarization
       # Objective scaling and estimation of 'ideal' and 'nadir' points
       normYs <- scale_objectives(Y       = Y,
                                  Yt      = Yt,
                                  scaling = scaling)
+      
       # Scalarization by neighborhood.
-      # bigZ is an [(T+1) x N] matrix (or [N x (LR+1)] if using a_GA), in which each column has the T (LR) scalarized
+      # bigZ is an [(T+1) x N] matrix, in which each column has the T scalarized
       # values for the solutions in the neighborhood of one subproblem, plus the
       # scalarized value for the incumbent solution for that subproblem.
-      
       B  <- BP$B.scalarize
       bigZ <- scalarize_values(
         normYs  = normYs,
         W       = W,
-        B       = BP$B.scalarize,
+        B       = B,
         aggfun  = aggfun
       )
       
       # Calculate selection indices
-      # sel.indx is an [N x (T+1)] matrix (or [N x (LR+1)] if using a_GA), in
-      # which each row contains the indices of one neighborhood (plus incumbent),
-      # sorted by their "selection quality" (which takes into account both the
-      #performance value and constraint handling policy, if any)
+      # sel.indx is an [N x (T+1)] matrix, in which each row contains the indices
+      # of one neighborhood (plus incumbent), sorted by their "selection quality"
+      # (which takes into account both the performance value and constraint
+      # handling policy, if any)
       B  <- BP$B.order
       sel.indx <- order_neighborhood(
         bigZ       = bigZ,
-        B          = BP$B.order,
+        B          = B,
         V          = V,
         Vt         = Vt,
         constraint = constraint
       )
       
-      
-      if (!nullONRA) {
-        if (iter > dt.size) {
-          index <- ((iter - 1) %% dt.size) + 1
-          p <-
-            ONRA(dt.bigZ = dt.bigZ[[index]], bigZ = bigZ)
-          dt.bigZ[[index]] <- bigZ
-        }
-        else{
-          dt.bigZ[[length(dt.bigZ) + 1]] <- bigZ
-        }
-      }
-      if (!nullONDB) {
-        # if(iter %% 2 == 0){
-        if (iter > dt.size) {
-          if (iter > dt.size + 1)
-            prev <- max(diversity$dm)
-          diversity <-
-            online_diversity(offspring = Y,
-                             parent = parent,
-                             W = W)
-          p <- diversity$p
-          if (iter > dt.size + 1) {
-            if (round(prev, 3) - round(max(diversity$dm), 3) == 0) {
-              p <- init_p(W, 0.5)
-            }
-            
-          }
-          # }
-        }
-        # else{
-        parent <- Y
-        # print(iter)
-        # }
-      }
-      
       # ========== Update
       # Update population
-      
       XY <- do.call(update_population,
                     args = as.list(environment()))
       X       <- XY$X
-      
       Y       <- XY$Y
       V       <- XY$V
       Archive <- XY$Archive
-      # if(update$UseArchive){
-      #   a <- rbind(Y,XY$Archive$Y)
-      #   b <- ecr::doNondominatedSorting(t(a))
-      #   Archive$Y <- a[b$ranks==1,]
-      #   
-      # }
       
-      
-      
-      
-      
+      if (!nullRA) {
+        if (resource.allocation$name == "DRA") {
+          if (iter %% resource.allocation$dt == 0) {
+            newObj <- bigZ[neighbors$T + 1,]
+            Pi <- dra(newObj, oldObj, Pi)
+            oldObj <- newObj
+          }
+        }
+        if (resource.allocation$name == "GRA") {
+          if (iter > resource.allocation$dt) {
+            index <- ((iter - 1) %% resource.allocation$dt) + 1
+            Pi <-
+              ONRA(dt.bigZ[[index]], bigZ, neighbors$T, epsilon = 1e-50)
+            dt.bigZ[[index]] <- bigZ
+          }
+          else{
+            dt.bigZ[[length(dt.bigZ) + 1]] <- bigZ
+          }
+        }
+        if (resource.allocation$name == "RAD") {
+          if (iter > resource.allocation$dt) {
+            diversity <-
+              online_diversity(
+                offspring = Y,
+                parent = parent,
+                W = W,
+                old.dm = old.dm
+              )
+            p <- diversity$p
+            old.dm <- diversity$dm
+          }
+          else
+            old.dm <- init_p(W, 0)
+          parent <- Y
+        }
+      }
       # ========== Stop Criteria
       # Calculate iteration time
       elapsed.time <- as.numeric(difftime(
@@ -620,7 +561,6 @@ moead <-
         yes = as.numeric(elapsed.time),
         no  = as.numeric(elapsed.time) - sum(iter.times)
       )
-      
       # Verify stop criteria
       keep.running <- check_stop_criteria(stopcrit = stopcrit,
                                           call.env = environment())
@@ -628,11 +568,6 @@ moead <-
       # ========== Print
       # Echo whatever is demanded
       print_progress(iter.times, showpars)
-      # print(iter)
-      # if (iter %% 10 ==0 ){
-      #   plot(Y, main = iter)
-      #   # exit()
-      # }
     }
     # =========================== End Iterative cycle ========================== #
     
@@ -655,8 +590,6 @@ moead <-
       Y           = Y,
       V           = V,
       W           = W,
-      H           = decomp$H,
-      n.problems  = problem$m,
       Archive     = Archive,
       ideal       = apply(Y, 2, min),
       nadir       = apply(Y, 2, max),
@@ -667,6 +600,7 @@ moead <-
       inputConfig = moead.input.pars
     )
     class(out) <- c("moead", "list")
+    
     return(out)
     # ================================ End Output ============================== #
   }

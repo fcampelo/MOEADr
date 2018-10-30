@@ -51,50 +51,69 @@ evaluate_population <- function(X, problem, nfe)
   # ==========
 
   # Denormalize population
-  X <- denormalize_population(X, problem)
-
-  # Prepare arguments for function call
-  fun.args <- as.list(formals(problem$name))
-
-  my.args  <- sapply(names(fun.args),
-                     FUN      = function(argname, pars, args){
-                                   if(argname %in% names(pars)) {
-                                     args[argname] <- pars[argname]
-                                   }
-                                   return(args[[argname]])},
-                     pars     = problem,
-                     args     = fun.args,
-                     simplify = FALSE)
-
-  my.args[[grep("[x|X]",
-                names(my.args))]] <- X
-
-  Y <- do.call(problem$name,
-               args = my.args)
-
+  if (problem$name == "problem.moon") {
+    write.table(X,
+                file = "pop_vars_eval.txt",
+                row.names = FALSE, sep = "\t",  col.names=FALSE)
+    system("./moon_mop . ")
+    # get evaluations from file
+    Y <- as.matrix(read.csv("pop_objs_eval.txt", sep = "\t", stringsAsFactors =  F, header = F))
+  }
+  else{
+    X <- denormalize_population(X, problem)
+    
+    # Prepare arguments for function call
+    fun.args <- as.list(formals(problem$name))
+    
+    my.args  <- sapply(names(fun.args),
+                       FUN      = function(argname, pars, args){
+                         if(argname %in% names(pars)) {
+                           args[argname] <- pars[argname]
+                         }
+                         return(args[[argname]])},
+                       pars     = problem,
+                       args     = fun.args,
+                       simplify = FALSE)
+    
+    my.args[[grep("[x|X]",
+                  names(my.args))]] <- X
+    
+    Y <- do.call(problem$name,
+                 args = my.args)
+  }
   if ("constraints" %in% names(problem))
   {
-    con <- problem$constraints
-    if (is.null(con$epsilon)) con$epsilon <- 0
-
-    # Prepare arguments for function call
-    vfun.args <- as.list(formals(con$name))
-
-    my.vargs  <- sapply(names(vfun.args),
-                        FUN      = function(argname, pars, args){
-                                     if(argname %in% names(pars)) {
-                                       args[argname] <- pars[argname]
-                                     }
-                                   return(args[[argname]])},
-                        pars     = con,
-                        args     = vfun.args,
-                        simplify = FALSE)
-
-    my.vargs[[grep("[x|X]",
-                   names(my.vargs))]] <- X
-
-    V <- do.call(con$name,
-                 args = my.vargs)
+    if(problem$name == "problem.moon") {
+      # get constrains from file
+      cons <- as.matrix(read.csv("pop_cons_eval.txt", sep = "\t", stringsAsFactors =  F, header = F))
+      Vmatrix <- abs(pmin(cons[, 1:2], 0))
+      V <- list(Cmatrix = cons, Vmatrix = Vmatrix, v = rowSums(Vmatrix))
+      
+    }
+    else{
+      con <- problem$constraints
+      if (is.null(con$epsilon)) con$epsilon <- 0
+      
+      # Prepare arguments for function call
+      vfun.args <- as.list(formals(con$name))
+      
+      my.vargs  <- sapply(names(vfun.args),
+                          FUN      = function(argname, pars, args){
+                            if(argname %in% names(pars)) {
+                              args[argname] <- pars[argname]
+                            }
+                            return(args[[argname]])},
+                          pars     = con,
+                          args     = vfun.args,
+                          simplify = FALSE)
+      
+      my.vargs[[grep("[x|X]",
+                     names(my.vargs))]] <- X
+      
+      V <- do.call(con$name,
+                   args = my.vargs)
+    }
+    
   }
   else
   {
