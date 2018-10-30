@@ -143,11 +143,9 @@ for (n.obj in n.objs) {
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
           decomp = decomp2,
-          increments = increments2,
           stopcrit = stopcrit,
           showpars = list(show.iters = "none", showevery = 10),
           seed = j,
-          
           resource.allocation = resource.allocation.RAD
         )
         
