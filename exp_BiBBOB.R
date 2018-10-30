@@ -5,7 +5,7 @@ library(MOEADr)
 library(emoa)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
-repetitions <- 21
+repetitions <-  21
 
 algorithms <- c("moead.de")
 
@@ -14,87 +14,67 @@ resource.allocation.DRA <- list(name = "DRA", dt = 50)
 resource.allocation.GRA <- list(name = "GRA", dt = 20)
 resource.allocation.RAD <- list(name = "RAD", dt = 20)
 
-# decomp <- list(name = "SLD")
+
 decomp <- list(name = "SLD", H = 149)
 decomp2 <- list(name = "uniform", N = 150)
 
-
+# neighbors <- preset_moead("original")$neighbors
+# neighbors$delta.p <- 0.9
 
 scaling <- list()
 scaling$name <- "simple"
-# 
-# variation <- preset_moead("original")$variation
-# variation[[4]] <- variation[[3]]
-# variation[[3]] <-
-#   list(name = "localsearch",
-#        type = "dvls",
-#        gamma.ls = 0.5)
 
-# update <- preset_moead("moead.de")$update
-# update$UseArchive = TRUE
+variation <- preset_moead("moead.de")$variation
+variation[[4]] <- variation[[3]]
+variation[[3]] <-
+  list(name = "localsearch",
+       type = "dvls",
+       gamma.ls = 0.5)
+
+update <- preset_moead("moead.de")$update
+update$UseArchive = TRUE
 
 update2 <- list(name  = "onra")
 # update2$UseArchive = TRUE
 
-n.objs <- c(2, 3)
+n.objs <- c(2)
 
-stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 30000))
+
+stopcrit  <- list(list(name    = "maxiter",
+                       maxiter = 30000))
 
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  for (i in 3:6) {
-    fun.names1[[length(fun.names1) + 1]] = paste0("WFG", i)
-  }
-  for (i in 9:9) {
-    fun.names1[[length(fun.names1) + 1]] = paste0("WFG", i)
+  for (i in 1:55) {
+    fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
   }
   
   my.data <- data.frame()
   for (algo in algorithms) {
     print(algo)
+    id = 1
     for (fun in fun.names1) {
       print(fun)
-      if (n.obj == 2) {
-        decomp$H <- 149
-        k = 2 * (n.obj - 1)
-        L = 20
-        d = k + L
-      }
-      if (n.obj == 3) {
-        decomp$H <- 19
-        k = 2 * (n.obj - 1)
-        L = 20
-        d = k + L
-      }
-      if (n.obj == 4) {
-        decomp$H <- 10
-        k = 2 * (n.obj - 1)
-        L = 20
-        d = k + L
-      }
       problem <-
-        load.WFG.function(
-          fun = fun,
-          n.obj = n.obj,
-          k = k,
-          L = L
-        )
-      problem <- problem$fn
-      problem.WFG <- function(X) {
+        makeBiObjBBOBFunction(dimension = 20,
+                              fid = id,
+                              iid = 1)
+      id = id + 1
+      problem.BiBBOB <- function(X) {
         t(apply(X, MARGIN = 1,
                 FUN = problem))
       }
       
       par.set = ParamHelpers::getParamSet(problem)
       problem.zdt1 <- list(
-        name       = "problem.WFG",
+        name       = "problem.BiBBOB",
         xmin       = as.numeric(getLower(par.set)),
         xmax       = as.numeric(getUpper(par.set)),
         m          = n.obj
       )
       ref.points <- rep(1 + (1 / decomp$H), problem.zdt1$m)
+      
       for (j in 1:repetitions) {
         moead.de.data <- list()
         moead.dra.data <- list()
@@ -204,7 +184,7 @@ for (n.obj in n.objs) {
           unlist(sapply(z, function(i, apf, y.nadir) {
             (apf[, i] - y.ideal[i]) / (y.nadir[i] - y.ideal[i])
           }, apf = moead.de$Y, y.nadir = y.nadir))
-      
+        
         moead.dra$Y.norm <-
           unlist(sapply(z, function(i, apf, y.nadir) {
             (apf[, i] - y.ideal[i]) / (y.nadir[i] - y.ideal[i])
