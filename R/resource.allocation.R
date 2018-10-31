@@ -110,8 +110,8 @@ online_diversity <-
     }
     p <-  my.out - old.dm
     p <- (p - min(p)) / ((max(p) - min(p)) + epsilon)
-    # if (anyNA(p))
-    #   p <- init_p(W, 1)
+    if (anyNA(p))
+      p <- init_p(W, 1)
     out <- list(p = p, dm = my.out)
     return(out)
   }
@@ -199,7 +199,7 @@ init_rad <- function(neighbors, aggfun, X, W, Y) {
                                                x      = X),
                             iter      = 1)
   # for GRA - do not this hardcoded
-  Pi <- init_p(W, 1)
+  Pi <- init_p(W, 0.5)
   
   return(list (Pi      = Pi,
                BP = BP))

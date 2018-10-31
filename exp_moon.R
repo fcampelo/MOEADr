@@ -231,6 +231,6 @@ for (algo in algorithms) {
     }
     print(aggregate(my.data$HV, mean, by = list(my.data$variation.name)))
   }
-  print(my,data)
+  print(my.data)
   save(my.data, file = "flymetothemoon")
 }
