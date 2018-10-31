@@ -511,21 +511,21 @@ moead <-
       V       <- XY$V
       Archive <- XY$Archive
       # print(update$nsga)
-      if(update$nsga == T){
-        # while(dim(Archive$Y)!=dim(X)){
-        for (i in 1:30){
-          a <- rbind(Y,XY$Archive$Y)
-          b <- ecr::doNondominatedSorting(t(a))
-          if(i == 1) Archive$Y <-  a[b$ranks==i,]
-          else Archive$Y <- rbind(Archive$Y, a[b$ranks==i,])
-          # if(dim(Archive$Y)[1]>dim(X)[1]) Archive$Y
-          print("iter")
-          print(iter)
-          # print(dim(Archive$Y))
-          # print(dim(X))
-          if(dim(Archive$Y)[1]>dim(X)[1]) break
-        }
-      }
+      # if(update$nsga == T){
+      #   # while(dim(Archive$Y)!=dim(X)){
+      #   for (i in 1:30){
+      #     a <- rbind(Y,XY$Archive$Y)
+      #     b <- ecr::doNondominatedSorting(t(a))
+      #     if(i == 1) Archive$Y <-  a[b$ranks==i,]
+      #     else Archive$Y <- rbind(Archive$Y, a[b$ranks==i,])
+      #     # if(dim(Archive$Y)[1]>dim(X)[1]) Archive$Y
+      #     print("iter")
+      #     print(iter)
+      #     # print(dim(Archive$Y))
+      #     # print(dim(X))
+      #     if(dim(Archive$Y)[1]>dim(X)[1]) break
+      #   }
+      # }
       
       if (!nullRA) {
         if (resource.allocation$name == "DRA") {
