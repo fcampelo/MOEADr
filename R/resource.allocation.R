@@ -199,7 +199,7 @@ init_rad <- function(neighbors, aggfun, X, W, Y) {
                                                x      = X),
                             iter      = 1)
   # for GRA - do not this hardcoded
-  Pi <- init_p(W, 0.5)
+  Pi <- init_p(W, 1)
   
   return(list (Pi      = Pi,
                BP = BP))

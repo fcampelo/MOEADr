@@ -20,7 +20,7 @@ decomp2 <- list(name = "uniform", N = 150)
 
 
 
-scaling <- list()
+  scaling <- list()
 scaling$name <- "simple"
 # 
 # variation <- preset_moead("original")$variation
@@ -36,7 +36,7 @@ scaling$name <- "simple"
 update2 <- list(name  = "onra")
 # update2$UseArchive = TRUE
 
-n.objs <- c(2, 3)
+n.objs <- c(2,3)
 
 stopcrit  <- list(list(name    = "maxeval",
                        maxeval = 30000))
@@ -69,7 +69,7 @@ for (n.obj in n.objs) {
         d = k + L
       }
       if (n.obj == 4) {
-        decomp$H <- 10
+        decomp$H <- 8
         k = 2 * (n.obj - 1)
         L = 20
         d = k + L
