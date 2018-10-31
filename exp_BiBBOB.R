@@ -15,7 +15,7 @@ resource.allocation.GRA <- list(name = "GRA", dt = 20)
 resource.allocation.RAD <- list(name = "RAD", dt = 20)
 
 
-decomp <- list(name = "SLD", H = 149)
+decomp <- list(name = "SLD", H = 249)
 decomp2 <- list(name = "uniform", N = 150)
 
 # neighbors <- preset_moead("original")$neighbors
@@ -41,12 +41,12 @@ n.objs <- c(2)
 
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 60000))
+                       maxeval = 30000))
 
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  for (i in 1:55) {
+  for (i in 1:1) {
     fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
   }
   
@@ -77,10 +77,10 @@ for (n.obj in n.objs) {
       
       for (j in 1:repetitions) {
         moead.de.data <- list()
-        moead.dra.data <- list()
+        # moead.dra.data <- list()
         moead.gra.data <- list()
         moead.rad.data <- list()
-        nsga.2.data <- list()
+        # nsga.2.data <- list()
         
         
         cat("rep:", j)
@@ -112,7 +112,7 @@ for (n.obj in n.objs) {
         moead.gra <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
-          decomp = decomp2,
+          decomp = decomp,
           update = update2,
           stopcrit = stopcrit,
           scaling = scaling,
@@ -125,8 +125,8 @@ for (n.obj in n.objs) {
         moead.rad <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
-          decomp = decomp2,
-          update = update2,
+          decomp = decomp,
+          # update = update2,
           stopcrit = stopcrit,
           scaling = scaling,
           showpars = list(show.iters = "none", showevery = 10),
@@ -165,10 +165,10 @@ for (n.obj in n.objs) {
         
         all.ideal <-
           rbind(moead.de$ideal,
-                moead.dra$ideal,
+                # moead.dra$ideal,
                 moead.rad$ideal,
-                moead.gra$ideal,
-                nsga.2$ideal)
+                moead.gra$ideal)#,
+                # nsga.2$ideal)
         y.ideal <- apply(all.ideal, 2, min)
         # for (i in 1:length(y.nadir)){
         #   if (y.nadir[i]<0) y.nadir[i] <- 1e-50
@@ -205,21 +205,21 @@ for (n.obj in n.objs) {
           emoa::dominated_hypervolume(points = t(moead.de$Y.norm[moead.de.non.d, ]),
                                       ref = ref.points)
         
-        moead.dra.non.d <- find_nondominated_points(moead.dra$Y.norm)
-        moead.dra.hv <-
-          emoa::dominated_hypervolume(points = t(moead.dra$Y.norm[moead.dra.non.d, ]),
-                                      ref = ref.points)
+        # moead.dra.non.d <- find_nondominated_points(moead.dra$Y.norm)
+        # moead.dra.hv <-
+        #   emoa::dominated_hypervolume(points = t(moead.dra$Y.norm[moead.dra.non.d, ]),
+        #                               ref = ref.points)
         
         moead.rad.non.d <- find_nondominated_points(moead.rad$Y.norm)
         moead.rad.hv <-
           emoa::dominated_hypervolume(points = t(moead.rad$Y.norm[moead.rad.non.d, ]),
                                       ref = ref.points)
-        
+
         # gra.awt
-        # moead.gra.non.d <- find_nondominated_points(moead.gra$Y.norm)
-        # moead.gra.hv <-
-        #   emoa::dominated_hypervolume(points = t(moead.gra$Y.norm[moead.gra.non.d, ]),
-        #                               ref = ref.points)
+        moead.gra.non.d <- find_nondominated_points(moead.gra$Y.norm)
+        moead.gra.hv <-
+          emoa::dominated_hypervolume(points = t(moead.gra$Y.norm[moead.gra.non.d, ]),
+                                      ref = ref.points)
         # 
         # nsga.2.non.d <- find_nondominated_points(nsga.2$Y.norm)
         # nsga.2.hv <-
