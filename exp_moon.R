@@ -15,8 +15,8 @@ resource.allocation.GRA <- list(name = "GRA", dt = 20)
 resource.allocation.RAD <- list(name = "RAD", dt = 20)
 
 
-decomp <- list(name = "SLD", H = 19)
-decomp2 <- list(name = "uniform", N = 150)
+decomp <- list(name = "SLD", H = 23)
+decomp2 <- list(name = "uniform", N = 300)
 
 # neighbors <- preset_moead("original")$neighbors
 # neighbors$delta.p <- 0.9
@@ -33,9 +33,15 @@ variation[[3]] <-
 
 update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
+update$nsga = TRUE
 
 update2 <- list(name  = "onra")
-# update2$UseArchive = TRUE
+update2$UseArchive = TRUE
+update2$nsga = TRUE
+
+update3 <- list(name  = "onra")
+update3$UseArchive = TRUE
+update3$nsga = TRUE
 
 n.obj <- 3
 
@@ -60,34 +66,38 @@ for (algo in algorithms) {
   ref.points <- rep(1, problem.zdt1$m)
   for (j in 1:repetitions) {
     moead.de.data <- list()
-    moead.dra.data <- list()
+    # moead.dra.data <- list()
     moead.gra.data <- list()
     moead.rad.data <- list()
     
     cat("rep:", j)
     
     
-    # # moead.de
+    # moead.de
     moead.de <- moead(
       problem  = problem.zdt1,
       preset   = preset_moead(algo),
       decomp = decomp,
       stopcrit = stopcrit,
+      scaling = scaling,
+      update = update,
       constraint = list(name = "penalty", beta=0),
       showpars = list(show.iters = "none", showevery = 100),
       seed = j
     )
     
-    moead.dra <- moead(
-      problem  = problem.zdt1,
-      preset   = preset_moead(algo),
-      decomp = decomp2,
-      stopcrit = stopcrit,
-      constraint = list(name = "penalty", beta=0),
-      showpars = list(show.iters = "none", showevery = 100),
-      seed = j,
-      resource.allocation = resource.allocation.DRA
-    )
+    # moead.dra <- moead(
+    #   problem  = problem.zdt1,
+    #   preset   = preset_moead(algo),
+    #   decomp = decomp2,
+    #   stopcrit = stopcrit,
+    #   scaling = scaling,
+    #   update = update,
+    #   constraint = list(name = "penalty", beta=0),
+    #   showpars = list(show.iters = "none", showevery = 100),
+    #   seed = j,
+    #   resource.allocation = resource.allocation.DRA
+    # )
     
     # gra.awt
     moead.gra <- moead(
@@ -96,6 +106,7 @@ for (algo in algorithms) {
       decomp = decomp2,
       update = update2,
       stopcrit = stopcrit,
+      scaling = scaling,
       constraint = list(name = "penalty", beta=0),
       showpars = list(show.iters = "none", showevery = 100),
       seed = j,
@@ -109,6 +120,7 @@ for (algo in algorithms) {
       decomp = decomp2,
       update = update2,
       stopcrit = stopcrit,
+      scaling = scaling,
       constraint = list(name = "penalty", beta=0),
       showpars = list(show.iters = "none", showevery = 10),
       seed = j,
@@ -120,7 +132,7 @@ for (algo in algorithms) {
     
     all.nadir <-
       rbind(moead.de$nadir,
-            moead.dra$nadir,
+            # moead.dra$nadir,
             moead.rad$nadir,
             moead.gra$nadir)
     
@@ -128,7 +140,7 @@ for (algo in algorithms) {
     
     all.ideal <-
       rbind(moead.de$ideal,
-            moead.dra$ideal,
+            # moead.dra$ideal,
             moead.rad$ideal,
             moead.gra$ideal)
     y.ideal <- apply(all.ideal, 2, min)
@@ -150,11 +162,11 @@ for (algo in algorithms) {
       unlist(sapply(z, function(i, apf, y.nadir) {
         (apf[, i] - y.ideal[i]) / (y.nadir[i] - y.ideal[i])
       }, apf = moead.de$Y, y.nadir = y.nadir))
-    
-    moead.dra$Y.norm <-
-      unlist(sapply(z, function(i, apf, y.nadir) {
-        (apf[, i] - y.ideal[i]) / (y.nadir[i] - y.ideal[i])
-      }, apf = moead.dra$Y, y.nadir = y.nadir))
+    # 
+    # moead.dra$Y.norm <-
+    #   unlist(sapply(z, function(i, apf, y.nadir) {
+    #     (apf[, i] - y.ideal[i]) / (y.nadir[i] - y.ideal[i])
+    #   }, apf = moead.dra$Y, y.nadir = y.nadir))
     
     # moead
     moead.de.non.d <- find_nondominated_points(moead.de$Y.norm)
@@ -162,10 +174,10 @@ for (algo in algorithms) {
       emoa::dominated_hypervolume(points = t(moead.de$Y.norm[moead.de.non.d, ]),
                                   ref = ref.points)
     
-    moead.dra.non.d <- find_nondominated_points(moead.dra$Y.norm)
-    moead.dra.hv <-
-      emoa::dominated_hypervolume(points = t(moead.dra$Y.norm[moead.dra.non.d, ]),
-                                  ref = ref.points)
+    # moead.dra.non.d <- find_nondominated_points(moead.dra$Y.norm)
+    # moead.dra.hv <-
+    #   emoa::dominated_hypervolume(points = t(moead.dra$Y.norm[moead.dra.non.d, ]),
+    #                               ref = ref.points)
     
     moead.rad.non.d <- find_nondominated_points(moead.rad$Y.norm)
     moead.rad.hv <-
@@ -183,9 +195,9 @@ for (algo in algorithms) {
     moead.de.data <-
       rbind(moead.de.data,
             moead.de.hv)
-    moead.dra.data <-
-      rbind(moead.dra.data,
-            moead.dra.hv)
+    # moead.dra.data <-
+    #   rbind(moead.dra.data,
+    #         moead.dra.hv)
     moead.gra.data <-
       rbind(moead.gra.data,
             moead.gra.hv)
@@ -196,17 +208,17 @@ for (algo in algorithms) {
     metrics <-
       rbind(
         unlist(moead.de.data),
-        unlist(moead.dra.data),
+        # unlist(moead.dra.data),
         unlist(moead.gra.data),
         unlist(moead.rad.data)
       )
     colnames(metrics) <- c("HV")
     names <-
       c('MOEA/D-DE',
-        'MOEA/D-DRA',
+        # 'MOEA/D-DRA',
         'MOEA/D-GRA',
         'MOEA/D-RAD')
-    temp <- data.frame(metrics, algo, names)
+    temp <- data.frame(metrics, algo, names, j)
     colnames(temp) <-
       c("HV",
         "base.algorithm",
@@ -217,6 +229,8 @@ for (algo in algorithms) {
     else {
       my.data <- temp
     }
+    print(aggregate(my.data$HV, mean, by = list(my.data$variation.name)))
   }
-  save(my.data, file = paste0(fun,"_",problem.zdt1$m))
+  print(my,data)
+  save(my.data, file = "flymetothemoon")
 }
