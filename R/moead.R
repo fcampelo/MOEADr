@@ -401,7 +401,7 @@ moead <-
       
       # ========== Neighborhoods
       # Define/update neighborhood probability matrix
-      # DRA skips this step
+      # ALL RA skips this step
       if (nullRA) {
         BP <- define_neighborhood(neighbors = neighbors,
                                   v.matrix  = switch(neighbors$name,
@@ -418,31 +418,29 @@ moead <-
         if (resource.allocation$name == "DRA") {
           size <- floor(dim(W)[1] / 5) - problem$m
           # for (ii in 1:5){
-            idx.tour <-
-              ecr::selTournament(
-                fitness = -Pi,
-                n.select = size,
-                k = 10
-              )
-            indexes <- append(idx.bounday, idx.tour)
+          idx.tour <-
+            ecr::selTournament(fitness = -Pi,
+                               n.select = size,
+                               k = 10)
+          indexes <- append(idx.bounday, idx.tour)
         }
         else{
           rand.seq <- runif(length(Pi))
           indexes <- which(rand.seq < Pi)
-          if (length(indexes) < 3){
+          if (length(indexes) < 3) {
             indexes <- which(rand.seq <= 1)
           }
         }
         Xt <- X
         temp.X <- X
-        X <- X[indexes, ]
+        X <- X[indexes,]
         Yt <- Y
         temp.Y <- Y
-        Y <- Y[indexes, ]
+        Y <- Y[indexes,]
         Vt <- V
       }
       
-      B  <- BP$B.variation[indexes,]
+      B  <- BP$B.variation[indexes, ]
       P  <- BP$P[indexes, indexes]
       
       # Perform variation
@@ -462,10 +460,10 @@ moead <-
       nfe <- YV$nfe
       
       if (!nullRA) {
-        temp.X[indexes, ] <- X
+        temp.X[indexes,] <- X
         X <- temp.X
         
-        temp.Y[indexes, ] <- Y
+        temp.Y[indexes,] <- Y
         Y <- temp.Y
       }
       
@@ -511,11 +509,27 @@ moead <-
       Y       <- XY$Y
       V       <- XY$V
       Archive <- XY$Archive
+      # print(update$nsga)
+      if(update$nsga == T){
+        # while(dim(Archive$Y)!=dim(X)){
+        for (i in 1:30){
+          a <- rbind(Y,XY$Archive$Y)
+          b <- ecr::doNondominatedSorting(t(a))
+          if(i == 1) Archive$Y <-  a[b$ranks==i,]
+          else Archive$Y <- rbind(Archive$Y, a[b$ranks==i,])
+          # if(dim(Archive$Y)[1]>dim(X)[1]) Archive$Y
+          print("iter")
+          print(iter)
+          # print(dim(Archive$Y))
+          # print(dim(X))
+          if(dim(Archive$Y)[1]>dim(X)[1]) break
+        }
+      }
       
       if (!nullRA) {
         if (resource.allocation$name == "DRA") {
           if (iter %% resource.allocation$dt == 0) {
-            newObj <- bigZ[neighbors$T + 1,]
+            newObj <- bigZ[neighbors$T + 1, ]
             Pi <- dra(newObj, oldObj, Pi)
             oldObj <- newObj
           }
