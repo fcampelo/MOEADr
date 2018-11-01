@@ -4,6 +4,7 @@ library(smoof)
 library(MOEADr)
 library(emoa)
 library(stringr)
+library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
 repetitions <-  21
