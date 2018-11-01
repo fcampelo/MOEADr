@@ -354,7 +354,9 @@ moead <-
     # Evaluate population on objectives
     YV <- evaluate_population(X       = X,
                               problem = problem,
-                              nfe     = nfe)
+                              nfe     = nfe,
+                              iter = 0,
+                              my.file.n=my.file.n)
     Y   <- YV$Y
     V   <- YV$V
     nfe <- YV$nfe
@@ -454,7 +456,9 @@ moead <-
       # Evaluate offspring population on objectives
       YV <- evaluate_population(X       = X,
                                 problem = problem,
-                                nfe     = nfe)
+                                nfe     = nfe,
+                                iter = iter,
+                                my.file.n=my.file.n)
       Y   <- YV$Y
       V   <- YV$V
       nfe <- YV$nfe
