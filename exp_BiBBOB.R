@@ -16,8 +16,9 @@ resource.allocation.GRA <- list(name = "GRA", dt = 20)
 resource.allocation.RAD <- list(name = "RAD", dt = 20)
 
 
-decomp <- list(name = "SLD", H = 149)
-decomp2 <- list(name = "uniform", N = 150)
+decomp <- list(name = "SLD", H = 299)
+decomp2 <- list(name = "uniform", N = 300)
+
 
 # neighbors <- preset_moead("original")$neighbors
 # neighbors$delta.p <- 0.9
