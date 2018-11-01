@@ -93,10 +93,11 @@ evaluate_population <- function(X, problem, nfe, iter, my.file.n)
   {
     if(problem$name == "problem.moon") {
       # get constrains from file
+      filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_cons_eval.txt")
       cons <- as.matrix(read.csv("pop_cons_eval.txt", sep = "\t", stringsAsFactors =  F, header = F))
       Vmatrix <- abs(pmin(cons[, 1:2], 0))
       V <- list(Cmatrix = cons, Vmatrix = Vmatrix, v = rowSums(Vmatrix))
-      filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_cons_eval.txt")
+      
       dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_cons_eval.txt")
       system(paste("mv ", filename, dest))
     }
