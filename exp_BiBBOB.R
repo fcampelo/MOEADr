@@ -47,7 +47,7 @@ stopcrit  <- list(list(name    = "maxeval",
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  for (i in 1:1) {
+  for (i in 1:55) {
     fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
   }
   
