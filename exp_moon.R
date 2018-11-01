@@ -236,7 +236,8 @@ for (algo in algorithms) {
     colnames(temp) <-
       c("HV",
         "base.algorithm",
-        "variation.name")
+        "variation.name",
+        "rep.number_seed")
     if (exists("my.data")) {
       my.data <- rbind(my.data, temp)
     }
