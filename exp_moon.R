@@ -3,7 +3,7 @@ setwd("~/MOEADr/R/")
 library(smoof)
 library(MOEADr)
 library(emoa)
-library(withr)
+library(stringr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
 repetitions <-  21
