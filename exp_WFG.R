@@ -42,7 +42,7 @@ stopcrit  <- list(list(name    = "maxeval",
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  for (i in 1:6) {
+  for (i in 2:6) {
     fun.names1[[length(fun.names1) + 1]] = paste0("WFG", i)
   }
   for (i in 9:9) {

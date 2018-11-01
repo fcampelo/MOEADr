@@ -59,6 +59,9 @@ order_neighborhood <- function(bigZ, B, V, Vt, constraint)
     bigV <- t(cbind(matrix(V$v[B],
                            dim(B)),
                     Vt$v))
+    # bigV <- t(cbind(matrix(V[B],
+    #                        dim(B)),
+    #                 Vt))
 
     # use constraint handler function to calculate selection matrix
     opname       <- paste0("constraint_", constraint$name)
@@ -69,8 +72,8 @@ order_neighborhood <- function(bigZ, B, V, Vt, constraint)
     ord.args$B    <- B
     ord.args$bigZ <- bigZ
     ord.args$bigV <- bigV
-    ord.args$V    <- V$v
-    ord.args$Vt   <- Vt$v
+    ord.args$V    <- V
+    ord.args$Vt   <- Vt
 
     # call constraint handling method
     sel.indx <- do.call(opname,
