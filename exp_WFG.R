@@ -15,7 +15,7 @@ resource.allocation.GRA <- list(name = "GRA", dt = 20)
 resource.allocation.RAD <- list(name = "RAD", dt = 20)
 
 # decomp <- list(name = "SLD")
-decomp <- list(name = "SLD", H = 249)
+decomp <- list(name = "SLD", H = 149)
 decomp2 <- list(name = "uniform", N = 150)
   
 scaling <- list()
@@ -42,7 +42,7 @@ stopcrit  <- list(list(name    = "maxeval",
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  for (i in 2:6) {
+  for (i in 1:6) {
     fun.names1[[length(fun.names1) + 1]] = paste0("WFG", i)
   }
   for (i in 9:9) {
@@ -130,7 +130,7 @@ for (n.obj in n.objs) {
         moead.gra <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
-          decomp = decomp,
+          decomp = decomp2,
           update = update2,
           stopcrit = stopcrit,
           scaling = scaling,
@@ -143,7 +143,7 @@ for (n.obj in n.objs) {
         moead.rad <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
-          decomp = decomp,
+          decomp = decomp2,
           update = update2,
           stopcrit = stopcrit,
           scaling = scaling,

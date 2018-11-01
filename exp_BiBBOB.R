@@ -15,7 +15,7 @@ resource.allocation.GRA <- list(name = "GRA", dt = 20)
 resource.allocation.RAD <- list(name = "RAD", dt = 20)
 
 
-decomp <- list(name = "SLD", H = 249)
+decomp <- list(name = "SLD", H = 149)
 decomp2 <- list(name = "uniform", N = 150)
 
 # neighbors <- preset_moead("original")$neighbors
@@ -94,7 +94,7 @@ for (n.obj in n.objs) {
           stopcrit = stopcrit,
           scaling = scaling,
           showpars = list(show.iters = "none", showevery = 100),
-          seed = j
+          seed = j+10
         )
         
         # moead.dra <- moead(
@@ -117,7 +117,7 @@ for (n.obj in n.objs) {
           stopcrit = stopcrit,
           scaling = scaling,
           showpars = list(show.iters = "none", showevery = 100),
-          seed = j,
+          seed = j+10,
           resource.allocation = resource.allocation.GRA
         )
         
@@ -130,7 +130,7 @@ for (n.obj in n.objs) {
           stopcrit = stopcrit,
           scaling = scaling,
           showpars = list(show.iters = "none", showevery = 10),
-          seed = j,
+          seed = j+10,
           
           resource.allocation = resource.allocation.RAD
         )
@@ -270,7 +270,7 @@ for (n.obj in n.objs) {
         else {
           my.data <- temp
         }
-        print(aggregate(my.data$HV, median, by = list(my.data$variation.name, my.data$fun)))
+        print(aggregate(my.data$HV, median, by = list(my.data$variation.name)))
       }
       save(my.data, file = paste0(fun, "_", problem.zdt1$m))
     }
