@@ -105,6 +105,7 @@ for (n.obj in n.objs) {
         
         
         # # moead.de
+        print("moead.de")
         moead.de <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
@@ -127,6 +128,7 @@ for (n.obj in n.objs) {
         # )
         
         # gra.awt
+        print("moead.gra")
         moead.gra <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
@@ -140,6 +142,7 @@ for (n.obj in n.objs) {
         )
         
         # ondb
+        print("moead.rad")
         moead.rad <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
