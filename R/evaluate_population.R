@@ -30,7 +30,7 @@
 #'
 #' @export
 
-evaluate_population <- function(X, problem, nfe)
+evaluate_population <- function(X, problem, nfe, iter, my.file.n)
 {
 
   # ========== Error catching and default value definitions
@@ -46,12 +46,28 @@ evaluate_population <- function(X, problem, nfe)
 
   # Denormalize population
   if (problem$name == "problem.moon") {
+    
+    
+    filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_vars_eval.txt")
     write.table(X,
-                file = "pop_vars_eval.txt",
+                file = filename,
                 row.names = FALSE, sep = "\t",  col.names=FALSE)
-    system("./moon_mop . ")
+    path <- paste0(my.file.n, "th_run/optimizer/interface/")
+    system(paste("./moon_mop",path))
     # get evaluations from file
-    Y <- as.matrix(read.csv("pop_objs_eval.txt", sep = "\t", stringsAsFactors =  F, header = F))
+    Y <- as.matrix(read.csv(paste0(my.file.n, "th_run/optimizer/interface/pop_objs_eval.txt"), sep = "\t", stringsAsFactors =  F, header = F))
+    my.iter <- with_options(
+      c(scipen = 999), 
+      str_pad(iter, 4, pad = "0")
+    )
+    dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_vars_eval.txt")
+    system(paste("mv ", filename, dest))
+    filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_cons_eval.txt")
+    dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_cons_eval.txt")
+    system(paste("mv ", filename, dest))
+    filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_objs_eval.txt")
+    dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_objs_eval.txt")
+    system(paste("mv ", filename, dest))
   }
   else{
     X <- denormalize_population(X, problem)
