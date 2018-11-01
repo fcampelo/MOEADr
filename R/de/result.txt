@@ -1,0 +1,8 @@
+result:
+          HyperVolume = 0.7314176877 in 0000 th run
+
+   Median HyperVolume = 0.7314176877 in 0000 th run
+   Best   HyperVolume = 0.7314176877 in 0000 th run
+   Worst  HyperVolume = 0.7314176877 in 0000 th run
+   Mean   HyperVolume = 0.7314176877             
+   Stdev  HyperVolume = NA             
