@@ -108,10 +108,12 @@ online_diversity <-
         my.out[i] <- Inf
       }
     }
-    p <-  my.out - old.dm
+    # p <-  my.out - old.dm
+    p <-  my.out
+
     p <- (p - min(p)) / ((max(p) - min(p)) + epsilon)
-    if (anyNA(p))
-      p <- init_p(W, 1)
+    # if (anyNA(p))
+    #   p <- init_p(W, 0.5)
     out <- list(p = p, dm = my.out)
     return(out)
   }

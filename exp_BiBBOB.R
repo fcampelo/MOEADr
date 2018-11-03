@@ -11,7 +11,7 @@ repetitions <-  21
 algorithms <- c("moead.de")
 
 #uniform weight
-resource.allocation.DRA <- list(name = "DRA", dt = 50)
+# resource.allocation.DRA <- list(name = "DRA", dt = 50)
 resource.allocation.GRA <- list(name = "GRA", dt = 20)
 resource.allocation.RAD <- list(name = "RAD", dt = 20)
 
@@ -47,7 +47,10 @@ stopcrit  <- list(list(name    = "maxeval",
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  for (i in 1:55) {
+  for (i in 11:11) {
+    fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
+  }
+  for (i in 13:13) {
     fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
   }
   
@@ -93,9 +96,9 @@ for (n.obj in n.objs) {
           preset   = preset_moead(algo),
           decomp = decomp,
           stopcrit = stopcrit,
-          scaling = scaling,
+          # scaling = scaling,
           showpars = list(show.iters = "none", showevery = 100),
-          seed = j+10
+          seed = j
         )
         
         # moead.dra <- moead(
@@ -113,12 +116,12 @@ for (n.obj in n.objs) {
         moead.gra <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
-          decomp = decomp,
+          decomp = decomp2,
           update = update2,
           stopcrit = stopcrit,
-          scaling = scaling,
+          # scaling = scaling,
           showpars = list(show.iters = "none", showevery = 100),
-          seed = j+10,
+          seed = j,
           resource.allocation = resource.allocation.GRA
         )
         
@@ -127,11 +130,11 @@ for (n.obj in n.objs) {
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
           decomp = decomp,
-          # update = update2,
+          update = update2,
           stopcrit = stopcrit,
           scaling = scaling,
           showpars = list(show.iters = "none", showevery = 10),
-          seed = j+10,
+          seed = j,
           
           resource.allocation = resource.allocation.RAD
         )

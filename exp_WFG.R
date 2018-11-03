@@ -15,8 +15,8 @@ resource.allocation.GRA <- list(name = "GRA", dt = 20)
 resource.allocation.RAD <- list(name = "RAD", dt = 20)
 
 # decomp <- list(name = "SLD")
-decomp <- list(name = "SLD", H = 149)
-decomp2 <- list(name = "uniform", N = 150)
+decomp <- list(name = "SLD", H = 199)
+decomp2 <- list(name = "uniform", N = 200)
   
 scaling <- list()
 scaling$name <- "simple"
@@ -34,7 +34,7 @@ scaling$name <- "simple"
 update2 <- list(name  = "onra")
 # update2$UseArchive = TRUE
 
-n.objs <- c(2,3,4)
+n.objs <- c(3)
 
 stopcrit  <- list(list(name    = "maxeval",
                        maxeval = 30000))
@@ -42,10 +42,10 @@ stopcrit  <- list(list(name    = "maxeval",
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  for (i in 1:6) {
+  for (i in 1:1) {
     fun.names1[[length(fun.names1) + 1]] = paste0("WFG", i)
   }
-  for (i in 9:9) {
+  for (i in 3:9) {
     fun.names1[[length(fun.names1) + 1]] = paste0("WFG", i)
   }
   
@@ -55,7 +55,7 @@ for (n.obj in n.objs) {
     for (fun in fun.names1) {
       print(fun)
       if (n.obj == 2) {
-        decomp$H <- 149
+        decomp$H <- 199
         k = 2 * (n.obj - 1)
         L = 20
         d = k + L
