@@ -270,6 +270,7 @@ moead <-
            seed = NULL,
            # Seed for PRNG
            resource.allocation = NULL,
+           my.file.n = NULL,
            # List:  resource
            ...)
 # other parameters
@@ -280,7 +281,6 @@ moead <-
         saveRDS(as.list(environment()),
                 "moead_env.rds")
     }
-    
     # ============================ Set parameters ============================== #
     if (!is.null(preset)) {
       if (is.null(problem))
@@ -513,23 +513,43 @@ moead <-
       X       <- XY$X
       Y       <- XY$Y
       V       <- XY$V
+      # print(V)
       Archive <- XY$Archive
-      # print(update$nsga)
-      # if(update$nsga == T){
-      #   # while(dim(Archive$Y)!=dim(X)){
-      #   for (i in 1:30){
-      #     a <- rbind(Y,XY$Archive$Y)
-      #     b <- ecr::doNondominatedSorting(t(a))
-      #     if(i == 1) Archive$Y <-  a[b$ranks==i,]
-      #     else Archive$Y <- rbind(Archive$Y, a[b$ranks==i,])
-      #     # if(dim(Archive$Y)[1]>dim(X)[1]) Archive$Y
-      #     print("iter")
-      #     print(iter)
-      #     # print(dim(Archive$Y))
-      #     # print(dim(X))
-      #     if(dim(Archive$Y)[1]>dim(X)[1]) break
-      #   }
-      # }
+      if(problem$name == "problem.moon"){
+        # my.iter <- with_options(
+        #   c(scipen = 999), 
+        #   str_pad(iter, 4, pad = "0")
+        # )
+        # filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_vars_eval.txt")
+        # dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_vars_eval.txt")
+        # system(paste("mv ", filename, dest))
+        # 
+        # filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_objs_eval.txt")
+        # dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_objs_eval.txt")
+        # system(paste("mv ", filename, dest))
+        # 
+        # filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_cons_eval.txt")
+        # dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_cons_eval.txt")
+        # system(paste("mv ", filename, dest))
+        # while(dim(Archive$Y)!=dim(X)){
+        # for (i in 1:30){
+          a <- rbind(Y, Archive$Y)
+          c <- rbind(X, Archive$X)
+          d <- rbind(V$Cmatrix, Archive$V$Cmatrix)
+          # e <- rbind(V$Vmatrix, Vt$Vmatrix)
+          # print(e)
+          # print(dim(e))
+          # f <- rbind(V$v, Archive$V$v)
+          b <- ecr::doNondominatedSorting(t(a))
+          Archive$Y <- a[b$ranks==1,]
+          Archive$X <- c[b$ranks==1,]
+          # Archive$V$Cmatrix <- d[b$ranks==1,]
+          # Archive$V$Vmatrix <- e[b$ranks==1,]
+          # Archive$V$v <- f[b$ranks==1,]
+          ecr::selTournament(fitness = Archive$Y,
+                             n.select = dim(W)[1],
+                             k = 10)
+      }
       
       if (!nullRA) {
         if (resource.allocation$name == "DRA") {
