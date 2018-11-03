@@ -129,7 +129,7 @@ for (n.obj in n.objs) {
         moead.rad <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
-          decomp = decomp,
+          decomp = decomp2,
           update = update2,
           stopcrit = stopcrit,
           # scaling = scaling,
@@ -274,7 +274,7 @@ for (n.obj in n.objs) {
         else {
           my.data <- temp
         }
-        print(aggregate(my.data$HV, median, by = list(my.data$variation.name)))
+        print(aggregate(my.data$HV, median, by = list(my.data$variation.name, my.data$fun)))
       }
       save(my.data, file = paste0(fun, "_", problem.zdt1$m))
     }
