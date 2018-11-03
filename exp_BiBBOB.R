@@ -132,7 +132,7 @@ for (n.obj in n.objs) {
           decomp = decomp,
           update = update2,
           stopcrit = stopcrit,
-          scaling = scaling,
+          # scaling = scaling,
           showpars = list(show.iters = "none", showevery = 10),
           seed = j,
           

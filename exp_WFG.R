@@ -111,7 +111,7 @@ for (n.obj in n.objs) {
           preset   = preset_moead(algo),
           decomp = decomp,
           stopcrit = stopcrit,
-          scaling = scaling,
+          # scaling = scaling,
           showpars = list(show.iters = "none", showevery = 100),
           seed = j
         )
@@ -135,7 +135,7 @@ for (n.obj in n.objs) {
           decomp = decomp2,
           update = update2,
           stopcrit = stopcrit,
-          scaling = scaling,
+          # scaling = scaling,
           showpars = list(show.iters = "none", showevery = 100),
           seed = j,
           resource.allocation = resource.allocation.GRA
@@ -149,7 +149,7 @@ for (n.obj in n.objs) {
           decomp = decomp2,
           update = update2,
           stopcrit = stopcrit,
-          scaling = scaling,
+          # scaling = scaling,
           showpars = list(show.iters = "none", showevery = 10),
           seed = j,
           resource.allocation = resource.allocation.RAD
