@@ -101,7 +101,8 @@ for (algo in algorithms) {
       constraint = list(name = "penalty", beta=0),
       showpars = list(show.iters = "none", showevery = 100),
       seed = j,
-      resource.allocation = resource.allocation.GRA
+      resource.allocation = resource.allocation.GRA,
+      my.file.n = my.file.n
     )
     # 
     # # ondb
@@ -119,7 +120,8 @@ for (algo in algorithms) {
       constraint = list(name = "penalty", beta=0),
       showpars = list(show.iters = "none", showevery = 10),
       seed = j,
-      resource.allocation = resource.allocation.RAD
+      resource.allocation = resource.allocation.RAD,
+      my.file.n = my.file.n
     )
     
     moead.de.non.d <- find_nondominated_points(moead.de$Archive$Y)
