@@ -111,6 +111,7 @@ for (algo in algorithms) {
       preset   = preset_moead(algo),
       decomp = decomp2,
       update = update2,
+      scaling = scaling,
       constraint = list(name = "penalty", beta=0.0),
       showpars = list(show.iters = "none", showevery = 10),
       seed = j,
