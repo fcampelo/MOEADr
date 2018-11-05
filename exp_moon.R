@@ -31,12 +31,12 @@ variation[[3]] <-
        gamma.ls = 0.5)
 
 update <- preset_moead("moead.de")$update
-update$UseArchive = TRUE
-update$nsga = TRUE
+# update$UseArchive = TRUE
+# update$nsga = FALSE
 
 update2 <- list(name  = "onra")
-update2$UseArchive = TRUE
-update2$nsga = TRUE
+# update2$UseArchive = TRUE
+# update2$nsga = FALSE
 
 n.obj <- 3
 
@@ -78,8 +78,8 @@ for (algo in algorithms) {
       preset   = preset_moead(algo),
       decomp = decomp,
       stopcrit = stopcrit,
-      scaling = scaling,
-      update = update,
+      # scaling = scaling,
+      # update = update,
       constraint = list(name = "penalty", beta=0.05),
       showpars = list(show.iters = "none", showevery = 100),
       seed = j,
@@ -96,8 +96,8 @@ for (algo in algorithms) {
       preset   = preset_moead(algo),
       decomp = decomp2,
       update = update2,
-      stopcrit = stopcrit,
-      scaling = scaling,
+      # stopcrit = stopcrit,
+      # scaling = scaling,
       constraint = list(name = "penalty", beta=0.05),
       showpars = list(show.iters = "none", showevery = 100),
       seed = j,
@@ -115,8 +115,8 @@ for (algo in algorithms) {
       preset   = preset_moead(algo),
       decomp = decomp2,
       update = update2,
-      stopcrit = stopcrit,
-      scaling = scaling,
+      # stopcrit = stopcrit,
+      # scaling = scaling,
       constraint = list(name = "penalty", beta=0.05),
       showpars = list(show.iters = "none", showevery = 10),
       seed = j,
