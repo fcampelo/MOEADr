@@ -33,7 +33,7 @@ variation[[3]] <-
        gamma.ls = 0.5)
 
 update <- preset_moead("moead.de")$update
-update$UseArchive = TRUE
+# update$UseArchive = TRUE
 
 update2 <- list(name  = "onra")
 # update2$UseArchive = TRUE
@@ -47,10 +47,13 @@ stopcrit  <- list(list(name    = "maxeval",
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  for (i in 11:11) {
+  for (i in 2:2) {
     fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
   }
   for (i in 13:13) {
+    fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
+  }
+  for (i in 11:11) {
     fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
   }
   
