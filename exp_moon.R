@@ -73,33 +73,33 @@ for (algo in algorithms) {
       c(scipen = 999), 
       str_pad(j - 1, 3, pad = "0")
     ))
-    moead.de <- moead(
-      problem  = problem.zdt1,
-      preset   = preset_moead(algo),
-      decomp = decomp,
-      stopcrit = stopcrit,
-      constraint = list(name = "penalty", beta=0.0),
-      showpars = list(show.iters = "none", showevery = 100),
-      seed = j,
-      my.file.n = my.file.n
-    )
-    # 
-    # # gra.awt
-    my.file.n <- paste0("gra/",with_options(
-      c(scipen = 999), 
-      str_pad(j - 1, 3, pad = "0")
-    ))
-    moead.gra <- moead(
-      problem  = problem.zdt1,
-      preset   = preset_moead(algo),
-      decomp = decomp2,
-      update = update2,
-      constraint = list(name = "penalty", beta=0.0),
-      showpars = list(show.iters = "none", showevery = 100),
-      seed = j,
-      resource.allocation = resource.allocation.GRA,
-      my.file.n = my.file.n
-    )
+    # moead.de <- moead(
+    #   problem  = problem.zdt1,
+    #   preset   = preset_moead(algo),
+    #   decomp = decomp,
+    #   stopcrit = stopcrit,
+    #   constraint = list(name = "penalty", beta=0.0),
+    #   showpars = list(show.iters = "none", showevery = 100),
+    #   seed = j,
+    #   my.file.n = my.file.n
+    # )
+    # # 
+    # # # gra.awt
+    # my.file.n <- paste0("gra/",with_options(
+    #   c(scipen = 999), 
+    #   str_pad(j - 1, 3, pad = "0")
+    # ))
+    # moead.gra <- moead(
+    #   problem  = problem.zdt1,
+    #   preset   = preset_moead(algo),
+    #   decomp = decomp2,
+    #   update = update2,
+    #   constraint = list(name = "penalty", beta=0.0),
+    #   showpars = list(show.iters = "none", showevery = 100),
+    #   seed = j,
+    #   resource.allocation = resource.allocation.GRA,
+    #   my.file.n = my.file.n
+    # )
     # 
     # # ondb
     my.file.n <- paste0("rad/",with_options(
@@ -119,45 +119,45 @@ for (algo in algorithms) {
       my.file.n = my.file.n
     )
     
-    moead.de.non.d <- find_nondominated_points(moead.de$Y)
-    moead.de.hv <-
-      emoa::dominated_hypervolume(points = t(moead.de$Y[moead.de.non.d,]),
-                                  ref = t(as.matrix(ref.points)))
-    
+    # moead.de.non.d <- find_nondominated_points(moead.de$Y)
+    # moead.de.hv <-
+    #   emoa::dominated_hypervolume(points = t(moead.de$Y[moead.de.non.d,]),
+    #                               ref = t(as.matrix(ref.points)))
+    # 
     moead.rad.non.d <- find_nondominated_points(moead.rad$Y)
     moead.rad.hv <-
       emoa::dominated_hypervolume(points = t(moead.rad$Y[moead.rad.non.d, ]),
                                   ref = ref.points)
 
     # gra.awt
-    moead.gra.non.d <- find_nondominated_points(moead.gra$Y)
-    moead.gra.hv <-
-      emoa::dominated_hypervolume(points = t(moead.gra$Y[moead.gra.non.d, ]),
-                                  ref = ref.points)
+    # moead.gra.non.d <- find_nondominated_points(moead.gra$Y)
+    # moead.gra.hv <-
+    #   emoa::dominated_hypervolume(points = t(moead.gra$Y[moead.gra.non.d, ]),
+    #                               ref = ref.points)
     # 
     # 
     # 
-    moead.de.data <-
-      rbind(moead.de.data,
-            moead.de.hv)
-    moead.gra.data <-
-      rbind(moead.gra.data,
-            moead.gra.hv)
+    # moead.de.data <-
+    #   rbind(moead.de.data,
+    #         moead.de.hv)
+    # moead.gra.data <-
+    #   rbind(moead.gra.data,
+    #         moead.gra.hv)
     moead.rad.data <-
       rbind(moead.rad.data,
             moead.rad.hv)
 
     metrics <-
       rbind(
-        unlist(moead.de.data),
-        unlist(moead.gra.data),
+        # unlist(moead.de.data),
+        # unlist(moead.gra.data),
         unlist(moead.rad.data)
       )
     colnames(metrics) <- c("HV")
     names <-
-      c('MOEA/D-DE',
-        'MOEA/D-GRA',
-        'MOEA/D-RAD')
+      # c('MOEA/D-DE',
+      #   'MOEA/D-GRA',
+        c('MOEA/D-RAD')
     temp <- data.frame(metrics, algo, names, j)
     colnames(temp) <-
       c("HV",
@@ -170,6 +170,6 @@ for (algo in algorithms) {
     else {
       my.data <- temp
     }
-    print(aggregate(my.data$HV, mean, by = list(my.data$variation.name)))
+    print(aggregate(my.data$HV, median, by = list(my.data$variation.name)))
   }
 }
