@@ -34,7 +34,7 @@ scaling$name <- "simple"
 update2 <- list(name  = "onra")
 # update2$UseArchive = TRUE
 
-n.objs <- c(3)
+n.objs <- c(2)
 
 stopcrit  <- list(list(name    = "maxeval",
                        maxeval = 30000))
