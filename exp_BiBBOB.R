@@ -32,7 +32,7 @@ variation[[3]] <-
        type = "dvls",
        gamma.ls = 0.5)
 
-update <- preset_moead("moead.de")$update
+# update <- preset_moead("moead.de")$update
 # update$UseArchive = TRUE
 
 update2 <- list(name  = "onra")
@@ -47,9 +47,9 @@ stopcrit  <- list(list(name    = "maxeval",
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  for (i in 2:2) {
-    fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
-  }
+  # for (i in 2:2) {
+  #   fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
+  # }
   for (i in 13:13) {
     fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
   }
@@ -99,7 +99,8 @@ for (n.obj in n.objs) {
           preset   = preset_moead(algo),
           decomp = decomp,
           stopcrit = stopcrit,
-          # scaling = scaling,
+          scaling = scaling,
+          # update = update,
           showpars = list(show.iters = "none", showevery = 100),
           seed = j
         )
@@ -122,7 +123,7 @@ for (n.obj in n.objs) {
           decomp = decomp2,
           update = update2,
           stopcrit = stopcrit,
-          # scaling = scaling,
+          scaling = scaling,
           showpars = list(show.iters = "none", showevery = 100),
           seed = j,
           resource.allocation = resource.allocation.GRA
@@ -132,10 +133,10 @@ for (n.obj in n.objs) {
         moead.rad <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
-          decomp = decomp2,
-          update = update2,
+          decomp = decomp,
+          # update = update2,
           stopcrit = stopcrit,
-          # scaling = scaling,
+          scaling = scaling,
           showpars = list(show.iters = "none", showevery = 10),
           seed = j,
           

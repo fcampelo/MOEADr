@@ -17,8 +17,8 @@ resource.allocation.GRA <- list(name = "GRA", dt = 20)
 resource.allocation.RAD <- list(name = "RAD", dt = 20)
 
 
-decomp <- list(name = "SLD", H = 13)
-decomp2 <- list(name = "uniform", N = 105)
+decomp <- list(name = "SLD", H = 149)
+decomp2 <- list(name = "uniform", N = 150)
 
 scaling <- list()
 scaling$name <- "simple"
@@ -59,6 +59,7 @@ for (algo in algorithms) {
       epsilon   = 0.05) # tolerance for equality constraints
   )
   ref.points <- matrix(c(1.0, 0.0, 1.0), nrow = 1, ncol = 3)
+  repetitions <- repetitions + 4
   for (j in 1:repetitions) {
     moead.de.data <- list()
     # moead.dra.data <- list()
@@ -73,34 +74,36 @@ for (algo in algorithms) {
       c(scipen = 999), 
       str_pad(j - 1, 3, pad = "0")
     ))
-    # moead.de <- moead(
-    #   problem  = problem.zdt1,
-    #   preset   = preset_moead(algo),
-    #   decomp = decomp,
-    #   stopcrit = stopcrit,
-    #   constraint = list(name = "penalty", beta=0.0),
-    #   showpars = list(show.iters = "none", showevery = 100),
-    #   seed = j,
-    #   my.file.n = my.file.n
-    # )
+    moead.de <- moead(
+      problem  = problem.zdt1,
+      preset   = preset_moead(algo),
+      decomp = decomp,
+      stopcrit = stopcrit,
+      scaling = scaling,
+      constraint = list(name = "penalty", beta=0.0),
+      showpars = list(show.iters = "none", showevery = 100),
+      seed = j,
+      my.file.n = my.file.n
+    )
     # # 
     # # # gra.awt
     # my.file.n <- paste0("gra/",with_options(
     #   c(scipen = 999), 
     #   str_pad(j - 1, 3, pad = "0")
     # ))
-    # moead.gra <- moead(
-    #   problem  = problem.zdt1,
-    #   preset   = preset_moead(algo),
-    #   decomp = decomp2,
-    #   update = update2,
-    #   constraint = list(name = "penalty", beta=0.0),
-    #   showpars = list(show.iters = "none", showevery = 100),
-    #   seed = j,
-    #   resource.allocation = resource.allocation.GRA,
-    #   my.file.n = my.file.n
-    # )
-    # 
+    moead.gra <- moead(
+      problem  = problem.zdt1,
+      preset   = preset_moead(algo),
+      decomp = decomp2,
+      update = update2,
+      scaling = scaling,
+      constraint = list(name = "penalty", beta=0.0),
+      showpars = list(show.iters = "none", showevery = 100),
+      seed = j,
+      resource.allocation = resource.allocation.GRA,
+      my.file.n = my.file.n
+    )
+
     # # ondb
     my.file.n <- paste0("rad/",with_options(
       c(scipen = 999), 
@@ -109,10 +112,10 @@ for (algo in algorithms) {
     moead.rad <- moead(
       problem  = problem.zdt1,
       preset   = preset_moead(algo),
-      decomp = decomp2,
-      update = update2,
+      decomp = decomp,
+      # update = update2,
       scaling = scaling,
-      constraint = list(name = "penalty", beta=0.0),
+      constraint = list(name = "penalty", beta=0.05),
       showpars = list(show.iters = "none", showevery = 10),
       seed = j,
       resource.allocation = resource.allocation.RAD,
