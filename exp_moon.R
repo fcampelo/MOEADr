@@ -17,7 +17,7 @@ resource.allocation.GRA <- list(name = "GRA", dt = 20)
 resource.allocation.RAD <- list(name = "RAD", dt = 20)
 
 
-decomp <- list(name = "SLD", H = 149)
+decomp <- list(name = "SLD", H = 16)
 decomp2 <- list(name = "uniform", N = 150)
 
 scaling <- list()
@@ -80,7 +80,7 @@ for (algo in algorithms) {
       decomp = decomp,
       stopcrit = stopcrit,
       scaling = scaling,
-      constraint = list(name = "penalty", beta=0.0),
+      constraint = list(name = "penalty", beta=0.05),
       showpars = list(show.iters = "none", showevery = 100),
       seed = j,
       my.file.n = my.file.n
@@ -97,7 +97,7 @@ for (algo in algorithms) {
       decomp = decomp2,
       update = update2,
       scaling = scaling,
-      constraint = list(name = "penalty", beta=0.0),
+      constraint = list(name = "penalty", beta=0.05),
       showpars = list(show.iters = "none", showevery = 100),
       seed = j,
       resource.allocation = resource.allocation.GRA,
