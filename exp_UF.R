@@ -92,7 +92,7 @@ for (n.obj in n.objs) {
           preset   = preset_moead(algo),
           decomp = decomp,
           stopcrit = stopcrit,
-          # scaling = scaling,
+          scaling = scaling,
           showpars = list(show.iters = "none", showevery = 100),
           seed = j
         )
@@ -115,7 +115,7 @@ for (n.obj in n.objs) {
           decomp = decomp2,
           update = update2,
           stopcrit = stopcrit,
-          # scaling = scaling,
+          scaling = scaling,
           showpars = list(show.iters = "none", showevery = 100),
           seed = j,
           resource.allocation = resource.allocation.GRA
@@ -125,8 +125,8 @@ for (n.obj in n.objs) {
         moead.rad <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
-          decomp = decomp2,
-          update = update2,
+          decomp = decomp,
+          # update = update2,
           stopcrit = stopcrit,
           scaling = scaling,
           showpars = list(show.iters = "none", showevery = 10),
