@@ -42,7 +42,7 @@ n.objs <- c(2)
 
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 30000))
+                       maxeval = 60000))
 
 for (n.obj in n.objs) {
   print(n.obj)
@@ -54,6 +54,18 @@ for (n.obj in n.objs) {
     fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
   }
   for (i in 11:11) {
+    fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
+  }
+  for (i in 1:1) {
+    fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
+  }
+  for (i in 3:10) {
+    fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
+  }
+  for (i in 12:12) {
+    fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
+  }
+  for (i in 14:55) {
     fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
   }
   
