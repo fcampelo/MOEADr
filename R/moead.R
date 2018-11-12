@@ -515,40 +515,29 @@ moead <-
       V       <- XY$V
       # print(V)
       Archive <- XY$Archive
-      if(problem$name == "problem.moon"){
-        # my.iter <- with_options(
-        #   c(scipen = 999), 
-        #   str_pad(iter, 4, pad = "0")
-        # )
-        # filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_vars_eval.txt")
-        # dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_vars_eval.txt")
-        # system(paste("mv ", filename, dest))
-        # 
-        # filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_objs_eval.txt")
-        # dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_objs_eval.txt")
-        # system(paste("mv ", filename, dest))
-        # 
-        # filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_cons_eval.txt")
-        # dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_cons_eval.txt")
-        # system(paste("mv ", filename, dest))
-        # while(dim(Archive$Y)!=dim(X)){
-        # for (i in 1:30){
+      if(problem$name == "problem.moon" && update$UseArchive == TRUE){
+      # if(update$UseArchive == TRUE){
+        # print("entrou")
+        if (nfe + dim(W)[1] < stopcrit[[1]]$maxeval){
+          aux <- unique(ecr::selTournament(fitness = bigZ[,ncol(bigZ)],
+                                           n.select = dim(W)[1],
+                                           k = 2))
+          temp <-
+            apply(
+              X = Archive$X[aux,],
+              MARGIN = 2,
+              FUN = function(x) {
+                approx(x, n = dim(W)[1], method = "linear")$y
+              }
+            )
+          Archive$X <- rbind(temp,Archive$X)
+        }
           a <- rbind(Y, Archive$Y)
           c <- rbind(X, Archive$X)
           d <- rbind(V$Cmatrix, Archive$V$Cmatrix)
-          # e <- rbind(V$Vmatrix, Vt$Vmatrix)
-          # print(e)
-          # print(dim(e))
-          # f <- rbind(V$v, Archive$V$v)
           b <- ecr::doNondominatedSorting(t(a))
           Archive$Y <- a[b$ranks==1,]
           Archive$X <- c[b$ranks==1,]
-          # Archive$V$Cmatrix <- d[b$ranks==1,]
-          # Archive$V$Vmatrix <- e[b$ranks==1,]
-          # Archive$V$v <- f[b$ranks==1,]
-          ecr::selTournament(fitness = Archive$Y,
-                             n.select = dim(W)[1],
-                             k = 10)
       }
       
       if (!nullRA) {
@@ -602,6 +591,8 @@ moead <-
       # Verify stop criteria
       keep.running <- check_stop_criteria(stopcrit = stopcrit,
                                           call.env = environment())
+      
+      
       
       # ========== Print
       # Echo whatever is demanded
