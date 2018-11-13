@@ -40,7 +40,7 @@ n.objs <- c(2)
 
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 60000))
+                       maxeval = 30000))
 
 for (n.obj in n.objs) {
   print(n.obj)
@@ -90,7 +90,7 @@ for (n.obj in n.objs) {
         xmax       = as.numeric(getUpper(par.set)),
         m          = n.obj
       )
-      ref.points <- rep(max(as.numeric(getUpper(par.set))),n.obj)
+      ref.points <- rep(1, problem.zdt1$m)
       
       for (j in 1:repetitions) {
         moead.de.data <- list()
