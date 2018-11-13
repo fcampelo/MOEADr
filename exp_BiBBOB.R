@@ -26,17 +26,15 @@ scaling <- list()
 scaling$name <- "simple"
 
 variation <- preset_moead("moead.de")$variation
-variation[[4]] <- variation[[3]]
-variation[[3]] <-
-  list(name = "localsearch",
-       type = "dvls",
-       gamma.ls = 0.5)
+# variation[[4]] <- variation[[3]]
+variation[[1]] <-
+  list(name = "de")
 
-# update <- preset_moead("moead.de")$update
-# update$UseArchive = TRUE
+update <- preset_moead("moead.de")$update
+update$UseArchive = TRUE
 
 update2 <- list(name  = "onra")
-# update2$UseArchive = TRUE
+update2$UseArchive = TRUE
 
 n.objs <- c(2)
 
@@ -50,24 +48,24 @@ for (n.obj in n.objs) {
   # for (i in 2:2) {
   #   fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
   # }
-  for (i in 13:13) {
+  # for (i in 13:13) {
+  #   fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
+  # }
+  # for (i in 11:11) {
+  #   fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
+  # }
+  for (i in 1:13) {
     fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
   }
-  for (i in 11:11) {
-    fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
-  }
-  for (i in 1:1) {
-    fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
-  }
-  for (i in 3:10) {
-    fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
-  }
-  for (i in 12:12) {
-    fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
-  }
-  for (i in 14:55) {
-    fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
-  }
+  # for (i in 3:10) {
+  #   fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
+  # }
+  # for (i in 12:12) {
+  #   fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
+  # }
+  # for (i in 14:14) {
+  #   fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
+  # }
   
   my.data <- data.frame()
   for (algo in algorithms) {
@@ -92,7 +90,7 @@ for (n.obj in n.objs) {
         xmax       = as.numeric(getUpper(par.set)),
         m          = n.obj
       )
-      ref.points <- rep(1, problem.zdt1$m)
+      ref.points <- rep(max(as.numeric(getUpper(par.set))),n.obj)
       
       for (j in 1:repetitions) {
         moead.de.data <- list()
@@ -112,7 +110,8 @@ for (n.obj in n.objs) {
           decomp = decomp,
           stopcrit = stopcrit,
           scaling = scaling,
-          # update = update,
+          update = update,
+          variation = variation,
           showpars = list(show.iters = "none", showevery = 100),
           seed = j
         )
@@ -136,6 +135,7 @@ for (n.obj in n.objs) {
           update = update2,
           stopcrit = stopcrit,
           scaling = scaling,
+          variation = variation,
           showpars = list(show.iters = "none", showevery = 100),
           seed = j,
           resource.allocation = resource.allocation.GRA
@@ -146,9 +146,10 @@ for (n.obj in n.objs) {
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
           decomp = decomp,
-          # update = update2,
+          update = update,
           stopcrit = stopcrit,
           scaling = scaling,
+          variation = variation,
           showpars = list(show.iters = "none", showevery = 10),
           seed = j,
           
@@ -180,9 +181,9 @@ for (n.obj in n.objs) {
                 moead.rad$nadir,
                 moead.gra$nadir)#,
                 # nsga.2$nadir)
-        
+
         y.nadir <- apply(all.nadir, 2, max)
-        
+
         all.ideal <-
           rbind(moead.de$ideal,
                 # moead.dra$ideal,
@@ -190,24 +191,24 @@ for (n.obj in n.objs) {
                 moead.gra$ideal)#,
                 # nsga.2$ideal)
         y.ideal <- apply(all.ideal, 2, min)
-        # for (i in 1:length(y.nadir)){
-        #   if (y.nadir[i]<0) y.nadir[i] <- 1e-50
-        # }
+        # # for (i in 1:length(y.nadir)){
+        # #   if (y.nadir[i]<0) y.nadir[i] <- 1e-50
+        # # }
         z <- 1:problem.zdt1$m
         moead.rad$Y.norm <-
           unlist(sapply(z, function(i, apf, y.nadir, y.ideal) {
             (apf[, i] - y.ideal[i]) / (y.nadir[i] - y.ideal[i])
-          }, apf = moead.rad$Y, y.nadir = y.nadir, y.ideal = y.ideal))
-        
+          }, apf = moead.rad$Archive$Y, y.nadir = y.nadir, y.ideal = y.ideal))
+
         moead.gra$Y.norm <-
           unlist(sapply(z, function(i, apf, y.nadir) {
             (apf[, i] - y.ideal[i]) / (y.nadir[i] - y.ideal[i])
-          }, apf = moead.gra$Y, y.nadir = y.nadir))
-        
+          }, apf = moead.gra$Archive$Y, y.nadir = y.nadir))
+
         moead.de$Y.norm <-
           unlist(sapply(z, function(i, apf, y.nadir) {
             (apf[, i] - y.ideal[i]) / (y.nadir[i] - y.ideal[i])
-          }, apf = moead.de$Y, y.nadir = y.nadir))
+          }, apf = moead.de$Archive$Y, y.nadir = y.nadir))
         # 
         # moead.dra$Y.norm <-
         #   unlist(sapply(z, function(i, apf, y.nadir) {
@@ -234,7 +235,7 @@ for (n.obj in n.objs) {
         moead.rad.hv <-
           emoa::dominated_hypervolume(points = t(moead.rad$Y.norm[moead.rad.non.d, ]),
                                       ref = ref.points)
-
+        
         # gra.awt
         moead.gra.non.d <- find_nondominated_points(moead.gra$Y.norm)
         moead.gra.hv <-
@@ -245,6 +246,10 @@ for (n.obj in n.objs) {
         # nsga.2.hv <-
         #   emoa::dominated_hypervolume(points = t(nsga.2$Y.norm[nsga.2.non.d, ]),
         #                               ref = ref.points)
+        
+        # plot(moead.de)
+        # plot(moead.gra)
+        # plot(moead.rad)
         
         
         moead.de.data <-
@@ -292,7 +297,7 @@ for (n.obj in n.objs) {
         }
         print(aggregate(my.data$HV, median, by = list(my.data$variation.name, my.data$fun)))
       }
-      save(my.data, file = paste0(fun, "_", problem.zdt1$m))
+      # save(my.data, file = paste0(fun, "_", problem.zdt1$m))
     }
   }
 }
