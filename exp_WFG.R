@@ -21,12 +21,10 @@ decomp2 <- list(name = "uniform", N = 150)
 scaling <- list()
 scaling$name <- "simple"
 # 
-# variation <- preset_moead("original")$variation
+variation <- preset_moead("moead.de")$variation
 # variation[[4]] <- variation[[3]]
-# variation[[3]] <-
-#   list(name = "localsearch",
-#        type = "dvls",
-#        gamma.ls = 0.5)
+variation[[1]] <-
+  list(name = "de")
 
 # update <- preset_moead("moead.de")$update
 # update$UseArchive = TRUE
@@ -112,6 +110,7 @@ for (n.obj in n.objs) {
           decomp = decomp,
           stopcrit = stopcrit,
           scaling = scaling,
+          variation = variation,
           showpars = list(show.iters = "none", showevery = 100),
           seed = j
         )
@@ -136,6 +135,7 @@ for (n.obj in n.objs) {
           update = update2,
           stopcrit = stopcrit,
           scaling = scaling,
+          variation = variation,
           showpars = list(show.iters = "none", showevery = 100),
           seed = j,
           resource.allocation = resource.allocation.GRA
@@ -150,6 +150,7 @@ for (n.obj in n.objs) {
           # update = update2,
           stopcrit = stopcrit,
           scaling = scaling,
+          variation = variation,
           showpars = list(show.iters = "none", showevery = 10),
           seed = j,
           resource.allocation = resource.allocation.RAD
