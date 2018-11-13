@@ -1,6 +1,6 @@
 setwd("~/MOEADr/R")
 suppressPackageStartupMessages(library(irace))
-# suppressPackageStartupMessages(library(parallel))
+suppressPackageStartupMessages(library(parallel))
 suppressPackageStartupMessages(library(smoof))
 # suppressPackageStartupMessages(library(MOEADr))
 library(emoa)
@@ -20,8 +20,8 @@ scenario$testNbElites   <-
   7     # test all final elite configurations
 
 # Number of cores to be used by irace (set with caution!)
-# nc                      <- parallel::detectCores() - 2
-# scenario$parallel       <- nc
+nc                      <- parallel::detectCores() - 5
+scenario$parallel       <- nc
 
 # Read tunable parameter list from file
 parameters <- readParameters("../inst/extdata/parameters4.txt")
