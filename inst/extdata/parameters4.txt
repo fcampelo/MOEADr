@@ -2,10 +2,12 @@
 # name		      switch	type	values [conditions (using R syntax)]
 T               " "     i     (10,40)
 delta.p         " "     r     (0.1,1)
+aggfun.name     " "     c     (WT,AWT,PBI)
+aggfun.theta    " "     i     (2,20) | aggfun.name == "PBI"
+update.name     " "     c     (standard,best,restricted)
 UseArchive      " "     i     (0,1)
-nr              " "     i     (1,10)
+Tr              " "     i     (4,20) | update.name == "best"
+nr              " "     i     (1,10) | update.name != "standard"
 polymut.eta     " "     r     (1,100)
 polymut.pm      " "     r     (0,1)
-diffmut.basis   " "     c     (rand,mean,wgi)
-diffmut.phi     " "     r     (0,1)
-
+beta            " "     r     (0,1)
