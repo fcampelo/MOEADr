@@ -228,9 +228,6 @@ for (n.obj in n.objs) {
         # nsga.2.hv <-
         #   emoa::dominated_hypervolume(points = t(nsga.2$Y.norm[nsga.2.non.d, ]),
         #                               ref = ref.points)
-        plot(moead.de)
-        plot(moead.gra)
-        plot(moead.rad)
         
         moead.de.data <-
           rbind(moead.de.data,
