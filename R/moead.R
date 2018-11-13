@@ -352,11 +352,13 @@ moead <-
                             problem = problem)
     
     # Evaluate population on objectives
-    YV <- evaluate_population(X       = X,
-                              problem = problem,
-                              nfe     = nfe,
-                              iter = 0,
-                              my.file.n=my.file.n)
+    YV <- evaluate_population(
+      X       = X,
+      problem = problem,
+      nfe     = nfe,
+      iter = 0,
+      my.file.n = my.file.n
+    )
     Y   <- YV$Y
     V   <- YV$V
     nfe <- YV$nfe
@@ -382,7 +384,6 @@ moead <-
         BP <- ra$BP
       }
     }
-    
     indexes <- seq.int(1, dim(W)[1])
     
     # ========================= End Initial definitions ======================== #
@@ -394,6 +395,7 @@ moead <-
     while (keep.running) {
       # Update iteration counter
       iter <- iter + 1
+      # print("iter")
       # print(iter)
       if ("save.iters" %in% names(moead.input.pars)) {
         if (moead.input.pars$save.iters == TRUE)
@@ -435,14 +437,13 @@ moead <-
         }
         Xt <- X
         temp.X <- X
-        X <- X[indexes,]
+        X <- X[indexes, ]
         Yt <- Y
         temp.Y <- Y
-        Y <- Y[indexes,]
+        Y <- Y[indexes, ]
         Vt <- V
       }
-      
-      B  <- BP$B.variation[indexes, ]
+      B  <- BP$B.variation[indexes,]
       P  <- BP$P[indexes, indexes]
       
       # Perform variation
@@ -451,38 +452,44 @@ moead <-
       X       <- Xv$X
       ls.args <- Xv$ls.args
       nfe     <- nfe + Xv$var.nfe
-      
       # ========== Evaluation
       # Evaluate offspring population on objectives
-      YV <- evaluate_population(X       = X,
-                                problem = problem,
-                                nfe     = nfe,
-                                iter = iter,
-                                my.file.n=my.file.n)
+        YV <- evaluate_population(
+          X       = X,
+          problem = problem,
+          nfe     = nfe,
+          iter = iter,
+          my.file.n = my.file.n
+        )  
+      # }
       Y   <- YV$Y
       V   <- YV$V
       nfe <- YV$nfe
       
       if (!nullRA) {
-        temp.X[indexes,] <- X
+        temp.X[indexes, ] <- X
         X <- temp.X
         
-        temp.Y[indexes,] <- Y
+        temp.Y[indexes, ] <- Y
         Y <- temp.Y
       }
-      
-      
-      
       # ========== Scalarization
       # Objective scaling and estimation of 'ideal' and 'nadir' points
-      normYs <- scale_objectives(Y       = Y,
-                                 Yt      = Yt,
-                                 scaling = scaling)
-      
+      # normYs <- scale_objectives(Y       = Y,
+      #                            Yt      = Yt,
+      #                            scaling = scaling)
+      # write.table(class(normYs$Y), "scalarize1.txt")
+      minP <- getminP(rbind(Y, Yt))
+      maxP <- getmaxP(rbind(Y, Yt))
+      normYs <- list(Y    = Y,
+                  Yt   = Yt,
+                  minP = minP,
+                  maxP = maxP)
       # Scalarization by neighborhood.
       # bigZ is an [(T+1) x N] matrix, in which each column has the T scalarized
       # values for the solutions in the neighborhood of one subproblem, plus the
       # scalarized value for the incumbent solution for that subproblem.
+      # write.table(class(normYs$Y), "scalarize10.txt")
       B  <- BP$B.scalarize
       bigZ <- scalarize_values(
         normYs  = normYs,
@@ -497,6 +504,7 @@ moead <-
       # (which takes into account both the performance value and constraint
       # handling policy, if any)
       B  <- BP$B.order
+      # write.table("test", "order.txt")
       sel.indx <- order_neighborhood(
         bigZ       = bigZ,
         B          = B,
@@ -504,7 +512,6 @@ moead <-
         Vt         = Vt,
         constraint = constraint
       )
-      
       # ========== Update
       # Update population
       XY <- do.call(update_population,
@@ -512,37 +519,50 @@ moead <-
       X       <- XY$X
       Y       <- XY$Y
       V       <- XY$V
-      # print(V)
       Archive <- XY$Archive
-      if(problem$name == "problem.moon" && update$UseArchive == TRUE){
-      # if(update$UseArchive == TRUE){
-        # print("entrou")
-        if (nfe + dim(W)[1] < stopcrit[[1]]$maxeval){
-          aux <- unique(ecr::selTournament(fitness = bigZ[,ncol(bigZ)],
-                                           n.select = dim(W)[1],
-                                           k = 2))
-          temp <-
-            apply(
-              X = Archive$X[aux,],
-              MARGIN = 2,
-              FUN = function(x) {
-                approx(x, n = dim(W)[1], method = "linear")$y
-              }
-            )
-          Archive$X <- rbind(temp,Archive$X)
-        }
-          a <- rbind(Y, Archive$Y)
-          c <- rbind(X, Archive$X)
-          d <- rbind(V$Cmatrix, Archive$V$Cmatrix)
-          b <- ecr::doNondominatedSorting(t(a))
-          Archive$Y <- a[b$ranks==1,]
-          Archive$X <- c[b$ranks==1,]
-      }
-      
+      # write.table("test", "crazyness.txt")
+      # if (problem$name == "problem.moon" &&
+      #     update$UseArchive == TRUE &&
+      #     update$nsga == TRUE) {
+      #   if (nfe + dim(W)[1] < stopcrit[[1]]$maxeval) {
+      #     aux <- unique(ecr::selTournament(
+      #       fitness = bigZ[, ncol(bigZ)],
+      #       n.select = dim(W)[1],
+      #       k = 10
+      #     ))
+      #     temp <-
+      #       apply(
+      #         X = Archive$X[aux,],
+      #         MARGIN = 2,
+      #         FUN = function(x) {
+      #           approx(x, n = dim(W)[1], method = "linear")$y
+      #         }
+      #       )
+      #     X <- rbind(temp, Archive$X)
+      #   }
+      #   a <- rbind(Y, Archive$Y)
+      #   c <- rbind(X, Archive$X)
+      #   b <- doNondominatedSorting(t(a))
+      #   rank = 1
+      #   X <- c[b$ranks == rank,]
+      #   sz <- dim(W)[1] - dim(X)[1]
+      #   if (sz < 0) {
+      #     aux <- ecr::selTournament(fitness = bigZ[, ncol(bigZ)],
+      #                               n.select = dim(W)[1],
+      #                               k = 10)
+      #     X <- X[aux, ]
+      #   }
+      #   while (sz > 0) {
+      #     rank <- rank + 1
+      #     my.tmp.idx <- which((b$ranks == rank) == TRUE)
+      #     X <- rbind(X, c[my.tmp.idx[1:sz],])
+      #     sz <- dim(W)[1] - dim(X)[1]
+      #   }
+      # }
       if (!nullRA) {
         if (resource.allocation$name == "DRA") {
           if (iter %% resource.allocation$dt == 0) {
-            newObj <- bigZ[neighbors$T + 1, ]
+            newObj <- bigZ[neighbors$T + 1,]
             Pi <- dra(newObj, oldObj, Pi)
             oldObj <- newObj
           }
@@ -577,6 +597,7 @@ moead <-
       }
       # ========== Stop Criteria
       # Calculate iteration time
+      write.table("test", "redo.txt")
       elapsed.time <- as.numeric(difftime(
         time1 = Sys.time(),
         time2 = time.start,
