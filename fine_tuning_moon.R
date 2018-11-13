@@ -122,7 +122,7 @@ target.runner <- function(experiment, scenario){
   }
   
   ## 11. Seed
-  seed <- sample(1:10000, 1)
+  seed <- sample(1:9999, 1)
   # seed <- conf$seed
   
   # Run MOEA/D
