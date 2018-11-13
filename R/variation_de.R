@@ -1,5 +1,5 @@
 variation_de <- function(X, P, phi = 0.5, ...) {
-  # print((X))
+  phi <- 0.5
   new.solution <- X
   dimX <- dim(X)[1]
   for (i in 1:dim(X)[1]) {
@@ -11,7 +11,3 @@ variation_de <- function(X, P, phi = 0.5, ...) {
   }
   return (new.solution)
 }
-
-# X <- lhs::randomLHS(10, 2)
-# X
-# variation_DE(X)
