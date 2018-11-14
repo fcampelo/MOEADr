@@ -521,45 +521,44 @@ moead <-
       Y       <- XY$Y
       V       <- XY$V
       Archive <- XY$Archive
-      # write.table("test", "crazyness.txt")
-      # if (problem$name == "problem.moon" &&
-      #     update$UseArchive == TRUE &&
-      #     update$nsga == TRUE) {
-      #   if (nfe + dim(W)[1] < stopcrit[[1]]$maxeval) {
-      #     aux <- unique(ecr::selTournament(
-      #       fitness = bigZ[, ncol(bigZ)],
-      #       n.select = dim(W)[1],
-      #       k = 10
-      #     ))
-      #     temp <-
-      #       apply(
-      #         X = Archive$X[aux,],
-      #         MARGIN = 2,
-      #         FUN = function(x) {
-      #           approx(x, n = dim(W)[1], method = "linear")$y
-      #         }
-      #       )
-      #     X <- rbind(temp, Archive$X)
-      #   }
-      #   a <- rbind(Y, Archive$Y)
-      #   c <- rbind(X, Archive$X)
-      #   b <- doNondominatedSorting(t(a))
-      #   rank = 1
-      #   X <- c[b$ranks == rank,]
-      #   sz <- dim(W)[1] - dim(X)[1]
-      #   if (sz < 0) {
-      #     aux <- ecr::selTournament(fitness = bigZ[, ncol(bigZ)],
-      #                               n.select = dim(W)[1],
-      #                               k = 10)
-      #     X <- X[aux, ]
-      #   }
-      #   while (sz > 0) {
-      #     rank <- rank + 1
-      #     my.tmp.idx <- which((b$ranks == rank) == TRUE)
-      #     X <- rbind(X, c[my.tmp.idx[1:sz],])
-      #     sz <- dim(W)[1] - dim(X)[1]
-      #   }
-      # }
+      if (problem$name == "problem.moon" &&
+          update$UseArchive == TRUE &&
+          update$nsga == TRUE) {
+        if (nfe + dim(W)[1] < stopcrit[[1]]$maxeval) {
+          aux <- unique(ecr::selTournament(
+            fitness = bigZ[, ncol(bigZ)],
+            n.select = dim(W)[1],
+            k = 10
+          ))
+          temp <-
+            apply(
+              X = Archive$X[aux,],
+              MARGIN = 2,
+              FUN = function(x) {
+                approx(x, n = dim(W)[1], method = "linear")$y
+              }
+            )
+          X <- rbind(temp, Archive$X)
+        }
+        a <- rbind(Y, Archive$Y)
+        c <- rbind(X, Archive$X)
+        b <- doNondominatedSorting(t(a))
+        rank = 1
+        X <- c[b$ranks == rank,]
+        sz <- dim(W)[1] - dim(X)[1]
+        if (sz < 0) {
+          aux <- ecr::selTournament(fitness = bigZ[, ncol(bigZ)],
+                                    n.select = dim(W)[1],
+                                    k = 10)
+          X <- X[aux, ]
+        }
+        while (sz > 0) {
+          rank <- rank + 1
+          my.tmp.idx <- which((b$ranks == rank) == TRUE)
+          X <- rbind(X, c[my.tmp.idx[1:sz],])
+          sz <- dim(W)[1] - dim(X)[1]
+        }
+      }
       if (!nullRA) {
         if (resource.allocation$name == "DRA") {
           if (iter %% resource.allocation$dt == 0) {
