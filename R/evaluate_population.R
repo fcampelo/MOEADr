@@ -38,6 +38,8 @@
 
 evaluate_population <- function(X, problem, nfe, iter, my.file.n)
 {
+  input.pars <- as.list(sys.call())[-1]
+  my.file.n <- eval(input.pars$my.file.n)
 
   # ========== Error catching and default value definitions
   # Input "problem" is assumed to have been already verified in
@@ -52,8 +54,10 @@ evaluate_population <- function(X, problem, nfe, iter, my.file.n)
 
   # Denormalize population
   if (problem$name == "problem.moon") {
-    
-    
+    my.iter <- with_options(
+      c(scipen = 999), 
+      str_pad(iter, 4, pad = "0")
+    )
     filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_vars_eval.txt")
     write.table(X,
                 file = filename,
@@ -62,16 +66,13 @@ evaluate_population <- function(X, problem, nfe, iter, my.file.n)
     system(paste("./moon_mop",path))
     # get evaluations from file
     Y <- as.matrix(read.csv(paste0(my.file.n, "th_run/optimizer/interface/pop_objs_eval.txt"), sep = "\t", stringsAsFactors =  F, header = F))
-    my.iter <- with_options(
-      c(scipen = 999), 
-      str_pad(iter, 4, pad = "0")
-    )
+    filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_vars_eval.txt")
     dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_vars_eval.txt")
-    system(paste("mv ", filename, dest))
+    system(paste("cp ", filename, dest))
     
     filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_objs_eval.txt")
     dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_objs_eval.txt")
-    system(paste("mv ", filename, dest))
+    system(paste("cp ", filename, dest))
   }
   else{
     X <- denormalize_population(X, problem)
@@ -99,13 +100,18 @@ evaluate_population <- function(X, problem, nfe, iter, my.file.n)
   {
     if(problem$name == "problem.moon") {
       # get constrains from file
+      my.iter <- with_options(
+        c(scipen = 999), 
+        str_pad(iter, 4, pad = "0")
+      )
       filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_cons_eval.txt")
       cons <- as.matrix(read.csv(filename, sep = "\t", stringsAsFactors =  F, header = F))
       Vmatrix <- abs(pmin(cons[, 1:2], 0))
       V <- list(Cmatrix = cons, Vmatrix = Vmatrix, v = rowSums(Vmatrix))
       
+      # filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_cons_eval.txt")
       dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_cons_eval.txt")
-      system(paste("mv ", filename, dest))
+      system(paste("cp ", filename, dest))
     }
     else{
       con <- problem$constraints

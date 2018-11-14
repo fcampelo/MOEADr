@@ -43,9 +43,9 @@ scale_objectives <- function(Y, Yt, scaling, eps = 1e-16, ...){
   # Get "ideal" and "nadir" points
   minP <- getminP(rbind(Y, Yt))
   maxP <- getmaxP(rbind(Y, Yt))
-
   # No scaling
   if (scaling$name == "none"){
+    write.table(class(Y), "scalarize2.txt")
     return(list(Y    = Y,
                 Yt   = Yt,
                 minP = minP,
