@@ -52,8 +52,8 @@ for (algo in algorithms) {
     xmax       = rep(1, d),
     m          = n.obj,
     constraints = list(
-      name      = "box_constraints",# constraint function routine
-      epsilon   = 0.00) # tolerance for equality constraints
+      name      = "unitary_constraints",# constraint function routine
+      epsilon   = 0.95) # tolerance for equality constraints
   )
   ref.points <- matrix(c(1.0, 0.0, 1.0), nrow = 1, ncol = 3)
   for (j in 1:repetitions) {
@@ -111,7 +111,7 @@ for (algo in algorithms) {
       stopcrit = stopcrit,
       update = update,
       variation = variation,
-      constraint = list(name = "penalty", beta=0.0),
+      constraint = list(name = "penalty", beta=0.05),
       showpars = list(show.iters = "none", showevery = 10),
       seed = j,
       resource.allocation = resource.allocation.RAD,
@@ -119,16 +119,16 @@ for (algo in algorithms) {
     )
     print("moead.rad$n.iter")
     print(moead.rad$n.iter)
-    moead.rad.non.d <- find_nondominated_points(moead.rad$Y)
+    moead.rad.non.d <- find_nondominated_points(moead.rad$Archive$Y)
     moead.rad.hv <-
-      emoa::dominated_hypervolume(points = t(moead.rad$Y[moead.rad.non.d, ]),
+      emoa::dominated_hypervolume(points = t(moead.rad$Archive$Y[moead.rad.non.d, ]),
                                   ref = ref.points)
     print(moead.rad.hv)
     print("moead.de")
     # print(moead.de$n.iter)
-    moead.de.non.d <- find_nondominated_points(moead.de$Y)
+    moead.de.non.d <- find_nondominated_points(moead.de$Archive$Y)
     moead.de.hv <-
-      emoa::dominated_hypervolume(points = t(moead.de$Y[moead.de.non.d, ]),
+      emoa::dominated_hypervolume(points = t(moead.de$Archive$Y[moead.de.non.d, ]),
                                   ref = ref.points)
     print(moead.de.hv)
     # moead.de.non.d <- find_nondominated_points(moead.gra$Y)
