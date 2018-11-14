@@ -45,7 +45,6 @@
 #' @export
 
 variation_diffmut <- function(X, P, B, Phi = NULL, basis = 'rand', ...){
-
   input.pars <- as.list(sys.call())[-1]
 
   # ========== Error catching and default value definitions
