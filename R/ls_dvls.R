@@ -43,8 +43,8 @@
 #' @export
 
 ls_dvls <- function(Xt, Yt, Vt, B, W, which.x, trunc.x,
-                    problem, scaling, aggfun, constraint, ...){
-
+                    problem, scaling, aggfun, constraint, indexes, iter, my.file.n, ...){
+  print("ls_dvls")
   # ========== Error catching and default value definitions
   # All error catching and default value definitions are assumed to have been
   # verified in the calling function perform_variation().
@@ -52,14 +52,22 @@ ls_dvls <- function(Xt, Yt, Vt, B, W, which.x, trunc.x,
 
   # ========== Calculate X+ and X-
   # 1. Draw neighborhood indices
-  dimX <- dim(Xt)
+  # dimX <- dim(Xt)
+  temp.Xt <- Xt
+  temp.Yt <- Yt
+  temp.W <- W
+  Xt <- Xt[indexes,]
+  Yt <- Yt[indexes,]
   Inds <- do.call(rbind,
                   lapply(which(which.x),
-                         FUN = function(i, B){sample(x       = B[i, ],
-                                                     size    = 2,
-                                                     replace = FALSE)},
+                         FUN = function(i, B){
+                           if (i < dimX[1]){
+                             sample(x       = B[i, ],
+                                    size    = 2,
+                                    replace = FALSE)   
+                           }
+                           },
                          B   = B))
-
   # 2. Calculate multipliers
   nls <- nrow(Inds)
   ls.Phi <- matrix(stats::rnorm(nls, mean = 0.5, sd = 0.1),
@@ -81,9 +89,11 @@ ls_dvls <- function(Xt, Yt, Vt, B, W, which.x, trunc.x,
   dvls.Vt$v       <- dvls.Vt$v[which.x]
 
   # ========== Evaluate X+, X-
+  W <- temp.W
   for (phi.m in c(-1, 1)){
     # 1. Generate candidate. Truncate if required
-    dvls.X  <- dvls.Xo + phi.m * ls.Phi * (Xt[Inds[, 1], , drop = FALSE] - Xt[Inds[, 2], , drop = FALSE])
+    # dvls.X  <- dvls.Xo + phi.m * ls.Phi * (Xt[Inds[, 1], , drop = FALSE] - Xt[Inds[, 2], , drop = FALSE])
+    dvls.X  <- dvls.Xo + phi.m * ls.Phi * (Xt[Inds[, 1]] - Xt[Inds[, 2]])
     if (trunc.x) dvls.X <- matrix(pmax(0, pmin(dvls.X, 1)),
                                   nrow  = nrow(dvls.X),
                                   byrow = FALSE)
@@ -91,7 +101,9 @@ ls_dvls <- function(Xt, Yt, Vt, B, W, which.x, trunc.x,
     # 2. Evaluate on objective functions and constraints
     dvls.YV <- evaluate_population(X       = dvls.X,
                                    problem = problem,
-                                   nfe     = 0)
+                                   nfe     = 0,
+                                   iter = iter,
+                                   my.file.n = my.file.n)
 
     # 3. Objective scaling
     dvls.normYs <- scale_objectives(Y       = dvls.YV$Y,
