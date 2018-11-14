@@ -18,7 +18,7 @@ resource.allocation.GRA <- list(name = "GRA", dt = 20)
 resource.allocation.RAD <- list(name = "RAD", dt = 20)
 
 
-decomp <- list(name = "SLD", H = 16)
+decomp <- list(name = "SLD", H = 20)
 decomp2 <- list(name = "uniform", N = 150)
 
 scaling <- list()
@@ -28,6 +28,7 @@ variation <- preset_moead("moead.de")$variation
 # variation[[4]] <- variation[[3]]
 variation[[1]] <-
   list(name = "de")
+variation[[4]] <- list(name = "localsearch", type = "tpqa", gamma.ls = 0.5)
 
 update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
@@ -74,7 +75,7 @@ for (algo in algorithms) {
       preset   = preset_moead(algo),
       decomp = decomp,
       stopcrit = stopcrit,
-      variation = variation,
+      update = update,
       constraint = list(name = "penalty", beta=0.05),
       showpars = list(show.iters = "none", showevery = 100),
       seed = j,
@@ -108,7 +109,7 @@ for (algo in algorithms) {
       preset   = preset_moead(algo),
       decomp = decomp,
       stopcrit = stopcrit,
-      # update = update,
+      update = update,
       variation = variation,
       constraint = list(name = "penalty", beta=0.0),
       showpars = list(show.iters = "none", showevery = 10),
@@ -118,18 +119,18 @@ for (algo in algorithms) {
     )
     print("moead.rad$n.iter")
     print(moead.rad$n.iter)
-    # moead.rad.non.d <- find_nondominated_points(moead.rad$Y)
-    # moead.rad.hv <-
-    #   emoa::dominated_hypervolume(points = t(moead.rad$Y[moead.rad.non.d, ]),
-    #                               ref = ref.points)
-    # print(moead.rad.hv)
-    # print("moead.de")
-    # # print(moead.de$n.iter)
-    # moead.de.non.d <- find_nondominated_points(moead.de$Y)
-    # moead.de.hv <-
-    #   emoa::dominated_hypervolume(points = t(moead.de$Y[moead.de.non.d, ]),
-    #                               ref = ref.points)
-    # print(moead.de.hv)
+    moead.rad.non.d <- find_nondominated_points(moead.rad$Y)
+    moead.rad.hv <-
+      emoa::dominated_hypervolume(points = t(moead.rad$Y[moead.rad.non.d, ]),
+                                  ref = ref.points)
+    print(moead.rad.hv)
+    print("moead.de")
+    # print(moead.de$n.iter)
+    moead.de.non.d <- find_nondominated_points(moead.de$Y)
+    moead.de.hv <-
+      emoa::dominated_hypervolume(points = t(moead.de$Y[moead.de.non.d, ]),
+                                  ref = ref.points)
+    print(moead.de.hv)
     # moead.de.non.d <- find_nondominated_points(moead.gra$Y)
     # moead.de.hv <-
     #   emoa::dominated_hypervolume(points = t(moead.gra$Y[moead.de.non.d, ]),
