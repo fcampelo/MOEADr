@@ -341,6 +341,9 @@ moead <-
     if (is.null(update$UseArchive)) {
       update$UseArchive <- FALSE
     }
+    if (!is.null(update$nsga)){
+      Archive2 = list(X = NULL, Y = NULL, V = NULL)
+    }
     # =========================== End Algorithm setup ========================== #
     
     # =========================== Initial definitions ========================== #
@@ -523,40 +526,17 @@ moead <-
       if (problem$name == "problem.moon" &&
           update$UseArchive == TRUE &&
           update$nsga == TRUE) {
-        if (nfe + dim(W)[1] < stopcrit[[1]]$maxeval) {
-          aux <- unique(ecr::selTournament(
-            fitness = bigZ[, ncol(bigZ)],
-            n.select = dim(W)[1],
-            k = 10
-          ))
-          temp <-
-            apply(
-              X = Archive$X[aux,],
-              MARGIN = 2,
-              FUN = function(x) {
-                approx(x, n = dim(W)[1], method = "linear")$y
-              }
-            )
-          X <- rbind(temp, Archive$X)
-        }
-        a <- rbind(Y, Archive$Y)
-        c <- rbind(X, Archive$X)
-        b <- doNondominatedSorting(t(a))
-        rank = 1
-        X <- c[b$ranks == rank,]
-        sz <- dim(W)[1] - dim(X)[1]
-        if (sz < 0) {
-          aux <- ecr::selTournament(fitness = bigZ[, ncol(bigZ)],
-                                    n.select = dim(W)[1],
-                                    k = 10)
-          X <- X[aux, ]
-        }
-        while (sz > 0) {
-          rank <- rank + 1
-          my.tmp.idx <- which((b$ranks == rank) == TRUE)
-          X <- rbind(X, c[my.tmp.idx[1:sz],])
-          sz <- dim(W)[1] - dim(X)[1]
-        }
+        print("ah")
+        comb.popX <- rbind(X, Archive$X, Archive2$X)
+        comb.popY <- rbind(Y, Archive$Y, Archive2$Y)
+        comb.popV <- rbind(V, Archive$V, Archive2$V)
+
+        sorting <- doNondominatedSorting(t(comb.popY))
+        Archive2$X <- comb.popX[sorting$rank == 1,]
+        Archive2$Y <- comb.popY[sorting$rank == 1,]
+        Archive2$V$V <- comb.popV$V[sorting$rank == 1,]
+        Archive2$V$Vmatrix <- comb.popV$Vmatrix[sorting$rank == 1,]
+        Archive2$V$Cmatrix <- comb.popV$Cmatrix[sorting$rank == 1,]
       }
       if (!nullRA) {
         if (resource.allocation$name == "DRA") {
@@ -639,6 +619,7 @@ moead <-
       V           = V,
       W           = W,
       Archive     = Archive,
+      Archive2     = Archive2,
       ideal       = apply(Y, 2, min),
       nadir       = apply(Y, 2, max),
       nfe         = nfe,
