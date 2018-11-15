@@ -398,8 +398,8 @@ moead <-
     while (keep.running) {
       # Update iteration counter
       iter <- iter + 1
-      print("iter")
-      print(iter)
+      # print("iter")
+      # print(iter)
       if ("save.iters" %in% names(moead.input.pars)) {
         if (moead.input.pars$save.iters == TRUE)
           saveRDS(as.list(environment()),
@@ -564,7 +564,7 @@ moead <-
                 parent = parent,
                 W = W,
                 old.dm = old.dm
-              )online_diversity
+              )
             Pi <- diversity$p
             old.dm <- diversity$dm
           }
