@@ -399,8 +399,8 @@ moead <-
     while (keep.running) {
       # Update iteration counter
       iter <- iter + 1
-      # print("iter")
-      # print(iter)
+      print("iter")
+      print(iter)
       if ("save.iters" %in% names(moead.input.pars)) {
         if (moead.input.pars$save.iters == TRUE)
           saveRDS(as.list(environment()),
@@ -524,20 +524,20 @@ moead <-
       Y       <- XY$Y
       V       <- XY$V
       Archive <- XY$Archive
-      # if (problem$name == "problem.moon" &&
-      #     update$UseArchive == TRUE &&
-      #     update$nsga == TRUE) {
-      #   comb.popX <- rbind(X, Archive$X, Archive2$X)
-      #   comb.popY <- rbind(Y, Archive$Y, Archive2$Y)
-      #   comb.popV <- rbind(V, Archive$V, Archive2$V)
-      # 
-      #   sorting <- doNondominatedSorting(t(comb.popY))
-      #   Archive2$X <- comb.popX[sorting$rank == 1,]
-      #   Archive2$Y <- comb.popY[sorting$rank == 1,]
-      #   Archive2$V$V <- comb.popV$V[sorting$rank == 1,]
-      #   Archive2$V$Vmatrix <- comb.popV$Vmatrix[sorting$rank == 1,]
-      #   Archive2$V$Cmatrix <- comb.popV$Cmatrix[sorting$rank == 1,]
-      # }
+      if (problem$name == "problem.moon" &&
+          update$UseArchive == TRUE &&
+          update$nsga == TRUE) {
+        comb.popX <- rbind(X, Archive$X, Archive2$X)
+        comb.popY <- rbind(Y, Archive$Y, Archive2$Y)
+        comb.popV <- rbind(V, Archive$V, Archive2$V)
+
+        sorting <- doNondominatedSorting(t(comb.popY))
+        Archive2$X <- comb.popX[sorting$rank == 1,]
+        Archive2$Y <- comb.popY[sorting$rank == 1,]
+        Archive2$V$V <- comb.popV$V[sorting$rank == 1,]
+        Archive2$V$Vmatrix <- comb.popV$Vmatrix[sorting$rank == 1,]
+        Archive2$V$Cmatrix <- comb.popV$Cmatrix[sorting$rank == 1,]
+      }
       if (!nullRA) {
         if (resource.allocation$name == "DRA") {
           if (iter %% resource.allocation$dt == 0) {
@@ -565,8 +565,8 @@ moead <-
                 parent = parent,
                 W = W,
                 old.dm = old.dm
-              )
-            p <- diversity$p
+              )online_diversity
+            Pi <- diversity$p
             old.dm <- diversity$dm
           }
           else
@@ -595,6 +595,8 @@ moead <-
       
       # ========== Print
       # Echo whatever is demanded
+      
+      if (iter %% 5  == 0 && iter > 20) plot(Pi, main = iter)
       print_progress(iter.times, showpars)
     }
     # =========================== End Iterative cycle ========================== #
