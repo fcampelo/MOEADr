@@ -595,7 +595,7 @@ moead <-
       # ========== Print
       # Echo whatever is demanded
       
-      if (iter %% 5  == 0 && iter > 20) plot(Pi, main = iter)
+      # if (iter %% 5  == 0 && iter > 20) plot(Pi, main = iter)
       print_progress(iter.times, showpars)
     }
     # =========================== End Iterative cycle ========================== #
