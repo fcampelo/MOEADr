@@ -342,9 +342,9 @@ moead <-
     if (is.null(update$UseArchive)) {
       update$UseArchive <- FALSE
     }
-    if (!is.null(update$nsga)){
+    # if (!is.null(update$nsga)){
       Archive2 = list(X = NULL, Y = NULL, V = NULL)
-    }
+    # }
     # =========================== End Algorithm setup ========================== #
     
     # =========================== Initial definitions ========================== #
