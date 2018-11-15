@@ -524,21 +524,20 @@ moead <-
       Y       <- XY$Y
       V       <- XY$V
       Archive <- XY$Archive
-      if (problem$name == "problem.moon" &&
-          update$UseArchive == TRUE &&
-          update$nsga == TRUE) {
-        print("ah")
-        comb.popX <- rbind(X, Archive$X, Archive2$X)
-        comb.popY <- rbind(Y, Archive$Y, Archive2$Y)
-        comb.popV <- rbind(V, Archive$V, Archive2$V)
-
-        sorting <- doNondominatedSorting(t(comb.popY))
-        Archive2$X <- comb.popX[sorting$rank == 1,]
-        Archive2$Y <- comb.popY[sorting$rank == 1,]
-        Archive2$V$V <- comb.popV$V[sorting$rank == 1,]
-        Archive2$V$Vmatrix <- comb.popV$Vmatrix[sorting$rank == 1,]
-        Archive2$V$Cmatrix <- comb.popV$Cmatrix[sorting$rank == 1,]
-      }
+      # if (problem$name == "problem.moon" &&
+      #     update$UseArchive == TRUE &&
+      #     update$nsga == TRUE) {
+      #   comb.popX <- rbind(X, Archive$X, Archive2$X)
+      #   comb.popY <- rbind(Y, Archive$Y, Archive2$Y)
+      #   comb.popV <- rbind(V, Archive$V, Archive2$V)
+      # 
+      #   sorting <- doNondominatedSorting(t(comb.popY))
+      #   Archive2$X <- comb.popX[sorting$rank == 1,]
+      #   Archive2$Y <- comb.popY[sorting$rank == 1,]
+      #   Archive2$V$V <- comb.popV$V[sorting$rank == 1,]
+      #   Archive2$V$Vmatrix <- comb.popV$Vmatrix[sorting$rank == 1,]
+      #   Archive2$V$Cmatrix <- comb.popV$Cmatrix[sorting$rank == 1,]
+      # }
       if (!nullRA) {
         if (resource.allocation$name == "DRA") {
           if (iter %% resource.allocation$dt == 0) {
