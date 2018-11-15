@@ -19,7 +19,7 @@ resource.allocation.RAD <- list(name = "RAD", dt = 20)
 
 
 decomp <- list(name = "SLD", H =16)
-decomp2 <- list(name = "uniform", N = 300)
+decomp2 <- list(name = "uniform", N = 153)
 
 scaling <- list()
 scaling$name <- "simple"
@@ -33,8 +33,8 @@ variation[[4]] <- list(name = "localsearch", type = "tpqa", gamma.ls = 0.5)
 update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 # update$UseArchive = FALSE
-# update$nsga = TRUE
-update$nsga = FALSE
+update$nsga = TRUE
+# update$nsga = FALSE
 update2 <- list(name  = "onra")
 update2$UseArchive = TRUE
 n.obj <- 3
@@ -71,24 +71,7 @@ for (algo in algorithms) {
     moead.de <- moead(
       problem  = problem.zdt1,
       preset   = preset_moead(algo),
-      decomp = decomp,
-      stopcrit = stopcrit,
-      update = update,
-      variation = variation,
-      constraint = list(name = "penalty", beta=0.95),
-      showpars = list(show.iters = "none", showevery = 100),
-      seed = j,
-      my.file.n = my.file.n
-    )
-    # gra.awt
-    my.file.n <- paste0("gra/",with_options(
-      c(scipen = 999),
-      str_pad(j - 1, 3, pad = "0")
-    ))
-    moead.gra <- moead(
-      problem  = problem.zdt1,
-      preset   = preset_moead("original"),
-      decomp = decomp,
+      decomp = decomp2,
       stopcrit = stopcrit,
       update = update,
       variation = variation,
@@ -121,6 +104,11 @@ for (algo in algorithms) {
     # moead.de.non.d <- find_nondominated_points(moead.de$Archive$Y)
     # moead.de.hv <-
     #   emoa::dominated_hypervolume(points = t(moead.de$Archive$Y[moead.de.non.d, ]),
+    #                               ref = ref.points)
+    # print(moead.de.hv)
+    # moead.de.non.d <- find_nondominated_points(moead.de$Archive2$Y)
+    # moead.de.hv <-
+    #   emoa::dominated_hypervolume(points = t(moead.de$Archive2$Y[moead.de.non.d, ]),
     #                               ref = ref.points)
     # print(moead.de.hv)
   }
