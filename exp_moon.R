@@ -25,16 +25,11 @@ scaling <- list()
 scaling$name <- "simple"
 
 variation <- preset_moead("moead.de")$variation
-# variation[[4]] <- variation[[3]]
-# variation[[1]] <-
-#   list(name = "de")
 variation[[4]] <- list(name = "localsearch", type = "tpqa", gamma.ls = 0.5)
 
 update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
-# update$UseArchive = FALSE
 update$nsga = TRUE
-# update$nsga = FALSE
 update2 <- list(name  = "onra")
 update2$UseArchive = TRUE
 n.obj <- 3
