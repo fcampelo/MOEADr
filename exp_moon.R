@@ -66,7 +66,7 @@ for (algo in algorithms) {
     moead.de <- moead(
       problem  = problem.zdt1,
       preset   = preset_moead(algo),
-      decomp = decomp2,
+      decomp = decomp,
       stopcrit = stopcrit,
       update = update,
       variation = variation,
