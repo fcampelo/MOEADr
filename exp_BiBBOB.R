@@ -27,8 +27,8 @@ scaling$name <- "simple"
 
 variation <- preset_moead("moead.de")$variation
 # variation[[4]] <- variation[[3]]
-variation[[1]] <-
-  list(name = "de")
+# variation[[1]] <-
+#   list(name = "de")
 
 update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
@@ -40,7 +40,7 @@ n.objs <- c(2)
 
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 300000))
+                       maxeval = 60000))
 
 for (n.obj in n.objs) {
   print(n.obj)
@@ -297,7 +297,7 @@ for (n.obj in n.objs) {
         }
         print(aggregate(my.data$HV, median, by = list(my.data$variation.name, my.data$fun)))
       }
-      save(my.data, file = paste0("30k",fun, "_", problem.zdt1$m))
+      save(my.data, file = paste0(fun, "_", problem.zdt1$m))
     }
   }
 }
