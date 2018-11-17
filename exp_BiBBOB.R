@@ -6,7 +6,7 @@ library(emoa)
 library(stringr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
-repetitions <-  21
+repetitions <-  30
 
 algorithms <- c("moead.de")
 
@@ -297,7 +297,7 @@ for (n.obj in n.objs) {
         }
         print(aggregate(my.data$HV, median, by = list(my.data$variation.name, my.data$fun)))
       }
-      # save(my.data, file = paste0(fun, "_", problem.zdt1$m))
+      save(my.data, file = paste0(fun, "_", problem.zdt1$m))
     }
   }
 }

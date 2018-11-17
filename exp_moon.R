@@ -96,14 +96,14 @@ for (algo in algorithms) {
     )
     print("moead.rad$n.iter")
     print(moead.rad$n.iter)
-    # moead.de.non.d <- find_nondominated_points(moead.de$Archive$Y)
+    moead.de.non.d <- find_nondominated_points(moead.de$Archive$Y)
+    moead.de.hv <-
+      emoa::dominated_hypervolume(points = t(moead.de$Archive$Y[moead.de.non.d, ]),
+                                  ref = ref.points)
+    print(moead.de.hv)
+    # moead.de.non.d <- find_nondominated_points(moead.rad$Archive2$Y)
     # moead.de.hv <-
-    #   emoa::dominated_hypervolume(points = t(moead.de$Archive$Y[moead.de.non.d, ]),
-    #                               ref = ref.points)
-    # print(moead.de.hv)
-    # moead.de.non.d <- find_nondominated_points(moead.de$Archive2$Y)
-    # moead.de.hv <-
-    #   emoa::dominated_hypervolume(points = t(moead.de$Archive2$Y[moead.de.non.d, ]),
+    #   emoa::dominated_hypervolume(points = t(moead.rad$Archive2$Y[moead.de.non.d, ]),
     #                               ref = ref.points)
     # print(moead.de.hv)
   }

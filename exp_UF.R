@@ -6,7 +6,7 @@ library(emoa)
 library(stringr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
-repetitions <-  21
+repetitions <-  30
 
 algorithms <- c("moead.de")
 
@@ -93,7 +93,7 @@ for (n.obj in n.objs) {
           stopcrit = stopcrit,
           scaling = scaling,
           update = update,
-          variation = variation,
+          # variation = variation,
           showpars = list(show.iters = "none", showevery = 100),
           seed = j
         )
@@ -117,7 +117,7 @@ for (n.obj in n.objs) {
           update = update2,
           stopcrit = stopcrit,
           scaling = scaling,
-          variation = variation,
+          # variation = varization,
           showpars = list(show.iters = "none", showevery = 100),
           seed = j,
           resource.allocation = resource.allocation.GRA
