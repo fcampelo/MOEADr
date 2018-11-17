@@ -5,7 +5,7 @@ library(MOEADr)
 library(emoa)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
-repetitions <- 21
+repetitions <- 30
 
 algorithms <- c("moead.de")
 
