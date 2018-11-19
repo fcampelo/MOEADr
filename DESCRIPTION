@@ -7,7 +7,7 @@ Description: Modular implementation of Multiobjective Evolutionary Algorithms
               testing of new algorithmic components, as well as easy 
               replication of published MOEA/D proposals.
 Version:  1.1.1
-Date:     2018-07-01
+Date:     2018-11-19
 Imports:  FNN, 
           assertthat
 Suggests: smoof,
