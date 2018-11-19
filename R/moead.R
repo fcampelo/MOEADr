@@ -342,7 +342,7 @@ moead <-
       update$UseArchive <- FALSE
     }
     # if (!is.null(update$nsga)){
-      Archive2 = list(X = NULL, Y = NULL, V = NULL)
+      Archive2 = list(X = NULL, Y = NULL, V = NULL, bigZ = NULL)
     # }
     # =========================== End Algorithm setup ========================== #
     
@@ -424,9 +424,8 @@ moead <-
       else{
         if (resource.allocation$name == "DRA") {
           size <- floor(dim(W)[1] / 5) - problem$m
-          # for (ii in 1:5){
           idx.tour <-
-            ecr::selTournament(fitness = -Pi,
+            selTournament(fitness = -Pi,
                                n.select = size,
                                k = 10)
           indexes <- append(idx.bounday, idx.tour)
@@ -457,14 +456,13 @@ moead <-
       nfe     <- nfe + Xv$var.nfe
       # ========== Evaluation
       # Evaluate offspring population on objectives
-        YV <- evaluate_population(
-          X       = X,
-          problem = problem,
-          nfe     = nfe,
-          iter = iter,
-          my.file.n = my.file.n
-        )  
-      # }
+      YV <- evaluate_population(
+        X       = X,
+        problem = problem,
+        nfe     = nfe,
+        iter = iter,
+        my.file.n = my.file.n
+      )  
       Y   <- YV$Y
       V   <- YV$V
       nfe <- YV$nfe
@@ -478,16 +476,20 @@ moead <-
       }
       # ========== Scalarization
       # Objective scaling and estimation of 'ideal' and 'nadir' points
-      # normYs <- scale_objectives(Y       = Y,
-      #                            Yt      = Yt,
-      #                            scaling = scaling)
-      # write.table(class(normYs$Y), "scalarize1.txt")
-      minP <- getminP(rbind(Y, Yt))
-      maxP <- getmaxP(rbind(Y, Yt))
-      normYs <- list(Y    = Y,
-                  Yt   = Yt,
-                  minP = minP,
-                  maxP = maxP)
+      if (problem$name != "problem.moon"){
+        normYs <- scale_objectives(Y       = Y,
+                                   Yt      = Yt,
+                                   scaling = scaling)        
+      }
+      else{
+        minP <- getminP(rbind(Y, Yt))
+        maxP <- getmaxP(rbind(Y, Yt))
+        normYs <- list(Y    = Y,
+                       Yt   = Yt,
+                       minP = minP,
+                       maxP = maxP)  
+      }
+      
       # Scalarization by neighborhood.
       # bigZ is an [(T+1) x N] matrix, in which each column has the T scalarized
       # values for the solutions in the neighborhood of one subproblem, plus the
@@ -507,7 +509,6 @@ moead <-
       # (which takes into account both the performance value and constraint
       # handling policy, if any)
       B  <- BP$B.order
-      # write.table("test", "order.txt")
       sel.indx <- order_neighborhood(
         bigZ       = bigZ,
         B          = B,
@@ -517,25 +518,33 @@ moead <-
       )
       # ========== Update
       # Update population
+      # print("no update")
+      # print(dim(X))
+      # print(dim(Xt))
       XY <- do.call(update_population,
                     args = as.list(environment()))
       X       <- XY$X
       Y       <- XY$Y
       V       <- XY$V
       Archive <- XY$Archive
-      if (problem$name == "problem.moon" &&
-          update$UseArchive == TRUE &&
+      # print("depois do update")
+      if (update$UseArchive == TRUE &&
           update$nsga == TRUE) {
         comb.popX <- rbind(X, Archive$X, Archive2$X)
         comb.popY <- rbind(Y, Archive$Y, Archive2$Y)
-        comb.popV <- rbind(V, Archive$V, Archive2$V)
-
-        sorting <- doNondominatedSorting(t(comb.popY))
-        Archive2$X <- comb.popX[sorting$rank == 1,]
-        Archive2$Y <- comb.popY[sorting$rank == 1,]
-        Archive2$V$V <- comb.popV$V[sorting$rank == 1,]
-        Archive2$V$Vmatrix <- comb.popV$Vmatrix[sorting$rank == 1,]
-        Archive2$V$Cmatrix <- comb.popV$Cmatrix[sorting$rank == 1,]
+        comb.popVv <- rbind(V$v, Archive$V$v, Archive2$V$v)
+        # print(V$v)
+        comb.popVCmatrix <- rbind(V$Cmatrix, Archive$V$Cmatrix, Archive2$V$Cmatrix)
+        comb.popVVmatrix <- rbind(V$Vmatrix, Archive$V$Vmatrix, Archive2$V$Vmatrix)
+    
+        sorting <- selNondom(fitness = t(comb.popY),
+                                             n.select = dim(W)[1])
+        
+        Archive2$X <- comb.popX[sorting,]
+        Archive2$Y <- comb.popY[sorting,]
+        Archive2$V$v <- comb.popVv[sorting]
+        Archive2$V$Vmatrix <- comb.popVVmatrix[sorting]
+        Archive2$V$Cmatrix <- comb.popVCmatrix[sorting]
       }
       if (!nullRA) {
         if (resource.allocation$name == "DRA") {
@@ -571,11 +580,19 @@ moead <-
           else
             old.dm <- init_p(W, 0)
           parent <- Y
+          # SA
+          # neighbors$delta.p <- 1 - median(Pi)
         }
       }
+      if (problem$name == "problem.moon" && (stopcrit[[1]]$maxeval< (nfe + dim(W)[1]))){
+        X <- Archive2$X
+        Y <- Archive2$Y
+        V <- Archive2$V
+        # print("entrou")
+      }
+      
       # ========== Stop Criteria
       # Calculate iteration time
-      write.table("test", "redo.txt")
       elapsed.time <- as.numeric(difftime(
         time1 = Sys.time(),
         time2 = time.start,
@@ -594,8 +611,6 @@ moead <-
       
       # ========== Print
       # Echo whatever is demanded
-      
-      # if (iter %% 5  == 0 && iter > 20) plot(Pi, main = iter)
       print_progress(iter.times, showpars)
     }
     # =========================== End Iterative cycle ========================== #
@@ -614,6 +629,33 @@ moead <-
     }
     
     # Output
+    if (problem$name == "problem.moon" && update$nsga == TRUE){
+      my.iter <- with_options(
+        c(scipen = 999), 
+        str_pad(iter, 4, pad = "0")
+      )
+      filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_vars_eval.txt")
+      write.table(X,
+                  file = filename,
+                  row.names = FALSE, sep = "\t",  col.names=FALSE)
+      path <- paste0(my.file.n, "th_run/optimizer/interface/")
+      system(paste("./moon_mop",path))
+      
+      filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_vars_eval.txt")
+      dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_vars_eval.txt")
+      system(paste("cp ", filename, dest))
+      
+      filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_objs_eval.txt")
+      dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_objs_eval.txt")
+      system(paste("cp ", filename, dest))
+      
+      filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_cons_eval.txt")
+      dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_cons_eval.txt")
+      system(paste("cp ", filename, dest))
+    }
+    
+    
+    
     out <- list(
       X           = X,
       Y           = Y,
