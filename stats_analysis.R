@@ -1,107 +1,70 @@
-library(rcompanion)
-library(multcompView)
-library(FSA)
-library(rcompanion)
-library(plyr)
+setwd("~/MOEADr/")
+load(file = "R/BiObjBBOB9_2")
+my.data <- my.data[my.data$variation.name != "MOEA/D-GRA", ]
+my.data <- my.data[my.data$variation.name != "NSGA-2", ]
 
-stats <- function(benchmark, data, fun.names, n.obj, ref.points){
-  print(benchmark)
-  print(n.obj)
-  algorithms <- c("moead.de")
-  for (algo in algorithms) {
-    print(algo)
-    algo.data <- data[data$algo == algo, ]
-    for (fun in fun.names) {
-      print(fun)
-      fun.algo.data <- algo.data[algo.data$fun == fun, ]
+my.data$variation.name <-
+  factor(levels(my.data$variation.name)[c(-3,-5)])
 
-      # if(kruskal.test(fun.algo.data$X1 ~ fun.algo.data$names)$p.value < 0.05){
-        PT = dunnTest(fun.algo.data$X2 ~ fun.algo.data$names,
-                      method="bh")    # Can adjust p-values;
-        PT = PT$res
-        x <-cldList(comparison = PT$Comparison,
-                      p.value    = PT$P.adj,
-                      threshold  = 0.05)
-        fil <- paste("~/Desktop/graphs/data", algo, fun, benchmark,".csv")
-        write.csv(x, file = fil)
+pairwise.wilcox.test(my.data[my.data$fun == "BiObjBBOB1", ]$HV, my.data[my.data$fun ==
+                                                                          "BiObjBBOB1", ]$variation.name, p.adjust.method = "hommel")
+aggregate(my.data[my.data$fun == "BiObjBBOB1", ]$HV, median, by = list(my.data[my.data$fun == "BiObjBBOB1", ]$variation.name))
+aggregate(my.data[my.data$fun == "BiObjBBOB1", ]$HV, sd, by = list(my.data[my.data$fun == "BiObjBBOB1", ]$variation.name))
 
-        write.csv(x, file = fil)
-      # }
-      # else{print("no stats sig")}
-    }
-  }
+pairwise.wilcox.test(my.data[my.data$fun == "BiObjBBOB2", ]$HV, my.data[my.data$fun ==
+                                                                          "BiObjBBOB2", ]$variation.name, p.adjust.method = "hommel")
+aggregate(my.data[my.data$fun == "BiObjBBOB2", ]$HV, median, by = list(my.data[my.data$fun == "BiObjBBOB2", ]$variation.name))
+aggregate(my.data[my.data$fun == "BiObjBBOB2", ]$HV, sd, by = list(my.data[my.data$fun == "BiObjBBOB2", ]$variation.name))
 
+pairwise.wilcox.test(my.data[my.data$fun == "BiObjBBOB3", ]$HV, my.data[my.data$fun ==
+                                                                          "BiObjBBOB3", ]$variation.name, p.adjust.method = "hommel")
+aggregate(my.data[my.data$fun == "BiObjBBOB3", ]$HV, median, by = list(my.data[my.data$fun == "BiObjBBOB3", ]$variation.name))
+aggregate(my.data[my.data$fun == "BiObjBBOB3", ]$HV, sd, by = list(my.data[my.data$fun == "BiObjBBOB3", ]$variation.name))
 
-}
+pairwise.wilcox.test(my.data[my.data$fun == "BiObjBBOB4", ]$HV, my.data[my.data$fun ==
+                                                                          "BiObjBBOB4", ]$variation.name, p.adjust.method = "hommel")
+aggregate(my.data[my.data$fun == "BiObjBBOB4", ]$HV, median, by = list(my.data[my.data$fun == "BiObjBBOB4", ]$variation.name))
+aggregate(my.data[my.data$fun == "BiObjBBOB4", ]$HV, sd, by = list(my.data[my.data$fun == "BiObjBBOB4", ]$variation.name))
 
-fun.names <- list()
-for (i in 1:7) {
-  fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
-}
-# for (i in 5:7) {
-#   fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
-# }
-load("~/MOEADr/R/DTLZ.2o")
-load(file = "DTLZ.2o")
-data <- DTLZ.2o
-n.obj = 2
-ref.points <-
-  rep(round(1 + 1 / 199, 3), 2)
-benchmark = "DTLZ"
-stats(benchmark, data, fun.names, n.obj, ref.points)
+pairwise.wilcox.test(my.data[my.data$fun == "BiObjBBOB5", ]$HV, my.data[my.data$fun ==
+                                                                          "BiObjBBOB5", ]$variation.name, p.adjust.method = "hommel")
+aggregate(my.data[my.data$fun == "BiObjBBOB5", ]$HV, median, by = list(my.data[my.data$fun == "BiObjBBOB5", ]$variation.name))
+aggregate(my.data[my.data$fun == "BiObjBBOB5", ]$HV, sd, by = list(my.data[my.data$fun == "BiObjBBOB5", ]$variation.name))
 
-fun.names <- list()
-for (i in 2:3) {
-  fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
-}
-for (i in 5:7) {
-  fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
-}
-setwd("~/Desktop/graphs")
-load(file = "DTLZ.3o")
-load(file = "DTLZ.3oSA")
-data <- DTLZ.3o
-dataRP <- DTLZ.3oSA
-n.obj = 3
-benchmark = "DTLZ"
-ref.points <-
-  rep(round(1 + 1 / 99, 3), 3)
-dataDTLZ3<-rbind(data, dataRP)
-dataDTLZ3$n.obj<-3
-stats(benchmark, dataDTLZ3, fun.names, n.obj, ref.points)
+pairwise.wilcox.test(my.data[my.data$fun == "BiObjBBOB6", ]$HV, my.data[my.data$fun ==
+                                                                          "BiObjBBOB6", ]$variation.name, p.adjust.method = "hommel")
+aggregate(my.data[my.data$fun == "BiObjBBOB6", ]$HV, median, by = list(my.data[my.data$fun == "BiObjBBOB6", ]$variation.name))
+aggregate(my.data[my.data$fun == "BiObjBBOB6", ]$HV, sd, by = list(my.data[my.data$fun == "BiObjBBOB6", ]$variation.name))
+
+pairwise.wilcox.test(my.data[my.data$fun == "BiObjBBOB7", ]$HV, my.data[my.data$fun ==
+                                                                          "BiObjBBOB7", ]$variation.name, p.adjust.method = "hommel")
+aggregate(my.data[my.data$fun == "BiObjBBOB7", ]$HV, median, by = list(my.data[my.data$fun == "BiObjBBOB7", ]$variation.name))
+aggregate(my.data[my.data$fun == "BiObjBBOB7", ]$HV, sd, by = list(my.data[my.data$fun == "BiObjBBOB7", ]$variation.name))
+
+pairwise.wilcox.test(my.data[my.data$fun == "BiObjBBOB8", ]$HV, my.data[my.data$fun ==
+                                                                          "BiObjBBOB8", ]$variation.name, p.adjust.method = "hommel")
+aggregate(my.data[my.data$fun == "BiObjBBOB8", ]$HV, median, by = list(my.data[my.data$fun == "BiObjBBOB8", ]$variation.name))
+aggregate(my.data[my.data$fun == "BiObjBBOB8", ]$HV, sd, by = list(my.data[my.data$fun == "BiObjBBOB8", ]$variation.name))
+
+pairwise.wilcox.test(my.data[my.data$fun == "BiObjBBOB9", ]$HV, my.data[my.data$fun ==
+                                                                          "BiObjBBOB9", ]$variation.name, p.adjust.method = "hommel")
+aggregate(my.data[my.data$fun == "BiObjBBOB9", ]$HV, median, by = list(my.data[my.data$fun == "BiObjBBOB9", ]$variation.name))
+aggregate(my.data[my.data$fun == "BiObjBBOB9", ]$HV, sd, by = list(my.data[my.data$fun == "BiObjBBOB9", ]$variation.name))
+
+pairwise.wilcox.test(my.data[my.data$fun == "BiObjBBOB10", ]$HV, my.data[my.data$fun ==
+                                                                           "BiObjBBOB10", ]$variation.name, p.adjust.method = "hommel")
+aggregate(my.data[my.data$fun == "BiObjBBOB10", ]$HV, median, by = list(my.data[my.data$fun == "BiObjBBOB10", ]$variation.name))
+aggregate(my.data[my.data$fun == "BiObjBBOB10", ]$HV, sd, by = list(my.data[my.data$fun == "BiObjBBOB10", ]$variation.name))
+
+pairwise.wilcox.test(my.data[my.data$fun == "BiObjBBOB11", ]$HV, my.data[my.data$fun ==
+                                                                           "BiObjBBOB11", ]$variation.name, p.adjust.method = "hommel")
+pairwise.wilcox.test(my.data[my.data$fun == "BiObjBBOB12", ]$HV, my.data[my.data$fun ==
+                                                                           "BiObjBBOB12", ]$variation.name, p.adjust.method = "hommel")
+pairwise.wilcox.test(my.data[my.data$fun == "BiObjBBOB13", ]$HV, my.data[my.data$fun ==
+                                                                           "BiObjBBOB13", ]$variation.name, p.adjust.method = "hommel")
 
 
-setwd("~/Desktop/graphs")
-load(file = "WFG.2o")
-load(file = "WFG.2o.SA")
-data <- WFG.2o
-dataRP <- WFG.2o.SA
-ref.points <-
-  rep(round(1 + 1 / 199, 3), 2)
-n.obj = 2
-dataWFG2<-rbind(data, dataRP)
-dataWFG2$n.obj<-2
-fun.names <- list()
-for (i in 1:9) {
-  fun.names[[length(fun.names) + 1]] = paste0("WFG", i)
-}
-benchmark = "WFG"
-stats(benchmark, dataWFG2, fun.names, n.obj, ref.points)
 
-setwd("~/Desktop/graphs")
-load(file = "WFG.3o")
-load(file = "WFG.3o.SA")
-data <- WFG.3o
-dataRP <- WFG.3o.SA
-n.obj = 3
-dataWFG3<-rbind(data, dataRP)
-dataWFG3$n.obj<-3
-ref.points <-
-  rep(round(1 + 1 / 99, 3), 3)
-fun.names <- list()
-for (i in 1:9) {
-  fun.names[[length(fun.names) + 1]] = paste0("WFG", i)
-}
-benchmark = "WFG"
-stats(benchmark, dataWFG3, fun.names, n.obj, ref.points)
 
+
+print(aggregate(my.data$HV, median, by = list(my.data$variation.name, my.data$fun)))

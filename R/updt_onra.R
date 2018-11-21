@@ -72,11 +72,6 @@ updt_onra <- function(update, X, Xt, Y, Yt, V, Vt,
                               B      = BP$fullB,
                               aggfun = aggfun)
 
-  # Find the problem in which each CANDIDATE solution (not incumbent) performs
-  # best
-  # best.indx <- apply(X      = fullZ[1:(nrow(fullZ) - 1), , drop = FALSE],
-  #                    MARGIN = 1,
-  #                    FUN    = which.min)
 
   best.indx <-
     apply(X      = (fullZ[1:(nrow(fullZ) - 1), , drop = FALSE] - fullZt[1:(nrow(fullZt) - 1), , drop = FALSE]) /

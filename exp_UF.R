@@ -26,9 +26,6 @@ scaling <- list()
 scaling$name <- "simple"
 
 variation <- preset_moead("moead.de")$variation
-# variation[[4]] <- variation[[3]]
-# variation[[1]] <-
-#   list(name = "de")
 
 update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE

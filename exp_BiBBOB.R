@@ -4,6 +4,8 @@ library(smoof)
 library(MOEADr)
 library(emoa)
 library(stringr)
+library(ecr)
+library(mco)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
 repetitions <-  30
@@ -19,24 +21,21 @@ resource.allocation.RAD <- list(name = "RAD", dt = 20)
 decomp <- list(name = "SLD", H = 149)
 decomp2 <- list(name = "uniform", N = 150)
 
-# neighbors <- preset_moead("original")$neighbors
-# neighbors$delta.p <- 0.9
-
 scaling <- list()
 scaling$name <- "simple"
 
 variation <- preset_moead("moead.de")$variation
 # variation2 <- preset_moead("original")$variation
 # variation[[1]] <- variation2 [[1]]
-# variation[[4]] <- list(name = "localsearch", type = "tpqa", gamma.ls = 0.95)
+variation[[4]] <- list(name = "localsearch", type = "tpqa", gamma.ls = 0.95)
 
 update <- preset_moead("moead.de")$update
-# update$UseArchive = TRUE
-# update$nsga = TRUE
+update$UseArchive = TRUE
+update$nsga = TRUE
 # update$nsga = F
 update2 <- list(name  = "onra")
-# update2$UseArchive = TRUE
-# update2$nsga = TRUE
+update2$UseArchive = TRUE
+update2$nsga = TRUE
 
 n.objs <- c(2)
 
@@ -47,27 +46,9 @@ stopcrit  <- list(list(name    = "maxeval",
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  # for (i in 2:2) {
-  #   fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
-  # }
-  # for (i in 13:13) {
-  #   fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
-  # }
-  # for (i in 11:11) {
-  #   fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
-  # }
   for (i in 1:13) {
     fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
   }
-  # for (i in 3:10) {
-  #   fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
-  # }
-  # for (i in 12:12) {
-  #   fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
-  # }
-  # for (i in 14:14) {
-  #   fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
-  # }
   
   my.data <- data.frame()
   for (algo in algorithms) {
@@ -77,7 +58,7 @@ for (n.obj in n.objs) {
       print(fun)
       problem <-
         makeBiObjBBOBFunction(dimension = 20,
-                              fid = 4,
+                              fid = id,
                               iid = 1)
       id = id + 1
       problem.BiBBOB <- function(X) {
@@ -160,7 +141,7 @@ for (n.obj in n.objs) {
         )
         
         # par.set = ParamHelpers::getParamSet(problem)
-        nsga.2 = mco::nsga2(
+        nsga.2 = nsga2(
           problem,
           idim = getNumberOfParameters(problem),
           generations = moead.de$n.iter,

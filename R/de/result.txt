@@ -1,8 +1,28 @@
 result:
-          HyperVolume = 0.7314176877 in 0000 th run
+          HyperVolume = 0.9449098444 in 0000 th run
+          HyperVolume = 0.9400205267 in 0001 th run
+          HyperVolume = 0.7731633525 in 0002 th run
+          HyperVolume = 0.6869047978 in 0003 th run
+          HyperVolume = 0.6869047978 in 0004 th run
+          HyperVolume = 0.6869047978 in 0005 th run
+          HyperVolume = 0.6885178015 in 0006 th run
+          HyperVolume = 0.7684590286 in 0007 th run
+          HyperVolume = 0.7469742812 in 0008 th run
+          HyperVolume = 0.6869047978 in 0009 th run
+          HyperVolume = 0.7449950835 in 0010 th run
+          HyperVolume = 0.8683649416 in 0011 th run
+          HyperVolume = 0.9410313729 in 0012 th run
+          HyperVolume = 0.6869047978 in 0013 th run
+          HyperVolume = 0.6869047978 in 0014 th run
+          HyperVolume = 0.6869047978 in 0015 th run
+          HyperVolume = 0.6742166196 in 0016 th run
+          HyperVolume = 0.6869047978 in 0017 th run
+          HyperVolume = 0.6869047978 in 0018 th run
+          HyperVolume = 0.9410599031 in 0019 th run
+          HyperVolume = 0.6662339966 in 0020 th run
 
-   Median HyperVolume = 0.7314176877 in 0000 th run
-   Best   HyperVolume = 0.7314176877 in 0000 th run
-   Worst  HyperVolume = 0.7314176877 in 0000 th run
-   Mean   HyperVolume = 0.7314176877             
-   Stdev  HyperVolume = NA             
+   Median HyperVolume = 0.6869047978 in 0003 th run
+   Best   HyperVolume = 0.9449098444 in 0000 th run
+   Worst  HyperVolume = 0.6662339966 in 0020 th run
+   Mean   HyperVolume = 0.7561947587             
+   Stdev  HyperVolume = 0.1033390899             
