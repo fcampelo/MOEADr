@@ -342,7 +342,7 @@ moead <-
       update$UseArchive <- FALSE
     }
     # if (!is.null(update$nsga)){
-      Archive2 = list(X = NULL, Y = NULL, V = NULL, bigZ = NULL)
+      Archive2 = list(X = NULL, Y = NULL, V = list(v = NULL, Cmatrix = NULL, Vmatrix = NULL))
     # }
     # =========================== End Algorithm setup ========================== #
     
@@ -369,11 +369,16 @@ moead <-
     # fixed neighbours
     if (!nullRA) {
       if (resource.allocation$name == "DRA") {
-        ra <- init_dra(neighbors, aggfun, X, W, Y)
+        scaling <- list()
+        scaling$name <- "simple"
+        ra <- init_dra(neighbors, aggfun, X, W, Y, scaling)
+        scaling   <- preset$scaling
         Pi <- ra$Pi
         oldObj <- ra$oldObj
         idx.bounday <- ra$idx.bounday
         BP <- ra$BP
+        
+        size <- floor(dim(W)[1] / 5) - problem$m
       }
       else if (resource.allocation$name == "GRA") {
         dt.bigZ <- list()
@@ -385,6 +390,8 @@ moead <-
         ra <- init_rad(neighbors, aggfun, X, W, Y)
         Pi <- ra$Pi
         BP <- ra$BP
+        idx.bounday <- ra$idx.bounday
+        size <- floor(dim(W)[1] / 5) - problem$m
       }
     }
     indexes <- seq.int(1, dim(W)[1])
@@ -420,10 +427,10 @@ moead <-
         Xt <- X
         Yt <- Y
         Vt <- V
+        
       }
       else{
-        if (resource.allocation$name == "DRA") {
-          size <- floor(dim(W)[1] / 5) - problem$m
+        if (resource.allocation$name != "GRA") {
           idx.tour <-
             selTournament(fitness = -Pi,
                                n.select = size,
@@ -509,6 +516,7 @@ moead <-
       # (which takes into account both the performance value and constraint
       # handling policy, if any)
       B  <- BP$B.order
+      
       sel.indx <- order_neighborhood(
         bigZ       = bigZ,
         B          = B,
@@ -518,33 +526,33 @@ moead <-
       )
       # ========== Update
       # Update population
-      # print("no update")
-      # print(dim(X))
-      # print(dim(Xt))
       XY <- do.call(update_population,
                     args = as.list(environment()))
       X       <- XY$X
       Y       <- XY$Y
       V       <- XY$V
       Archive <- XY$Archive
-      # print("depois do update")
+      
       if (update$UseArchive == TRUE &&
           update$nsga == TRUE) {
         comb.popX <- rbind(X, Archive$X, Archive2$X)
         comb.popY <- rbind(Y, Archive$Y, Archive2$Y)
-        comb.popVv <- rbind(V$v, Archive$V$v, Archive2$V$v)
-        # print(V$v)
+        comb.popVv <- cbind(V$v, Archive$V$v, Archive2$V$v)
+        
         comb.popVCmatrix <- rbind(V$Cmatrix, Archive$V$Cmatrix, Archive2$V$Cmatrix)
         comb.popVVmatrix <- rbind(V$Vmatrix, Archive$V$Vmatrix, Archive2$V$Vmatrix)
     
         sorting <- selNondom(fitness = t(comb.popY),
                                              n.select = dim(W)[1])
-        
         Archive2$X <- comb.popX[sorting,]
         Archive2$Y <- comb.popY[sorting,]
-        Archive2$V$v <- comb.popVv[sorting]
-        Archive2$V$Vmatrix <- comb.popVVmatrix[sorting]
-        Archive2$V$Cmatrix <- comb.popVCmatrix[sorting]
+        
+        divisor <- dim(W)[1]
+        for (i in 1:divisor){
+          Archive2$V$v[i] <- comb.popVv[(sorting[i]%%divisor)+1, ceiling(sorting[i]/divisor)]
+        }
+        Archive2$V$Vmatrix <- comb.popVVmatrix[sorting,]
+        Archive2$V$Cmatrix <- comb.popVCmatrix[sorting,]
       }
       if (!nullRA) {
         if (resource.allocation$name == "DRA") {
@@ -585,10 +593,9 @@ moead <-
         }
       }
       if (problem$name == "problem.moon" && (stopcrit[[1]]$maxeval< (nfe + dim(W)[1]))){
+        V <- Archive2$V
         X <- Archive2$X
         Y <- Archive2$Y
-        V <- Archive2$V
-        # print("entrou")
       }
       
       # ========== Stop Criteria
