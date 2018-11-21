@@ -110,8 +110,8 @@ online_diversity <-
     }
     p <-  my.out - old.dm
     p <- (p - min(p)) / ((max(p) - min(p)) + epsilon)
-    # if (anyNA(p))
-    #   p <- init_p(W, 0.5)
+    if (anyNA(p))
+      p <- init_p(W, 0.5)
     out <- list(p = p, dm = my.out)
     return(out)
   }
@@ -132,7 +132,7 @@ dra <- function(newObj, oldObj, Pi) {
   return(Pi)
 }
 
-init_dra <- function(neighbors, aggfun, X, W, Y) {
+init_dra <- function(neighbors, aggfun, X, W, Y, scaling) {
   BP <- define_neighborhood(neighbors = neighbors,
                             v.matrix  = switch(neighbors$name,
                                                lambda = W,
@@ -201,6 +201,19 @@ init_rad <- function(neighbors, aggfun, X, W, Y) {
   # for GRA - do not this hardcoded
   Pi <- init_p(W, 0.5)
   
+  my.identity <- diag(dim(W)[2])
+  idx <- list()
+  for (i in 1:dim(W)[1]) {
+    for (j in 1:dim(my.identity)[1]) {
+      my.sum <- sum(round(W[i, ],2) == my.identity[j, ])
+      if (my.sum == dim(W)[2]) {
+        idx[[length(idx) + 1]] <- i
+      }
+    }
+  }
+  idx.bounday <- unlist(idx)
+  
   return(list (Pi      = Pi,
+               idx.bounday = idx.bounday,
                BP = BP))
 }
