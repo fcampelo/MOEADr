@@ -110,11 +110,6 @@ online_diversity <-
     }
     p <-  my.out - old.dm
     p <- (p - min(p)) / ((max(p) - min(p)) + epsilon)
-    if (anyNA(p)){
-      print("entrou")
-      p <- init_p(W, 1)
-    }
-      
     out <- list(p = p, dm = my.out)
     return(out)
   }
