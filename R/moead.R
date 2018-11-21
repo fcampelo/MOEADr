@@ -430,7 +430,6 @@ moead <-
         
       }
       else{
-        P <- Pi
         if (resource.allocation$name != "GRA") {
           idx.tour <-
             selTournament(fitness = -Pi,
@@ -562,6 +561,7 @@ moead <-
             Pi <- dra(newObj, oldObj, Pi)
             oldObj <- newObj
           }
+          if(sum(Pi)!=0) P <- Pi
         }
         if (resource.allocation$name == "GRA") {
           if (iter > resource.allocation$dt) {
