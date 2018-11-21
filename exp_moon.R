@@ -93,7 +93,7 @@ for (algo in algorithms) {
       stopcrit = stopcrit,
       update = update2,
       variation = variation,
-      constraint = list(name = "penalty", beta=3.95),
+      constraint = list(name = "penalty", beta=0.95),
       showpars = list(show.iters = "none", showevery = 100),
       seed = 13,
       resource.allocation = resource.allocation.RAD,
