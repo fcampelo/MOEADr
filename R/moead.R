@@ -455,6 +455,12 @@ moead <-
       B  <- BP$B.variation[indexes,]
       P  <- BP$P[indexes, indexes]
       
+      if(sum(Pi)!=0)
+        P <- Pi
+      else
+        P  <- BP$P[indexes, indexes]
+      P <- P[indexes, indexes]
+      
       # Perform variation
       Xv      <- do.call(perform_variation,
                          args = as.list(environment()))
@@ -561,7 +567,7 @@ moead <-
             Pi <- dra(newObj, oldObj, Pi)
             oldObj <- newObj
           }
-          if(sum(Pi)!=0) P <- Pi
+          
         }
         if (resource.allocation$name == "GRA") {
           if (iter > resource.allocation$dt) {
@@ -590,6 +596,8 @@ moead <-
             old.dm <- init_p(W, 0)
           parent <- Y
           # SA
+          # if(sum(Pi)!=0)
+          #   P <- Pi
           # neighbors$delta.p <- 1 - median(Pi)
         }
       }
