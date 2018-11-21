@@ -1,7 +1,4 @@
 setwd("~/MOEADr/")
-library(R.utils)
-library(moobench)
-
 
 create_graphs <-
   function(benchmark,
@@ -19,7 +16,7 @@ create_graphs <-
     par(cex.axis = 1.5)
     boxplot(
       my.data[my.data$fun == fun,]$HV ~ my.data[my.data$fun == fun,]$variation.name,
-      col = c("blue", "gray", "orange"),
+      col = c("blue", "gray", "orange", "green", "brown"),
       las = 1
     )
     dev.off()
@@ -29,8 +26,8 @@ create_graphs <-
 
 
 load(file = "R/BiObjBBOB7_2")
-my.data <- my.data[my.data$variation.name != "MOEA/D-DRA", ]
-my.data <- my.data[my.data$variation.name != "NSGA-2", ]
+# my.data <- my.data[my.data$variation.name != "MOEA/D-DRA", ]
+# my.data <- my.data[my.data$variation.name != "NSGA-2", ]
 
 my.data$variation.name <-
   factor(levels(my.data$variation.name)[c(-2, -5)])
