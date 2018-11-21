@@ -430,6 +430,7 @@ moead <-
         
       }
       else{
+        P <- Pi
         if (resource.allocation$name != "GRA") {
           idx.tour <-
             selTournament(fitness = -Pi,
@@ -613,8 +614,6 @@ moead <-
       # Verify stop criteria
       keep.running <- check_stop_criteria(stopcrit = stopcrit,
                                           call.env = environment())
-      
-      
       
       # ========== Print
       # Echo whatever is demanded
