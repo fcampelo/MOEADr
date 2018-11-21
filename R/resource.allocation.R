@@ -1,7 +1,7 @@
 ONRA <- function(dt.bigZ, bigZ, my.T, epsilon = 1e-50) {
   # dt <- apply(X = dt.bigZ, MARGIN = 2, sum)
-  dt <- dt.bigZ[my.T + 1,]
-  z <- bigZ[my.T + 1,]
+  dt <- dt.bigZ[my.T + 1, ]
+  z <- bigZ[my.T + 1, ]
   u <- (dt - z) / dt
   if (max(u) == 0) {
     p <- rep(1, length(u))
@@ -39,13 +39,13 @@ find_indexes <- function(offspring, parent) {
     # equation (4)
     
     for (i in 1:nrow(parent)) {
-      set <- cbind(parent[i,], offspring[j,])
+      set <- cbind(parent[i, ], offspring[j, ])
       if (is_dominated(set)[1]) {
         if (!found) {
           indexes_j <- append(indexes_j, j)
           found <- TRUE
         }
-        aux <- norm_vec2(parent[i,] - offspring[j,])
+        aux <- norm_vec2(parent[i, ] - offspring[j, ])
         if (min.value > aux) {
           # for equation (6) and (5)
           min.value <- aux
@@ -67,8 +67,8 @@ find_indexes <- function(offspring, parent) {
 online_diversity <-
   function(offspring, parent, W, old.dm, epsilon = 1e-50) {
     out <- find_indexes(offspring, parent)
-    indexes_i <- sample(out$i)
-    indexes_j <- sample(out$j)
+    indexes_i <- out$i
+    indexes_j <- out$j
     
     # "onra"
     # p <- rep(0.5, nrow(offspring))
@@ -81,12 +81,12 @@ online_diversity <-
         for (j in 1:length(indexes_j)) {
           # diversity measurement: aumount of diversity loss of an ind. solution between 2 generations
           #condition for eq (7)
-          c.line <- offspring[i,] - offspring[indexes_j[[j]],]
-          p.line <- parent[i,] - parent[indexes_i[[j]],]
+          c.line <- offspring[i, ] - offspring[indexes_j[[j]], ]
+          p.line <- parent[i, ] - parent[indexes_i[[j]], ]
           
           #equation (3)
           d.convs <-
-            (offspring[indexes_j[[j]],] - parent[indexes_i[[j]],]) + epsilon
+            (offspring[indexes_j[[j]], ] - parent[indexes_i[[j]], ]) + epsilon
           
           # projection calculation
           proj.c <- projection(c.line, d.convs)
@@ -110,6 +110,8 @@ online_diversity <-
     }
     p <-  my.out - old.dm
     p <- (p - min(p)) / ((max(p) - min(p)) + epsilon)
+    if (anyNA(p))
+      p <- init_p(W, 1)
     out <- list(p = p, dm = my.out)
     return(out)
   }
@@ -143,7 +145,7 @@ init_dra <- function(neighbors, aggfun, X, W, Y, scaling) {
   idx <- list()
   for (i in 1:dim(W)[1]) {
     for (j in 1:dim(my.identity)[1]) {
-      my.sum <- sum(round(W[i,], 2) == my.identity[j,])
+      my.sum <- sum(round(W[i, ],2) == my.identity[j, ])
       if (my.sum == dim(W)[2]) {
         idx[[length(idx) + 1]] <- i
       }
@@ -168,7 +170,7 @@ init_dra <- function(neighbors, aggfun, X, W, Y, scaling) {
     B       = B,
     aggfun  = aggfun
   )
-  oldObj <- bigZ[neighbors$T + 1,]
+  oldObj <- bigZ[neighbors$T + 1, ]
   return(list (
     Pi      = Pi,
     oldObj = oldObj,
@@ -203,7 +205,7 @@ init_rad <- function(neighbors, aggfun, X, W, Y) {
   idx <- list()
   for (i in 1:dim(W)[1]) {
     for (j in 1:dim(my.identity)[1]) {
-      my.sum <- sum(round(W[i,], 2) == my.identity[j,])
+      my.sum <- sum(round(W[i, ],2) == my.identity[j, ])
       if (my.sum == dim(W)[2]) {
         idx[[length(idx) + 1]] <- i
       }
@@ -211,9 +213,7 @@ init_rad <- function(neighbors, aggfun, X, W, Y) {
   }
   idx.bounday <- unlist(idx)
   
-  return(list (
-    Pi      = Pi,
-    idx.bounday = idx.bounday,
-    BP = BP
-  ))
+  return(list (Pi      = Pi,
+               idx.bounday = idx.bounday,
+               BP = BP))
 }
