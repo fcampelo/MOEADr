@@ -46,10 +46,10 @@ update_population <- function(update, ...){
     arch.args$update$nr   <- nrow(arch.args$X)
 
     # Update Archive
-    # NextPop$Archive       <- do.call("updt_best",
-    #                                  args = arch.args)
-    NextPop$Archive       <- do.call("updt_restricted",
+    NextPop$Archive       <- do.call("updt_best",
                                      args = arch.args)
+    # NextPop$Archive       <- do.call("updt_restricted",
+    #                                  args = arch.args)
   } else NextPop$Archive <- NULL
 
   # ========== Return
