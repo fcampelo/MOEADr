@@ -272,6 +272,7 @@ moead <-
            my.file.n = NULL,
            # List:  resource
            ...)
+
 # other parameters
   {
     moead.input.pars <- as.list(sys.call())[-1]
@@ -328,6 +329,9 @@ moead <-
     # check resource allocation
     if (!is.null(resource.allocation)) {
       nullRA <- FALSE
+    }# check moon problem
+    if (problem$name != "problem.moon") {
+      my.file.n <- NULL
     }
     
     
@@ -341,15 +345,16 @@ moead <-
     if (is.null(update$UseArchive)) {
       update$UseArchive <- FALSE
     }
-    # if (!is.null(update$nsga)){
-      Archive2 = list(X = NULL, Y = NULL, V = list(v = NULL, Cmatrix = NULL, Vmatrix = NULL))
-    # }
+    Archive2 = list(X = NULL, Y = NULL, V = list(v = NULL, Cmatrix = NULL, Vmatrix = NULL))
     # =========================== End Algorithm setup ========================== #
     
     # =========================== Initial definitions ========================== #
     # Generate weigth vectors
     W  <- generate_weights(decomp = decomp,
                            m      = problem$m)
+    
+    if(isTRUE(update$ws_transformation)) W <- ws_transformation(W)
+    
     # Generate initial population
     X  <- create_population(N       = nrow(W),
                             problem = problem)
@@ -376,7 +381,6 @@ moead <-
         Pi <- ra$Pi
         oldObj <- ra$oldObj
         idx.bounday <- ra$idx.bounday
-        BP <- ra$BP
         
         size <- floor(dim(W)[1] / 5) - problem$m
       }
@@ -384,13 +388,11 @@ moead <-
         dt.bigZ <- list()
         ra <- init_gra(neighbors, aggfun, X, W, Y)
         Pi <- ra$Pi
-        BP <- ra$BP
       }
       if (resource.allocation$name == "RAD") {
         ra <- init_rad(neighbors, aggfun, X, W, Y)
         Pi <- ra$Pi
-        BP <- ra$BP
-        idx.bounday <- ra$idx.bounday
+        # idx.bounday <- ra$idx.bounday
         size <- floor(dim(W)[1] / 5) - problem$m
       }
     }
@@ -416,12 +418,12 @@ moead <-
       # ========== Neighborhoods
       # Define/update neighborhood probability matrix
       # ALL RA skips this step
+      BP <- define_neighborhood(neighbors = neighbors,
+                                v.matrix  = switch(neighbors$name,
+                                                   lambda = W,
+                                                   x      = X),
+                                iter      = iter)
       if (nullRA) {
-        BP <- define_neighborhood(neighbors = neighbors,
-                                  v.matrix  = switch(neighbors$name,
-                                                     lambda = W,
-                                                     x      = X),
-                                  iter      = iter)
         # ========== Variation
         # Store current population
         Xt <- X
@@ -430,7 +432,7 @@ moead <-
         
       }
       else{
-        if (resource.allocation$name != "GRA") {
+        if (resource.allocation$name == "DRA") {
           idx.tour <-
             selTournament(fitness = -Pi,
                                n.select = size,
@@ -455,11 +457,11 @@ moead <-
       B  <- BP$B.variation[indexes,]
       P  <- BP$P[indexes, indexes]
       
-      if(sum(Pi)!=0)
-        P <- Pi
-      else
-        P  <- BP$P[indexes, indexes]
-      P <- P[indexes, indexes]
+      # if(sum(Pi)!=0)
+      #   P <- Pi[indexes]
+      # else
+      #   P  <- BP$P[indexes, indexes]
+        
       
       # Perform variation
       Xv      <- do.call(perform_variation,
@@ -598,7 +600,7 @@ moead <-
           # SA
           # if(sum(Pi)!=0)
           #   P <- Pi
-          # neighbors$delta.p <- 1 - median(Pi)
+          # neighbors$delta.p <- median(Pi)
         }
       }
       if (problem$name == "problem.moon" && (stopcrit[[1]]$maxeval< (nfe + dim(W)[1]))){

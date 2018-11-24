@@ -1,11 +1,4 @@
 setwd("~/MOEADr/")
-load(file = "R/BiObjBBOB9_2")
-my.data <- my.data[my.data$variation.name != "MOEA/D-GRA", ]
-my.data <- my.data[my.data$variation.name != "NSGA-2", ]
-
-my.data$variation.name <-
-  factor(levels(my.data$variation.name)[c(-3,-5)])
-
 pairwise.wilcox.test(my.data[my.data$fun == "BiObjBBOB1", ]$HV, my.data[my.data$fun ==
                                                                           "BiObjBBOB1", ]$variation.name, p.adjust.method = "hommel")
 aggregate(my.data[my.data$fun == "BiObjBBOB1", ]$HV, median, by = list(my.data[my.data$fun == "BiObjBBOB1", ]$variation.name))
@@ -58,13 +51,21 @@ aggregate(my.data[my.data$fun == "BiObjBBOB10", ]$HV, sd, by = list(my.data[my.d
 
 pairwise.wilcox.test(my.data[my.data$fun == "BiObjBBOB11", ]$HV, my.data[my.data$fun ==
                                                                            "BiObjBBOB11", ]$variation.name, p.adjust.method = "hommel")
+aggregate(my.data[my.data$fun == "BiObjBBOB11", ]$HV, median, by = list(my.data[my.data$fun == "BiObjBBOB11", ]$variation.name))
+aggregate(my.data[my.data$fun == "BiObjBBOB11", ]$HV, sd, by = list(my.data[my.data$fun == "BiObjBBOB11", ]$variation.name))
+
+
 pairwise.wilcox.test(my.data[my.data$fun == "BiObjBBOB12", ]$HV, my.data[my.data$fun ==
                                                                            "BiObjBBOB12", ]$variation.name, p.adjust.method = "hommel")
+aggregate(my.data[my.data$fun == "BiObjBBOB12", ]$HV, median, by = list(my.data[my.data$fun == "BiObjBBOB12", ]$variation.name))
+aggregate(my.data[my.data$fun == "BiObjBBOB12", ]$HV, sd, by = list(my.data[my.data$fun == "BiObjBBOB12", ]$variation.name))
+
 pairwise.wilcox.test(my.data[my.data$fun == "BiObjBBOB13", ]$HV, my.data[my.data$fun ==
                                                                            "BiObjBBOB13", ]$variation.name, p.adjust.method = "hommel")
+aggregate(my.data[my.data$fun == "BiObjBBOB13", ]$HV, median, by = list(my.data[my.data$fun == "BiObjBBOB13", ]$variation.name))
+aggregate(my.data[my.data$fun == "BiObjBBOB13", ]$HV, sd, by = list(my.data[my.data$fun == "BiObjBBOB13", ]$variation.name))
 
 
 
 
-
-print(aggregate(my.data$HV, median, by = list(my.data$variation.name, my.data$fun)))
+# print(aggregate(my.data$HV, median, by = list(my.data$variation.name, my.data$fun)))

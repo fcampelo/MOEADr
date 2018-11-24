@@ -30,11 +30,11 @@
 #'
 #' @export
 
-evaluate_population <- function(X, problem, nfe, iter, my.file.n)
+evaluate_population <- function(X, problem, nfe, iter, my.file.n = NULL)
 {
   input.pars <- as.list(sys.call())[-1]
-  my.file.n <- eval(input.pars$my.file.n)
-
+  if (!is.null(my.file.n)) my.file.n <- eval(input.pars$my.file.n)
+  
   # ========== Error catching and default value definitions
   # Input "problem" is assumed to have been already verified in
   # create_population(), and will not be re-checked here.

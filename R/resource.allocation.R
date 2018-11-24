@@ -112,7 +112,8 @@ online_diversity <-
     p <- (p - min(p)) / ((max(p) - min(p)) + epsilon)
     if (anyNA(p))
       p <- init_p(W, 1)
-    out <- list(p = p, dm = my.out)
+    out <- list(p = 1 - p, dm = my.out)
+    # out <- list(p = p, dm = my.out)
     return(out)
   }
 
@@ -174,30 +175,21 @@ init_dra <- function(neighbors, aggfun, X, W, Y, scaling) {
   return(list (
     Pi      = Pi,
     oldObj = oldObj,
-    idx.bounday = idx.bounday,
-    BP = BP
+    idx.bounday = idx.bounday#,
+    # BP = BP
   ))
 }
 
 init_gra <- function(neighbors, aggfun, X, W, Y) {
-  BP <- define_neighborhood(neighbors = neighbors,
-                            v.matrix  = switch(neighbors$name,
-                                               lambda = W,
-                                               x      = X),
-                            iter      = 1)
   # for GRA - do not this hardcoded
   Pi <- init_p(W, 1)
   
-  return(list (Pi      = Pi,
-               BP = BP))
+  # return(list (Pi      = Pi,
+  #              BP = BP))
+  return(list (Pi      = Pi))
 }
 
 init_rad <- function(neighbors, aggfun, X, W, Y) {
-  BP <- define_neighborhood(neighbors = neighbors,
-                            v.matrix  = switch(neighbors$name,
-                                               lambda = W,
-                                               x      = X),
-                            iter      = 1)
   # for GRA - do not this hardcoded
   Pi <- init_p(W, 0.5)
   
@@ -213,7 +205,21 @@ init_rad <- function(neighbors, aggfun, X, W, Y) {
   }
   idx.bounday <- unlist(idx)
   
+  # return(list (Pi      = Pi,
+  #              idx.bounday = idx.bounday,
+  #              BP = BP))
   return(list (Pi      = Pi,
-               idx.bounday = idx.bounday,
-               BP = BP))
+               idx.bounday = idx.bounday))
 }
+
+
+
+ws_transformation <- function(W, epsilon = 1e-50) {
+  temp <- t(apply(W, 1, function(W){1/(W+epsilon)}))
+  temp <- t((apply(temp, 1, function(temp){temp/sum(temp)})))
+  # temp <- apply(temp, 1, function(W){1/(W+epsilon)})
+  # round(temp[,c(2,1)], 8)
+  # return (round(temp[,c(2,1)], 8))
+  return (round(temp, 8))
+}
+

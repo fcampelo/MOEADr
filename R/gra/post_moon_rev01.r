@@ -58,7 +58,7 @@ nPop <- 153
 # de
 # nGen <- rep(392, 21)
 # rad
-nGen <- rep(1066, 21)
+nGen <- rep(196, 21)
 # nGen <- rep(389, 21)
 # nGen[1] <- 389
 # nGen[2] <- 389
@@ -77,10 +77,10 @@ nGen <- rep(1066, 21)
 # nGen[15] <- 392
 # nGen[16] <- 388
 # nGen[17] <- 388
-# nGen[18] <- 1066
-# nGen[19] <- 1066
-# nGen[20] <- 1066
-# nGen[21] <- 1066
+# nGen[18] <- 391
+# nGen[19] <- 391
+# nGen[20] <- 392
+# nGen[21] <- 389
 # gra
 # nGen <- rep(Inf, 21)
 # nGen[1] <- 301
