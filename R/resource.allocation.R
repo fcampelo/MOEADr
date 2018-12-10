@@ -12,18 +12,14 @@ ONRA <- function(dt.bigZ, bigZ, my.T, epsilon = 1e-50) {
   return(p)
 }
 
-
+# L2
 norm_vec2 <- function(x) {
   sqrt(crossprod(x))
 }
 
-norm_vec2.2 <- function(x) {
-  crossprod(x)
-}
-
 
 projection <- function(a, b, epsilon = 1e-50) {
-  return(c(sum(a * b) / (norm_vec2.2(a) + epsilon)) * a)
+  return(c(sum(a * b) / (crossprod(a) + epsilon)) * a)
 }
 
 
@@ -39,7 +35,7 @@ find_indexes <- function(offspring, parent) {
     # equation (4)
     
     for (i in 1:nrow(parent)) {
-      set <- cbind(parent[i, ], offspring[j, ])
+      set <- rbind(parent[i, ], offspring[j, ])
       if (is_dominated(set)[1]) {
         if (!found) {
           indexes_j <- append(indexes_j, j)
@@ -69,11 +65,10 @@ online_diversity <-
     out <- find_indexes(offspring, parent)
     indexes_i <- out$i
     indexes_j <- out$j
-    
-    # "onra"
-    # p <- rep(0.5, nrow(offspring))
+
+    # my.out <- rep(.Machine$double.xmin, nrow(offspring))
     my.out <- rep(-Inf, nrow(offspring))
-    
+
     # equation (7)
     for (i in 1:dim(offspring)[1]) {
       # max.out <- -Inf
@@ -83,19 +78,18 @@ online_diversity <-
           #condition for eq (7)
           c.line <- offspring[i, ] - offspring[indexes_j[[j]], ]
           p.line <- parent[i, ] - parent[indexes_i[[j]], ]
-          
+
           #equation (3)
           d.convs <-
             (offspring[indexes_j[[j]], ] - parent[indexes_i[[j]], ]) + epsilon
-          
           # projection calculation
           proj.c <- projection(c.line, d.convs)
           proj.p <- projection(p.line, d.convs)
-          
+
           # calculate the norm of the vectors: numerator and demoniator of equation (7)
           a <- norm_vec2(p.line - proj.p)
           b <- norm_vec2(c.line - proj.c)
-          
+
           # equation (7)
           aux <-  a / (b + epsilon)
           #equation (10)
@@ -109,9 +103,9 @@ online_diversity <-
       }
     }
     p <-  my.out - old.dm
+    # p <-  my.out
     p <- (p - min(p)) / ((max(p) - min(p)) + epsilon)
-    if (anyNA(p))
-      p <- init_p(W, 1)
+
     out <- list(p = 1 - p, dm = my.out)
     # out <- list(p = p, dm = my.out)
     return(out)
@@ -184,32 +178,14 @@ init_gra <- function(neighbors, aggfun, X, W, Y) {
   # for GRA - do not this hardcoded
   Pi <- init_p(W, 1)
   
-  # return(list (Pi      = Pi,
-  #              BP = BP))
   return(list (Pi      = Pi))
 }
 
 init_rad <- function(neighbors, aggfun, X, W, Y) {
   # for GRA - do not this hardcoded
-  Pi <- init_p(W, 0.5)
+  Pi <- init_p(W, 1)
   
-  my.identity <- diag(dim(W)[2])
-  idx <- list()
-  for (i in 1:dim(W)[1]) {
-    for (j in 1:dim(my.identity)[1]) {
-      my.sum <- sum(round(W[i, ],2) == my.identity[j, ])
-      if (my.sum == dim(W)[2]) {
-        idx[[length(idx) + 1]] <- i
-      }
-    }
-  }
-  idx.bounday <- unlist(idx)
-  
-  # return(list (Pi      = Pi,
-  #              idx.bounday = idx.bounday,
-  #              BP = BP))
-  return(list (Pi      = Pi,
-               idx.bounday = idx.bounday))
+  return(list (Pi      = Pi))
 }
 
 
@@ -217,9 +193,23 @@ init_rad <- function(neighbors, aggfun, X, W, Y) {
 ws_transformation <- function(W, epsilon = 1e-50) {
   temp <- t(apply(W, 1, function(W){1/(W+epsilon)}))
   temp <- t((apply(temp, 1, function(temp){temp/sum(temp)})))
-  # temp <- apply(temp, 1, function(W){1/(W+epsilon)})
-  # round(temp[,c(2,1)], 8)
-  # return (round(temp[,c(2,1)], 8))
   return (round(temp, 8))
 }
 
+
+
+by_norm <- function(parent_x, offspring_x, epsilon = 1e-50) {
+  u <- apply(offspring_x - parent_x, 1, norm, type = "2")
+  u <- (u - min(u)) / ((max(u) - min(u)) + epsilon)
+  return (u)
+}
+
+by_random <- function(len){
+ return(runif(len))
+}
+
+by_jacobian <- function(problem, offspring, epsilon = 1e-50) {
+  u <- apply(jacobian(problem, offspring), 2, sum)
+  u <- (u - min(u)) / ((max(u) - min(u)) + epsilon)
+  return (u)
+}

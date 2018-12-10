@@ -2,48 +2,28 @@ library(feather)
 library(MOEADr)
 library(withr)
 library(stringr)
-
-
-setwd("~/MOEADr/R/")
-
+library(emoa)
+library(ggplot2)
 
 
 
 
-calc_hv <- function(variation, fun, repetitions, ref.points = c(1,1), mod = FALSE){
-  scaling <- list()
+calc_hv <- function(data, variation, fun, repetitions, max.val, min.val, ref.points = c(1,1), epsilon = 1e-50) {
   moead.data <- list()
-  scaling$name <- "simple"
-  
-  for (i in 1:repetitions){
-    if (isTRUE(mod)){
-      my.file.n <- paste0("../../",variation,"_mod/",variation, with_options(c(scipen = 999),
-                                                                             str_pad(i-1, 3, pad = "0")), "_", fun)  
-    }
-    else{
-      my.file.n <- paste0("../../",variation,"/",variation, with_options(c(scipen = 999),
-                                                                         str_pad(i-1, 3, pad = "0")), "_", fun)
-    }
-    
-    moead <- as.matrix(read_feather(my.file.n))
-    print(my.file.n)
-    print(moead)
-    moead <-scale_objectives(moead, moead, scaling = scaling)$Y
-    moead.non.d <- find_nondominated_points(moead)
-    moead.hv <-
-      emoa::dominated_hypervolume(points = t(moead[moead.non.d, ]),
-                                  ref = ref.points)
-    
-    moead.data <-
-      rbind(moead.data, moead.hv)
+  data <- (sweep(data, 2, min.val))/ ((max.val - min.val) + epsilon)
+  non.d <- find_nondominated_points(data)
+  if (sum(non.d) > 0){
+  moead.hv <-
+    dominated_hypervolume(points = t(data[non.d,]),
+                                ref = ref.points)
   }
-  moead.data <- as.data.frame(unlist(moead.data))
-  temp <- data.frame(moead.data, fun, paste0(variation,".",mod), (1:repetitions)-1)
+  else moead.hv <- 0
+  temp <- data.frame(moead.hv, fun, paste0(variation), repetitions-1)
   
   colnames(temp) <-
     c("HV",
       "fun",
-      "variation.name")
+      "algorithm", "rep")
   temp
 }
 
@@ -51,45 +31,41 @@ create_graphs <-
   function(data,
            fun.names,
            n.obj) {
-    aux <- data[data$base.algorithm == "moead.de",]
     for (fun in fun.names) {
-      # aux1 <- aux[aux$fun == fun, ]
-      pathname <- paste0("../HV-archive2/moead.de_", fun, ".png")
-      png(pathname,
-          width = 1000,
-          height = 600)
-      par(cex.axis = 1.5)
-      boxplot(
-        my.data[my.data$fun == fun,]$HV ~ my.data[my.data$fun == fun,]$variation.name,
-        col = c("blue", "gray", "orange", "green", "brown"),
-        las = 1
-      )
-      dev.off()
+      my.data <- data[data$fun == fun, ]
+      # my.data$algorithm <- factor(my.data$algorithm)
+      pathname <- paste0("../HV-archive2/", fun, ".png")
+      p <- ggplot(my.data, aes(algorithm, HV)) +
+        geom_violin(aes(fill = algorithm), scale = "count") #+ ylim(0, 1) +
+        # geom_violin(aes(fill = algorithm)) +
+        ggtitle(fun) 
+      p <-
+        p + geom_boxplot(width = 0.4, alpha = 0.65) + theme(axis.text = element_text(size =
+                                                                                       14),
+                                                            axis.title =
+                                                              element_text(size = 16, face = "bold")) + theme(plot.title = element_text(
+                                                                color = "blue",
+                                                                size = 24,
+                                                                face = "bold"
+                                                              )) + geom_jitter(height = 0, width = 0.1)
+      
+      ggsave(filename = pathname, device = "png")
+    }
+  }
+
+create_graphs_log <-
+  function(data,
+           fun.names,
+           n.obj) {
+    data$HV <- log(data$HV)
+    for (fun in fun.names) {
+      my.data <- data[data$fun == fun,]
+      pathname <- paste0("../HV-archive2/",fun, "_log.png")
+      p <- ggplot(my.data, aes(algorithm, HV)) + 
+        geom_violin(aes(fill = factor(algorithm))) 
+      p + geom_boxplot(width=0.4, alpha = 0.65)
+      ggsave(filename = pathname, device = "png")
     }
   }
 
 
-
-
-fun.names <- list()
-for (i in 1:1) {
-  fun.names[[length(fun.names) + 1]] = paste0("BiObjBBOB", i)
-}
-n.obj <- 2
-benchmark = "BiObjBBOB"
-repetitions <- 8
-ref.points<- rep(1+1/149,2)
-
-
-my.data0 <- calc_hv("rad", fun, repetitions, ref.points)
-my.data1 <- calc_hv("rad", fun, repetitions, ref.points, mod = TRUE)
-my.data2 <- calc_hv("de", fun, repetitions, ref.points)
-my.data5 <- calc_hv("de", fun, repetitions, ref.points, mod = TRUE)
-my.data3 <- calc_hv("gra", fun, repetitions, ref.points)
-my.data4 <- calc_hv("dra", fun, repetitions, ref.points)
-my.data6 <- calc_hv("nsga.2", fun, repetitions, ref.points)
-
-my.data <- rbind(my.data0, my.data1, my.data3, my.data4, my.data5)
-
-
-create_graphs(my.data, fun.names)

@@ -74,15 +74,15 @@ plot.moead <- function(x,
     V <- x$Archive$V
   }
 
-  if(feasible.only && !is.null(V)){
-    feas.indx <- rowSums(V$Vmatrix > viol.threshold) == 0
-    Y         <- Y[feas.indx, ]
-    X         <- X[feas.indx, ]
-
-    V$Cmatrix <- V$Cmatrix[feas.indx, ]
-    V$Vmatrix <- V$Vmatrix[feas.indx, ]
-    V$v       <- V$v[feas.indx]
-  }
+  # if(feasible.only && !is.null(V)){
+  #   feas.indx <- rowSums(V$Vmatrix > viol.threshold) == 0
+  #   Y         <- Y[feas.indx, ]
+  #   X         <- X[feas.indx, ]
+  # 
+  #   V$Cmatrix <- V$Cmatrix[feas.indx, ]
+  #   V$Vmatrix <- V$Vmatrix[feas.indx, ]
+  #   V$v       <- V$v[feas.indx]
+  # }
 
   if(nondominated.only){
     nd.indx   <- find_nondominated_points(Y)
