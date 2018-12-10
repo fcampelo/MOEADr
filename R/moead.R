@@ -331,9 +331,9 @@ moead <-
     if (!is.null(resource.allocation)) {
       nullRA <- FALSE
     }# check moon problem
-    if (problem$name != "problem.moon") {
-      my.file.n <- NULL
-    }
+    # if (problem$name != "problem.moon") {
+    #   my.file.n <- NULL
+    # }
     
     
     # ============ End Error catching and default value definitions ============ #
@@ -394,7 +394,10 @@ moead <-
         ra <- init_rad(neighbors, aggfun, X, W, Y)
         Pi <- ra$Pi
         # idx.bounday <- ra$idx.bounday
-        size <- floor(dim(W)[1] / 5) - problem$m
+        # size <- floor(dim(W)[1] / 5) - problem$m
+      }
+      else{
+        Pi <- init_p(W, 1)
       }
     }
     indexes <- seq.int(1, dim(W)[1])
@@ -404,6 +407,8 @@ moead <-
     # ============================= Iterative cycle ============================ #
     keep.running  <- TRUE      # stop criteria flag
     iter          <- 0         # counter: iterations
+    pdGen <- formatC(iter, width = 3, format = "d", flag = "0")
+    write_feather(as.data.frame(Y), paste0(my.file.n, "rep_",seed,"_",pdGen,"_Y"))
     
     while (keep.running) {
       # Update iteration counter
@@ -434,16 +439,16 @@ moead <-
       }
       else{
         if (resource.allocation$name == "DRA") {
-          idx.tour <-
-            selTournament(fitness = -Pi,
-                               n.select = size,
-                               k = 10)
-          indexes <- append(idx.bounday, idx.tour)
+            idx.tour <-
+              selTournament(fitness = -Pi,
+                            n.select = size,
+                            k = 10)
+            indexes <- append(idx.bounday, idx.tour)  
         }
         else{
           rand.seq <- runif(length(Pi))
-          indexes <- which(rand.seq < Pi)
-          if (length(indexes) < 3) {
+          indexes <- which(rand.seq <= Pi)
+          if (length(indexes) < 3 | is.null(length(indexes))) {
             indexes <- which(rand.seq <= 1)
           }
         }
@@ -457,11 +462,6 @@ moead <-
       }
       B  <- BP$B.variation[indexes,]
       P  <- BP$P[indexes, indexes]
-      
-      # if(sum(Pi)!=0)
-      #   P <- Pi[indexes]
-      # else
-      #   P  <- BP$P[indexes, indexes]
         
       
       # Perform variation
@@ -486,7 +486,6 @@ moead <-
       if (!nullRA) {
         temp.X[indexes, ] <- X
         X <- temp.X
-        
         temp.Y[indexes, ] <- Y
         Y <- temp.Y
       }
@@ -598,11 +597,18 @@ moead <-
           else
             old.dm <- init_p(W, 0)
           parent <- Y
-          # SA
-          # if(sum(Pi)!=0)
-          #   P <- Pi
-          # neighbors$delta.p <- median(Pi)
         }
+        if (resource.allocation$name == "norm"){
+          if (iter > resource.allocation$dt) {
+            Pi <- by_norm(offspring_x = X, parent_x = parent)
+          }
+          parent <- X
+        }
+        if (resource.allocation$name == "random"){
+          if (iter > resource.allocation$dt) {
+            Pi <- by_random(dim(W)[1])
+          }
+        }          
       }
       if (problem$name == "problem.moon" && (stopcrit[[1]]$maxeval< (nfe + dim(W)[1]))){
         V <- Archive2$V
@@ -629,6 +635,9 @@ moead <-
       # ========== Print
       # Echo whatever is demanded
       print_progress(iter.times, showpars)
+      
+      pdGen <- formatC(iter, width = 3, format = "d", flag = "0")
+      write_feather(as.data.frame(Y), paste0(my.file.n, "rep_",seed,"_",pdGen,"_Y"))
     }
     # =========================== End Iterative cycle ========================== #
     
