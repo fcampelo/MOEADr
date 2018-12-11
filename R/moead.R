@@ -372,32 +372,32 @@ moead <-
     nfe <- YV$nfe
     
     # fixed neighbours
-    # if (!nullRA) {
-    #   if (resource.allocation$name == "DRA") {
-    #     scaling <- list()
-    #     scaling$name <- "simple"
-    #     ra <- init_dra(neighbors, aggfun, X, W, Y, scaling)
-    #     scaling   <- preset$scaling
-    #     Pi <- ra$Pi
-    #     oldObj <- ra$oldObj
-    #     idx.bounday <- ra$idx.bounday
-    #     
-    #     size <- floor(dim(W)[1] / 5) - problem$m
-    #   }
-    #   else if (resource.allocation$name == "GRA") {
-    #     dt.bigZ <- list()
-    #     ra <- init_gra(neighbors, aggfun, X, W, Y)
-    #     Pi <- ra$Pi
-    #   }
-    #   if (resource.allocation$name == "RAD") {
-    #     ra <- init_rad(neighbors, aggfun, X, W, Y)
-    #     Pi <- ra$Pi
-    #     # idx.bounday <- ra$idx.bounday
-    #     # size <- floor(dim(W)[1] / 5) - problem$m
-    #   }
-      # else{
+    if (!nullRA) {
+      if (resource.allocation$name == "DRA") {
+        scaling <- list()
+        scaling$name <- "simple"
+        ra <- init_dra(neighbors, aggfun, X, W, Y, scaling)
+        scaling   <- preset$scaling
+        Pi <- ra$Pi
+        oldObj <- ra$oldObj
+        idx.bounday <- ra$idx.bounday
+
+        size <- floor(dim(W)[1] / 5) - problem$m
+      }
+      else if (resource.allocation$name == "GRA") {
+        dt.bigZ <- list()
+        ra <- init_gra(neighbors, aggfun, X, W, Y)
+        Pi <- ra$Pi
+      }
+      if (resource.allocation$name == "RAD") {
+        ra <- init_rad(neighbors, aggfun, X, W, Y)
+        Pi <- ra$Pi
+        # idx.bounday <- ra$idx.bounday
+        # size <- floor(dim(W)[1] / 5) - problem$m
+      }
+    else{
         Pi <- init_p(W, 1)
-      # }
+      }
     # }
     indexes <- seq.int(1, dim(W)[1])
     
