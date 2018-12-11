@@ -437,20 +437,20 @@ moead <-
         
       }
       else{
-        if (resource.allocation$name == "DRA") {
-            idx.tour <-
-              selTournament(fitness = -Pi,
-                            n.select = size,
-                            k = 10)
-            indexes <- append(idx.bounday, idx.tour)  
-        }
-        else{
+        # if (resource.allocation$name == "DRA") {
+        #     idx.tour <-
+        #       selTournament(fitness = -Pi,
+        #                     n.select = size,
+        #                     k = 10)
+        #     indexes <- append(idx.bounday, idx.tour)  
+        # }
+        # else{
           rand.seq <- runif(length(Pi))
           indexes <- which(rand.seq <= Pi)
           if (length(indexes) < 3 | is.null(length(indexes))) {
             indexes <- which(rand.seq <= 1)
           }
-        }
+        # }
         Xt <- X
         temp.X <- X
         X <- X[indexes, ]
