@@ -300,7 +300,7 @@
     geom_line(aes(linetype="dashed", color=name))+
     geom_point(aes(shape=name, color = name))+
     geom_errorbar(aes(ymin=HV-sd_HV, ymax=HV+sd_HV), width=.1) 
-  p
+  # p
   ggsave(filename = pathname, device = "png")
   
   pathname <- "../files/igd_all.png"
@@ -308,5 +308,8 @@
     geom_line(aes(linetype="dashed", color=name))+
     geom_point(aes(shape=name, color = name))+
     geom_errorbar(aes(ymin=IGD-sd_IGD, ymax=IGD+sd_IGD), width=.1) 
-  p
+  # p
   ggsave(filename = pathname, device = "png")
+  
+  
+  create_graphs(my.data)
