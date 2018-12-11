@@ -399,7 +399,7 @@ moead <-
     else{
         Pi <- init_p(W, 1)
       }
-    # }
+    }
     indexes <- seq.int(1, dim(W)[1])
     
     # ========================= End Initial definitions ======================== #
