@@ -36,8 +36,14 @@ stopcrit  <- list(list(name    = "maxiter",
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  for (i in 1:1) {
+  for (i in 1:7) {
     fun.names1[[length(fun.names1) + 1]] = paste0("DTLZ", i)
+  }
+  if (n.obj == 2){
+    decomp <- list(name = "SLD", H = 350)
+  }
+  else if (n.obj == 3){
+    decomp <- list(name = "SLD", H = 25)
   }
   
   my.data <- data.frame()
