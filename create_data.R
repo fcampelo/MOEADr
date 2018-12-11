@@ -5,7 +5,7 @@
   gens <- 200
   
   fun.names<-list()
-  for (i in 1:1) {
+  for (i in 1:6) {
     fun.names[[length(fun.names) + 1]] = paste0("UF", i)
     # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
   }
@@ -312,4 +312,5 @@
   ggsave(filename = pathname, device = "png")
   
   
-  create_graphs(my.data)
+  create_graphs(my.data, fun.names, 2)
+  
