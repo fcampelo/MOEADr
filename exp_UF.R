@@ -28,7 +28,7 @@ decomp <- list(name = "SLD", H = 350)
 scaling <- list()
 scaling$name <- "simple"
 
-n.objs <- c(3)
+n.objs <- c(2,3)
 id <- 1
 
 stopcrit  <- list(list(name    = "maxiter",
