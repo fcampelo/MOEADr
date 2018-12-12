@@ -6,6 +6,169 @@ library(emoa)
 library(ggplot2)
 
 
+extractFeasible <- function(data, isFilteredByCons = T) {
+  nr1 <- nrow(data)
+  isFeasible <- rep(T, nr1)
+  if (isFilteredByCons) {
+    stopifnot(length(consColnames) == nCon)
+    for (i in 1:nCon) {
+      fPart <- ifelse(data[, nObj + i] >= 0, T, F)
+      isFeasible <- isFeasible & fPart
+    }
+  } else {
+    cat("no filtering by constraints\n")
+    flush.console()
+  }
+  return (isFeasible)
+}
+
+extractNonDominatedSolutions <- function(data, isFeasible) {
+  idxFeasible <- ifelse(isFeasible == T, 1:nrow(data), 0)
+  idxFeasible <- subset(idxFeasible, idxFeasible > 0)
+  #objsTmp <<- as.matrix(data[idxFeasible, 1:(2 + nObj)]) # for output
+  objsTmp <- as.matrix(data[idxFeasible, 1:(nObj + nCon)]) # for output
+  objsTmp
+}
+
+
+rankUnion <- function(dataTmp, isRedefineArc) {
+  # Re-define Archive arrays for write history
+  if (isRedefineArc == T) {
+    # initialize archive and store dataTmp as it is 
+    archive <<-  as.matrix(dataTmp)
+    archive <<- as.matrix(archive[complete.cases(archive[, 1]), ])
+  } else {
+    # achive stores only objectives
+    archive <<- as.matrix(rbind(archive[, 1:(nObj + nCon)], dataTmp[, 1:(nObj + nCon)]))
+    archive <<- as.matrix(archive[complete.cases(archive[, 1]), ])
+  }
+  #
+  if (ncol(archive) == 1) {
+    archive <<- t(archive)
+  }
+  #
+  if (nrow(archive) == 1) {
+    idd <- as.matrix(F)
+  } else {
+    idd <- as.matrix(is_dominated(t(as.matrix(archive[, 1:nObj]))))
+  }
+  #
+  rankFeasible <- ifelse(idd == F, 1, 2)
+  return (rankFeasible)
+}
+
+
+convertEvalObjectives <- function(objsTmp) {
+  conversionEvalString <- paste("",
+                                "dataTmp[, 1] <- objsTmp[, 1];",
+                                "dataTmp[, 2] <- objsTmp[, 2];",
+                                "dataTmp[, 3] <- objsTmp[, 3];",
+                                "")
+  if (ncol(objsTmp) == 1) {
+    objsTmp <<- t(objsTmp)
+  }
+  dataTmp <- objsTmp
+  #
+  eval(parse(text = conversionEvalString))
+  #
+  return (dataTmp)
+}
+
+
+calculateIndicator <- function(iRun2, dataTmp, refPoint) {
+  if (nrow(dataTmp) > 0) {
+    if (nrow(dataTmp) == 1) {
+      indicatorTmp[iRun2] <<- emoa::dominated_hypervolume((as.matrix(dataTmp[, 1:nObj])), t(as.matrix(refPoint)))
+    } else {
+      indicatorTmp[iRun2] <<- emoa::dominated_hypervolume(t(as.matrix(dataTmp[, 1:nObj])), t(as.matrix(refPoint)))
+    }
+  } else {
+    indicatorTmp[iRun2]  <<- initialValue
+  }
+  if (nrow(archive) > 0) {
+    if (nrow(archive) == 1) {
+    } else {
+      indicatorArc[iRun2] <<- emoa::dominated_hypervolume(t(as.matrix(archive[, 1:nObj])), t(as.matrix(refPoint)))
+    }
+  }
+}
+
+calculateIndicator <- function(iRun2, dataTmp, refPoint) {
+  if (nrow(dataTmp) > 0) {
+    if (nrow(dataTmp) == 1) {
+      indicatorTmp[iRun2] <<- emoa::dominated_hypervolume((as.matrix(dataTmp[, 1:nObj])), t(as.matrix(refPoint)))
+    } else {
+      indicatorTmp[iRun2] <<- emoa::dominated_hypervolume(t(as.matrix(dataTmp[, 1:nObj])), t(as.matrix(refPoint)))
+    }
+  } else {
+    indicatorTmp[iRun2]  <<- initialValue
+  }
+  if (nrow(archive) > 0) {
+    if (nrow(archive) == 1) {
+    } else {
+      indicatorArc[iRun2] <<- emoa::dominated_hypervolume(t(as.matrix(archive[, 1:nObj])), t(as.matrix(refPoint)))
+    }
+  }
+}
+
+read.data <- function(fun, runIdPre, iRun, my.data, gen){
+  runDig <- 3
+  generationDig <- 3
+  nr1prev <- 0
+  cat("gen = ")
+  
+  for (i in 1:gen){
+    iGen2 <- i
+    iGen <- i - 1
+    cat(iGen, ", ")
+    filePath <- fun
+    # runIdPre <- ""
+    runIdPost <- ""
+    objsFilePre <- ""
+    varsFilePre <- ""
+    consFilePre <- ""
+    objsFilePost <- ""
+    varsFilePost <- ""
+    consFilePost <- ""
+    
+    # my.file.n <- paste0("../de/", fun,"_rep_",i,"_",pdGen,"_Y")
+    # data <- as.matrix(read_feather(my.file.n))
+    
+    # zpdRun <- formatC(iRun, width = runDig, format = "d", flag = "0") #zero padded
+    zpdGen <- formatC(iGen2, width = generationDig, format = "d", flag = "0") #zero padded
+    # tgt <- paste(filePath, runIdPre, zpdRun, runIdPost, objsFilePre, zpdGen, objsFilePost, sep = "")
+    tgt <- paste0(runIdPre,"/", fun,"_rep_",iRun2,"_",zpdGen,"_Y")
+    # print(tgt)
+    # objsData <- read.table(tgt, header = F, sep = "\t")
+    objsData <- as.matrix(read_feather(tgt))
+    # tgt <- paste(filePath, runIdPre, zpdRun, runIdPost, varsFilePre, zpdGen, varsFilePost, sep = "")
+    # print(tgt)
+    # varsData <- read.table(tgt, header = F, sep = "\t")
+    # tgt <- paste(filePath, runIdPre, zpdRun, runIdPost, consFilePre, zpdGen, consFilePost, sep = "")
+    # print(tgt)
+    # consData <- read.table(tgt, header = F, sep = "\t")
+    nr1 <- nrow(objsData)
+    gen <- rep(iGen2, each = nr1)
+    evals <- rep((nr1prev + 1):(nr1prev + nPop+1), length = nr1)
+    # print(evals)
+    zeroObj <- matrix(0.0, nrow=dim(objsData)[1], ncol=1 )
+    # temp <- data.frame(objsData[, 1:nObj], consData, varsData, gen, evals)
+    # temp <- data.frame(objsData[, 1:nObj], gen, evals)
+    # colnames(temp) <- c(objsColnames, consColnames, varsColnames, "#Gen", "#Eval")
+    # my.data2 <- rbind(my.data, data.frame(objsData[, 1:nObj], gen, evals))
+    consData <- rep(0, nr1)
+    varsData <- rep(0, nr1)
+    # print(length(varsData))
+    # print(dim(objsData))
+    
+    my.data2 <- rbind(my.data, data.frame(objsData[, 1:nObj], gen, evals))
+    my.data2$consData <- consData
+    my.data2$varsData <- varsData
+    # my.data2 <- rbind(my.data, data.frame(objsData[, 1:nObj], consData, varsData, gen, evals))
+    nr1prev <<- nr1prev + nPop
+  }
+  return (my.data2)
+}
 
 
 calc_hv <- function(data, variation, fun, repetitions, max.val, min.val, ref.points = c(1,1), epsilon = 1e-50) {
@@ -28,17 +191,35 @@ calc_hv <- function(data, variation, fun, repetitions, max.val, min.val, ref.poi
 }
 
 create_graphs <-
-  function(data,
+  function(my.data,
            fun.names,
            n.obj) {
+    # algorithm <- "moead.de"
     for (fun in fun.names) {
-      my.data <- data[data$fun == fun, ]
+      # my.data <- data[data$fun == fun, ]
       # my.data$algorithm <- factor(my.data$algorithm)
-      pathname <- paste0("../HV-archive2/", fun, ".png")
+      pathname <- paste0("../files/", fun, "_HV.png")
       p <- ggplot(my.data, aes(algorithm, HV)) +
         geom_violin(aes(fill = algorithm), scale = "count") #+ ylim(0, 1) +
-        # geom_violin(aes(fill = algorithm)) +
-        ggtitle(fun) 
+      # geom_violin(aes(fill = algorithm)) +
+      ggtitle(fun) 
+      p <-
+        p + geom_boxplot(width = 0.4, alpha = 0.65) + theme(axis.text = element_text(size =
+                                                                                       14),
+                                                            axis.title =
+                                                              element_text(size = 16, face = "bold")) + theme(plot.title = element_text(
+                                                                color = "blue",
+                                                                size = 24,
+                                                                face = "bold"
+                                                              )) + geom_jitter(height = 0, width = 0.1)
+      
+      ggsave(filename = pathname, device = "png")
+      
+      pathname <- paste0("../files/", fun, "_IGD.png")
+      p <- ggplot(my.data, aes(algorithm, IGD)) +
+        geom_violin(aes(fill = algorithm), scale = "count") #+ ylim(0, 1) +
+      # geom_violin(aes(fill = algorithm)) +
+      ggtitle(fun) 
       p <-
         p + geom_boxplot(width = 0.4, alpha = 0.65) + theme(axis.text = element_text(size =
                                                                                        14),
