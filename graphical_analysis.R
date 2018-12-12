@@ -111,16 +111,18 @@ calculateIndicator <- function(iRun2, dataTmp, refPoint) {
   }
 }
 
-read.data <- function(fun, runIdPre, iRun, my.data, gen){
+read.data <- function(fun, runIdPre, iRun, gen, flag = 0){
   runDig <- 3
   generationDig <- 3
   nr1prev <- 0
-  cat("gen = ")
-  
+  # cat("gen = ")
+  hv <- matrix(0, nrow = gen)
+  igd <- matrix(0, nrow = gen)
+  my.data2 <- data.frame()
   for (i in 1:gen){
     iGen2 <- i
     iGen <- i - 1
-    cat(iGen, ", ")
+    # cat(iGen, ", ")
     filePath <- fun
     # runIdPre <- ""
     runIdPost <- ""
@@ -131,26 +133,19 @@ read.data <- function(fun, runIdPre, iRun, my.data, gen){
     varsFilePost <- ""
     consFilePost <- ""
     
-    # my.file.n <- paste0("../de/", fun,"_rep_",i,"_",pdGen,"_Y")
-    # data <- as.matrix(read_feather(my.file.n))
-    
     # zpdRun <- formatC(iRun, width = runDig, format = "d", flag = "0") #zero padded
     zpdGen <- formatC(iGen2, width = generationDig, format = "d", flag = "0") #zero padded
     # tgt <- paste(filePath, runIdPre, zpdRun, runIdPost, objsFilePre, zpdGen, objsFilePost, sep = "")
     tgt <- paste0(runIdPre,"/", fun,"_rep_",iRun2,"_",zpdGen,"_Y")
-    # print(tgt)
     # objsData <- read.table(tgt, header = F, sep = "\t")
     objsData <- as.matrix(read_feather(tgt))
     # tgt <- paste(filePath, runIdPre, zpdRun, runIdPost, varsFilePre, zpdGen, varsFilePost, sep = "")
-    # print(tgt)
     # varsData <- read.table(tgt, header = F, sep = "\t")
     # tgt <- paste(filePath, runIdPre, zpdRun, runIdPost, consFilePre, zpdGen, consFilePost, sep = "")
-    # print(tgt)
     # consData <- read.table(tgt, header = F, sep = "\t")
     nr1 <- nrow(objsData)
     gen <- rep(iGen2, each = nr1)
-    evals <- rep((nr1prev + 1):(nr1prev + nPop+1), length = nr1)
-    # print(evals)
+    evals <- rep((nr1prev + 1):(nr1prev + nPop+1), length = nr1)-1
     zeroObj <- matrix(0.0, nrow=dim(objsData)[1], ncol=1 )
     # temp <- data.frame(objsData[, 1:nObj], consData, varsData, gen, evals)
     # temp <- data.frame(objsData[, 1:nObj], gen, evals)
@@ -158,16 +153,20 @@ read.data <- function(fun, runIdPre, iRun, my.data, gen){
     # my.data2 <- rbind(my.data, data.frame(objsData[, 1:nObj], gen, evals))
     consData <- rep(0, nr1)
     varsData <- rep(0, nr1)
-    # print(length(varsData))
-    # print(dim(objsData))
-    
-    my.data2 <- rbind(my.data, data.frame(objsData[, 1:nObj], gen, evals))
-    my.data2$consData <- consData
-    my.data2$varsData <- varsData
-    # my.data2 <- rbind(my.data, data.frame(objsData[, 1:nObj], consData, varsData, gen, evals))
+    # print(evals)
+    my.data2 <- rbind(my.data2, data.frame(objsData[, 1:nObj], gen, evals, consData, varsData))    # my.data2 <- rbind(my.data, data.frame(objsData[, 1:nObj], consData, varsData, gen, evals))
     nr1prev <<- nr1prev + nPop
+    my.data2[, 1:2] <-
+      (sweep(my.data2[, 1:2], 2, min.val)) / ((max.val - min.val) + 1e-50)
+    if (flag == 1){
+      
+      hv[i,1] <- emoa::dominated_hypervolume(t(as.matrix(my.data2[,1:2])), t(as.matrix(c(1,1))))
+      igd[i,1] <- calcIGD(archive[, 1:2], Yref)
+      # emoa::dominated_hypervolume(t(as.matrix(my.data2[,1:2])), t(as.matrix(c(1,1))))
+    }
   }
-  return (my.data2)
+  out <- list(my.data2 = my.data2, hv = hv, igd = igd)
+  return (out)
 }
 
 
@@ -199,8 +198,8 @@ create_graphs <-
       # my.data <- data[data$fun == fun, ]
       # my.data$algorithm <- factor(my.data$algorithm)
       pathname <- paste0("../files/", fun, "_HV.png")
-      p <- ggplot(my.data, aes(algorithm, HV)) +
-        geom_violin(aes(fill = algorithm), scale = "count") #+ ylim(0, 1) +
+      p <- ggplot(my.data, aes(algorithm, HV)) +geom_boxplot(aes(fill = algorithm), scale = "count")
+        # geom_violin(aes(fill = algorithm), scale = "count") #+ ylim(0, 1) +
       # geom_violin(aes(fill = algorithm)) +
       ggtitle(fun) 
       p <-
@@ -216,8 +215,8 @@ create_graphs <-
       ggsave(filename = pathname, device = "png")
       
       pathname <- paste0("../files/", fun, "_IGD.png")
-      p <- ggplot(my.data, aes(algorithm, IGD)) +
-        geom_violin(aes(fill = algorithm), scale = "count") #+ ylim(0, 1) +
+      p <- ggplot(my.data, aes(algorithm, IGD)) +geom_boxplot(aes(fill = algorithm), scale = "count")
+        # geom_violin(aes(fill = algorithm), scale = "count") #+ ylim(0, 1) +
       # geom_violin(aes(fill = algorithm)) +
       ggtitle(fun) 
       p <-
@@ -233,20 +232,4 @@ create_graphs <-
       ggsave(filename = pathname, device = "png")
     }
   }
-
-create_graphs_log <-
-  function(data,
-           fun.names,
-           n.obj) {
-    data$HV <- log(data$HV)
-    for (fun in fun.names) {
-      my.data <- data[data$fun == fun,]
-      pathname <- paste0("../HV-archive2/",fun, "_log.png")
-      p <- ggplot(my.data, aes(algorithm, HV)) + 
-        geom_violin(aes(fill = factor(algorithm))) 
-      p + geom_boxplot(width=0.4, alpha = 0.65)
-      ggsave(filename = pathname, device = "png")
-    }
-  }
-
 

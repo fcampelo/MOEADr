@@ -102,8 +102,8 @@ online_diversity <-
         my.out[i] <- .Machine$double.xmax
       }
     }
-    p <-  my.out - old.dm
-    # p <-  my.out
+    # p <-  my.out - old.dm
+    p <-  my.out
     p <- (p - min(p)) / ((max(p) - min(p)) + epsilon)
 
     out <- list(p = 1 - p, dm = my.out)
