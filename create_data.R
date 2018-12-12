@@ -1,6 +1,6 @@
 ## start loadind data
 setwd("~/MOEADr/")
-
+source("graphical_analysis.R")
 
 nPop <- 350
 nRun <- 30
