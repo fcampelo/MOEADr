@@ -2,6 +2,40 @@
 setwd("~/MOEADr/")
 source("graphical_analysis.R")
 
+nPop <- 350
+nRun <- 30
+nObj <- 2 # fix even if single obj
+# number of variables
+nVar <- 200
+# number of constraints
+nCon <- 1
+# number of generations
+gen <- 200
+# reference point
+
+refPoint <- c(1, 1)
+
+# things
+objsColnames <- paste("#obj", 1:nObj, sep = "")
+varsColnames <- paste("#var", 1:nVar, sep = "")
+consColnames <- paste("#con", 1:nCon, sep = "")
+
+# init with zero
+initialValueM <- 0
+initialValue <<- initialValueM
+indicatorArc <<- matrix(initialValue, nrow = 1)
+indicatorTmp <<- matrix(initialValue, nrow = nRun)
+indicatorArcIGD <<- matrix(initialValue, nrow = nRun)
+
+# Fun names
+fun.names <- list()
+for (i in 1:7) {
+  fun.names[[length(fun.names) + 1]] = paste0("UF", i)
+  # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
+}
+# variants names
+variants <- c("de", "norm", "rad", "random", "gra", "dra")
+
 max.val <- c(-Inf, -Inf)
 min.val <- c(Inf, Inf)
 # id <- 1
@@ -71,39 +105,7 @@ for (fun in fun.names){
 }
 
 
-nPop <- 350
-nRun <- 30
-nObj <- 2 # fix even if single obj
-# number of variables
-nVar <- 200
-# number of constraints
-nCon <- 1
-# number of generations
-gen <- 200
-# reference point
 
-refPoint <- c(1, 1)
-
-# things
-objsColnames <- paste("#obj", 1:nObj, sep = "")
-varsColnames <- paste("#var", 1:nVar, sep = "")
-consColnames <- paste("#con", 1:nCon, sep = "")
-
-# init with zero
-initialValueM <- 0
-initialValue <<- initialValueM
-indicatorArc <<- matrix(initialValue, nrow = 1)
-indicatorTmp <<- matrix(initialValue, nrow = nRun)
-indicatorArcIGD <<- matrix(initialValue, nrow = nRun)
-
-# Fun names
-fun.names <- list()
-for (i in 1:7) {
-  fun.names[[length(fun.names) + 1]] = paste0("UF", i)
-  # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
-}
-# variants names
-variants <- c("de", "norm", "rad", "random", "gra", "dra")
 
 for (fun in fun.names) {
   print(fun)
