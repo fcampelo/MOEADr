@@ -75,8 +75,8 @@ for (variant in variants) {
           gen = gen,
           flag = 0
         )$my.data2
-      max.val <- pmax(max.val, apply(data, 2, max))
-      min.val <- pmin(min.val, apply(data, 2, min))
+      max.val <- pmax(max.val, apply(my.data, 2, max))
+      min.val <- pmin(min.val, apply(my.data, 2, min))
     }
   }
 }
