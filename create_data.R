@@ -3,7 +3,7 @@ setwd("~/MOEADr/")
 
 
 nPop <- 350
-nRun <- 2
+nRun <- 30
 nObj <- 2 # fix even if single obj
 # number of variables
 nVar <- 200
@@ -29,7 +29,7 @@ indicatorArcIGD <<- matrix(initialValue, nrow = nRun)
 
 # Fun names
 fun.names <- list()
-for (i in 1:1) {
+for (i in 1:7) {
   fun.names[[length(fun.names) + 1]] = paste0("UF", i)
   # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
 }
