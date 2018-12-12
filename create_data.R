@@ -2,6 +2,75 @@
 setwd("~/MOEADr/")
 source("graphical_analysis.R")
 
+max.val <- c(-Inf, -Inf)
+min.val <- c(Inf, Inf)
+# id <- 1
+for (fun in fun.names){
+  # Yref <- as.matrix(read.table(paste0("inst/extdata/pf_data/UF",id, ".dat")))
+  # Yref <- as.matrix(read.table(paste0("inst/extdata/pf_data/DTLZ",id, ".2D.pf")))
+  Yref <- as.matrix(read.table(paste0("inst/extdata/pf_data/DTLZ",id, ".2D.pf")))
+  id <- id + 1
+  for (i in 1:repetitions){
+    for (gen in 1:gens){
+      pdGen <- formatC(gen-1, width = 3, format = "d", flag = "0")
+      my.file.n <- paste0("../de/", fun,"_rep_",i,"_",pdGen,"_Y")
+      data <- as.matrix(read_feather(my.file.n))
+      max.val <- pmax(max.val, apply(data, 2, max))
+      min.val <- pmin(min.val, apply(data, 2, min))
+    }
+  }
+  
+  for (i in 1:repetitions){
+    for (gen in 1:gens){
+      pdGen <- formatC(gen-1, width = 3, format = "d", flag = "0")
+      my.file.n <- paste0("../rad/", fun,"_rep_",i,"_",pdGen,"_Y")
+      data <- as.matrix(read_feather(my.file.n))
+      max.val <- pmax(max.val, apply(data, 2, max))
+      min.val <- pmin(min.val, apply(data, 2, min))
+    }
+  }
+  
+  for (i in 1:repetitions){
+    for (gen in 1:gens){
+      pdGen <- formatC(gen-1, width = 3, format = "d", flag = "0")
+      my.file.n <- paste0("../dra/", fun,"_rep_",i,"_",pdGen,"_Y")
+      data <- as.matrix(read_feather(my.file.n))
+      max.val <- pmax(max.val, apply(data, 2, max))
+      min.val <- pmin(min.val, apply(data, 2, min))
+    }
+  }
+  for (i in 1:repetitions){
+    for (gen in 1:gens){
+      pdGen <- formatC(gen-1, width = 3, format = "d", flag = "0")
+      my.file.n <- paste0("../gra/", fun,"_rep_",i,"_",pdGen,"_Y")
+      data <- as.matrix(read_feather(my.file.n))
+      max.val <- pmax(max.val, apply(data, 2, max))
+      min.val <- pmin(min.val, apply(data, 2, min))
+    }
+  }
+  
+  for (i in 1:repetitions){
+    for (gen in 1:gens){
+      pdGen <- formatC(gen-1, width = 3, format = "d", flag = "0")
+      my.file.n <- paste0("../norm/", fun,"_rep_",i,"_",pdGen,"_Y")
+      data <- as.matrix(read_feather(my.file.n))
+      max.val <- pmax(max.val, apply(data, 2, max))
+      min.val <- pmin(min.val, apply(data, 2, min))
+    }
+  }
+  
+  for (i in 1:repetitions){
+    for (gen in 1:gens){
+      pdGen <- formatC(gen-1, width = 3, format = "d", flag = "0")
+      my.file.n <- paste0("../random/", fun,"_rep_",i,"_",pdGen,"_Y")
+      data <- as.matrix(read_feather(my.file.n))
+      max.val <- pmax(max.val, apply(data, 2, max))
+      min.val <- pmin(min.val, apply(data, 2, min))
+    }
+  }
+}
+
+
 nPop <- 350
 nRun <- 30
 nObj <- 2 # fix even if single obj
