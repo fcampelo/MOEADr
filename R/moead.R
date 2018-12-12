@@ -462,8 +462,8 @@ moead <-
       }
       B  <- BP$B.variation[indexes,]
       P  <- BP$P[indexes, indexes]
+      temp.P  <- BP$P
         
-      
       # Perform variation
       Xv      <- do.call(perform_variation,
                          args = as.list(environment()))
@@ -472,6 +472,7 @@ moead <-
       nfe     <- nfe + Xv$var.nfe
       # ========== Evaluation
       # Evaluate offspring population on objectives
+      
       YV <- evaluate_population(
         X       = X,
         problem = problem,
@@ -488,6 +489,7 @@ moead <-
         X <- temp.X
         temp.Y[indexes, ] <- Y
         Y <- temp.Y
+        P <- temp.P
       }
       # ========== Scalarization
       # Objective scaling and estimation of 'ideal' and 'nadir' points
