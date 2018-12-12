@@ -34,7 +34,8 @@ for (i in 1:1) {
 }
 # variants names
 # variants <- c("de", "norm")
-variants <- c("de", "norm", "rad", "random", "gra", "dra")
+# variants <- c("de", "norm", "rad", "random", "gra", "dra")
+variants <- c("de", "norm", "rad", "random", "gra")
 
 # things
 objsColnames <- paste("#obj", 1:nObj, sep = "")
