@@ -125,7 +125,7 @@ for (fun in fun.names) {
           flag = 1
         )
       my.data <- out$my.data2
-      cat(lala)
+      
       if (variant == "de"){
         de_median_hvs <- rbind(de_median_hvs, data.frame(out$hv, rep(1:gen)))
         de_median_igds <- rbind(de_median_igds, data.frame(out$igd, rep(1:gen)))
