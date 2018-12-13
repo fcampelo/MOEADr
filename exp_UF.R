@@ -11,7 +11,7 @@ library(pracma)
 library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
-repetitions <-  5
+repetitions <-  30
 dimension <- 100
 
 algorithms <- c("moead.de")
@@ -24,7 +24,7 @@ resource.allocation.NORM <- list(name = "norm", dt = 20)
 resource.allocation.RANDOM <- list(name = "random", dt = 20)
 
 
-decomp <- list(name = "SLD", H = 99)
+decomp <- list(name = "SLD", H = 349)
 
 scaling <- list()
 scaling$name <- "simple"
@@ -33,7 +33,7 @@ n.objs <- c(2,3)
 id <- 1
 
 stopcrit  <- list(list(name    = "maxiter",
-                       maxiter = 100))
+                       maxiter = 200))
 
 for (n.obj in n.objs) {
   print(n.obj)
