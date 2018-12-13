@@ -3,15 +3,15 @@ rm(list = ls(all = TRUE))
 setwd("~/MOEADr/")
 source("graphical_analysis.R")
 setwd("~/MOEADr/")
-nPop <- 100
-nRun <- 5
+nPop <- 350
+nRun <- 30
 nObj <- 2 # fix even if single obj
 # number of variables
 nVar <- 200
 # number of constraints
 nCon <- 1
 # number of generations
-gen <- 100
+gen <- 200
 # reference point
 
 refPoint <- c(1, 1)
