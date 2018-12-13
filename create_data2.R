@@ -1,16 +1,17 @@
 ## start loadind data
-
+rm(list = ls(all = TRUE))
+setwd("~/MOEADr/")
 source("graphical_analysis.R")
 setwd("~/MOEADr/")
-nPop <- 350
-nRun <- 30
+nPop <- 100
+nRun <- 5
 nObj <- 2 # fix even if single obj
 # number of variables
 nVar <- 200
 # number of constraints
 nCon <- 1
 # number of generations
-gen <- 200
+gen <- 100
 # reference point
 
 refPoint <- c(1, 1)
@@ -75,7 +76,7 @@ for (variant in variants) {
           iRun = iRun,
           gen = gen,
           flag = 0
-        )$my.data2
+        )$my.data2[,1:2]
       max.val <- pmax(max.val, apply(my.data, 2, max))
       min.val <- pmin(min.val, apply(my.data, 2, min))
     }
@@ -219,7 +220,7 @@ for (fun in fun.names) {
               "random")
       colnames(random_median_gen) <- c("HV", "IGD", "gen", "name")
     }
-    
+    exit()
   }
   df <-
     rbind(
