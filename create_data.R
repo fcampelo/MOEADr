@@ -164,6 +164,7 @@ for (fun in fun.names) {
           sep = "")
       
       calculateIndicator(iRun2, objsTmp2, ref.points)
+      if (is.null(archive)) archive <- objsTmp2
       indicatorArcIGD[iRun2] <- calcIGD(archive[, 1:2], Yref)
       
       
