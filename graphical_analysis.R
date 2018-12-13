@@ -161,7 +161,7 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0){
     if (flag == 1){
       
       hv[i,1] <- emoa::dominated_hypervolume(t(as.matrix(my.data2[,1:2])), t(as.matrix(c(1,1))))
-      igd[i,1] <- calcIGD(archive[, 1:2], Yref)
+      igd[i,1] <- calcIGD(my.data2[, 1:2], Yref)
       # emoa::dominated_hypervolume(t(as.matrix(my.data2[,1:2])), t(as.matrix(c(1,1))))
     }
   }
