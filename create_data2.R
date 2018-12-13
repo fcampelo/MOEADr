@@ -164,7 +164,7 @@ for (fun in fun.names) {
           " solutions are nondominated\n",
           sep = "")
       
-      calculateIndicator(iRun2, objsTmp2, ref.points)
+      calculateIndicator(iRun2, objsTmp2, refPoint)
       if (is.null(archive)) archive <- objsTmp2
       indicatorArcIGD[iRun2] <- calcIGD(archive[, 1:2], Yref)
       
