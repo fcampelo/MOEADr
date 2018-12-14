@@ -82,21 +82,21 @@ for (variant in variants) {
 }
 
 de_median_gen <- data.frame()
-dra_median_gen <- data.frame()
+# dra_median_gen <- data.frame()
 gra_median_gen <- data.frame()
 random_median_gen <- data.frame()
 rad_median_gen <- data.frame()
 norm_median_gen <- data.frame()
 
 de_median_hvs <- data.frame()
-dra_median_hvs <- data.frame()
+# dra_median_hvs <- data.frame()
 gra_median_hvs <- data.frame()
 random_median_hvs <- data.frame()
 rad_median_hvs <- data.frame()
 norm_median_hvs <- data.frame()
 
 de_median_igds <- data.frame()
-dra_median_igds <- data.frame()
+# dra_median_igds <- data.frame()
 gra_median_igds <- data.frame()
 random_median_igds <- data.frame()
 rad_median_igds <- data.frame()
@@ -132,10 +132,10 @@ for (fun in fun.names) {
         rad_median_hvs <- rbind(rad_median_hvs, data.frame(out$hv, rep(1:gen)))
         rad_median_igds <- rbind(rad_median_igds, data.frame(out$igd, rep(1:gen)))
       } 
-      else if (variant == "dra"){
-        dra_median_hvs <- rbind(dra_median_hvs, data.frame(out$hv, rep(1:gen)))
-        dra_median_igds <- rbind(dra_median_igds, data.frame(out$igd, rep(1:gen)))
-      } 
+      # else if (variant == "dra"){
+      #   dra_median_hvs <- rbind(dra_median_hvs, data.frame(out$hv, rep(1:gen)))
+      #   dra_median_igds <- rbind(dra_median_igds, data.frame(out$igd, rep(1:gen)))
+      # } 
       else if (variant == "gra"){
         gra_median_hvs <- rbind(gra_median_hvs, data.frame(out$hv, rep(1:gen)))
         gra_median_igds <- rbind(gra_median_igds, data.frame(out$igd, rep(1:gen)))
@@ -185,14 +185,14 @@ for (fun in fun.names) {
               "rad")
       colnames(rad_median_gen) <- c("HV", "IGD", "gen", "name")
     }
-    else if (variant == "dra") {
-      dra_median_gen <-
-        cbind(indicatorTmp,
-              indicatorArcIGD,
-              1:length(indicatorArcIGD),
-              "dra")
-      colnames(dra_median_gen) <- c("HV", "IGD", "gen", "name")
-    }
+    # else if (variant == "dra") {
+    #   dra_median_gen <-
+    #     cbind(indicatorTmp,
+    #           indicatorArcIGD,
+    #           1:length(indicatorArcIGD),
+    #           "dra")
+    #   colnames(dra_median_gen) <- c("HV", "IGD", "gen", "name")
+    # }
     else if (variant == "gra") {
       gra_median_gen <-
         cbind(indicatorTmp,
@@ -224,7 +224,7 @@ for (fun in fun.names) {
       data.frame(de_median_gen),
       data.frame(rad_median_gen),
       data.frame(gra_median_gen),
-      data.frame(dra_median_gen),
+      # data.frame(dra_median_gen),
       data.frame(random_median_gen),
       data.frame(norm_median_gen)
     )
@@ -240,7 +240,7 @@ for (fun in fun.names) {
 
 names(de_median_hvs) <- c("HV", "gen")
 names(rad_median_hvs) <- c("HV", "gen")
-names(dra_median_hvs) <- c("HV", "gen")
+# names(dra_median_hvs) <- c("HV", "gen")
 names(gra_median_hvs) <- c("HV", "gen")
 names(random_median_hvs) <- c("HV", "gen")
 names(norm_median_hvs) <- c("HV", "gen")
@@ -248,8 +248,8 @@ de_hv.plot <-aggregate(x = de_median_hvs$HV, FUN = median, by = list(de_median_h
 de_hv.plot$name <- "de"
 rad_hv.plot <-aggregate(x = rad_median_hvs$HV, FUN = median, by = list(rad_median_hvs$gen))
 rad_hv.plot$name <- "rad"
-dra_hv.plot <-aggregate(x = dra_median_hvs$HV, FUN = median, by = list(dra_median_hvs$gen))
-dra_hv.plot$name <- "dra"
+# dra_hv.plot <-aggregate(x = dra_median_hvs$HV, FUN = median, by = list(dra_median_hvs$gen))
+# dra_hv.plot$name <- "dra"
 gra_hv.plot <-aggregate(x = gra_median_hvs$HV, FUN = median, by = list(gra_median_hvs$gen))
 gra_hv.plot$name <- "gra"
 random_hv.plot <-aggregate(x = random_median_hvs$HV, FUN = median, by = list(random_median_hvs$gen))
@@ -260,7 +260,7 @@ df2 <-
   rbind(
     data.frame(de_hv.plot),
     data.frame(rad_hv.plot),
-    data.frame(dra_hv.plot),
+    # data.frame(dra_hv.plot),
     data.frame(gra_hv.plot),
     data.frame(random_hv.plot),
     data.frame(norm_hv.plot)
@@ -268,7 +268,7 @@ df2 <-
 
 names(de_median_igds) <- c("igd", "gen")
 names(rad_median_igds) <- c("igd", "gen")
-names(dra_median_igds) <- c("igd", "gen")
+# names(dra_median_igds) <- c("igd", "gen")
 names(gra_median_igds) <- c("igd", "gen")
 names(random_median_igds) <- c("igd", "gen")
 names(norm_median_igds) <- c("igd", "gen")
@@ -276,8 +276,8 @@ de_igd.plot <-aggregate(x = de_median_igds$igd, FUN = median, by = list(de_media
 de_igd.plot$name <- "de"
 rad_igd.plot <-aggregate(x = rad_median_igds$igd, FUN = median, by = list(rad_median_igds$gen))
 rad_igd.plot$name <- "rad"
-dra_igd.plot <-aggregate(x = dra_median_igds$igd, FUN = median, by = list(dra_median_igds$gen))
-dra_igd.plot$name <- "dra"
+# dra_igd.plot <-aggregate(x = dra_median_igds$igd, FUN = median, by = list(dra_median_igds$gen))
+# dra_igd.plot$name <- "dra"
 gra_igd.plot <-aggregate(x = gra_median_igds$igd, FUN = median, by = list(gra_median_igds$gen))
 gra_igd.plot$name <- "gra"
 random_igd.plot <-aggregate(x = random_median_igds$igd, FUN = median, by = list(random_median_igds$gen))
@@ -288,7 +288,7 @@ df3 <-
   rbind(
     data.frame(de_igd.plot),
     data.frame(rad_igd.plot),
-    data.frame(dra_igd.plot),
+    # data.frame(dra_igd.plot),
     data.frame(gra_igd.plot),
     data.frame(random_igd.plot),
     data.frame(norm_igd.plot)
