@@ -154,7 +154,7 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0){
     consData <- rep(0, nr1)
     varsData <- rep(0, nr1)
     # print(evals)
-    my.data2 <- rbind(my.data2, data.frame(objsData[, 1:nObj], gen, evals, consData, varsData))    # my.data2 <- rbind(my.data, data.frame(objsData[, 1:nObj], consData, varsData, gen, evals))
+    
     nr1prev <<- nr1prev + nPop
     if (flag == 1){
       # print(dim(my.data2))
@@ -167,6 +167,7 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0){
       # emoa::dominated_hypervolume(t(as.matrix(my.data2[,1:2])), t(as.matrix(c(1,1))))
     }
   }
+  my.data2 <- rbind(my.data2, data.frame(objsData[, 1:nObj], gen, evals, consData, varsData))    # my.data2 <- rbind(my.data, data.frame(objsData[, 1:nObj], consData, varsData, gen, evals))
   out <- list(my.data2 = my.data2, hv = hv, igd = igd)
   return (out)
 }

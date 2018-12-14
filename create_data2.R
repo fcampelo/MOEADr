@@ -4,7 +4,7 @@ setwd("~/MOEADr/")
 source("graphical_analysis.R")
 setwd("~/MOEADr/")
 nPop <- 350
-nRun <- 5
+nRun <- 39
 nObj <- 2 # fix even if single obj
 # number of variables
 nVar <- 30
@@ -34,9 +34,9 @@ for (i in 1:1) {
   # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
 }
 # variants names
-variants <- c("norm", "rad")
+# variants <- c("norm", "rad")
 # variants <- c("de", "norm", "rad", "random", "gra", "dra")
-# variants <- c("de", "norm", "rad", "random", "gra")
+variants <- c("de", "norm", "rad", "random", "gra")
 
 # things
 objsColnames <- paste("#obj", 1:nObj, sep = "")
@@ -320,3 +320,8 @@ create_graphs(df, fun.names, 2)
 #   geom_boxplot(aes(fill = algorithm), scale = "count")
 # p
 # ""
+
+
+write_feather(df, "forboxplot")
+write_feather(df2, "HV_gens")
+write_feather(df3, "IGD_gens")
