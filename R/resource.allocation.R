@@ -1,7 +1,7 @@
 ONRA <- function(dt.bigZ, bigZ, my.T, epsilon = 1e-50) {
   # dt <- apply(X = dt.bigZ, MARGIN = 2, sum)
-  dt <- dt.bigZ[my.T + 1, ]
-  z <- bigZ[my.T + 1, ]
+  dt <- dt.bigZ[my.T + 1,]
+  z <- bigZ[my.T + 1,]
   u <- (dt - z) / dt
   if (max(u) == 0) {
     p <- rep(1, length(u))
@@ -19,7 +19,7 @@ norm_vec2 <- function(x) {
 
 
 projection <- function(a, b, epsilon = 1e-50) {
-  return(c(sum(a * b) / (crossprod(a) + epsilon)) * a)
+  return(c(sum(a * b) / sum(a ^ 2) + epsilon) * a)
 }
 
 
@@ -35,13 +35,13 @@ find_indexes <- function(offspring, parent) {
     # equation (4)
     
     for (i in 1:nrow(parent)) {
-      set <- rbind(parent[i, ], offspring[j, ])
-      if (is_dominated(set)[1]) {
+      set <- rbind(parent[i,], offspring[j,])
+      if (is_maximally_dominated(set)[1]) {
         if (!found) {
           indexes_j <- append(indexes_j, j)
           found <- TRUE
         }
-        aux <- norm_vec2(parent[i, ] - offspring[j, ])
+        aux <- norm(parent[i,] - offspring[j,], type = "2")
         if (min.value > aux) {
           # for equation (6) and (5)
           min.value <- aux
@@ -62,13 +62,13 @@ find_indexes <- function(offspring, parent) {
 
 online_diversity <-
   function(offspring, parent, W, old.dm, epsilon = 1e-50) {
-    out <- find_indexes(offspring, parent)
+    out <-
+      find_indexes(apply(offspring, 1, sample), apply(parent, 1, sample))
     indexes_i <- out$i
     indexes_j <- out$j
-
     # my.out <- rep(.Machine$double.xmin, nrow(offspring))
-    my.out <- rep(-Inf, nrow(offspring))
-
+    my.out <- rep(.Machine$double.xmin, nrow(offspring))
+    
     # equation (7)
     for (i in 1:dim(offspring)[1]) {
       # max.out <- -Inf
@@ -76,38 +76,41 @@ online_diversity <-
         for (j in 1:length(indexes_j)) {
           # diversity measurement: aumount of diversity loss of an ind. solution between 2 generations
           #condition for eq (7)
-          c.line <- offspring[i, ] - offspring[indexes_j[[j]], ]
-          p.line <- parent[i, ] - parent[indexes_i[[j]], ]
-
-          #equation (3)
-          d.convs <-
-            (offspring[indexes_j[[j]], ] - parent[indexes_i[[j]], ]) + epsilon
-          # projection calculation
-          proj.c <- projection(c.line, d.convs)
-          proj.p <- projection(p.line, d.convs)
-
-          # calculate the norm of the vectors: numerator and demoniator of equation (7)
-          a <- norm_vec2(p.line - proj.p)
-          b <- norm_vec2(c.line - proj.c)
-
-          # equation (7)
-          aux <-  a / (b + epsilon)
-          #equation (10)
-          if (aux > my.out[i]) {
-            my.out[i] <- aux
+          c.line <- offspring[i,] - offspring[indexes_j[[j]],]
+          p.line <- parent[i,] - parent[indexes_i[[j]],]
+          
+          if (c.line != 0 && p.line != 0) {
+            #equation (3)
+            d.convs <-
+              (offspring[indexes_j[[j]],] - parent[indexes_i[[j]],]) + epsilon
+            # projection calculation
+            proj.c <- projection(c.line, d.convs)
+            proj.p <- projection(p.line, d.convs)
+            
+            # calculate the norm of the vectors: numerator and demoniator of equation (7)
+            a <- norm(p.line - proj.p, type = "2")
+            b <- norm(c.line - proj.c, type = "2")
+            
+            # equation (7)
+            aux <-  a / (b + epsilon)
+            #equation (10)
+            if (aux > my.out[i]) {
+              my.out[i] <- aux
+            }
           }
+          
         }
       }
       else{
         my.out[i] <- .Machine$double.xmax
       }
+      cat(my.out[i],", ")
     }
     # p <-  my.out - old.dm
     p <-  my.out
     p <- (p - min(p)) / ((max(p) - min(p)) + epsilon)
-
-    out <- list(p = 1 - p, dm = my.out)
-    # out <- list(p = p, dm = my.out)
+    # out <- list(p = 1 - p, dm = my.out)
+    out <- list(p = p, dm = my.out)
     return(out)
   }
 
@@ -140,7 +143,7 @@ init_dra <- function(neighbors, aggfun, X, W, Y, scaling) {
   idx <- list()
   for (i in 1:dim(W)[1]) {
     for (j in 1:dim(my.identity)[1]) {
-      my.sum <- sum(round(W[i, ],2) == my.identity[j, ])
+      my.sum <- sum(round(W[i,], 2) == my.identity[j,])
       if (my.sum == dim(W)[2]) {
         idx[[length(idx) + 1]] <- i
       }
@@ -165,7 +168,7 @@ init_dra <- function(neighbors, aggfun, X, W, Y, scaling) {
     B       = B,
     aggfun  = aggfun
   )
-  oldObj <- bigZ[neighbors$T + 1, ]
+  oldObj <- bigZ[neighbors$T + 1,]
   return(list (
     Pi      = Pi,
     oldObj = oldObj,
@@ -191,8 +194,12 @@ init_rad <- function(neighbors, aggfun, X, W, Y) {
 
 
 ws_transformation <- function(W, epsilon = 1e-50) {
-  temp <- t(apply(W, 1, function(W){1/(W+epsilon)}))
-  temp <- t((apply(temp, 1, function(temp){temp/sum(temp)})))
+  temp <- t(apply(W, 1, function(W) {
+    1 / (W + epsilon)
+  }))
+  temp <- t((apply(temp, 1, function(temp) {
+    temp / sum(temp)
+  })))
   return (round(temp, 8))
 }
 
@@ -204,8 +211,8 @@ by_norm <- function(parent_x, offspring_x, epsilon = 1e-50) {
   return (u)
 }
 
-by_random <- function(len){
- return(runif(len))
+by_random <- function(len) {
+  return(runif(len))
 }
 
 by_jacobian <- function(problem, offspring, epsilon = 1e-50) {

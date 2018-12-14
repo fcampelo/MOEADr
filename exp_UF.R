@@ -39,7 +39,7 @@ for (n.obj in n.objs) {
   print(n.obj)
   if (n.obj == 2){
     fun.names1 <- list()
-    for (i in 1:7) {
+    for (i in 2:7) {
       fun.names1[[length(fun.names1) + 1]] = paste0("UF", i)
     }
   }
@@ -97,18 +97,18 @@ for (n.obj in n.objs) {
           my.file.n = my.file.n
         )
         
-        my.file.n <- paste0("../../dra/",fun,"_")
-        moead.dra <- moead(
-          problem  = problem.zdt1,
-          preset   = preset_moead(algo),
-          decomp = decomp,
-          stopcrit = stopcrit,
-          scaling = scaling,
-          showpars = list(show.iters = "none", showevery = 100),
-          seed = j,
-          resource.allocation = resource.allocation.DRA,
-          my.file.n = my.file.n
-        )
+        # my.file.n <- paste0("../../dra/",fun,"_")
+        # moead.dra <- moead(
+        #   problem  = problem.zdt1,
+        #   preset   = preset_moead(algo),
+        #   decomp = decomp,
+        #   stopcrit = stopcrit,
+        #   scaling = scaling,
+        #   showpars = list(show.iters = "none", showevery = 100),
+        #   seed = j,
+        #   resource.allocation = resource.allocation.DRA,
+        #   my.file.n = my.file.n
+        # )
         
         
         # gra.awt

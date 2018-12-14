@@ -410,6 +410,9 @@ moead <-
     pdGen <- formatC(iter, width = 3, format = "d", flag = "0")
     write_feather(as.data.frame(Y), paste0(my.file.n, "rep_",seed,"_",pdGen,"_Y"))
     
+    usage <- list(rep(1, dim(W)[1]))
+    # Reduce("+",usage)
+    
     while (keep.running) {
       # Update iteration counter
       iter <- iter + 1
@@ -640,6 +643,10 @@ moead <-
       
       pdGen <- formatC(iter, width = 3, format = "d", flag = "0")
       write_feather(as.data.frame(Y), paste0(my.file.n, "rep_",seed,"_",pdGen,"_Y"))
+      
+      if(nullRA) usage[[length(usage)+1]] <- rep(1, dim(W)[1])
+      else usage[[length(usage)+1]] <- as.integer(rand.seq <= Pi)
+      
     }
     # =========================== End Iterative cycle ========================== #
     
@@ -697,7 +704,8 @@ moead <-
       n.iter      = iter,
       time        = difftime(Sys.time(), time.start, units = "secs"),
       seed        = seed,
-      inputConfig = moead.input.pars
+      inputConfig = moead.input.pars,
+      usage = usage
     )
     class(out) <- c("moead", "list")
     
