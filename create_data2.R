@@ -4,10 +4,10 @@ setwd("~/MOEADr/")
 source("graphical_analysis.R")
 setwd("~/MOEADr/")
 nPop <- 350
-nRun <- 30
+nRun <- 5
 nObj <- 2 # fix even if single obj
 # number of variables
-nVar <- 200
+nVar <- 30
 # number of constraints
 nCon <- 1
 # number of generations
@@ -34,9 +34,9 @@ for (i in 1:1) {
   # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
 }
 # variants names
-# variants <- c("de", "norm")
+variants <- c("norm", "rad")
 # variants <- c("de", "norm", "rad", "random", "gra", "dra")
-variants <- c("de", "norm", "rad", "random", "gra")
+# variants <- c("de", "norm", "rad", "random", "gra")
 
 # things
 objsColnames <- paste("#obj", 1:nObj, sep = "")
@@ -56,8 +56,6 @@ for (i in 1:1) {
   fun.names[[length(fun.names) + 1]] = paste0("UF", i)
   # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
 }
-# variants names
-# variants <- c("de", "norm", "rad", "random", "gra", "dra")
 
 max.val <- c(-Inf, -Inf)
 min.val <- c(Inf, Inf)
@@ -82,7 +80,6 @@ for (variant in variants) {
     }
   }
 }
-
 
 de_median_gen <- data.frame()
 dra_median_gen <- data.frame()
@@ -220,7 +217,6 @@ for (fun in fun.names) {
               "random")
       colnames(random_median_gen) <- c("HV", "IGD", "gen", "name")
     }
-    exit()
   }
   df <-
     rbind(
@@ -233,8 +229,6 @@ for (fun in fun.names) {
       data.frame(norm_median_gen)
     )
   df$fun <- fun
-  cat("HV", indicatorArc, "\n")
-  cat("IGD", indicatorArcIGD, "\n")
 }
 
 
