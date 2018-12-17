@@ -7,7 +7,7 @@ nPop <- 350
 nRun <- 30
 nObj <- 2 # fix even if single obj
 # number of variables
-nVar <- 30
+nVar <- 100
 # number of constraints
 nCon <- 1
 # number of generations
