@@ -39,7 +39,7 @@ for (n.obj in n.objs) {
   print(n.obj)
   if (n.obj == 2){
     fun.names1 <- list()
-    for (i in 2:7) {
+    for (i in 1:7) {
       fun.names1[[length(fun.names1) + 1]] = paste0("UF", i)
     }
   }
