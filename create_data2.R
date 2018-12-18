@@ -4,7 +4,7 @@ setwd("~/MOEADr/")
 source("graphical_analysis.R")
 setwd("~/MOEADr/")
 nPop <- 350
-nRun <- 3
+nRun <- 10
 nObj <- 2 # fix even if single obj
 # number of variables
 nVar <- 100
@@ -39,6 +39,7 @@ for (i in 1:7) {
 variants <- c("de", "norm", "rad", "random", "gra")
 
 for (fun in fun.names) {
+  print(fun)
 # things
 objsColnames <- paste("#obj", 1:nObj, sep = "")
 varsColnames <- paste("#var", 1:nVar, sep = "")
@@ -94,9 +95,9 @@ random_median_igds <- data.frame()
 rad_median_igds <- data.frame()
 norm_median_igds <- data.frame()
 
-  print("round 2")
   Yref <-
     as.matrix(read.table(paste0("inst/extdata/pf_data/", fun, ".dat")))
+  print(head(Yref))
   for (variant in variants) {
     print(variant)
     runIdPre <- paste0("../", variant)
