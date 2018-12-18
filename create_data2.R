@@ -4,14 +4,14 @@ setwd("~/MOEADr/")
 source("graphical_analysis.R")
 setwd("~/MOEADr/")
 nPop <- 350
-nRun <- 10
+nRun <- 30
 nObj <- 2 # fix even if single obj
 # number of variables
 nVar <- 100
 # number of constraints
 nCon <- 1
 # number of generations
-gen <- 20
+gen <- 200
 # reference point
 
 refPoint <- c(1, 1)
@@ -29,7 +29,7 @@ indicatorArcIGD <<- matrix(initialValue, nrow = nRun)
 
 # Fun names
 fun.names <- list()
-for (i in 3:7) {
+for (i in 1:7) {
   fun.names[[length(fun.names) + 1]] = paste0("UF", i)
   # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
 }
