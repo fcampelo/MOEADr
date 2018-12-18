@@ -23,7 +23,7 @@ consColnames <- paste("#con", 1:nCon, sep = "")
 
 # Fun names
 fun.names <- list()
-for (i in 1:1) {
+for (i in 1:7) {
   fun.names[[length(fun.names) + 1]] = paste0("UF", i)
   # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
 }
@@ -284,7 +284,7 @@ pathname <- paste0("../files/", fun, "hv_all.png")
 p2 <- ggplot(df2, aes(gen, HV, group=name)) +
   geom_line(aes(color=name))+
   geom_point(aes(shape=name, color = name))#+
-p2
+# p2
 ggsave(filename = pathname, device = "png")
 # #
 pathname <- paste0("../files/", fun, "igd_all.png")
