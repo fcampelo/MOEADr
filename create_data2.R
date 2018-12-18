@@ -91,7 +91,7 @@ norm_median_igds <- data.frame()
 
   Yref <-
     as.matrix(read.table(paste0("inst/extdata/pf_data/", fun, ".dat")))
-  print(head(Yref))
+
   for (variant in variants) {
     runIdPre <- paste0("../", variant)
     df <- data.frame()
