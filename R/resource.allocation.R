@@ -63,7 +63,7 @@ find_indexes <- function(offspring, parent) {
 online_diversity <-
   function(offspring, parent, W, old.dm, epsilon = 1e-50) {
     out <-
-      find_indexes(apply(offspring, 1, sample), apply(parent, 1, sample))
+      find_indexes(apply(offspring, 2, sample), parent)
     indexes_i <- out$i
     indexes_j <- out$j
     # my.out <- rep(.Machine$double.xmin, nrow(offspring))
@@ -104,13 +104,12 @@ online_diversity <-
       else{
         my.out[i] <- .Machine$double.xmax
       }
-      cat(my.out[i],", ")
     }
     # p <-  my.out - old.dm
     p <-  my.out
     p <- (p - min(p)) / ((max(p) - min(p)) + epsilon)
     # out <- list(p = 1 - p, dm = my.out)
-    out <- list(p = p, dm = my.out)
+    out <- list(p = 1-p, dm = my.out)
     return(out)
   }
 

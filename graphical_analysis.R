@@ -157,13 +157,10 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0){
     
     nr1prev <<- nr1prev + nPop
     if (flag == 1){
-      # print(dim(my.data2))
-      # print((min.val))
-      # print((max.val))
+      igd[i,1] <- calcIGD(objsData[, 1:2], Yref)
       objsData[, 1:2] <-
         (sweep(objsData[, 1:2], 2, min.val)) / ((max.val - min.val) + 1e-50)
       hv[i,1] <- emoa::dominated_hypervolume(t(as.matrix(objsData[,1:2])), t(as.matrix(c(1,1))))
-      igd[i,1] <- calcIGD(objsData[, 1:2], Yref)
       # emoa::dominated_hypervolume(t(as.matrix(my.data2[,1:2])), t(as.matrix(c(1,1))))
     }
   }

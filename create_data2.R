@@ -4,14 +4,14 @@ setwd("~/MOEADr/")
 source("graphical_analysis.R")
 setwd("~/MOEADr/")
 nPop <- 350
-nRun <- 30
+nRun <- 3
 nObj <- 2 # fix even if single obj
 # number of variables
 nVar <- 100
 # number of constraints
 nCon <- 1
 # number of generations
-gen <- 200
+gen <- 20
 # reference point
 
 refPoint <- c(1, 1)
@@ -29,7 +29,7 @@ indicatorArcIGD <<- matrix(initialValue, nrow = nRun)
 
 # Fun names
 fun.names <- list()
-for (i in 1:1) {
+for (i in 1:7) {
   fun.names[[length(fun.names) + 1]] = paste0("UF", i)
   # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
 }
@@ -38,6 +38,7 @@ for (i in 1:1) {
 # variants <- c("de", "norm", "rad", "random", "gra", "dra")
 variants <- c("de", "norm", "rad", "random", "gra")
 
+for (fun in fun.names) {
 # things
 objsColnames <- paste("#obj", 1:nObj, sep = "")
 varsColnames <- paste("#var", 1:nVar, sep = "")
@@ -50,21 +51,13 @@ indicatorArc <<- matrix(initialValue, nrow = 1)
 indicatorTmp <<- matrix(initialValue, nrow = nRun)
 indicatorArcIGD <<- matrix(initialValue, nrow = nRun)
 
-# Fun names
-fun.names <- list()
-for (i in 1:1) {
-  fun.names[[length(fun.names) + 1]] = paste0("UF", i)
-  # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
-}
 
 max.val <- c(-Inf, -Inf)
 min.val <- c(Inf, Inf)
-# id <- 1
+id <- 1
 for (variant in variants) {
   runIdPre <- paste0("../", variant)
   print(variant)
-  for (fun in fun.names) {
-    print(fun)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
       my.data <-
@@ -78,7 +71,6 @@ for (variant in variants) {
       max.val <- pmax(max.val, apply(my.data, 2, max))
       min.val <- pmin(min.val, apply(my.data, 2, min))
     }
-  }
 }
 
 de_median_gen <- data.frame()
@@ -101,9 +93,8 @@ gra_median_igds <- data.frame()
 random_median_igds <- data.frame()
 rad_median_igds <- data.frame()
 norm_median_igds <- data.frame()
-for (fun in fun.names) {
-  print(fun)
-  # Yref <- as.matrix(read.table(paste0("inst/extdata/pf_data/DTLZ",id, ".2D.pf")))
+
+  print("round 2")
   Yref <-
     as.matrix(read.table(paste0("inst/extdata/pf_data/", fun, ".dat")))
   for (variant in variants) {

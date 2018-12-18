@@ -450,7 +450,7 @@ moead <-
         # else{
           rand.seq <- runif(length(Pi))
           indexes <- which(rand.seq <= Pi)
-          if (length(indexes) < 3 | is.null(length(indexes))) {
+          if (length(indexes) < 3 || is.null(length(indexes))) {
             indexes <- which(rand.seq <= 1)
           }
         # }
@@ -467,6 +467,7 @@ moead <-
       temp.P  <- BP$P
         
       # Perform variation
+      
       Xv      <- do.call(perform_variation,
                          args = as.list(environment()))
       X       <- Xv$X
