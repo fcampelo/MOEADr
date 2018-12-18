@@ -1,0 +1,30 @@
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
+# Example code in package build process
+*-Ex.R
+# Output files from R CMD build
+/*.tar.gz
+# Output files from R CMD check
+/*.Rcheck/
+# RStudio files
+.Rproj.user/
+# OAuth2 tokens
+.httr-oauth
+# knitr and R markdown default cache directories
+/*_cache/
+/cache/
+# Temporary files created by R markdown
+*.utf8.md
+*.knit.md
+.Rproj.user
+# Rprof temporary files
+Rprof.out
+inst/doc
+doc
+Meta
+MOEADr.Rproj
+R/DB
