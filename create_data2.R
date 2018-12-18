@@ -20,16 +20,10 @@ objsColnames <- paste("#obj", 1:nObj, sep = "")
 varsColnames <- paste("#var", 1:nVar, sep = "")
 consColnames <- paste("#con", 1:nCon, sep = "")
 
-# init with zero
-initialValueM <- 0
-initialValue <<- initialValueM
-indicatorArc <<- matrix(initialValue, nrow = 1)
-indicatorTmp <<- matrix(initialValue, nrow = nRun)
-indicatorArcIGD <<- matrix(initialValue, nrow = nRun)
 
 # Fun names
 fun.names <- list()
-for (i in 1:7) {
+for (i in 1:1) {
   fun.names[[length(fun.names) + 1]] = paste0("UF", i)
   # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
 }
