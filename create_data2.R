@@ -29,7 +29,7 @@ indicatorArcIGD <<- matrix(initialValue, nrow = nRun)
 
 # Fun names
 fun.names <- list()
-for (i in 1:7) {
+for (i in 3:7) {
   fun.names[[length(fun.names) + 1]] = paste0("UF", i)
   # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
 }
@@ -99,7 +99,6 @@ norm_median_igds <- data.frame()
     as.matrix(read.table(paste0("inst/extdata/pf_data/", fun, ".dat")))
   print(head(Yref))
   for (variant in variants) {
-    print(variant)
     runIdPre <- paste0("../", variant)
     df <- data.frame()
     df2 <- data.frame()
@@ -287,14 +286,14 @@ df3 <-
   )
 names(df3) <- c("gen", "IGD", "name")
 names(df2) <- c("gen", "HV", "name")
-pathname <- "../files/hv_all.png"
+pathname <- paste0("../files/", fun, "hv_all.png")
 p2 <- ggplot(df2, aes(gen, HV, group=name)) +
   geom_line(aes(color=name))+
   geom_point(aes(shape=name, color = name))#+
 p2
 ggsave(filename = pathname, device = "png")
 # #
-pathname <- "../files/igd_all.png"
+pathname <- paste0("../files/", fun, "igd_all.png")
 p3 <- ggplot(df3, aes(gen, IGD, group=name)) +
   geom_line(aes(color=name))+
   geom_point(aes(shape=name, color = name))#+
