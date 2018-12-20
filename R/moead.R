@@ -412,7 +412,7 @@ moead <-
     
     usage <- list(rep(1, dim(W)[1]))
     # Reduce("+",usage)
-    
+    old_nfe <- nfe
     while (keep.running) {
       # Update iteration counter
       iter <- iter + 1
@@ -643,7 +643,8 @@ moead <-
       
       pdGen <- formatC(iter, width = 3, format = "d", flag = "0")
       write_feather(as.data.frame(Y), paste0(my.file.n, "rep_",seed,"_",pdGen,"_Y"))
-      
+      write_feather(as.data.frame(cbind(iter, nfe-old_nfe)), paste0(my.file.n, "iter_nfe_",seed,"_",pdGen))
+      old_nfe <- nfe
       if(nullRA) usage[[length(usage)+1]] <- rep(1, dim(W)[1])
       else usage[[length(usage)+1]] <- as.integer(rand.seq <= Pi)
       
@@ -689,7 +690,14 @@ moead <-
       system(paste("cp ", filename, dest))
     }
     
-    
+    write_feather(as.data.frame(difftime(Sys.time(), time.start)), paste0(my.file.n, "time_",seed,"_",pdGen))
+    destfile <- paste0(my.file.n, "info")
+    temp <- data.frame()
+    if(file.exists(destfile)){
+      temp <- read_feather(destfile)
+    }
+    my.iter <- rbind(temp, iter)
+    write_feather(my.iter, destfile)  
     
     out <- list(
       X           = X,

@@ -3,15 +3,13 @@ rm(list = ls(all = TRUE))
 setwd("~/MOEADr/")
 source("graphical_analysis.R")
 setwd("~/MOEADr/")
-nPop <- 200
+nPop <- 350
 nRun <- 5
 nObj <- 2 # fix even if single obj
 # number of variables
 nVar <- 100
 # number of constraints
 nCon <- 1
-# number of generations
-gen <- 22
 # reference point
 
 refPoint <- c(1, 1)
@@ -45,6 +43,7 @@ for (fun in fun.names) {
     runIdPre <- paste0("../", variant)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
+      gen <- as.integer(read_feather(paste0("../",variant, "/UF1_info")))
       my.data <-
         read.data(
           fun = fun,
@@ -95,6 +94,7 @@ for (fun in fun.names) {
     df2 <- data.frame()
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
+      gen <- as.integer(read_feather(paste0("../",variant, "/UF1_info")))
       out <-
         read.data(
           fun = fun,
