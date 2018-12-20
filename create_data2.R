@@ -41,9 +41,12 @@ for (fun in fun.names) {
   id <- 1
   for (variant in variants) {
     runIdPre <- paste0("../", variant)
+    temp <- read_feather(paste0("../",variant, "/UF1_info"))
+    temp<-as.data.frame(temp)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
-      gen <- as.integer(read_feather(paste0("../",variant, "/UF1_info")))
+      
+      gen <- as.integer(temp[iRun2,])
       my.data <-
         read.data(
           fun = fun,
@@ -93,9 +96,11 @@ for (fun in fun.names) {
     runIdPre <- paste0("../", variant)
     df <- data.frame()
     df2 <- data.frame()
+    temp <- read_feather(paste0("../",variant, "/UF1_info"))
+    temp<-as.data.frame(temp)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
-      gen <- as.integer(read_feather(paste0("../",variant, "/UF1_info")))
+      gen <- as.integer(temp[iRun2,])
       out <-
         read.data(
           fun = fun,
@@ -315,25 +320,15 @@ names(df3) <- c("gen", "IGD", "name")
 names(df2) <- c("gen", "HV", "name")
 pathname <- paste0("../files/", fun, "hv_all.png")
 p2 <- ggplot(df2, aes(gen, HV, group = name)) +
-<<<<<<< HEAD
   geom_line(aes(color = name)) #+
   # geom_point(aes(shape = name, color = name))#+
-=======
-  geom_line(aes(color = name)) +
-  geom_point(aes(shape = name, color = name))#+
->>>>>>> aeabce32de20df9c7ee45f77ef9e25da49778a38
 # p2
 ggsave(filename = pathname, device = "png")
 # #
 pathname <- paste0("../files/", fun, "igd_all.png")
 p3 <- ggplot(df3, aes(gen, IGD, group = name)) +
-<<<<<<< HEAD
   geom_line(aes(color = name)) #+
   # geom_point(aes(shape = name, color = name))#+
-=======
-  geom_line(aes(color = name)) +
-  geom_point(aes(shape = name, color = name))#+
->>>>>>> aeabce32de20df9c7ee45f77ef9e25da49778a38
 # p3
 ggsave(filename = pathname, device = "png")
 #
