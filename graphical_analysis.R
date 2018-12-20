@@ -116,6 +116,7 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0){
   generationDig <- 3
   nr1prev <- 0
   # cat("gen = ")
+  print(runIdPre)
   hv <- matrix(0, nrow = gen)
   igd <- matrix(0, nrow = gen)
   my.data2 <- data.frame()
