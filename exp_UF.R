@@ -153,7 +153,7 @@ for (n.obj in n.objs) {
           resource.allocation = resource.allocation.RANDOM,
           my.file.n = my.file.n
         )
-        exit()
+        # exit()
         # 
         # 
         # # par.set = ParamHelpers::getParamSet(problem)
