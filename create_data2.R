@@ -45,13 +45,20 @@ for (fun in fun.names) {
   id <- 1
   for (variant in variants) {
     runIdPre <- paste0("../", variant)
+    temp <- read_feather(paste0("../",variant, "/UF1_info"))
+    temp<-as.data.frame(temp)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
+<<<<<<< HEAD
 <<<<<<< HEAD
       # cat(variant)
 =======
 >>>>>>> ahhhh
       gen <- as.integer(read_feather(paste0("../",variant, "/UF1_info")))
+=======
+      
+      gen <- as.integer(temp[iRun2,])
+>>>>>>> ahhhh
       my.data <-
         read.data(
           fun = fun,
@@ -101,9 +108,11 @@ for (fun in fun.names) {
     runIdPre <- paste0("../", variant)
     df <- data.frame()
     df2 <- data.frame()
+    temp <- read_feather(paste0("../",variant, "/UF1_info"))
+    temp<-as.data.frame(temp)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
-      gen <- as.integer(read_feather(paste0("../",variant, "/UF1_info")))
+      gen <- as.integer(temp[iRun2,])
       out <-
         read.data(
           fun = fun,
