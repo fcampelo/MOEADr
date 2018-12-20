@@ -43,6 +43,7 @@ for (fun in fun.names) {
     runIdPre <- paste0("../", variant)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
+      # cat(variant)
       gen <- as.integer(read_feather(paste0("../",variant, "/UF1_info")))
       my.data <-
         read.data(
@@ -87,6 +88,7 @@ for (fun in fun.names) {
     indicatorTmp <<- matrix(initialValue, nrow = nRun)
     indicatorArcIGD <<- matrix(initialValue, nrow = nRun)
     
+    times <- list()
     ndom <- list()
     fes <- list()
     runIdPre <- paste0("../", variant)
@@ -152,7 +154,8 @@ for (fun in fun.names) {
       if (is.null(archive))
         archive <- objsTmp2
       indicatorArcIGD[iRun2] <- calcIGD(archive[, 1:2], Yref)
-      
+      pdGen <- formatC(gen, width = 3, format = "d", flag = "0")
+      times[[length(times) + 1]] <- as.integer(read_feather(paste0(runIdPre, "/",fun,"_time_",iRun+1,"_",pdGen)))
       fes[[length(fes) + 1]] <- sum(isFeasible)
       ndom[[length(ndom) + 1]] <- sum(rankFeasible == 1)
     }
@@ -162,10 +165,11 @@ for (fun in fun.names) {
               indicatorArcIGD,
               fes,
               ndom,
+              times,
               1:length(indicatorArcIGD),
               "none")
       colnames(de_median_gen) <-
-        c("HV", "IGD", "fesiable", "nondominated", "rep", "name")
+        c("HV", "IGD", "fesiable", "nondominated", "time", "rep", "name")
     }
     else if (variant == "rad") {
       rad_median_gen <-
@@ -173,10 +177,11 @@ for (fun in fun.names) {
               indicatorArcIGD,
               fes,
               ndom,
+              times,
               1:length(indicatorArcIGD),
               "MRDL")
       colnames(rad_median_gen) <-
-        c("HV", "IGD", "fesiable", "nondominated", "rep", "name")
+        c("HV", "IGD", "fesiable", "nondominated", "time", "rep", "name")
     }
     else if (variant == "gra") {
       gra_median_gen <-
@@ -184,10 +189,11 @@ for (fun in fun.names) {
               indicatorArcIGD,
               fes,
               ndom,
+              times,
               1:length(indicatorArcIGD),
               "R.I.")
       colnames(gra_median_gen) <-
-        c("HV", "IGD", "fesiable", "nondominated", "rep", "name")
+        c("HV", "IGD", "fesiable", "nondominated", "time", "rep", "name")
     }
     else if (variant == "norm") {
       norm_median_gen <-
@@ -195,10 +201,11 @@ for (fun in fun.names) {
               indicatorArcIGD,
               fes,
               ndom,
+              times,
               1:length(indicatorArcIGD),
               "Norm")
       colnames(norm_median_gen) <-
-        c("HV", "IGD", "fesiable", "nondominated", "rep", "name")
+        c("HV", "IGD", "fesiable", "nondominated", "time", "rep", "name")
     }
     else if (variant == "random") {
       random_median_gen <-
@@ -206,10 +213,11 @@ for (fun in fun.names) {
               indicatorArcIGD,
               fes,
               ndom,
+              times,
               1:length(indicatorArcIGD),
               "Random")
       colnames(random_median_gen) <-
-        c("HV", "IGD", "fesiable", "nondominated", "rep", "name")
+        c("HV", "IGD", "fesiable", "nondominated", "time", "rep", "name")
     }
   }
   df <-
@@ -330,6 +338,12 @@ df$algorithm <- unlist(df$name)
 
 create_graphs(df, fun.names, 2)
 
+
+df$fesiable <- as.numeric(df$fesiable)
+df$nondominated <- as.numeric(df$nondominated)
+df$time <- as.numeric(df$time)
+df$rep <- as.numeric(df$rep)
+df$name <- as.character(df$name)
 
 write_feather(df, "forboxplot")
 write_feather(df2, "HV_gens")

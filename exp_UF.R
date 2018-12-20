@@ -33,7 +33,7 @@ n.objs <- c(2,3)
 id <- 1
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 60000))
+                       maxeval = 140000))
 
 for (n.obj in n.objs) {
   print(n.obj)
