@@ -12,7 +12,7 @@ library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
 repetitions <-  1
-dimension <- 30
+dimension <- 100
 
 algorithms <- c("moead.de")
 
@@ -24,7 +24,7 @@ resource.allocation.NORM <- list(name = "norm", dt = 20)
 resource.allocation.RANDOM <- list(name = "random", dt = 20)
 
 
-decomp <- list(name = "SLD", H = 199)
+decomp <- list(name = "SLD", H = 349)
 
 scaling <- list()
 scaling$name <- "simple"
