@@ -4,7 +4,11 @@ setwd("~/MOEADr/")
 source("graphical_analysis.R")
 setwd("~/MOEADr/")
 nPop <- 350
+<<<<<<< HEAD
 nRun <- 1 
+=======
+nRun <- 21
+>>>>>>> ahhhh
 nObj <- 2 # fix even if single obj
 # number of variables
 nVar <- 30
@@ -43,7 +47,10 @@ for (fun in fun.names) {
     runIdPre <- paste0("../", variant)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
+<<<<<<< HEAD
       # cat(variant)
+=======
+>>>>>>> ahhhh
       gen <- as.integer(read_feather(paste0("../",variant, "/UF1_info")))
       my.data <-
         read.data(
