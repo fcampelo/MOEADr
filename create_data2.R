@@ -4,10 +4,10 @@ setwd("~/MOEADr/")
 source("graphical_analysis.R")
 setwd("~/MOEADr/")
 nPop <- 350
-nRun <- 5
+nRun <- 1 
 nObj <- 2 # fix even if single obj
 # number of variables
-nVar <- 100
+nVar <- 30
 # number of constraints
 nCon <- 1
 # reference point
@@ -156,8 +156,6 @@ for (fun in fun.names) {
       fes[[length(fes) + 1]] <- sum(isFeasible)
       ndom[[length(ndom) + 1]] <- sum(rankFeasible == 1)
     }
-    
-    print(indicatorTmp)
     if (variant == "de") {
       de_median_gen <-
         cbind(indicatorTmp,
@@ -310,23 +308,25 @@ names(df3) <- c("gen", "IGD", "name")
 names(df2) <- c("gen", "HV", "name")
 pathname <- paste0("../files/", fun, "hv_all.png")
 p2 <- ggplot(df2, aes(gen, HV, group = name)) +
-  geom_line(aes(color = name)) +
-  geom_point(aes(shape = name, color = name))#+
+  geom_line(aes(color = name)) #+
+  # geom_point(aes(shape = name, color = name))#+
 # p2
 ggsave(filename = pathname, device = "png")
 # #
 pathname <- paste0("../files/", fun, "igd_all.png")
 p3 <- ggplot(df3, aes(gen, IGD, group = name)) +
-  geom_line(aes(color = name)) +
-  geom_point(aes(shape = name, color = name))#+
+  geom_line(aes(color = name)) #+
+  # geom_point(aes(shape = name, color = name))#+
 # p3
 ggsave(filename = pathname, device = "png")
 #
 #
 #
-df$HV <- round(as.numeric(levels(df$HV))[df$HV], 4)
-df$IGD <- round(as.numeric(levels(df$IGD))[df$IGD], 4)
-df$algorithm <- df$name
+df$HV <- as.numeric(unlist(df$HV))
+df$IGD <- as.numeric(unlist(df$IGD))
+df$HV <- round(df$HV, 4)
+df$IGD <- round(df$IGD, 4)
+df$algorithm <- unlist(df$name)
 
 create_graphs(df, fun.names, 2)
 
