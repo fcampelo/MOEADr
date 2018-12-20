@@ -4,11 +4,7 @@ setwd("~/MOEADr/")
 source("graphical_analysis.R")
 setwd("~/MOEADr/")
 nPop <- 350
-<<<<<<< HEAD
-nRun <- 1 
-=======
-nRun <- 5
->>>>>>> aeabce32de20df9c7ee45f77ef9e25da49778a38
+nRun <- 21
 nObj <- 2 # fix even if single obj
 # number of variables
 nVar <- 30
@@ -47,10 +43,6 @@ for (fun in fun.names) {
     runIdPre <- paste0("../", variant)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
-<<<<<<< HEAD
-      # cat(variant)
-=======
->>>>>>> aeabce32de20df9c7ee45f77ef9e25da49778a38
       gen <- as.integer(read_feather(paste0("../",variant, "/UF1_info")))
       my.data <-
         read.data(
@@ -95,10 +87,7 @@ for (fun in fun.names) {
     indicatorTmp <<- matrix(initialValue, nrow = nRun)
     indicatorArcIGD <<- matrix(initialValue, nrow = nRun)
     
-<<<<<<< HEAD
     times <- list()
-=======
->>>>>>> aeabce32de20df9c7ee45f77ef9e25da49778a38
     ndom <- list()
     fes <- list()
     runIdPre <- paste0("../", variant)
@@ -164,38 +153,22 @@ for (fun in fun.names) {
       if (is.null(archive))
         archive <- objsTmp2
       indicatorArcIGD[iRun2] <- calcIGD(archive[, 1:2], Yref)
-<<<<<<< HEAD
       pdGen <- formatC(gen, width = 3, format = "d", flag = "0")
       times[[length(times) + 1]] <- as.integer(read_feather(paste0(runIdPre, "/",fun,"_time_",iRun+1,"_",pdGen)))
       fes[[length(fes) + 1]] <- sum(isFeasible)
       ndom[[length(ndom) + 1]] <- sum(rankFeasible == 1)
     }
-=======
-      
-      fes[[length(fes) + 1]] <- sum(isFeasible)
-      ndom[[length(ndom) + 1]] <- sum(rankFeasible == 1)
-    }
-    
-    print(indicatorTmp)
->>>>>>> aeabce32de20df9c7ee45f77ef9e25da49778a38
     if (variant == "de") {
       de_median_gen <-
         cbind(indicatorTmp,
               indicatorArcIGD,
               fes,
               ndom,
-<<<<<<< HEAD
               times,
               1:length(indicatorArcIGD),
               "none")
       colnames(de_median_gen) <-
         c("HV", "IGD", "fesiable", "nondominated", "time", "rep", "name")
-=======
-              1:length(indicatorArcIGD),
-              "none")
-      colnames(de_median_gen) <-
-        c("HV", "IGD", "fesiable", "nondominated", "rep", "name")
->>>>>>> aeabce32de20df9c7ee45f77ef9e25da49778a38
     }
     else if (variant == "rad") {
       rad_median_gen <-
@@ -203,18 +176,11 @@ for (fun in fun.names) {
               indicatorArcIGD,
               fes,
               ndom,
-<<<<<<< HEAD
               times,
               1:length(indicatorArcIGD),
               "MRDL")
       colnames(rad_median_gen) <-
         c("HV", "IGD", "fesiable", "nondominated", "time", "rep", "name")
-=======
-              1:length(indicatorArcIGD),
-              "MRDL")
-      colnames(rad_median_gen) <-
-        c("HV", "IGD", "fesiable", "nondominated", "rep", "name")
->>>>>>> aeabce32de20df9c7ee45f77ef9e25da49778a38
     }
     else if (variant == "gra") {
       gra_median_gen <-
@@ -222,18 +188,11 @@ for (fun in fun.names) {
               indicatorArcIGD,
               fes,
               ndom,
-<<<<<<< HEAD
               times,
               1:length(indicatorArcIGD),
               "R.I.")
       colnames(gra_median_gen) <-
         c("HV", "IGD", "fesiable", "nondominated", "time", "rep", "name")
-=======
-              1:length(indicatorArcIGD),
-              "R.I.")
-      colnames(gra_median_gen) <-
-        c("HV", "IGD", "fesiable", "nondominated", "rep", "name")
->>>>>>> aeabce32de20df9c7ee45f77ef9e25da49778a38
     }
     else if (variant == "norm") {
       norm_median_gen <-
@@ -241,18 +200,11 @@ for (fun in fun.names) {
               indicatorArcIGD,
               fes,
               ndom,
-<<<<<<< HEAD
               times,
               1:length(indicatorArcIGD),
               "Norm")
       colnames(norm_median_gen) <-
         c("HV", "IGD", "fesiable", "nondominated", "time", "rep", "name")
-=======
-              1:length(indicatorArcIGD),
-              "Norm")
-      colnames(norm_median_gen) <-
-        c("HV", "IGD", "fesiable", "nondominated", "rep", "name")
->>>>>>> aeabce32de20df9c7ee45f77ef9e25da49778a38
     }
     else if (variant == "random") {
       random_median_gen <-
@@ -260,18 +212,11 @@ for (fun in fun.names) {
               indicatorArcIGD,
               fes,
               ndom,
-<<<<<<< HEAD
               times,
               1:length(indicatorArcIGD),
               "Random")
       colnames(random_median_gen) <-
         c("HV", "IGD", "fesiable", "nondominated", "time", "rep", "name")
-=======
-              1:length(indicatorArcIGD),
-              "Random")
-      colnames(random_median_gen) <-
-        c("HV", "IGD", "fesiable", "nondominated", "rep", "name")
->>>>>>> aeabce32de20df9c7ee45f77ef9e25da49778a38
     }
   }
   df <-
