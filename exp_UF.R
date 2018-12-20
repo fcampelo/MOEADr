@@ -11,8 +11,8 @@ library(pracma)
 library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
-repetitions <-  21
-dimension <- 100
+repetitions <-  1
+dimension <- 21
 
 algorithms <- c("moead.de")
 
@@ -39,7 +39,7 @@ for (n.obj in n.objs) {
   print(n.obj)
   if (n.obj == 2){
     fun.names1 <- list()
-    for (i in 2:7) {
+    for (i in 1:7) {
       fun.names1[[length(fun.names1) + 1]] = paste0("UF", i)
     }
   }
@@ -97,19 +97,6 @@ for (n.obj in n.objs) {
           my.file.n = my.file.n
         )
         
-        # my.file.n <- paste0("../../dra/",fun,"_")
-        # moead.dra <- moead(
-        #   problem  = problem.zdt1,
-        #   preset   = preset_moead(algo),
-        #   decomp = decomp,
-        #   stopcrit = stopcrit,
-        #   scaling = scaling,
-        #   showpars = list(show.iters = "none", showevery = 100),
-        #   seed = j,
-        #   resource.allocation = resource.allocation.DRA,
-        #   my.file.n = my.file.n
-        # )
-        
         
         # gra.awt
         my.file.n <- paste0("../../gra/",fun,"_")
@@ -166,7 +153,7 @@ for (n.obj in n.objs) {
           resource.allocation = resource.allocation.RANDOM,
           my.file.n = my.file.n
         )
-        # exit()
+        exit()
         # 
         # 
         # # par.set = ParamHelpers::getParamSet(problem)
