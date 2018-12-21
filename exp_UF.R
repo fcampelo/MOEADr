@@ -29,7 +29,7 @@ decomp <- list(name = "SLD", H = 349)
 scaling <- list()
 scaling$name <- "simple"
 
-n.objs <- c(2,3)
+n.objs <- c(2)
 id <- 1
 
 stopcrit  <- list(list(name    = "maxeval",
@@ -39,7 +39,7 @@ for (n.obj in n.objs) {
   print(n.obj)
   if (n.obj == 2){
     fun.names1 <- list()
-    for (i in 1:7) {
+    for (i in 1:1) {
       fun.names1[[length(fun.names1) + 1]] = paste0("UF", i)
     }
   }
