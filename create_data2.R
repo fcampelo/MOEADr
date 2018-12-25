@@ -61,10 +61,6 @@ for (fun in fun.names) {
   for (variant in variants) {
     runIdPre <- paste0("../", variant)
     temp <- read_feather(paste0("../",variant, "/UF1_info"))
-    if (variant == "de") temp <- temp[3:nrow(temp),]
-    if (variant == "gra") temp <- temp[2:nrow(temp),]
-    if (variant == "random") temp <- temp[2:nrow(temp),]
-    if (variant == "norm") temp <- temp[2:nrow(temp),]
     temp<-as.data.frame(temp)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
@@ -128,10 +124,6 @@ for (fun in fun.names) {
     df <- data.frame()
     df2 <- data.frame()
     temp <- read_feather(paste0("../",variant, "/UF1_info"))
-    if (variant == "de") temp <- temp[3:nrow(temp),]
-    if (variant == "gra") temp <- temp[2:nrow(temp),]
-    if (variant == "random") temp <- temp[2:nrow(temp),]
-    if (variant == "norm") temp <- temp[2:nrow(temp),]
     temp<-as.data.frame(temp)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
