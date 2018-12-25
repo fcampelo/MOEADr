@@ -30,8 +30,8 @@ scaling$name <- "simple"
 n.objs <- c(2,3)
 id <- 1
 
-stopcrit  <- list(list(name    = "maxiter",
-                       maxiter = 200))
+stopcrit  <- list(list(name    = "maxeval",
+                       maxeval = 140000))
 
 for (n.obj in n.objs) {
   print(n.obj)

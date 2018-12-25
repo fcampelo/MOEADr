@@ -11,8 +11,8 @@ library(pracma)
 library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
-repetitions <-  1
-dimension <- 21
+repetitions <-  4
+dimension <- 30
 
 algorithms <- c("moead.de")
 
@@ -76,6 +76,7 @@ for (n.obj in n.objs) {
       # ref.points <- rep(1, problem.zdt1$m)
       
       for (j in 1:repetitions) {
+        J<- j+1
         moead.de.data <- list()
         moead.dra.data <- list()
         moead.gra.data <- list()
@@ -115,18 +116,18 @@ for (n.obj in n.objs) {
         # write_feather(as.data.frame(moead.gra$Y), my.file.n)
         
         # ondb
-        my.file.n <- paste0("../../rad/",fun,"_")
-        moead.rad <- moead(
-          problem  = problem.zdt1,
-          preset   = preset_moead(algo),
-          decomp = decomp,
-          stopcrit = stopcrit,
-          scaling = scaling,
-          showpars = list(show.iters = "none", showevery = 10),
-          seed = j,
-          resource.allocation = resource.allocation.RAD,
-          my.file.n = my.file.n
-        )
+        # my.file.n <- paste0("../../rad/",fun,"_")
+        # moead.rad <- moead(
+        #   problem  = problem.zdt1,
+        #   preset   = preset_moead(algo),
+        #   decomp = decomp,
+        #   stopcrit = stopcrit,
+        #   scaling = scaling,
+        #   showpars = list(show.iters = "none", showevery = 10),
+        #   seed = j,
+        #   resource.allocation = resource.allocation.RAD,
+        #   my.file.n = my.file.n
+        # )
         #
         my.file.n <- paste0("../../norm/",fun,"_")
         moead.norm <- moead(

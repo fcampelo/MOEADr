@@ -5,10 +5,15 @@ source("graphical_analysis.R")
 setwd("~/MOEADr/")
 nPop <- 350
 <<<<<<< HEAD
+<<<<<<< HEAD
 nRun <- 1 
 =======
 nRun <- 21
 >>>>>>> ahhhh
+=======
+# nRun <- 21
+nRun <- 1
+>>>>>>> dtlz exp
 nObj <- 2 # fix even if single obj
 # number of variables
 nVar <- 30
@@ -17,6 +22,10 @@ nCon <- 1
 # reference point
 
 refPoint <- c(1, 1)
+
+#evaluation points
+# check.points <- c(20000, 40000, 60000, 80000, 100000, 120000, 140000)
+
 # things
 objsColnames <- paste("#obj", 1:nObj, sep = "")
 varsColnames <- paste("#var", 1:nVar, sep = "")
@@ -29,7 +38,9 @@ for (i in 1:1) {
   fun.names[[length(fun.names) + 1]] = paste0("UF", i)
   # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
 }
-variants <- c("de", "norm", "rad", "random", "gra")
+# variants <- c("de", "norm", "rad", "random", "gra")
+variants <- c("de", "norm", "random", "gra")
+# variants <- c("random ")
 
 for (fun in fun.names) {
   print(fun)
@@ -46,6 +57,10 @@ for (fun in fun.names) {
   for (variant in variants) {
     runIdPre <- paste0("../", variant)
     temp <- read_feather(paste0("../",variant, "/UF1_info"))
+    if (variant == "de") temp <- temp[3:nrow(temp),]
+    if (variant == "gra") temp <- temp[2:nrow(temp),]
+    if (variant == "random") temp <- temp[2:nrow(temp),]
+    if (variant == "norm") temp <- temp[2:nrow(temp),]
     temp<-as.data.frame(temp)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
@@ -75,19 +90,19 @@ for (fun in fun.names) {
   de_median_gen <- data.frame()
   gra_median_gen <- data.frame()
   random_median_gen <- data.frame()
-  rad_median_gen <- data.frame()
+  # rad_median_gen <- data.frame()
   norm_median_gen <- data.frame()
   
   de_median_hvs <- data.frame()
   gra_median_hvs <- data.frame()
   random_median_hvs <- data.frame()
-  rad_median_hvs <- data.frame()
+  # rad_median_hvs <- data.frame()
   norm_median_hvs <- data.frame()
   
   de_median_igds <- data.frame()
   gra_median_igds <- data.frame()
   random_median_igds <- data.frame()
-  rad_median_igds <- data.frame()
+  # rad_median_igds <- data.frame()
   norm_median_igds <- data.frame()
   
   Yref <-
@@ -109,10 +124,17 @@ for (fun in fun.names) {
     df <- data.frame()
     df2 <- data.frame()
     temp <- read_feather(paste0("../",variant, "/UF1_info"))
+    if (variant == "de") temp <- temp[3:nrow(temp),]
+    if (variant == "gra") temp <- temp[2:nrow(temp),]
+    if (variant == "random") temp <- temp[2:nrow(temp),]
+    if (variant == "norm") temp <- temp[2:nrow(temp),]
     temp<-as.data.frame(temp)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
+      
+      
       gen <- as.integer(temp[iRun2,])
+      
       out <-
         read.data(
           fun = fun,
@@ -122,36 +144,36 @@ for (fun in fun.names) {
           flag = 1
         )
       my.data <- out$my.data2
-      
+
       if (variant == "de") {
         de_median_hvs <-
-          rbind(de_median_hvs, data.frame(out$hv, rep(1:gen)))
+          rbind(de_median_hvs, data.frame(out$hv, rep(1:gen),out$nfe))
         de_median_igds <-
-          rbind(de_median_igds, data.frame(out$igd, rep(1:gen)))
+          rbind(de_median_igds, data.frame(out$igd, rep(1:gen),out$nfe))
       }
-      else if (variant == "rad") {
-        rad_median_hvs <-
-          rbind(rad_median_hvs, data.frame(out$hv, rep(1:gen)))
-        rad_median_igds <-
-          rbind(rad_median_igds, data.frame(out$igd, rep(1:gen)))
-      }
+      # else if (variant == "rad") {
+      #   rad_median_hvs <-
+      #     rbind(rad_median_hvs, data.frame(out$hv, rep(1:gen),rep(1:gen)*out$nfe))
+      #   rad_median_igds <-
+      #     rbind(rad_median_igds, data.frame(out$igd, rep(1:gen),rep(1:gen)*out$nfe))
+      # }
       else if (variant == "gra") {
         gra_median_hvs <-
-          rbind(gra_median_hvs, data.frame(out$hv, rep(1:gen)))
+          rbind(gra_median_hvs, data.frame(out$hv, rep(1:gen),out$nfe))
         gra_median_igds <-
-          rbind(gra_median_igds, data.frame(out$igd, rep(1:gen)))
+          rbind(gra_median_igds, data.frame(out$igd, rep(1:gen),out$nfe))
       }
       else if (variant == "norm") {
         norm_median_hvs <-
-          rbind(norm_median_hvs, data.frame(out$hv, rep(1:gen)))
+          rbind(norm_median_hvs, data.frame(out$hv, rep(1:gen),out$nfe))
         norm_median_igds <-
-          rbind(norm_median_igds, data.frame(out$igd, rep(1:gen)))
+          rbind(norm_median_igds, data.frame(out$igd, rep(1:gen),out$nfe))
       }
       else if (variant == "random") {
         random_median_hvs <-
-          rbind(random_median_hvs, data.frame(out$hv, rep(1:gen)))
+          rbind(random_median_hvs, data.frame(out$hv, rep(1:gen),out$nfe))
         random_median_igds <-
-          rbind(random_median_igds, data.frame(out$igd, rep(1:gen)))
+          rbind(random_median_igds, data.frame(out$igd, rep(1:gen),out$nfe))
       }
       
       isFeasible <- extractFeasible(my.data)
@@ -187,18 +209,18 @@ for (fun in fun.names) {
       colnames(de_median_gen) <-
         c("HV", "IGD", "fesiable", "nondominated", "time", "rep", "name")
     }
-    else if (variant == "rad") {
-      rad_median_gen <-
-        cbind(indicatorTmp,
-              indicatorArcIGD,
-              fes,
-              ndom,
-              times,
-              1:length(indicatorArcIGD),
-              "MRDL")
-      colnames(rad_median_gen) <-
-        c("HV", "IGD", "fesiable", "nondominated", "time", "rep", "name")
-    }
+    # else if (variant == "rad") {
+    #   rad_median_gen <-
+    #     cbind(indicatorTmp,
+    #           indicatorArcIGD,
+    #           fes,
+    #           ndom,
+    #           times,
+    #           1:length(indicatorArcIGD),
+    #           "MRDL")
+    #   colnames(rad_median_gen) <-
+    #     c("HV", "IGD", "fesiable", "nondominated", "time", "rep", "name")
+    # }
     else if (variant == "gra") {
       gra_median_gen <-
         cbind(indicatorTmp,
@@ -240,7 +262,7 @@ for (fun in fun.names) {
     rbind(
       df,
       data.frame(de_median_gen),
-      data.frame(rad_median_gen),
+      # data.frame(rad_median_gen),
       data.frame(gra_median_gen),
       data.frame(random_median_gen),
       data.frame(norm_median_gen)
@@ -249,99 +271,99 @@ for (fun in fun.names) {
 }
 
 
-names(de_median_hvs) <- c("HV", "gen")
-names(rad_median_hvs) <- c("HV", "gen")
-names(gra_median_hvs) <- c("HV", "gen")
-names(random_median_hvs) <- c("HV", "gen")
-names(norm_median_hvs) <- c("HV", "gen")
+names(de_median_hvs) <- c("HV", "gen", "eval")
+# names(rad_median_hvs) <- c("HV", "gen", "eval")
+names(gra_median_hvs) <- c("HV", "gen", "eval")
+names(random_median_hvs) <- c("HV", "gen", "eval")
+names(norm_median_hvs) <- c("HV", "gen", "eval")
 de_hv.plot <-
   aggregate(x = de_median_hvs$HV,
             FUN = median,
-            by = list(de_median_hvs$gen))
+            by = list(de_median_hvs$eval))
 de_hv.plot$name <- "de"
-rad_hv.plot <-
-  aggregate(x = rad_median_hvs$HV,
-            FUN = median,
-            by = list(rad_median_hvs$gen))
-rad_hv.plot$name <- "rad"
+# rad_hv.plot <-
+#   aggregate(x = rad_median_hvs$HV,
+#             FUN = median,
+#             by = list(rad_median_hvs$eval))
+# rad_hv.plot$name <- "rad"
 gra_hv.plot <-
   aggregate(x = gra_median_hvs$HV,
             FUN = median,
-            by = list(gra_median_hvs$gen))
+            by = list(gra_median_hvs$eval))
 gra_hv.plot$name <- "gra"
 random_hv.plot <-
   aggregate(x = random_median_hvs$HV,
             FUN = median,
-            by = list(random_median_hvs$gen))
+            by = list(random_median_hvs$eval))
 random_hv.plot$name <- "random"
 norm_hv.plot <-
   aggregate(x = norm_median_hvs$HV,
             FUN = median,
-            by = list(norm_median_hvs$gen))
+            by = list(norm_median_hvs$eval))
 norm_hv.plot$name <- "norm"
 df2 <-
   rbind(
     data.frame(de_hv.plot),
-    data.frame(rad_hv.plot),
+    # data.frame(rad_hv.plot),
     data.frame(gra_hv.plot),
     data.frame(random_hv.plot),
     data.frame(norm_hv.plot)
   )
 
-names(de_median_igds) <- c("igd", "gen")
-names(rad_median_igds) <- c("igd", "gen")
-names(gra_median_igds) <- c("igd", "gen")
-names(random_median_igds) <- c("igd", "gen")
-names(norm_median_igds) <- c("igd", "gen")
+names(de_median_igds) <- c("igd", "gen", "eval")
+# names(rad_median_igds) <- c("igd", "gen")
+names(gra_median_igds) <- c("igd", "gen", "eval")
+names(random_median_igds) <- c("igd", "gen", "eval")
+names(norm_median_igds) <- c("igd", "gen", "eval")
 de_igd.plot <-
   aggregate(x = de_median_igds$igd,
             FUN = median,
-            by = list(de_median_igds$gen))
+            by = list(de_median_igds$eval))
 de_igd.plot$name <- "de"
-rad_igd.plot <-
-  aggregate(x = rad_median_igds$igd,
-            FUN = median,
-            by = list(rad_median_igds$gen))
-rad_igd.plot$name <- "rad"
+# rad_igd.plot <-
+#   aggregate(x = rad_median_igds$igd,
+#             FUN = median,
+#             by = list(rad_median_igds$gen))
+# rad_igd.plot$name <- "rad"
 gra_igd.plot <-
   aggregate(x = gra_median_igds$igd,
             FUN = median,
-            by = list(gra_median_igds$gen))
+            by = list(gra_median_igds$eval))
 gra_igd.plot$name <- "gra"
 random_igd.plot <-
   aggregate(
     x = random_median_igds$igd,
     FUN = median,
-    by = list(random_median_igds$gen)
+    by = list(random_median_igds$eval)
   )
 random_igd.plot$name <- "random"
 norm_igd.plot <-
   aggregate(x = norm_median_igds$igd,
             FUN = median,
-            by = list(norm_median_igds$gen))
+            by = list(norm_median_igds$eval))
 norm_igd.plot$name <- "norm"
 df3 <-
   rbind(
     data.frame(de_igd.plot),
-    data.frame(rad_igd.plot),
+    # data.frame(rad_igd.plot),
     data.frame(gra_igd.plot),
     data.frame(random_igd.plot),
     data.frame(norm_igd.plot)
   )
-names(df3) <- c("gen", "IGD", "name")
-names(df2) <- c("gen", "HV", "name")
+names(df3) <- c("Evaluations", "IGD", "Priority.Function")
+names(df2) <- c("Evaluations", "HV", "Priority.Function")
 pathname <- paste0("../files/", fun, "hv_all.png")
-p2 <- ggplot(df2, aes(gen, HV, group = name)) +
-  geom_line(aes(color = name)) #+
+p2 <- ggplot(df2, aes(Evaluations, HV, group = Priority.Function)) +
+  geom_line(aes(color = Priority.Function)) #+
   # geom_point(aes(shape = name, color = name))#+
-# p2
+p2
 ggsave(filename = pathname, device = "png")
 # #
 pathname <- paste0("../files/", fun, "igd_all.png")
-p3 <- ggplot(df3, aes(gen, IGD, group = name)) +
-  geom_line(aes(color = name)) #+
+p3 <- ggplot(df3, aes(Evaluations, IGD, group = Priority.Function)) +
+  geom_line(aes(color = Priority.Function)) #+
   # geom_point(aes(shape = name, color = name))#+
-# p3
+p3
 ggsave(filename = pathname, device = "png")
 #
 #
