@@ -119,6 +119,7 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0){
   print(runIdPre)
   hv <- matrix(0, nrow = gen)
   igd <- matrix(0, nrow = gen)
+  nfe <- matrix(0, nrow = gen)
   my.data2 <- data.frame()
   for (i in 1:gen){
     iGen2 <- i
@@ -146,12 +147,19 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0){
     # consData <- read.table(tgt, header = F, sep = "\t")
     nr1 <- nrow(objsData)
     gen <- rep(iGen2, each = nr1)
-    evals <- rep((nr1prev + 1):(nr1prev + nPop+1), length = nr1)-1
+    evals <- rep((nr1prev + 1):(nr1prev + nPop+1), length = nr1)
     zeroObj <- matrix(0.0, nrow=dim(objsData)[1], ncol=1 )
     # temp <- data.frame(objsData[, 1:nObj], consData, varsData, gen, evals)
     # temp <- data.frame(objsData[, 1:nObj], gen, evals)
     # colnames(temp) <- c(objsColnames, consColnames, varsColnames, "#Gen", "#Eval")
     # my.data2 <- rbind(my.data, data.frame(objsData[, 1:nObj], gen, evals))
+    
+    # UF1_iter_nfe_1_001
+    tgt <- paste0(runIdPre,"/", fun,"_iter_nfe_",iRun2,"_",zpdGen)
+    # objsData <- read.table(tgt, header = F, sep = "\t")
+    temp <- as.matrix(read_feather(tgt))
+    if (i > 1) nfe[i,1] <- temp[,2] + nfe[i-1,1]  
+    else nfe[i,1] <- temp[,2]
     consData <- rep(0, nr1)
     varsData <- rep(0, nr1)
     # print(evals)
@@ -166,7 +174,7 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0){
     }
   }
   my.data2 <- rbind(my.data2, data.frame(objsData[, 1:nObj], gen, evals, consData, varsData))    # my.data2 <- rbind(my.data, data.frame(objsData[, 1:nObj], consData, varsData, gen, evals))
-  out <- list(my.data2 = my.data2, hv = hv, igd = igd)
+  out <- list(my.data2 = my.data2, hv = hv, igd = igd, nfe = nfe)
   return (out)
 }
 
@@ -197,7 +205,7 @@ create_graphs <-
     # algorithm <- "moead.de"
     for (fun in fun.names) {
       # my.data <- data[data$fun == fun, ]
-      # my.data$algorithm <- factor(my.data$algorithm)
+      my.data$algorithm <- factor(my.data$algorithm)
       pathname <- paste0("../files/", fun, "_HV.png")
       p <- ggplot(my.data, aes(algorithm, HV)) +geom_boxplot(aes(fill = algorithm), scale = "count")
         # geom_violin(aes(fill = algorithm), scale = "count") #+ ylim(0, 1) +
@@ -212,7 +220,8 @@ create_graphs <-
                                                                 size = 24,
                                                                 face = "bold"
                                                               )) + geom_jitter(height = 0, width = 0.1)
-      
+      p +labs(title=paste0("HV - ",fun),
+                x ="Prioritu Function")
       ggsave(filename = pathname, device = "png")
       
       pathname <- paste0("../files/", fun, "_IGD.png")
@@ -229,7 +238,8 @@ create_graphs <-
                                                                 size = 24,
                                                                 face = "bold"
                                                               )) + geom_jitter(height = 0, width = 0.1)
-      
+      p+labs(title=paste0("IGD - ",fun),
+             x ="Prioritu Function")
       ggsave(filename = pathname, device = "png")
     }
   }
