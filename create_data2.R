@@ -12,8 +12,12 @@ nRun <- 21
 >>>>>>> ahhhh
 =======
 # nRun <- 21
+<<<<<<< HEAD
 nRun <- 1
 >>>>>>> dtlz exp
+=======
+nRun <- 21
+>>>>>>> exp uf1
 nObj <- 2 # fix even if single obj
 # number of variables
 nVar <- 30
