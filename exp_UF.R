@@ -11,9 +11,8 @@ library(pracma)
 library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
-repetitions <-  4
+repetitions <-  21
 dimension <- 30
-
 algorithms <- c("moead.de")
 
 #uniform weight
