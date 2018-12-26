@@ -615,11 +615,11 @@ moead <-
           }
         }          
       }
-      if (problem$name == "problem.moon" && (stopcrit[[1]]$maxeval< (nfe + dim(W)[1]))){
-        V <- Archive2$V
-        X <- Archive2$X
-        Y <- Archive2$Y
-      }
+      # if (problem$name == "problem.moon" && (stopcrit[[1]]$maxeval< (nfe + dim(W)[1]))){
+      #   V <- Archive2$V
+      #   X <- Archive2$X
+      #   Y <- Archive2$Y
+      # }
       
       # ========== Stop Criteria
       # Calculate iteration time
@@ -665,7 +665,8 @@ moead <-
     }
     
     # Output
-    if (problem$name == "problem.moon" && update$nsga == TRUE){
+    # if (problem$name == "problem.moon" && update$nsga == TRUE){
+    if (problem$name == "problem.moon"){
       my.iter <- with_options(
         c(scipen = 999), 
         str_pad(iter, 4, pad = "0")
