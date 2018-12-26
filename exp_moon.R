@@ -93,6 +93,7 @@ for (algo in algorithms) {
       preset   = preset_moead(algo),
       decomp = decomp,
       stopcrit = stopcrit,
+      constraint = list(name = "penalty", beta=0.95),
       scaling = scaling,
       showpars = list(show.iters = "none", showevery = 10),
       seed = j,
