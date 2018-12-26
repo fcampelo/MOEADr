@@ -115,18 +115,18 @@ for (n.obj in n.objs) {
         # write_feather(as.data.frame(moead.gra$Y), my.file.n)
         
         # ondb
-        # my.file.n <- paste0("../../rad/",fun,"_")
-        # moead.rad <- moead(
-        #   problem  = problem.zdt1,
-        #   preset   = preset_moead(algo),
-        #   decomp = decomp,
-        #   stopcrit = stopcrit,
-        #   scaling = scaling,
-        #   showpars = list(show.iters = "none", showevery = 10),
-        #   seed = j,
-        #   resource.allocation = resource.allocation.RAD,
-        #   my.file.n = my.file.n
-        # )
+        my.file.n <- paste0("../../rad/",fun,"_")
+        moead.rad <- moead(
+          problem  = problem.zdt1,
+          preset   = preset_moead(algo),
+          decomp = decomp,
+          stopcrit = stopcrit,
+          scaling = scaling,
+          showpars = list(show.iters = "none", showevery = 10),
+          seed = j,
+          resource.allocation = resource.allocation.RAD,
+          my.file.n = my.file.n
+        )
         #
         my.file.n <- paste0("../../norm/",fun,"_")
         moead.norm <- moead(
