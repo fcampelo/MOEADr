@@ -12,7 +12,6 @@ library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
 repetitions <-  21
-dimension <- 30
 algorithms <- c("moead.de")
 
 #uniform weight
@@ -30,7 +29,7 @@ n.obj <- 3
 
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 140000))
+                       maxeval = 70000))
 
 scaling <- list()
 scaling$name <- "simple"
@@ -38,6 +37,7 @@ scaling$name <- "simple"
 d <- 2
 fun <- "moon"
 my.data <- data.frame()
+setwd("~/MOEADr/R/")
 for (algo in algorithms) {
   # print(algo)
   problem.zdt1 <- list(
@@ -87,18 +87,18 @@ for (algo in algorithms) {
     # write_feather(as.data.frame(moead.gra$Y), my.file.n)
     
     # ondb
-    # my.file.n <- paste0("../../rad/",fun,"_")
-    # moead.rad <- moead(
-    #   problem  = problem.zdt1,
-    #   preset   = preset_moead(algo),
-    #   decomp = decomp,
-    #   stopcrit = stopcrit,
-    #   scaling = scaling,
-    #   showpars = list(show.iters = "none", showevery = 10),
-    #   seed = j,
-    #   resource.allocation = resource.allocation.RAD,
-    #   my.file.n = my.file.n
-    # )
+    my.file.n <- paste0("../../rad/",fun,"_")
+    moead.rad <- moead(
+      problem  = problem.zdt1,
+      preset   = preset_moead(algo),
+      decomp = decomp,
+      stopcrit = stopcrit,
+      scaling = scaling,
+      showpars = list(show.iters = "none", showevery = 10),
+      seed = j,
+      resource.allocation = resource.allocation.RAD,
+      my.file.n = my.file.n
+    )
     #
     my.file.n <- paste0("../../norm/",fun,"_")
     moead.norm <- moead(
