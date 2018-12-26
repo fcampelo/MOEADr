@@ -22,21 +22,22 @@ resource.allocation.NORM <- list(name = "norm", dt = 20)
 resource.allocation.RANDOM <- list(name = "random", dt = 20)
 
 
-decomp <- list(name = "SLD", H = 350)
+decomp <- list(name = "SLD", H = 349)
 
 scaling <- list()
 scaling$name <- "simple"
 
 n.objs <- c(2,3)
-id <- 1
+
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 140000))
+                       maxeval = 70000))
 
 for (n.obj in n.objs) {
+  id <- 1
   print(n.obj)
   fun.names1 <- list()
-  for (i in 1:1) {
+  for (i in 1:7) {
     fun.names1[[length(fun.names1) + 1]] = paste0("DTLZ", i)
   }
   

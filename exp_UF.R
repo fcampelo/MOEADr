@@ -12,7 +12,7 @@ library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
 repetitions <-  21
-dimension <- 30
+dimension <- 100
 algorithms <- c("moead.de")
 
 #uniform weight
@@ -28,17 +28,17 @@ decomp <- list(name = "SLD", H = 349)
 scaling <- list()
 scaling$name <- "simple"
 
-n.objs <- c(2)
+n.objs <- c(2,3)
 id <- 1
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 140000))
+                       maxeval = 70000))
 
 for (n.obj in n.objs) {
   print(n.obj)
   if (n.obj == 2){
     fun.names1 <- list()
-    for (i in 1:1) {
+    for (i in 1:7) {
       fun.names1[[length(fun.names1) + 1]] = paste0("UF", i)
     }
   }

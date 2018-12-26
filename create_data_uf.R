@@ -20,7 +20,7 @@ nRun <- 21
 >>>>>>> exp uf1
 nObj <- 2 # fix even if single obj
 # number of variables
-nVar <- 30
+nVar <- 100
 # number of constraints
 nCon <- 1
 # reference point
@@ -38,7 +38,7 @@ consColnames <- paste("#con", 1:nCon, sep = "")
 
 # Fun names
 fun.names <- list()
-for (i in 1:1) {
+for (i in 1:10) {
   fun.names[[length(fun.names) + 1]] = paste0("UF", i)
   # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
 }
@@ -60,7 +60,8 @@ for (fun in fun.names) {
   id <- 1
   for (variant in variants) {
     runIdPre <- paste0("../", variant)
-    temp <- read_feather(paste0("../",variant, "/UF1_info"))
+    # temp <- read_feather(paste0("../",variant, "/UF1_info"))
+    temp <- read_feather(paste0("../",variant, "/",fun,"_info"))
     temp<-as.data.frame(temp)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
@@ -123,7 +124,8 @@ for (fun in fun.names) {
     runIdPre <- paste0("../", variant)
     df <- data.frame()
     df2 <- data.frame()
-    temp <- read_feather(paste0("../",variant, "/UF1_info"))
+    # temp <- read_feather(paste0("../",variant, "/UF1_info"))
+    temp <- read_feather(paste0("../",variant, "/",fun,"_info"))
     temp<-as.data.frame(temp)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
@@ -379,6 +381,6 @@ df$time <- as.numeric(df$time)
 df$rep <- as.numeric(df$rep)
 df$name <- as.character(df$name)
 
-write_feather(df, "forboxplot")
-write_feather(df2, "HV_gens")
-write_feather(df3, "IGD_gens")
+write_feather(df, "forboxplot_uf")
+write_feather(df2, "HV_gens_uf")
+write_feather(df3, "IGD_gens_uf")
