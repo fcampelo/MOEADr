@@ -352,6 +352,7 @@ df$HV <- round(df$HV, 4)
 df$IGD <- round(df$IGD, 4)
 df$algorithm <- unlist(df$name)
 
+
 create_graphs(df, fun.names, 2)
 
 
