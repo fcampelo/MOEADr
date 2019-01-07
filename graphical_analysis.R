@@ -161,7 +161,10 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0){
     if (i > 1) nfe[i,1] <- temp[,2] + nfe[i-1,1]  
     else nfe[i,1] <- temp[,2]
     
-    if (nfe > 70000) break
+    if (nfe > 70000) {
+      print("true")
+      break
+    }
     
     consData <- rep(0, nr1)
     varsData <- rep(0, nr1)
