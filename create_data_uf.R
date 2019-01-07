@@ -30,8 +30,8 @@ for (i in 1:10) {
   fun.names[[length(fun.names) + 1]] = paste0("UF", i)
   # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
 }
-# variants <- c("de", "norm", "rad", "random", "gra")
-variants <- c("de", "norm", "random", "gra")
+variants <- c("de", "norm", "rad", "random", "gra")
+# variants <- c("de", "norm", "random", "gra")
 # variants <- c("random ")
 
 for (fun in fun.names) {
