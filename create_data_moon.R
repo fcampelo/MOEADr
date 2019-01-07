@@ -256,27 +256,27 @@ names(random_median_hvs) <- c("HV", "gen", "eval")
 names(norm_median_hvs) <- c("HV", "gen", "eval")
 de_hv.plot <-
   aggregate(x = de_median_hvs$HV,
-            FUN = max,
+            FUN = median,
             by = list(de_median_hvs$eval))
 de_hv.plot$name <- "de"
 rad_hv.plot <-
   aggregate(x = rad_median_hvs$HV,
-            FUN = max,
+            FUN = median,
             by = list(rad_median_hvs$eval))
 rad_hv.plot$name <- "rad"
 gra_hv.plot <-
   aggregate(x = gra_median_hvs$HV,
-            FUN = max,
+            FUN = median,
             by = list(gra_median_hvs$eval))
 gra_hv.plot$name <- "gra"
 random_hv.plot <-
   aggregate(x = random_median_hvs$HV,
-            FUN = max,
+            FUN = median,
             by = list(random_median_hvs$eval))
 random_hv.plot$name <- "random"
 norm_hv.plot <-
   aggregate(x = norm_median_hvs$HV,
-            FUN = max,
+            FUN = median,
             by = list(norm_median_hvs$eval))
 norm_hv.plot$name <- "norm"
 df2 <-
@@ -360,6 +360,8 @@ df$nondominated <- as.numeric(df$nondominated)
 df$time <- as.numeric(df$time)
 df$rep <- as.numeric(df$rep)
 df$name <- as.character(df$name)
+
+print(df2[which(df2$Priority.Function=="rad"),])
 
 write_feather(df, "forboxplot_moon")
 write_feather(df2, "HV_gens_moon")
