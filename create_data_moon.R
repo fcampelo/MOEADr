@@ -86,8 +86,8 @@ for (fun in fun.names) {
   # rad_median_igds <- data.frame()
   norm_median_igds <- data.frame()
   
-  Yref <-
-    as.matrix(read.table(paste0("inst/extdata/pf_data/", fun, ".dat")))
+  # Yref <-
+  #   as.matrix(read.table(paste0("inst/extdata/pf_data/", fun, ".dat")))
   
   for (variant in variants) {
     # init with zero
