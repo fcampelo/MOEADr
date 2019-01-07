@@ -256,27 +256,27 @@ names(random_median_hvs) <- c("HV", "gen", "eval")
 names(norm_median_hvs) <- c("HV", "gen", "eval")
 de_hv.plot <-
   aggregate(x = de_median_hvs$HV,
-            FUN = median,
+            FUN = max,
             by = list(de_median_hvs$eval))
 de_hv.plot$name <- "de"
 rad_hv.plot <-
   aggregate(x = rad_median_hvs$HV,
-            FUN = median,
+            FUN = max,
             by = list(rad_median_hvs$eval))
 rad_hv.plot$name <- "rad"
 gra_hv.plot <-
   aggregate(x = gra_median_hvs$HV,
-            FUN = median,
+            FUN = max,
             by = list(gra_median_hvs$eval))
 gra_hv.plot$name <- "gra"
 random_hv.plot <-
   aggregate(x = random_median_hvs$HV,
-            FUN = median,
+            FUN = max,
             by = list(random_median_hvs$eval))
 random_hv.plot$name <- "random"
 norm_hv.plot <-
   aggregate(x = norm_median_hvs$HV,
-            FUN = median,
+            FUN = max,
             by = list(norm_median_hvs$eval))
 norm_hv.plot$name <- "norm"
 df2 <-
