@@ -166,7 +166,7 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0){
     
     nr1prev <<- nr1prev + nPop
     if (flag == 1){
-      igd[i,1] <- calcIGD(objsData[, 1:nObj], Yref)
+      if (fun != "moon") igd[i,1] <- calcIGD(objsData[, 1:nObj], Yref)
       objsData[, 1:nObj] <-
         (sweep(objsData[, 1:nObj], 2, min.val)) / ((max.val - min.val) + 1e-50)
       hv[i,1] <- emoa::dominated_hypervolume(t(as.matrix(objsData[,1:nObj])), t(as.matrix(c(1,1))))
