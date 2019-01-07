@@ -10,7 +10,7 @@ library(feather)
 library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
-repetitions <-  30
+repetitions <-  21
 dimension <- 100
 algorithms <- c("moead.de")
 
@@ -27,7 +27,7 @@ decomp <- list(name = "SLD", H = 349)
 scaling <- list()
 scaling$name <- "simple"
 
-n.objs <- c(2,3)
+n.objs <- c(3)
 
 
 stopcrit  <- list(list(name    = "maxeval",
@@ -36,6 +36,7 @@ stopcrit  <- list(list(name    = "maxeval",
 for (n.obj in n.objs) {
   id <- 1
   print(n.obj)
+  if (n.obj==3) decomp <- list(name = "SLD", H = 25)
   fun.names1 <- list()
   for (i in 1:7) {
     fun.names1[[length(fun.names1) + 1]] = paste0("DTLZ", i)
