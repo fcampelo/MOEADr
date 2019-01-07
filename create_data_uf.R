@@ -131,9 +131,9 @@ for (fun in fun.names) {
       }
       else if (variant == "rad") {
         rad_median_hvs <-
-          rbind(rad_median_hvs, data.frame(out$hv, rep(1:gen),rep(1:gen)*out$nfe))
+          rbind(rad_median_hvs, data.frame(out$hv, rep(1:gen),out$nfe))
         rad_median_igds <-
-          rbind(rad_median_igds, data.frame(out$igd, rep(1:gen),rep(1:gen)*out$nfe))
+          rbind(rad_median_igds, data.frame(out$igd, rep(1:gen),out$nfe))
       }
       else if (variant == "gra") {
         gra_median_hvs <-
