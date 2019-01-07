@@ -32,7 +32,7 @@ fun.names <- list("moon")
 # }
 variants <- c("de", "norm", "rad", "random", "gra")
 # variants <- c("de", "norm", "random", "gra")
-# variants <- c("random ")
+# variants <- c("de")
 
 for (fun in fun.names) {
   print(fun)
@@ -169,7 +169,7 @@ for (fun in fun.names) {
       calculateIndicator(iRun2, objsTmp2, refPoint)
       if (is.null(archive))
         archive <- objsTmp2
-      indicatorArcIGD[iRun2] <- calcIGD(archive[, 1:2], Yref)
+      # indicatorArcIGD[iRun2] <- calcIGD(archive[, 1:2], Yref)
       pdGen <- formatC(gen, width = 3, format = "d", flag = "0")
       times[[length(times) + 1]] <- as.integer(read_feather(paste0(runIdPre, "/",fun,"_time_",iRun+1,"_",pdGen)))
       fes[[length(fes) + 1]] <- sum(isFeasible)
