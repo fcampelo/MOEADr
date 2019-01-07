@@ -160,6 +160,9 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0){
     temp <- as.matrix(read_feather(tgt))
     if (i > 1) nfe[i,1] <- temp[,2] + nfe[i-1,1]  
     else nfe[i,1] <- temp[,2]
+    
+    if (nfe > 70000) break
+    
     consData <- rep(0, nr1)
     varsData <- rep(0, nr1)
     # print(evals)
