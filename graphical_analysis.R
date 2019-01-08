@@ -111,7 +111,7 @@ calculateIndicator <- function(iRun2, dataTmp, refPoint) {
   }
 }
 
-read.data <- function(fun, runIdPre, iRun, gen, flag = 0 n.obj=NULL){
+read.data <- function(fun, runIdPre, iRun, gen, flag = 0, n.obj=NULL){
   runDig <- 3
   generationDig <- 3
   nr1prev <- 0
