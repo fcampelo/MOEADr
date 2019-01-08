@@ -111,7 +111,7 @@ calculateIndicator <- function(iRun2, dataTmp, refPoint) {
   }
 }
 
-read.data <- function(fun, runIdPre, iRun, gen, flag = 0){
+read.data <- function(fun, runIdPre, iRun, gen, flag = 0, n.obj=NULL){
   runDig <- 3
   generationDig <- 3
   nr1prev <- 0
@@ -138,7 +138,8 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0){
     # zpdRun <- formatC(iRun, width = runDig, format = "d", flag = "0") #zero padded
     zpdGen <- formatC(iGen2, width = generationDig, format = "d", flag = "0") #zero padded
     # tgt <- paste(filePath, runIdPre, zpdRun, runIdPost, objsFilePre, zpdGen, objsFilePost, sep = "")
-    tgt <- paste0(runIdPre,"/", fun,"_rep_",iRun2,"_",zpdGen,"_Y")
+    if (isNULL(n.obj)) tgt <- paste0(runIdPre,"/", fun,"_rep_",iRun2,"_",zpdGen,"_Y")
+    else tgt <- paste0(runIdPre,"/", fun,"_",n.obj,"_", "_rep_",iRun2,"_",zpdGen,"_Y")
     # objsData <- read.table(tgt, header = F, sep = "\t")
     objsData <- as.matrix(read_feather(tgt))
     # tgt <- paste(filePath, runIdPre, zpdRun, runIdPost, varsFilePre, zpdGen, varsFilePost, sep = "")
@@ -155,7 +156,8 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0){
     # my.data2 <- rbind(my.data, data.frame(objsData[, 1:nObj], gen, evals))
     
     # UF1_iter_nfe_1_001
-    tgt <- paste0(runIdPre,"/", fun,"_iter_nfe_",iRun2,"_",zpdGen)
+    if (isNULL(n.obj)) tgt <- paste0(runIdPre,"/", fun,"_iter_nfe_",iRun2,"_",zpdGen)
+    else tgt <- paste0(runIdPre,"/", fun,"_",n.obj,"_","_iter_nfe_",iRun2,"_",zpdGen)
     # objsData <- read.table(tgt, header = F, sep = "\t")
     temp <- as.matrix(read_feather(tgt))
     if (i > 1) nfe[i,1] <- temp[,2] + nfe[i-1,1]  
