@@ -32,7 +32,7 @@ fun.names <- list("moon")
 # }
 variants <- c("de", "norm", "rad", "random", "gra")
 # variants <- c("de", "norm", "random", "gra")
-# variants <- c("de")
+variants <- c("de")
 
 for (fun in fun.names) {
   print(fun)
@@ -47,6 +47,7 @@ for (fun in fun.names) {
   min.val <- c(Inf, Inf)
   id <- 1
   #loop for getting max/min values
+  print("first variant for")
   for (variant in variants) {
     runIdPre <- paste0("../", variant)
     # temp <- read_feather(paste0("../",variant, "/UF1_info"))
@@ -90,6 +91,7 @@ for (fun in fun.names) {
   # Yref <-
   #   as.matrix(read.table(paste0("inst/extdata/pf_data/", fun, ".dat")))
   #loop for getting scaled data, HV/IGD values over evaluations for all iteractions
+  print("2nd variant for")
   for (variant in variants) {
     # init with zero
     print(variant)
@@ -120,7 +122,7 @@ for (fun in fun.names) {
           runIdPre = runIdPre,
           iRun = iRun,
           gen = gen,
-          flag = 1
+          flag = 2
         )
       my.data <- out$my.data2
       
@@ -340,15 +342,25 @@ for (fun in fun.names) {
   df$name <- as.character(df$name)
 }
 #HV/IGD values over evaluations for "median" iteraction
+print("last variant for")
+variants<- c("None", "MRDL", "Random", "R.I.", "Norm-L2")
+variants<- c("None")
   for (variant in variants) {
     none.median <-
-      df[which(df[df$algorithm == "none", ]$HV == median(df[df$algorithm == "none", ]$HV)), ]
-    runIdPre <- paste0("../", variant)
+      df[which(df[df$algorithm == variant, ]$HV == median(df[df$algorithm == variant, ]$HV)), ]
     
-    temp <- read_feather(paste0("../", variant, "/", fun, "_info"))
+    
+    if (variant == "None") name = "de"
+    else if (variant == "MRDL") name = "rad"
+    else if (variant == "R.I.") name = "gra"
+    else if (variant == "Random") name = "random"
+    else if (variant == "Norm-L2") name = "norm"
+    
+    runIdPre <- paste0("../", name)
+    temp <- read_feather(paste0("../", name, "/", fun, "_info"))
     temp <- as.data.frame(temp)
     
-    iRun2 <- none.median$rep
+    iRun2 <- none.median$rep[1]
     iRun <- iRun2 - 1
     gen <- as.integer(temp[iRun2, ])
     
@@ -361,26 +373,26 @@ for (fun in fun.names) {
         flag = 1
       )
     # plot(out$my.data2[,1:2])
-    if (variant == "de") {
+    if (name == "de") {
       de_hv.plot <- data.frame(out$nfe, out$hv, "None")
       names(de_hv.plot) <- c("Evaluations", "HV", "Priority.Function")
     }
-    else if (variant == "rad") {
+    else if (name == "rad") {
       rad_hv.plot <- data.frame(out$nfe, out$hv, "MRDL")
       names(rad_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
     }
-    else if (variant == "norm") {
+    else if (name == "norm") {
       norm_hv.plot <- data.frame(out$nfe, out$hv, "Norm-L2")
       names(norm_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
     }
-    else if (variant == "gra") {
+    else if (name == "gra") {
       gra_hv.plot <- data.frame(out$nfe, out$hv, "R.I.")
       names(gra_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
     }
-    else if (variant == "random") {
+    else if (name == "random") {
       random_hv.plot <- data.frame(out$nfe, out$hv, "Random")
       names(random_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
