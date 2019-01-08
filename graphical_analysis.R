@@ -227,7 +227,7 @@ create_graphs <-
                                                                 face = "bold"
                                                               )) + geom_jitter(height = 0, width = 0.1)
       p +labs(title=paste0("HV - ",fun),
-                x ="Prioritu Function")
+                x ="Priority Function")
       ggsave(filename = pathname, device = "png")
       
       pathname <- paste0("../files/", fun, "_IGD.png")
@@ -245,7 +245,7 @@ create_graphs <-
                                                                 face = "bold"
                                                               )) + geom_jitter(height = 0, width = 0.1)
       p+labs(title=paste0("IGD - ",fun),
-             x ="Prioritu Function")
+             x ="Priority Function")
       ggsave(filename = pathname, device = "png")
     }
   }
