@@ -46,6 +46,7 @@ for (fun in fun.names) {
   max.val <- c(-Inf, -Inf)
   min.val <- c(Inf, Inf)
   id <- 1
+  #loop for getting max/min values
   for (variant in variants) {
     runIdPre <- paste0("../", variant)
     # temp <- read_feather(paste0("../",variant, "/UF1_info"))
@@ -88,7 +89,7 @@ for (fun in fun.names) {
   
   # Yref <-
   #   as.matrix(read.table(paste0("inst/extdata/pf_data/", fun, ".dat")))
-  
+  #loop for getting scaled data, HV/IGD values over evaluations for all iteractions
   for (variant in variants) {
     # init with zero
     print(variant)
@@ -325,7 +326,20 @@ for (fun in fun.names) {
   #             FUN = median,
   #             by = list(norm_median_hvs$eval))
   # norm_hv.plot$name <- "norm"
+  
+  df$HV <- as.numeric(unlist(df$HV))
+  df$IGD <- as.numeric(unlist(df$IGD))
+  df$HV <- round(df$HV, 4)
+  df$IGD <- round(df$IGD, 4)
+  df$algorithm <- unlist(df$name)
+  
+  df$fesiable <- as.numeric(df$fesiable)
+  df$nondominated <- as.numeric(df$nondominated)
+  df$time <- as.numeric(df$time)
+  df$rep <- as.numeric(df$rep)
+  df$name <- as.character(df$name)
 }
+#HV/IGD values over evaluations for "median" iteraction
   for (variant in variants) {
     none.median <-
       df[which(df[df$algorithm == "none", ]$HV == median(df[df$algorithm == "none", ]$HV)), ]
