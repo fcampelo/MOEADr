@@ -138,7 +138,7 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0, n.obj=NULL){
     # zpdRun <- formatC(iRun, width = runDig, format = "d", flag = "0") #zero padded
     zpdGen <- formatC(iGen2, width = generationDig, format = "d", flag = "0") #zero padded
     # tgt <- paste(filePath, runIdPre, zpdRun, runIdPost, objsFilePre, zpdGen, objsFilePost, sep = "")
-    if (isNULL(n.obj)) tgt <- paste0(runIdPre,"/", fun,"_rep_",iRun2,"_",zpdGen,"_Y")
+    if (is.null(n.obj)) tgt <- paste0(runIdPre,"/", fun,"_rep_",iRun2,"_",zpdGen,"_Y")
     else tgt <- paste0(runIdPre,"/", fun,"_",n.obj,"_", "_rep_",iRun2,"_",zpdGen,"_Y")
     # objsData <- read.table(tgt, header = F, sep = "\t")
     objsData <- as.matrix(read_feather(tgt))
@@ -156,7 +156,7 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0, n.obj=NULL){
     # my.data2 <- rbind(my.data, data.frame(objsData[, 1:nObj], gen, evals))
     
     # UF1_iter_nfe_1_001
-    if (isNULL(n.obj)) tgt <- paste0(runIdPre,"/", fun,"_iter_nfe_",iRun2,"_",zpdGen)
+    if (is.null(n.obj)) tgt <- paste0(runIdPre,"/", fun,"_iter_nfe_",iRun2,"_",zpdGen)
     else tgt <- paste0(runIdPre,"/", fun,"_",n.obj,"_","_iter_nfe_",iRun2,"_",zpdGen)
     # objsData <- read.table(tgt, header = F, sep = "\t")
     temp <- as.matrix(read_feather(tgt))
