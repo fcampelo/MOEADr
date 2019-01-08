@@ -379,20 +379,20 @@ variants<- c("None", "MRDL", "Random", "R.I.", "Norm-L2")
   
   df2 <-
     rbind(
-      data.frame(de_hv.plot),
       data.frame(rad_hv.plot),
+      data.frame(de_hv.plot),
+      data.frame(norm_hv.plot),
       data.frame(gra_hv.plot),
-      data.frame(random_hv.plot),
-      data.frame(norm_hv.plot)
+      data.frame(random_hv.plot)
     )
   
   df3 <-
     rbind(
-      data.frame(de_igd.plot),
       data.frame(rad_igd.plot),
+      data.frame(de_igd.plot),
+      data.frame(norm_igd.plot),
       data.frame(gra_igd.plot),
-      data.frame(random_igd.plot),
-      data.frame(norm_igd.plot)
+      data.frame(random_igd.plot)
     )
   
   pathname <- paste0("../files/", fun, "hv_all.png")
