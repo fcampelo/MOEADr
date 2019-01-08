@@ -116,6 +116,10 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0){
   generationDig <- 3
   nr1prev <- 0
   # cat("gen = ")
+<<<<<<< HEAD
+=======
+  # print(runIdPre)
+>>>>>>> cd moon
   hv <- matrix(0, nrow = gen)
   igd <- matrix(0, nrow = gen)
   nfe <- matrix(0, nrow = gen)
@@ -160,11 +164,6 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0){
     if (i > 1) nfe[i,1] <- temp[,2] + nfe[i-1,1]  
     else nfe[i,1] <- temp[,2]
     
-    if (nfe > 70000) {
-      print("true")
-      break
-    }
-    
     consData <- rep(0, nr1)
     varsData <- rep(0, nr1)
     # print(evals)
@@ -175,7 +174,12 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0){
       objsData[, 1:nObj] <-
         (sweep(objsData[, 1:nObj], 2, min.val)) / ((max.val - min.val) + 1e-50)
       hv[i,1] <- emoa::dominated_hypervolume(t(as.matrix(objsData[,1:nObj])), t(as.matrix(c(1,1))))
-      # emoa::dominated_hypervolume(t(as.matrix(my.data2[,1:2])), t(as.matrix(c(1,1))))
+    }
+    if (flag == 2 && i == gen){
+      if (fun != "moon") igd[i,1] <- calcIGD(objsData[, 1:nObj], Yref)
+      objsData[, 1:nObj] <-
+        (sweep(objsData[, 1:nObj], 2, min.val)) / ((max.val - min.val) + 1e-50)
+      hv[i,1] <- emoa::dominated_hypervolume(t(as.matrix(objsData[,1:nObj])), t(as.matrix(c(1,1))))
     }
   }
   my.data2 <- rbind(my.data2, data.frame(objsData[, 1:nObj], gen, evals, consData, varsData))    # my.data2 <- rbind(my.data, data.frame(objsData[, 1:nObj], consData, varsData, gen, evals))
