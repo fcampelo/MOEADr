@@ -192,7 +192,7 @@ for (fun in fun.names) {
           ndom,
           times,
           1:length(indicatorArcIGD),
-          "none"
+          "None"
         )
       colnames(de_median_gen) <-
         c("HV",
@@ -252,7 +252,7 @@ for (fun in fun.names) {
           ndom,
           times,
           1:length(indicatorArcIGD),
-          "Norm"
+          "Norm-L2"
         )
       colnames(norm_median_gen) <-
         c("HV",
@@ -362,26 +362,26 @@ for (fun in fun.names) {
       )
     # plot(out$my.data2[,1:2])
     if (variant == "de") {
-      de_hv.plot <- data.frame(out$nfe, out$hv, "none")
+      de_hv.plot <- data.frame(out$nfe, out$hv, "None")
       names(de_hv.plot) <- c("Evaluations", "HV", "Priority.Function")
     }
     else if (variant == "rad") {
-      rad_hv.plot <- data.frame(out$nfe, out$hv, "none")
+      rad_hv.plot <- data.frame(out$nfe, out$hv, "MRDL")
       names(rad_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
     }
     else if (variant == "norm") {
-      norm_hv.plot <- data.frame(out$nfe, out$hv, "none")
+      norm_hv.plot <- data.frame(out$nfe, out$hv, "Norm-L2")
       names(norm_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
     }
     else if (variant == "gra") {
-      gra_hv.plot <- data.frame(out$nfe, out$hv, "none")
+      gra_hv.plot <- data.frame(out$nfe, out$hv, "R.I.")
       names(gra_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
     }
     else if (variant == "random") {
-      random_hv.plot <- data.frame(out$nfe, out$hv, "none")
+      random_hv.plot <- data.frame(out$nfe, out$hv, "Random")
       names(random_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
     }
