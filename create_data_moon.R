@@ -307,16 +307,16 @@ for (fun in fun.names) {
   df$time <- as.numeric(df$time)
   df$rep <- as.numeric(df$rep)
   df$name <- as.character(df$name)
-}
-#HV/IGD values over evaluations for "median" iteraction
-print("last variant for")
-variants<- c("None", "MRDL", "Random", "R.I.", "Norm-L2")
-# variants<- c("None")
+  
+  #HV/IGD values over evaluations for "median" iteraction
+  print("last variant for")
+  variants<- c("None", "MRDL", "Random", "R.I.", "Norm-L2")
+  # variants<- c("None")
   for (variant in variants) {
     none.median <-
       df[which(df[df$algorithm == variant, ]$HV == median(df[df$algorithm == variant, ]$HV)), ]
     
-    
+    print(none.median$rep)
     if (variant == "None") name = "de"
     else if (variant == "MRDL") name = "rad"
     else if (variant == "R.I.") name = "gra"
@@ -404,18 +404,20 @@ variants<- c("None", "MRDL", "Random", "R.I.", "Norm-L2")
   ggsave(filename = pathname, device = "png")
   
   
-    pathname <- paste0("../files/", fun, "igd_all.png")
-    p3 <- ggplot(df3, aes(Evaluations, IGD, group = Priority.Function)) +
-      geom_line(aes(color = Priority.Function)) #+
-    # geom_point(aes(shape = name, color = name))#+
-    p3
-    ggsave(filename = pathname, device = "png")
+  pathname <- paste0("../files/", fun, "igd_all.png")
+  p3 <- ggplot(df3, aes(Evaluations, IGD, group = Priority.Function)) +
+    geom_line(aes(color = Priority.Function)) #+
+  # geom_point(aes(shape = name, color = name))#+
+  p3
+  ggsave(filename = pathname, device = "png")
+  
+  create_graphs(df, fun.names, 2)
+  
+  write_feather(df, "forboxplot_moon")
+  write_feather(df2, "HV_gens_moon")
+  write_feather(df3, "IGD_gens_moon")
+}
 
-    create_graphs(df, fun.names, 2)
-
-    write_feather(df, "forboxplot_moon")
-    write_feather(df2, "HV_gens_moon")
-    write_feather(df3, "IGD_gens_moon")
   
   #
   
