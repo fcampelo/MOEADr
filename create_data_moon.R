@@ -32,7 +32,7 @@ fun.names <- list("moon")
 # }
 variants <- c("de", "norm", "rad", "random", "gra")
 # variants <- c("de", "norm", "random", "gra")
-variants <- c("de")
+# variants <- c("de")
 
 for (fun in fun.names) {
   print(fun)
@@ -344,7 +344,7 @@ for (fun in fun.names) {
 #HV/IGD values over evaluations for "median" iteraction
 print("last variant for")
 variants<- c("None", "MRDL", "Random", "R.I.", "Norm-L2")
-variants<- c("None")
+# variants<- c("None")
   for (variant in variants) {
     none.median <-
       df[which(df[df$algorithm == variant, ]$HV == median(df[df$algorithm == variant, ]$HV)), ]
