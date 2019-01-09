@@ -173,7 +173,7 @@ for (fun in fun.names) {
       calculateIndicator(iRun2, objsTmp2, refPoint)
       if (is.null(archive))
         archive <- objsTmp2
-      # indicatorArcIGD[iRun2] <- calcIGD(archive[, 1:2], Yref)
+      indicatorArcIGD[iRun2] <- tail(out$igd,1)
       pdGen <- formatC(gen,
                        width = 3,
                        format = "d",
@@ -414,7 +414,8 @@ for (fun in fun.names) {
   
   create_graphs(df, fun.names, 2)
   
-  write_feather(df, paste0("forboxplot_moon", fun))
-  write_feather(df2, paste0("HV_gens_moon", fun))
-  write_feather(df3, paste0("IGD_gens_moon", fun))
+  write_feather(df, paste0("forboxplot_", fun))
+  write_feather(df2, paste0("HV_gens_", fun))
+  write_feather(df3, paste0("IGD_gens_", fun))
+  variants <- c("de", "norm", "rad", "random", "gra")
 }
