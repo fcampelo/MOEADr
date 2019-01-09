@@ -13,7 +13,7 @@ nVar <- 100
 nCon <- 1
 # reference point
 
-refPoint <- c(1, 1)
+refPoint <- c(1, 0, 1)
 
 #evaluation points
 # check.points <- c(20000, 40000, 60000, 80000, 100000, 120000, 140000)
