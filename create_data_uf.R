@@ -26,13 +26,13 @@ consColnames <- paste("#con", 1:nCon, sep = "")
 
 # Fun names
 fun.names <- list()
-for (i in 1:1) {
+for (i in 1:10) {
   fun.names[[length(fun.names) + 1]] = paste0("UF", i)
   # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
 }
 variants <- c("de", "norm", "rad", "random", "gra")
 # variants <- c("de", "norm", "random", "gra")
-# variants <- c("random ")
+variants <- c("de")
 
 for (fun in fun.names) {
   print(fun)
@@ -62,7 +62,7 @@ for (fun in fun.names) {
           fun = fun,
           runIdPre = runIdPre,
           iRun = iRun,
-          gen = gen,
+          my.gen = gen,
           flag = 0
         )$my.data2[, 1:2]
       max.val <- pmax(max.val, apply(my.data, 2, max))
@@ -121,11 +121,11 @@ for (fun in fun.names) {
           fun = fun,
           runIdPre = runIdPre,
           iRun = iRun,
-          gen = gen,
+          my.gen = gen,
           flag = 2
         )
       my.data <- out$my.data2
-      
+
       if (variant == "de") {
         de_median_hvs <-
           rbind(de_median_hvs, data.frame(out$hv, rep(1:gen), out$nfe))
@@ -316,6 +316,7 @@ for (fun in fun.names) {
     none.median <-
       df[which(df[df$algorithm == variant, ]$HV == median(df[df$algorithm == variant, ]$HV)), ]
     
+    cat(variant, ": ",none.median$rep)
     
     if (variant == "None") name = "de"
     else if (variant == "MRDL") name = "rad"
@@ -336,7 +337,7 @@ for (fun in fun.names) {
         fun = fun,
         runIdPre = runIdPre,
         iRun = iRun,
-        gen = gen,
+        my.gen = gen,
         flag = 1
       )
     # plot(out$my.data2[,1:2])

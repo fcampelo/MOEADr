@@ -62,7 +62,7 @@ for (fun in fun.names) {
           fun = fun,
           runIdPre = runIdPre,
           iRun = iRun,
-          gen = gen,
+          my.gen = gen,
           flag = 0
         )$my.data2[, 1:2]
       max.val <- pmax(max.val, apply(my.data, 2, max))
@@ -121,7 +121,7 @@ for (fun in fun.names) {
           fun = fun,
           runIdPre = runIdPre,
           iRun = iRun,
-          gen = gen,
+          my.gen = gen,
           flag = 2
         )
       my.data <- out$my.data2
@@ -316,7 +316,8 @@ for (fun in fun.names) {
     none.median <-
       df[which(df[df$algorithm == variant, ]$HV == median(df[df$algorithm == variant, ]$HV)), ]
     
-    print(none.median$rep)
+    cat(variant, ": ",none.median$rep)
+    
     if (variant == "None") name = "de"
     else if (variant == "MRDL") name = "rad"
     else if (variant == "R.I.") name = "gra"
@@ -336,7 +337,7 @@ for (fun in fun.names) {
         fun = fun,
         runIdPre = runIdPre,
         iRun = iRun,
-        gen = gen,
+        my.gen = gen,
         flag = 1
       )
     # plot(out$my.data2[,1:2])
