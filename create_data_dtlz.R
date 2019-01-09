@@ -418,9 +418,11 @@ for (fun in fun.names) {
   
   create_graphs(df, fun.names, 2)
   
-  write_feather(df, paste0("forboxplot_moon", fun))
-  write_feather(df2, paste0("HV_gens_moon", fun))
-  write_feather(df3, paste0("IGD_gens_moon", fun))
+  write_feather(df, paste0("forboxplot_", fun))
+  write_feather(df2, paste0("HV_gens_", fun))
+  write_feather(df3, paste0("IGD_gens_", fun))
+  
+  variants <- c("de", "norm", "rad", "random", "gra")
 }
 
 
@@ -810,8 +812,10 @@ for (fun in fun.names) {
   
   create_graphs(df, fun.names, 2)
   
-  write_feather(df, paste0("forboxplot_moon", fun,"_",n.obj,"_"))
-  write_feather(df2, paste0("HV_gens_moon", fun,"_",n.obj,"_"))
-  write_feather(df3, paste0("IGD_gens_moon", fun,"_",n.obj,"_"))
+  write_feather(df, paste0("forboxplot_", fun,"_",n.obj,"_"))
+  write_feather(df2, paste0("HV_gens_", fun,"_",n.obj,"_"))
+  write_feather(df3, paste0("IGD_gens_", fun,"_",n.obj,"_"))
+  
+  variants <- c("de", "norm", "rad", "random", "gra")
 }
 
