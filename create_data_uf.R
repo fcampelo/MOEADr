@@ -44,7 +44,7 @@ for (i in 1:10) {
 }
 variants <- c("de", "norm", "rad", "random", "gra")
 # variants <- c("de", "norm", "random", "gra")
-variants <- c("de")
+# variants <- c("de")
 
 for (fun in fun.names) {
   print(fun)

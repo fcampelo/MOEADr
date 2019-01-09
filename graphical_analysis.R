@@ -111,7 +111,7 @@ calculateIndicator <- function(iRun2, dataTmp, refPoint) {
   }
 }
 
-read.data <- function(fun, runIdPre, iRun, gen, flag = 0, n.obj=NULL){
+read.data <- function(fun, runIdPre, iRun, my.gen, flag = 0, n.obj=NULL){
   runDig <- 3
   generationDig <- 3
   nr1prev <- 0
@@ -124,7 +124,7 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0, n.obj=NULL){
   igd <- matrix(0, nrow = gen)
   nfe <- matrix(0, nrow = gen)
   my.data2 <- data.frame()
-  for (i in 1:gen){
+  for (i in 1:my.gen){
     iGen2 <- i
     iGen <- i - 1
     # cat(iGen, ", ")
@@ -177,7 +177,7 @@ read.data <- function(fun, runIdPre, iRun, gen, flag = 0, n.obj=NULL){
         (sweep(objsData[, 1:nObj], 2, min.val)) / ((max.val - min.val) + 1e-50)
       hv[i,1] <- emoa::dominated_hypervolume(t(as.matrix(objsData[,1:nObj])), t(as.matrix(c(1,1))))
     }
-    if (flag == 2 && i == gen){
+    if (i == my.gen && flag == 2){
       if (fun != "moon") igd[i,1] <- calcIGD(objsData[, 1:nObj], Yref)
       objsData[, 1:nObj] <-
         (sweep(objsData[, 1:nObj], 2, min.val)) / ((max.val - min.val) + 1e-50)
