@@ -183,16 +183,16 @@ for (fun in fun.names) {
       }
       
       isFeasible <- extractFeasible(my.data)
-      cat("\n", sum(isFeasible), " solutions are feasible\n", sep = "")
+      # cat("\n", sum(isFeasible), " solutions are feasible\n", sep = "")
       
       isFoundFeasible <<- T
       objsTmp <- extractNonDominatedSolutions(my.data, isFeasible)
       objsTmp2 <- convertEvalObjectives(objsTmp)
       rankFeasible <- rankUnion(objsTmp2, T) #T or F???
       archive <<- subset(archive, rankFeasible == 1)
-      cat(sum(rankFeasible == 1),
-          " solutions are nondominated\n",
-          sep = "")
+      # cat(sum(rankFeasible == 1),
+      #     " solutions are nondominated\n",
+      #     sep = "")
       
       calculateIndicator(iRun2, objsTmp2, refPoint)
       if (is.null(archive))
