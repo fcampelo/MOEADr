@@ -315,8 +315,9 @@ for (fun in fun.names) {
   for (variant in variants) {
     none.median <-
       df[which(df[df$algorithm == variant, ]$HV == median(df[df$algorithm == variant, ]$HV)), ]
-    print(variant)
-    cat(": ",none.median$rep)
+    
+    cat(variant, ": ",none.median$rep)
+    
     if (variant == "None") name = "de"
     else if (variant == "MRDL") name = "rad"
     else if (variant == "R.I.") name = "gra"
