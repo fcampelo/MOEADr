@@ -32,7 +32,7 @@ fun.names <- list("moon")
 # }
 variants <- c("de", "norm", "rad", "random", "gra")
 # variants <- c("de", "norm", "random", "gra")
-variants <- c("de")
+# variants <- c("de")
 
 for (fun in fun.names) {
   print(fun)
@@ -124,7 +124,7 @@ for (fun in fun.names) {
           my.gen = gen,
           flag = 2
         )
-      exit()
+      
       my.data <- out$my.data2
       
       if (variant == "de") {
