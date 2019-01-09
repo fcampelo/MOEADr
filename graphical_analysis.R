@@ -172,15 +172,25 @@ read.data <- function(fun, runIdPre, iRun, my.gen, flag = 0, n.obj=NULL){
     
     nr1prev <<- nr1prev + nPop
     if (flag == 1){
-      if (fun != "moon") igd[i,1] <- calcIGD(objsData[, 1:nObj], Yref)
-      objsData[, 1:nObj] <-
-        (sweep(objsData[, 1:nObj], 2, min.val)) / ((max.val - min.val) + 1e-50)
+      # objsData[, 1:nObj] <- (sweep(objsData[, 1:nObj], 2, abs(min.val), "+"))
+      if (fun != "moon") {
+        igd[i,1] <- calcIGD(objsData[, 1:nObj], Yref)
+        a<-(sweep(objsData[, 1:nObj], 2, min.val))
+        b<-((max.val - min.val) + 1e-50)
+        objsData[, 1:nObj] <- sweep(a, 2, b, "/")
+      }
       hv[i,1] <- emoa::dominated_hypervolume(t(as.matrix(objsData[,1:nObj])), t(as.matrix(refPoint)))
     }
     if (i == my.gen && flag == 2){
-      if (fun != "moon") igd[i,1] <- calcIGD(objsData[, 1:nObj], Yref)
-      objsData[, 1:nObj] <-
-        (sweep(objsData[, 1:nObj], 2, min.val)) / ((max.val - min.val) + 1e-50)
+     
+      # objsData[, 1:nObj] <- objsData[, 1:nObj] + abs(min.val)
+      if (fun != "moon") {
+        igd[i,1] <- calcIGD(objsData[, 1:nObj], Yref)
+        a<-(sweep(objsData[, 1:nObj], 2, min.val))
+        b<-((max.val - min.val) + 1e-50)
+        objsData[, 1:nObj] <- sweep(a, 2, b, "/")
+      }
+         
       hv[i,1] <- emoa::dominated_hypervolume(t(as.matrix(objsData[,1:nObj])), t(as.matrix(refPoint)))
     }
   }
