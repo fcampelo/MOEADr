@@ -8,12 +8,12 @@ nPop <- 350
 nRun <- 21
 nObj <- 3 # fix even if single obj
 # number of variables
-nVar <- 100
+nVar <- 2
 # number of constraints
 nCon <- 1
 # reference point
 
-refPoint <- c(1, 0, 1)
+refPoint <- matrix(c(1.0, 0.0, 1.0), nrow = 1, ncol = 3)
 
 #evaluation points
 # check.points <- c(20000, 40000, 60000, 80000, 100000, 120000, 140000)
@@ -32,7 +32,7 @@ fun.names <- list("moon")
 # }
 variants <- c("de", "norm", "rad", "random", "gra")
 # variants <- c("de", "norm", "random", "gra")
-# variants <- c("de")
+variants <- c("de")
 
 for (fun in fun.names) {
   print(fun)
@@ -64,7 +64,7 @@ for (fun in fun.names) {
           iRun = iRun,
           my.gen = gen,
           flag = 0
-        )$my.data2[, 1:2]
+        )$my.data2[, 1:nObj]
       max.val <- pmax(max.val, apply(my.data, 2, max))
       min.val <- pmin(min.val, apply(my.data, 2, min))
     }
@@ -159,16 +159,16 @@ for (fun in fun.names) {
       }
       
       isFeasible <- extractFeasible(my.data)
-      cat("\n", sum(isFeasible), " solutions are feasible\n", sep = "")
+      # cat("\n", sum(isFeasible), " solutions are feasible\n", sep = "")
       
       isFoundFeasible <<- T
       objsTmp <- extractNonDominatedSolutions(my.data, isFeasible)
       objsTmp2 <- convertEvalObjectives(objsTmp)
       rankFeasible <- rankUnion(objsTmp2, T) #T or F???
       archive <<- subset(archive, rankFeasible == 1)
-      cat(sum(rankFeasible == 1),
-          " solutions are nondominated\n",
-          sep = "")
+      # cat(sum(rankFeasible == 1),
+      #     " solutions are nondominated\n",
+      #     sep = "")
       
       calculateIndicator(iRun2, objsTmp2, refPoint)
       if (is.null(archive))
@@ -182,7 +182,7 @@ for (fun in fun.names) {
         as.integer(read_feather(paste0(
           runIdPre, "/", fun, "_time_", iRun + 1, "_", pdGen
         )))
-      fes[[length(fes) + 1]] <- sum(isFeasible)
+      fes[[length(fes) + 1]] <- sum(isFeasible)-1
       ndom[[length(ndom) + 1]] <- sum(rankFeasible == 1)
     }
     if (variant == "de") {
@@ -311,7 +311,7 @@ for (fun in fun.names) {
   #HV/IGD values over evaluations for "median" iteraction
   print("last variant for")
   variants<- c("None", "MRDL", "Random", "R.I.", "Norm-L2")
-  # variants<- c("None")
+  variants<- c("None")
   for (variant in variants) {
     none.median <-
       df[which(df[df$algorithm == variant, ]$HV == median(df[df$algorithm == variant, ]$HV)), ]

@@ -134,7 +134,7 @@ read.data <- function(fun, runIdPre, iRun, my.gen, flag = 0, n.obj=NULL){
     objsFilePost <- ""
     varsFilePost <- ""
     consFilePost <- ""
-    
+
     # zpdRun <- formatC(iRun, width = runDig, format = "d", flag = "0") #zero padded
     zpdGen <- formatC(iGen2, width = generationDig, format = "d", flag = "0") #zero padded
     # tgt <- paste(filePath, runIdPre, zpdRun, runIdPost, objsFilePre, zpdGen, objsFilePost, sep = "")
@@ -142,6 +142,9 @@ read.data <- function(fun, runIdPre, iRun, my.gen, flag = 0, n.obj=NULL){
     else tgt <- paste0(runIdPre,"/", fun,"_",n.obj,"_", "_rep_",iRun2,"_",zpdGen,"_Y")
     # objsData <- read.table(tgt, header = F, sep = "\t")
     objsData <- as.matrix(read_feather(tgt))
+    # print(objsData[,1:nObj])
+    # print(objsData[,1:nObj])
+    # exit()
     # tgt <- paste(filePath, runIdPre, zpdRun, runIdPost, varsFilePre, zpdGen, varsFilePost, sep = "")
     # varsData <- read.table(tgt, header = F, sep = "\t")
     # tgt <- paste(filePath, runIdPre, zpdRun, runIdPost, consFilePre, zpdGen, consFilePost, sep = "")
@@ -172,13 +175,13 @@ read.data <- function(fun, runIdPre, iRun, my.gen, flag = 0, n.obj=NULL){
       if (fun != "moon") igd[i,1] <- calcIGD(objsData[, 1:nObj], Yref)
       objsData[, 1:nObj] <-
         (sweep(objsData[, 1:nObj], 2, min.val)) / ((max.val - min.val) + 1e-50)
-      hv[i,1] <- emoa::dominated_hypervolume(t(as.matrix(objsData[,1:nObj])), t(as.matrix(c(1,1))))
+      hv[i,1] <- emoa::dominated_hypervolume(t(as.matrix(objsData[,1:nObj])), t(as.matrix(refPoint)))
     }
     if (i == my.gen && flag == 2){
       if (fun != "moon") igd[i,1] <- calcIGD(objsData[, 1:nObj], Yref)
       objsData[, 1:nObj] <-
         (sweep(objsData[, 1:nObj], 2, min.val)) / ((max.val - min.val) + 1e-50)
-      hv[i,1] <- emoa::dominated_hypervolume(t(as.matrix(objsData[,1:nObj])), t(as.matrix(c(1,1))))
+      hv[i,1] <- emoa::dominated_hypervolume(t(as.matrix(objsData[,1:nObj])), t(as.matrix(refPoint)))
     }
   }
   my.data2 <- rbind(my.data2, data.frame(objsData[, 1:nObj], gen, evals, consData, varsData))    # my.data2 <- rbind(my.data, data.frame(objsData[, 1:nObj], consData, varsData, gen, evals))
