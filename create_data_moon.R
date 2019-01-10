@@ -347,7 +347,6 @@ for (fun in fun.names) {
       names(de_hv.plot) <- c("Evaluations", "HV", "Priority.Function")
       de_igd.plot <- data.frame(out$nfe, out$igd, "None")
       names(de_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
-      print()
     }
     else if (name == "rad") {
       rad_hv.plot <- data.frame(out$nfe, out$hv, "MRDL")
