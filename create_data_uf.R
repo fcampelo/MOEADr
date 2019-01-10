@@ -372,10 +372,10 @@ for (fun in fun.names) {
       norm_hv.plot <- data.frame(out$nfe, out$hv, "Norm")
       names(norm_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
-      print(names(norm_hv.plot))
+      print(head(norm_hv.plot))
       norm_igd.plot <- data.frame(out$nfe, out$igd, "Norm")
       names(norm_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
-      print(names(norm_igd.plot))
+      print(head(norm_igd.plot))
       exit()
     }
     else if (name == "gra") {
