@@ -311,7 +311,7 @@ for (fun in fun.names) {
   #HV/IGD values over evaluations for "median" iteraction
   print("last variant for")
   variants<- c("None", "MRDL", "Random", "R.I.", "Norm")
-  variants<- c("Norm")
+  # variants<- c("Norm")
   de_hv.plot <- data.frame()
   rad_hv.plot <- data.frame()
   gra_hv.plot <- data.frame()
