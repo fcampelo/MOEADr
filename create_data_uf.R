@@ -5,7 +5,7 @@ source("graphical_analysis.R")
 setwd("~/MOEADr/")
 nPop <- 350
 # nRun <- 21
-nRun <- 21
+nRun <- 3
 nObj <- 2 # fix even if single obj
 # number of variables
 nVar <- 100
@@ -312,6 +312,19 @@ for (fun in fun.names) {
   print("last variant for")
   variants<- c("None", "MRDL", "Random", "R.I.", "Spectral-Norm")
   # variants<- c("None")
+  de_hv.plot <- data.frame()
+  rad_hv.plot <- data.frame()
+  gra_hv.plot <- data.frame()
+  random_hv.plot <- data.frame()
+  norm_hv.plot <- data.frame()
+  
+  de_igd.plot <- data.frame()
+  rad_igd.plot <- data.frame()
+  gra_igd.plot <- data.frame()
+  random_igd.plot <- data.frame()
+  norm_igd.plot <- data.frame()
+  
+  
   for (variant in variants) {
     none.median <-
       df[which(df[df$algorithm == variant, ]$HV == median(df[df$algorithm == variant, ]$HV)), ]
@@ -341,6 +354,7 @@ for (fun in fun.names) {
         flag = 1
       )
     # plot(out$my.data2[,1:2])
+    
     if (name == "de") {
       de_hv.plot <- data.frame(out$nfe, out$hv, "None")
       names(de_hv.plot) <- c("Evaluations", "HV", "Priority.Function")
@@ -395,7 +409,8 @@ for (fun in fun.names) {
       data.frame(gra_igd.plot),
       data.frame(random_igd.plot)
     )
-  
+  print(df3)
+  exit()
   pathname <- paste0("../files/", fun, "hv_all.png")
   p2 <-
     ggplot(df2, aes(Evaluations, HV, group = Priority.Function)) +
