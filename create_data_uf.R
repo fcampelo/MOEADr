@@ -5,7 +5,7 @@ source("graphical_analysis.R")
 setwd("~/MOEADr/")
 nPop <- 350
 # nRun <- 21
-nRun <- 3
+nRun <- 21
 nObj <- 2 # fix even if single obj
 # number of variables
 nVar <- 100
@@ -32,7 +32,7 @@ for (i in 1:10) {
 }
 variants <- c("de", "norm", "rad", "random", "gra")
 # variants <- c("de", "norm", "random", "gra")
-variants <- c("de")
+# variants <- c("de")
 
 for (fun in fun.names) {
   print(fun)
@@ -311,7 +311,7 @@ for (fun in fun.names) {
   #HV/IGD values over evaluations for "median" iteraction
   print("last variant for")
   variants<- c("None", "MRDL", "Random", "R.I.", "Spectral-Norm")
-  variants<- c("None")
+  # variants<- c("None")
   for (variant in variants) {
     none.median <-
       df[which(df[df$algorithm == variant, ]$HV == median(df[df$algorithm == variant, ]$HV)), ]
