@@ -163,9 +163,12 @@ read.data <- function(fun, runIdPre, iRun, my.gen, flag = 0, n.obj=NULL){
     else tgt <- paste0(runIdPre,"/", fun,"_",n.obj,"_","_iter_nfe_",iRun2,"_",zpdGen)
     # objsData <- read.table(tgt, header = F, sep = "\t")
     temp <- as.matrix(read_feather(tgt))
-    if (i > 1) nfe[i,1] <- temp[,2] + nfe[i-1,1]  
+    if (i > 1) {
+      nfe[i,1] <- temp[,2] + nfe[i-1,1]  
+      nfe <- nfe - 1
+    }
     else nfe[i,1] <- temp[,2]
-    nfe <- nfe - 1
+    
     consData <- rep(0, nr1)
     varsData <- rep(0, nr1)
     # print(evals)
