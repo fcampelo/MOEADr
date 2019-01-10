@@ -5,7 +5,7 @@ rm(list = ls(all = TRUE))
 setwd("~/MOEADr/")
 source("graphical_analysis.R")
 setwd("~/MOEADr/")
-nPop <- 350
+nPop <- 50
 # nRun <- 21
 nRun <- 1
 nObj <- 2 # fix even if single obj
@@ -313,7 +313,7 @@ for (fun in fun.names) {
   #HV/IGD values over evaluations for "median" iteraction
   print("last variant for")
   variants<- c("None", "MRDL", "Random", "R.I.", "Norm")
-  # variants<- c("None")
+  variants<- c("Norm")
   de_hv.plot <- data.frame()
   rad_hv.plot <- data.frame()
   gra_hv.plot <- data.frame()
@@ -369,17 +369,16 @@ for (fun in fun.names) {
         c("Evaluations", "HV", "Priority.Function")
       rad_igd.plot <- data.frame(out$nfe, out$igd, "MRDL")
       names(rad_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
-      
-      print(de_hv.plot)
-      print(de_igd.plot)
-      exit()
     }
     else if (name == "norm") {
       norm_hv.plot <- data.frame(out$nfe, out$hv, "Norm")
       names(norm_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
+      print(names(norm_hv.plot))
       norm_igd.plot <- data.frame(out$nfe, out$igd, "Norm")
       names(norm_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
+      print(names(norm_igd.plot))
+      exit()
     }
     else if (name == "gra") {
       gra_hv.plot <- data.frame(out$nfe, out$hv, "R.I.")
