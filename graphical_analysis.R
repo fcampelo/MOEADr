@@ -165,7 +165,7 @@ read.data <- function(fun, runIdPre, iRun, my.gen, flag = 0, n.obj=NULL){
     temp <- as.matrix(read_feather(tgt))
     if (i > 1) nfe[i,1] <- temp[,2] + nfe[i-1,1]  
     else nfe[i,1] <- temp[,2]
-    
+    nfe <- nfe - 1
     consData <- rep(0, nr1)
     varsData <- rep(0, nr1)
     # print(evals)
@@ -226,7 +226,7 @@ create_graphs <-
     # algorithm <- "moead.de"
     for (fun in fun.names) {
       # my.data <- data[data$fun == fun, ]
-      my.data$algorithm <- factor(my.data$algorithm)
+      my.data$algorithm <- factor(my.data$algorithm,levels = c("MRDL", "None", "Spectral-Norm", "R.I.", "Random"))
       pathname <- paste0("../files/", fun, "_HV.png")
       p <- ggplot(my.data, aes(algorithm, HV)) +geom_boxplot(aes(fill = algorithm), scale = "count")
         # geom_violin(aes(fill = algorithm), scale = "count") #+ ylim(0, 1) +
