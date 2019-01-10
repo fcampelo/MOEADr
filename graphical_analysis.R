@@ -168,9 +168,9 @@ read.data <- function(fun, runIdPre, iRun, my.gen, flag = 0, n.obj=NULL){
     temp <- as.matrix(read_feather(tgt))
     if (i > 1) {
       nfe[i,1] <- temp[,2] + nfe[i-1,1]  
-      nfe <- nfe - 1
+      nfe[i,1] <- nfe[i,1] - 1
     }
-    else nfe[i,1] <- temp[,2]
+    else {nfe[i,1] <- temp[,2]}
     
     consData <- rep(0, nr1)
     varsData <- rep(0, nr1)
