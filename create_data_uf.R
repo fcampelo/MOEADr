@@ -13,11 +13,15 @@ nRun <- 21
 =======
 # nRun <- 21
 <<<<<<< HEAD
+<<<<<<< HEAD
 nRun <- 1
 >>>>>>> dtlz exp
 =======
 nRun <- 21
 >>>>>>> exp uf1
+=======
+nRun <- 3
+>>>>>>> create data *
 nObj <- 2 # fix even if single obj
 # number of variables
 nVar <- 100
@@ -44,7 +48,7 @@ for (i in 1:10) {
 }
 variants <- c("de", "norm", "rad", "random", "gra")
 # variants <- c("de", "norm", "random", "gra")
-# variants <- c("de")
+variants <- c("de")
 
 for (fun in fun.names) {
   print(fun)
@@ -278,7 +282,7 @@ for (fun in fun.names) {
           ndom,
           times,
           1:length(indicatorArcIGD),
-          "Norm-L2"
+          "Spectral-Norm"
         )
       colnames(norm_median_gen) <-
         c("HV",
@@ -334,8 +338,8 @@ for (fun in fun.names) {
   
   #HV/IGD values over evaluations for "median" iteraction
   print("last variant for")
-  variants<- c("None", "MRDL", "Random", "R.I.", "Norm-L2")
-  # variants<- c("None")
+  variants<- c("None", "MRDL", "Random", "R.I.", "Spectral-Norm")
+  variants<- c("None")
   for (variant in variants) {
     none.median <-
       df[which(df[df$algorithm == variant, ]$HV == median(df[df$algorithm == variant, ]$HV)), ]
@@ -346,7 +350,7 @@ for (fun in fun.names) {
     else if (variant == "MRDL") name = "rad"
     else if (variant == "R.I.") name = "gra"
     else if (variant == "Random") name = "random"
-    else if (variant == "Norm-L2") name = "norm"
+    else if (variant == "Spectral-Norm") name = "norm"
     
     runIdPre <- paste0("../", name)
     temp <- read_feather(paste0("../", name, "/", fun, "_info"))
@@ -375,28 +379,28 @@ for (fun in fun.names) {
       rad_hv.plot <- data.frame(out$nfe, out$hv, "MRDL")
       names(rad_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
-      rad_igd.plot <- data.frame(out$nfe, out$igd, "None")
+      rad_igd.plot <- data.frame(out$nfe, out$igd, "MRDL")
       names(rad_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
     }
     else if (name == "norm") {
-      norm_hv.plot <- data.frame(out$nfe, out$hv, "Norm-L2")
+      norm_hv.plot <- data.frame(out$nfe, out$hv, "Spectral-Norm")
       names(norm_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
-      norm_igd.plot <- data.frame(out$nfe, out$igd, "None")
+      norm_igd.plot <- data.frame(out$nfe, out$igd, "Spectral-Norm")
       names(norm_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
     }
     else if (name == "gra") {
       gra_hv.plot <- data.frame(out$nfe, out$hv, "R.I.")
       names(gra_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
-      gra_igd.plot <- data.frame(out$nfe, out$igd, "None")
+      gra_igd.plot <- data.frame(out$nfe, out$igd, "R.I.")
       names(gra_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
     }
     else if (name == "random") {
       random_hv.plot <- data.frame(out$nfe, out$hv, "Random")
       names(random_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
-      random_igd.plot <- data.frame(out$nfe, out$igd, "None")
+      random_igd.plot <- data.frame(out$nfe, out$igd, "Random")
       names(random_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
     }
     
