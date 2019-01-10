@@ -411,8 +411,6 @@ for (fun in fun.names) {
       data.frame(gra_igd.plot),
       data.frame(random_igd.plot)
     )
-  print(df3)
-  exit()
   pathname <- paste0("../files/", fun, "hv_all.png")
   p2 <-
     ggplot(df2, aes(Evaluations, HV, group = Priority.Function)) +
