@@ -5,7 +5,7 @@ source("graphical_analysis.R")
 setwd("~/MOEADr/")
 nPop <- 350
 # nRun <- 21
-nRun <- 1
+nRun <- 21
 nObj <- 3 # fix even if single obj
 # number of variables
 nVar <- 2
@@ -354,9 +354,6 @@ for (fun in fun.names) {
         c("Evaluations", "HV", "Priority.Function")
       rad_igd.plot <- data.frame(out$nfe, out$igd, "None")
       names(rad_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
-      print(de_hv.plot)
-      print(de_igd.plot)
-      exit()
     }
     else if (name == "norm") {
       norm_hv.plot <- data.frame(out$nfe, out$hv, "Norm")
