@@ -7,7 +7,7 @@ source("graphical_analysis.R")
 setwd("~/MOEADr/")
 nPop <- 350
 # nRun <- 21
-nRun <- 3
+nRun <- 21
 nObj <- 2 # fix even if single obj
 # number of variables
 nVar <- 100
