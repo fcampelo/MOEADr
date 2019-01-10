@@ -290,11 +290,12 @@ for (fun in fun.names) {
   df <-
     rbind(
       df,
-      data.frame(de_median_gen),
+      
       data.frame(rad_median_gen),
+      data.frame(de_median_gen),
+      data.frame(norm_median_gen),
       data.frame(gra_median_gen),
-      data.frame(random_median_gen),
-      data.frame(norm_median_gen)
+      data.frame(random_median_gen)
     )
   df$fun <- fun
   df$HV <- as.numeric(unlist(df$HV))
