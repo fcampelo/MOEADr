@@ -427,7 +427,7 @@ for (fun in fun.names) {
   p3
   ggsave(filename = pathname, device = "png")
   
-  create_graphs(df, fun.names, 2)
+  create_graphs(df, fun, 2)
   
   write_feather(df, paste0("forboxplot_", fun))
   write_feather(df2, paste0("HV_gens_", fun))
