@@ -91,7 +91,7 @@ for (fun in fun.names) {
   norm_median_igds <- data.frame()
   
   Yref <-
-    as.matrix(read.table(paste0("inst/extdata/pf_data/", fun, ".dat")))
+    as.matrix(read.table(paste0("inst/extdata/pf_data/", fun, "2D.pf")))
   #loop for getting scaled data, HV/IGD values over evaluations for all iteractions
   print("2nd variant for")
   for (variant in variants) {
