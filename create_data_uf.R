@@ -3,9 +3,9 @@ rm(list = ls(all = TRUE))
 setwd("~/MOEADr/")
 source("graphical_analysis.R")
 setwd("~/MOEADr/")
-nPop <- 50
+nPop <- 350
 # nRun <- 21
-nRun <- 1
+nRun <- 21
 nObj <- 2 # fix even if single obj
 # number of variables
 nVar <- 100
@@ -372,11 +372,8 @@ for (fun in fun.names) {
       norm_hv.plot <- data.frame(out$nfe, out$hv, "Norm")
       names(norm_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
-      print(head(norm_hv.plot))
       norm_igd.plot <- data.frame(out$nfe, out$igd, "Norm")
       names(norm_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
-      print(head(norm_igd.plot))
-      exit()
     }
     else if (name == "gra") {
       gra_hv.plot <- data.frame(out$nfe, out$hv, "R.I.")
