@@ -107,6 +107,7 @@ for (fun in fun.names) {
     runIdPre <- paste0("../", variant)
     df <- data.frame()
     df2 <- data.frame()
+    df3 <- data.frame()
     # temp <- read_feather(paste0("../",variant, "/UF1_info"))
     temp <- read_feather(paste0("../", variant, "/", fun, "_info"))
     temp <- as.data.frame(temp)
@@ -290,19 +291,21 @@ for (fun in fun.names) {
   df <-
     rbind(
       df,
-      data.frame(de_median_gen),
       data.frame(rad_median_gen),
+      data.frame(de_median_gen),
+      data.frame(norm_median_gen),
       data.frame(gra_median_gen),
-      data.frame(random_median_gen),
-      data.frame(norm_median_gen)
+      data.frame(random_median_gen)
     )
+  print(df$name)
   df$fun <- fun
   df$HV <- as.numeric(unlist(df$HV))
   df$IGD <- as.numeric(unlist(df$IGD))
   df$HV <- round(df$HV, 4)
   df$IGD <- round(df$IGD, 4)
   df$algorithm <- unlist(df$name)
-  
+  print(df$name)
+  exit()
   df$fesiable <- as.numeric(df$fesiable)
   df$nondominated <- as.numeric(df$nondominated)
   df$time <- as.numeric(df$time)
@@ -387,7 +390,6 @@ for (fun in fun.names) {
       data.frame(gra_hv.plot),
       data.frame(random_hv.plot)
     )
-  
   df3 <-
     rbind(
       data.frame(rad_igd.plot),
