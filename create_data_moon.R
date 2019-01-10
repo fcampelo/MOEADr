@@ -347,33 +347,34 @@ for (fun in fun.names) {
       names(de_hv.plot) <- c("Evaluations", "HV", "Priority.Function")
       de_igd.plot <- data.frame(out$nfe, out$igd, "None")
       names(de_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
+      print()
     }
     else if (name == "rad") {
       rad_hv.plot <- data.frame(out$nfe, out$hv, "MRDL")
       names(rad_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
-      rad_igd.plot <- data.frame(out$nfe, out$igd, "None")
+      rad_igd.plot <- data.frame(out$nfe, out$igd, "MRDL")
       names(rad_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
     }
     else if (name == "norm") {
       norm_hv.plot <- data.frame(out$nfe, out$hv, "Norm")
       names(norm_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
-      norm_igd.plot <- data.frame(out$nfe, out$igd, "None")
+      norm_igd.plot <- data.frame(out$nfe, out$igd, "Norm")
       names(norm_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
     }
     else if (name == "gra") {
       gra_hv.plot <- data.frame(out$nfe, out$hv, "R.I.")
       names(gra_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
-      gra_igd.plot <- data.frame(out$nfe, out$igd, "None")
+      gra_igd.plot <- data.frame(out$nfe, out$igd, "R.I.")
       names(gra_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
     }
     else if (name == "random") {
       random_hv.plot <- data.frame(out$nfe, out$hv, "Random")
       names(random_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
-      random_igd.plot <- data.frame(out$nfe, out$igd, "None")
+      random_igd.plot <- data.frame(out$nfe, out$igd, "Random")
       names(random_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
     }
     
