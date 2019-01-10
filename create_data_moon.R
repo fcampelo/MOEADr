@@ -387,7 +387,7 @@ for (fun in fun.names) {
       data.frame(gra_hv.plot),
       data.frame(random_hv.plot)
     )
-  
+  df2 <= names(df2)[order(df2)]
   df3 <-
     rbind(
       data.frame(rad_igd.plot),
