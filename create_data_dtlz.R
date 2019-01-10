@@ -110,7 +110,7 @@ for (fun in fun.names) {
     df <- data.frame()
     df2 <- data.frame()
     # temp <- read_feather(paste0("../",variant, "/UF1_info"))
-    temp <- read_feather(paste0("../", variant, "/", fun,"_",n.obj, "_info"))
+    temp <- read_feather(paste0("../", variant, "/", fun, "_info"))
     temp <- as.data.frame(temp)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
@@ -328,7 +328,7 @@ for (fun in fun.names) {
     else if (variant == "Norm") name = "norm"
     
     runIdPre <- paste0("../", name)
-    temp <- read_feather(paste0("../", name, "/", fun, "_info"))
+    temp <- read_feather(paste0("../", name, "/", fun,"_info"))
     temp <- as.data.frame(temp)
     
     iRun2 <- none.median$rep[1]
