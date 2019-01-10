@@ -27,7 +27,7 @@ decomp <- list(name = "SLD", H = 349)
 scaling <- list()
 scaling$name <- "simple"
 
-n.objs <- c(3)
+n.objs <- c(2)
 
 
 stopcrit  <- list(list(name    = "maxeval",
@@ -75,7 +75,7 @@ for (n.obj in n.objs) {
         
         cat("rep:", j)
         
-        my.file.n <- paste0("../../de/",fun,"_")
+        my.file.n <- paste0("../../de/",fun,"_",n.obj,"_")
         moead.de <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
@@ -87,7 +87,7 @@ for (n.obj in n.objs) {
           my.file.n = my.file.n
         )
         
-        my.file.n <- paste0("../../dra/",fun,"_")
+        my.file.n <- paste0("../../dra/",fun,"_",n.obj,"_")
         moead.dra <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
@@ -102,7 +102,7 @@ for (n.obj in n.objs) {
         
         
         # gra.awt
-        my.file.n <- paste0("../../gra/",fun,"_")
+        my.file.n <- paste0("../../gra/",fun,"_",n.obj,"_")
         moead.gra <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
@@ -118,7 +118,7 @@ for (n.obj in n.objs) {
         # write_feather(as.data.frame(moead.gra$Y), my.file.n)
         
         # ondb
-        my.file.n <- paste0("../../rad/",fun,"_")
+        my.file.n <- paste0("../../rad/",fun,"_",n.obj,"_")
         moead.rad <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
@@ -131,7 +131,7 @@ for (n.obj in n.objs) {
           my.file.n = my.file.n
         )
         
-        my.file.n <- paste0("../../norm/",fun,"_")
+        my.file.n <- paste0("../../norm/",fun,"_",n.obj,"_")
         moead.norm <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
@@ -144,7 +144,7 @@ for (n.obj in n.objs) {
           my.file.n = my.file.n
         )
         
-        my.file.n <- paste0("../../random/",fun,"_")
+        my.file.n <- paste0("../../random/",fun,"_",n.obj,"_")
         moead.random <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
