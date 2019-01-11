@@ -15,7 +15,7 @@ nVar <- 100
 nCon <- 1
 # reference point
 
-refPoint <- c(1, 1)
+refPoint <- c(1, 1, 1)
 
 #evaluation points
 # check.points <- c(20000, 40000, 60000, 80000, 100000, 120000, 140000)
@@ -28,7 +28,7 @@ consColnames <- paste("#con", 1:nCon, sep = "")
 
 # Fun names
 fun.names <- list()
-for (i in 1:10) {
+for (i in 8:10) {
   fun.names[[length(fun.names) + 1]] = paste0("UF", i)
   # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
 }
