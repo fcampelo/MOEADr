@@ -26,7 +26,7 @@ consColnames <- paste("#con", 1:nCon, sep = "")
 
 # Fun names
 fun.names <- list()
-for (i in 1:3) {
+for (i in 1:1) {
   # fun.names[[length(fun.names) + 1]] = paste0("UF", i)
   fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
 }
