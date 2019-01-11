@@ -26,7 +26,7 @@ consColnames <- paste("#con", 1:nCon, sep = "")
 
 # Fun names
 fun.names <- list()
-for (i in 1:3) {
+for (i in 1:1) {
   # fun.names[[length(fun.names) + 1]] = paste0("UF", i)
   fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
 }
@@ -52,7 +52,7 @@ for (fun in fun.names) {
   for (variant in variants) {
     runIdPre <- paste0("../", variant)
     # temp <- read_feather(paste0("../",variant, "/UF1_info"))
-    temp <- read_feather(paste0("../", variant, "/", fun, "_info"))
+    temp <- read_feather(paste0("../", variant, "/", fun, "2_info"))
     temp <- as.data.frame(temp)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
@@ -109,7 +109,7 @@ for (fun in fun.names) {
     df <- data.frame()
     df2 <- data.frame()
     # temp <- read_feather(paste0("../",variant, "/UF1_info"))
-    temp <- read_feather(paste0("../", variant, "/", fun, "_info"))
+    temp <- read_feather(paste0("../", variant, "/", fun, "2_info"))
     temp <- as.data.frame(temp)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
