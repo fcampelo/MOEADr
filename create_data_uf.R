@@ -8,7 +8,7 @@ setwd("~/MOEADr/")
 nPop <- 350
 # nRun <- 21
 nRun <- 21
-nObj <- 2 # fix even if single obj
+nObj <- 3 # fix even if single obj
 # number of variables
 nVar <- 100
 # number of constraints
@@ -28,7 +28,7 @@ consColnames <- paste("#con", 1:nCon, sep = "")
 
 # Fun names
 fun.names <- list()
-for (i in 9:10) {
+for (i in 8:10) {
   fun.names[[length(fun.names) + 1]] = paste0("UF", i)
   # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
 }
