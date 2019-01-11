@@ -228,7 +228,7 @@ create_graphs <-
     # algorithm <- "moead.de"
     for (fun in fun.names) {
       # my.data <- data[data$fun == fun, ]
-      my.data$algorithm <- factor(my.data$algorithm,levels = c("MRDL", "None", "Spectral-Norm", "R.I.", "Random"))
+      # my.data$algorithm <- factor(my.data$algorithm,levels = c("MRDL", "None", "Spectral-Norm", "R.I.", "Random"))
       pathname <- paste0("../files/", fun, "_HV.png")
       p <- ggplot(my.data, aes(algorithm, HV)) +geom_boxplot(aes(fill = algorithm), scale = "count")
         # geom_violin(aes(fill = algorithm), scale = "count") #+ ylim(0, 1) +
