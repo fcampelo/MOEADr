@@ -75,7 +75,7 @@ for (n.obj in n.objs) {
         
         cat("rep:", j)
         
-        my.file.n <- paste0("../../de/",fun,"_",n.obj,"_")
+        my.file.n <- paste0("../../de/",fun,"_")
         moead.de <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
@@ -86,8 +86,9 @@ for (n.obj in n.objs) {
           seed = j,
           my.file.n = my.file.n
         )
+        exit()
         
-        my.file.n <- paste0("../../dra/",fun,"_",n.obj,"_")
+        my.file.n <- paste0("../../dra/",fun,"_")
         moead.dra <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
@@ -102,7 +103,7 @@ for (n.obj in n.objs) {
         
         
         # gra.awt
-        my.file.n <- paste0("../../gra/",fun,"_",n.obj,"_")
+        my.file.n <- paste0("../../gra/",fun,"_")
         moead.gra <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
@@ -118,7 +119,7 @@ for (n.obj in n.objs) {
         # write_feather(as.data.frame(moead.gra$Y), my.file.n)
         
         # ondb
-        my.file.n <- paste0("../../rad/",fun,"_",n.obj,"_")
+        my.file.n <- paste0("../../rad/",fun,"_")
         moead.rad <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
@@ -131,7 +132,7 @@ for (n.obj in n.objs) {
           my.file.n = my.file.n
         )
         
-        my.file.n <- paste0("../../norm/",fun,"_",n.obj,"_")
+        my.file.n <- paste0("../../norm/",fun,"_")
         moead.norm <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
@@ -144,7 +145,7 @@ for (n.obj in n.objs) {
           my.file.n = my.file.n
         )
         
-        my.file.n <- paste0("../../random/",fun,"_",n.obj,"_")
+        my.file.n <- paste0("../../random/",fun,"_")
         moead.random <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
