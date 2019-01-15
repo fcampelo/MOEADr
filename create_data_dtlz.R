@@ -52,11 +52,12 @@ for (fun in fun.names) {
   for (variant in variants) {
     runIdPre <- paste0("../", variant)
     # temp <- read_feather(paste0("../",variant, "/UF1_info"))
-    temp <- read_feather(paste0("../", variant, "/", fun, "_2_info"))
-    temp <- as.data.frame(temp)
+    if (variant == "de") temp <- read_feather(paste0("../", variant, "/", fun, "_2_info"))
+    else temp <- read_feather(paste0("../", variant, "/", fun, "_info"))    
+temp <- as.data.frame(temp)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
-      
+ 
       gen <- as.integer(temp[iRun2, ])
       my.data <-
         read.data(
@@ -90,7 +91,7 @@ for (fun in fun.names) {
   norm_median_igds <- data.frame()
   
   Yref <-
-    as.matrix(read.table(paste0("inst/extdata/pf_data/", fun, ".dat")))
+    as.matrix(read.table(paste0("inst/extdata/pf_data/", fun, ".2D.pf")))
   #loop for getting scaled data, HV/IGD values over evaluations for all iteractions
   print("2nd variant for")
   for (variant in variants) {
@@ -109,7 +110,9 @@ for (fun in fun.names) {
     df <- data.frame()
     df2 <- data.frame()
     # temp <- read_feather(paste0("../",variant, "/UF1_info"))
-    temp <- read_feather(paste0("../", variant, "/", fun, "_2_info"))
+   # temp <- read_feather(paste0("../", variant, "/", fun, "_2_info"))
+    if (variant == "de") temp <- read_feather(paste0("../", variant, "/", fun, "_2_info"))
+    else temp <- read_feather(paste0("../", variant, "/", fun, "_info"))
     temp <- as.data.frame(temp)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
@@ -329,7 +332,7 @@ for (fun in fun.names) {
   for (variant in variants) {
     none.median <-
       df[which(df[df$algorithm == variant, ]$HV == median(df[df$algorithm == variant, ]$HV)), ]
-    
+   # print(df[df$algorithm == variant, ]$IGD)
     cat(variant, ": ",none.median$rep)
     
     if (variant == "None") name = "de"
@@ -339,7 +342,10 @@ for (fun in fun.names) {
     else if (variant == "Norm") name = "norm"
     
     runIdPre <- paste0("../", name)
-    temp <- read_feather(paste0("../", name, "/", fun, "_info"))
+    #temp <- read_feather(paste0("../", name, "/", fun, "_info"))
+if (name == "de") temp <- read_feather(paste0("../", name, "/", fun, "_2_info"))
+    else temp <- read_feather(paste0("../", name, "/", fun, "_info"))    
+
     temp <- as.data.frame(temp)
     
     iRun2 <- none.median$rep[1]
