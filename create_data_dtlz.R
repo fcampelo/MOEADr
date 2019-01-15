@@ -32,7 +32,7 @@ for (i in 1:1) {
 }
 variants <- c("de", "norm", "rad", "random", "gra")
 # variants <- c("de", "norm", "random", "gra")
-# variants <- c("random ")
+variants <- c("de")
 
 n.obj <- 2
 for (fun in fun.names) {
@@ -317,7 +317,7 @@ temp <- as.data.frame(temp)
   #HV/IGD values over evaluations for "median" iteraction
   print("last variant for")
   variants<- c("None", "MRDL", "Random", "R.I.", "Norm")
-  # variants<- c("Norm")
+  variants<- c("None")
   de_hv.plot <- data.frame()
   rad_hv.plot <- data.frame()
   gra_hv.plot <- data.frame()
