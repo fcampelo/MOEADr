@@ -54,7 +54,7 @@ for (fun in fun.names) {
     runIdPre <- paste0("../", variant)
     # temp <- read_feather(paste0("../",variant, "/UF1_info"))
     # if (variant == "de") 
-      temp <- read_feather(paste0("../", variant, "/", fun, "_2_info"))
+      temp <- read_feather(paste0("../", variant, "/", fun, "_info"))
     # else temp <- read_feather(paste0("../", variant, "/", fun, "_info"))    
 temp <- as.data.frame(temp)
     for (iRun2 in 1:nRun) {
@@ -113,8 +113,7 @@ temp <- as.data.frame(temp)
     df2 <- data.frame()
     # temp <- read_feather(paste0("../",variant, "/UF1_info"))
    # temp <- read_feather(paste0("../", variant, "/", fun, "_2_info"))
-    if (variant == "de") temp <- read_feather(paste0("../", variant, "/", fun, "_2_info"))
-    else temp <- read_feather(paste0("../", variant, "/", fun, "_info"))
+    temp <- read_feather(paste0("../", variant, "/", fun, "_info"))
     temp <- as.data.frame(temp)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
