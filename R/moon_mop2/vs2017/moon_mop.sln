@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2019
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "moon_mop", "moon_mop\moon_mop.vcxproj", "{B288BA9B-5D5B-462B-B22C-571ADABCFEAF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B288BA9B-5D5B-462B-B22C-571ADABCFEAF}.Debug|x64.ActiveCfg = Debug|x64
+		{B288BA9B-5D5B-462B-B22C-571ADABCFEAF}.Debug|x64.Build.0 = Debug|x64
+		{B288BA9B-5D5B-462B-B22C-571ADABCFEAF}.Debug|x86.ActiveCfg = Debug|Win32
+		{B288BA9B-5D5B-462B-B22C-571ADABCFEAF}.Debug|x86.Build.0 = Debug|Win32
+		{B288BA9B-5D5B-462B-B22C-571ADABCFEAF}.Release|x64.ActiveCfg = Release|x64
+		{B288BA9B-5D5B-462B-B22C-571ADABCFEAF}.Release|x64.Build.0 = Release|x64
+		{B288BA9B-5D5B-462B-B22C-571ADABCFEAF}.Release|x86.ActiveCfg = Release|Win32
+		{B288BA9B-5D5B-462B-B22C-571ADABCFEAF}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {47326023-A230-4E21-940A-2E79F45459EF}
+	EndGlobalSection
+EndGlobal
