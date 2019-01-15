@@ -161,8 +161,7 @@ read.data <- function(fun, runIdPre, iRun, my.gen, flag = 0, n.obj=NULL){
     
     # UF1_iter_nfe_1_001
     # if (is.null(n.obj)) 
-    if (runIdPre == "../norm") tgt <- paste0(runIdPre,"/", fun,"_2_iter_nfe_",iRun2,"_",zpdGen)
-    else  tgt <- paste0(runIdPre,"/", fun,"_iter_nfe_",iRun2,"_",zpdGen)
+    tgt <- paste0(runIdPre,"/", fun,"_iter_nfe_",iRun2,"_",zpdGen)
     # else tgt <- paste0(runIdPre,"/", fun,"_",n.obj,"_","_iter_nfe_",iRun2,"_",zpdGen)
     # objsData <- read.table(tgt, header = F, sep = "\t")
     temp <- as.matrix(read_feather(tgt))
