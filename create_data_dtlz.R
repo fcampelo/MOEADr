@@ -345,8 +345,7 @@ temp <- as.data.frame(temp)
     
     runIdPre <- paste0("../", name)
     #temp <- read_feather(paste0("../", name, "/", fun, "_info"))
-if (name == "de") temp <- read_feather(paste0("../", name, "/", fun, "_2_info"))
-    else temp <- read_feather(paste0("../", name, "/", fun, "_info"))    
+    temp <- read_feather(paste0("../", name, "/", fun, "_info"))    
 
     temp <- as.data.frame(temp)
     
