@@ -134,7 +134,7 @@ read.data <- function(fun, runIdPre, iRun, my.gen, flag = 0, n.obj=NULL){
     objsFilePost <- ""
     varsFilePost <- ""
     consFilePost <- ""
-
+    
     # zpdRun <- formatC(iRun, width = runDig, format = "d", flag = "0") #zero padded
     zpdGen <- formatC(iGen2, width = generationDig, format = "d", flag = "0") #zero padded
     # tgt <- paste(filePath, runIdPre, zpdRun, runIdPost, objsFilePre, zpdGen, objsFilePost, sep = "")
@@ -161,7 +161,8 @@ read.data <- function(fun, runIdPre, iRun, my.gen, flag = 0, n.obj=NULL){
     
     # UF1_iter_nfe_1_001
     # if (is.null(n.obj)) 
-      tgt <- paste0(runIdPre,"/", fun,"_iter_nfe_",iRun2,"_",zpdGen)
+    if (runIdPre == "../norm") tgt <- paste0(runIdPre,"/", fun,"_2_iter_nfe_",iRun2,"_",zpdGen)
+    else  tgt <- paste0(runIdPre,"/", fun,"_iter_nfe_",iRun2,"_",zpdGen)
     # else tgt <- paste0(runIdPre,"/", fun,"_",n.obj,"_","_iter_nfe_",iRun2,"_",zpdGen)
     # objsData <- read.table(tgt, header = F, sep = "\t")
     temp <- as.matrix(read_feather(tgt))
@@ -184,7 +185,7 @@ read.data <- function(fun, runIdPre, iRun, my.gen, flag = 0, n.obj=NULL){
       hv[i,1] <- emoa::dominated_hypervolume(t(as.matrix(objsData[,1:nObj])), t(as.matrix(refPoint)))
     }
     if (i == my.gen && flag == 2){
-     
+      
       # objsData[, 1:nObj] <- objsData[, 1:nObj] + abs(min.val)
       if (fun != "moon") {
         igd[i,1] <- calcIGD(objsData[, 1:nObj], Yref)
@@ -192,7 +193,7 @@ read.data <- function(fun, runIdPre, iRun, my.gen, flag = 0, n.obj=NULL){
         b<-((max.val - min.val) + 1e-50)
         objsData[, 1:nObj] <- sweep(a, 2, b, "/")
       }
-         
+      
       hv[i,1] <- emoa::dominated_hypervolume(t(as.matrix(objsData[,1:nObj])), t(as.matrix(refPoint)))
     }
   }
@@ -207,9 +208,9 @@ calc_hv <- function(data, variation, fun, repetitions, max.val, min.val, ref.poi
   data <- (sweep(data, 2, min.val))/ ((max.val - min.val) + epsilon)
   non.d <- find_nondominated_points(data)
   if (sum(non.d) > 0){
-  moead.hv <-
-    dominated_hypervolume(points = t(data[non.d,]),
-                                ref = ref.points)
+    moead.hv <-
+      dominated_hypervolume(points = t(data[non.d,]),
+                            ref = ref.points)
   }
   else moead.hv <- 0
   temp <- data.frame(moead.hv, fun, paste0(variation), repetitions-1)
@@ -231,7 +232,7 @@ create_graphs <-
       # my.data$algorithm <- factor(my.data$algorithm,levels = c("MRDL", "None", "Spectral-Norm", "R.I.", "Random"))
       pathname <- paste0("../files/", fun, "_HV.png")
       p <- ggplot(my.data, aes(algorithm, HV)) +geom_boxplot(aes(fill = algorithm), scale = "count")
-        # geom_violin(aes(fill = algorithm), scale = "count") #+ ylim(0, 1) +
+      # geom_violin(aes(fill = algorithm), scale = "count") #+ ylim(0, 1) +
       # geom_violin(aes(fill = algorithm)) +
       ggtitle(fun) 
       p <-
@@ -244,12 +245,12 @@ create_graphs <-
                                                                 face = "bold"
                                                               )) + geom_jitter(height = 0, width = 0.1)
       p +labs(title=paste0("HV - ",fun),
-                x ="Priority Function")
+              x ="Priority Function")
       ggsave(filename = pathname, device = "png")
       
       pathname <- paste0("../files/", fun, "_IGD.png")
       p <- ggplot(my.data, aes(algorithm, IGD)) +geom_boxplot(aes(fill = algorithm), scale = "count")
-        # geom_violin(aes(fill = algorithm), scale = "count") #+ ylim(0, 1) +
+      # geom_violin(aes(fill = algorithm), scale = "count") #+ ylim(0, 1) +
       # geom_violin(aes(fill = algorithm)) +
       ggtitle(fun) 
       p <-
