@@ -86,7 +86,6 @@ for (n.obj in n.objs) {
           seed = j,
           my.file.n = my.file.n
         )
-        exit()
         
         my.file.n <- paste0("../../dra/",fun,"_")
         moead.dra <- moead(
