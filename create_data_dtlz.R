@@ -5,7 +5,7 @@ source("graphical_analysis_dtlz.R")
 setwd("~/MOEADr/")
 nPop <- 350
 # nRun <- 21
-nRun <- 21
+nRun <- 1
 nObj <- 2 # fix even if single obj
 # number of variables
 nVar <- 100
