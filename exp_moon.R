@@ -15,21 +15,21 @@ repetitions <-  21
 algorithms <- c("moead.de")
 
 #uniform weight
-resource.allocation.DRA <- list(name = "DRA", dt = 20)
-resource.allocation.GRA <- list(name = "GRA", dt = 20)
-resource.allocation.RAD <- list(name = "RAD", dt = 20)
-resource.allocation.NORM <- list(name = "norm", dt = 20)
-resource.allocation.RANDOM <- list(name = "random", dt = 20)
+resource.allocation.DRA <- list(name = "DRA", dt = 2)
+resource.allocation.GRA <- list(name = "GRA", dt = 2)
+resource.allocation.RAD <- list(name = "RAD", dt = 2)
+resource.allocation.NORM <- list(name = "norm", dt = 2)
+resource.allocation.RANDOM <- list(name = "random", dt = 2)
 
-
-
-decomp <- list(name = "SLD", H = 25)
+update <- preset_moead("moead.de")$update
+update$UseArchive <- TRUE
+decomp <- list(name = "SLD", H = 99)
 
 n.obj <- 3
 
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 70000))
+                       maxeval = 60000))
 
 scaling <- list()
 scaling$name <- "simple"
@@ -39,7 +39,7 @@ fun <- "moon"
 my.data <- data.frame()
 setwd("~/MOEADr/R/")
 for (algo in algorithms) {
-  # print(algo)
+  print(algo)
   problem.zdt1 <- list(
     name       = "problem.moon",
     xmin       = rep(0, d),
@@ -65,8 +65,10 @@ for (algo in algorithms) {
       scaling = scaling,
       showpars = list(show.iters = "none", showevery = 100),
       seed = j,
-      my.file.n = my.file.n
+      my.file.n = my.file.n#,
+      # update = update
     )
+    # exit()
     
     
     # gra.awt
@@ -83,10 +85,10 @@ for (algo in algorithms) {
       resource.allocation = resource.allocation.GRA,
       my.file.n = my.file.n
     )
-    
-    # write_feather(as.data.frame(moead.gra$Y), my.file.n)
-    
-    # ondb
+    # 
+    # # write_feather(as.data.frame(moead.gra$Y), my.file.n)
+    # 
+    # # ondb
     my.file.n <- paste0("../../rad/",fun,"_")
     moead.rad <- moead(
       problem  = problem.zdt1,
@@ -112,22 +114,25 @@ for (algo in algorithms) {
       showpars = list(show.iters = "none", showevery = 10),
       seed = j,
       resource.allocation = resource.allocation.NORM,
-      my.file.n = my.file.n
+      my.file.n = my.file.n#,
+      # update = update
     )
-    
-    my.file.n <- paste0("../../random/",fun,"_")
-    moead.random <- moead(
-      problem  = problem.zdt1,
-      preset   = preset_moead(algo),
-      decomp = decomp,
-      stopcrit = stopcrit,
-      constraint = list(name = "penalty", beta=0.95),
-      scaling = scaling,
-      showpars = list(show.iters = "none", showevery = 10),
-      seed = j,
-      resource.allocation = resource.allocation.RANDOM,
-      my.file.n = my.file.n
-    )
+    # print("this exit")
+    # exit()
+    # 
+    # my.file.n <- paste0("../../random/",fun,"_")
+    # moead.random <- moead(
+    #   problem  = problem.zdt1,
+    #   preset   = preset_moead(algo),
+    #   decomp = decomp,
+    #   stopcrit = stopcrit,
+    #   constraint = list(name = "penalty", beta=0.95),
+    #   scaling = scaling,
+    #   showpars = list(show.iters = "none", showevery = 10),
+    #   seed = j,
+    #   resource.allocation = resource.allocation.RANDOM,
+    #   my.file.n = my.file.n
+    # )
   
   }
 }
