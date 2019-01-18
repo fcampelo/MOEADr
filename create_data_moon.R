@@ -5,12 +5,12 @@ source("graphical_analysis.R")
 setwd("~/MOEADr/")
 nPop <- 350
 # nRun <- 21
-nRun <- 21
+nRun <- 2
 nObj <- 3 # fix even if single obj
 # number of variables
 nVar <- 2
 # number of constraints
-nCon <- 1
+nCon <- 3
 # reference point
 
 refPoint <- matrix(c(1.0, 0.0, 1.0), nrow = 1, ncol = 3)
@@ -30,9 +30,9 @@ fun.names <- list("moon")
 #   fun.names[[length(fun.names) + 1]] = paste0("UF", i)
 #   # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
 # }
-variants <- c("de", "norm", "rad", "random", "gra")
-# variants <- c("de", "norm", "random", "gra")
-# variants <- c("de")
+# variants <- c("gra", "norm", "rad", "random", "de")
+variants <- c("de", "norm", "gra", "rad")
+# variants <- c("de", "norm")
 
 for (fun in fun.names) {
   print(fun)
@@ -55,8 +55,8 @@ for (fun in fun.names) {
     temp <- as.data.frame(temp)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
-      
       gen <- as.integer(temp[iRun2, ])
+      
       my.data <-
         read.data(
           fun = fun,
@@ -114,9 +114,12 @@ for (fun in fun.names) {
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
       
-      
+      print()
       gen <- as.integer(temp[iRun2, ])
-      
+      # print("data")
+      # print(runIdPre)
+      # print(iRun)
+      # print(gen)
       out <-
         read.data(
           fun = fun,
@@ -127,7 +130,7 @@ for (fun in fun.names) {
         )
       
       my.data <- out$my.data2
-      
+      print(tail(out$hv))
       if (variant == "de") {
         de_median_hvs <-
           rbind(de_median_hvs, data.frame(out$hv, rep(1:gen), out$nfe))
@@ -164,18 +167,7 @@ for (fun in fun.names) {
       # cat("\n", sum(isFeasible), " solutions are feasible\n", sep = "")
       
       isFoundFeasible <<- T
-      objsTmp <- extractNonDominatedSolutions(my.data, isFeasible)
-      objsTmp2 <- convertEvalObjectives(objsTmp)
-      rankFeasible <- rankUnion(objsTmp2, T) #T or F???
-      archive <<- subset(archive, rankFeasible == 1)
-      # cat(sum(rankFeasible == 1),
-      #     " solutions are nondominated\n",
-      #     sep = "")
       
-      calculateIndicator(iRun2, objsTmp2, refPoint)
-      if (is.null(archive))
-        archive <- objsTmp2
-      # indicatorArcIGD[iRun2] <- calcIGD(archive[, 1:2], Yref)
       pdGen <- formatC(gen,
                        width = 3,
                        format = "d",
@@ -184,7 +176,33 @@ for (fun in fun.names) {
         as.integer(read_feather(paste0(
           runIdPre, "/", fun, "_time_", iRun + 1, "_", pdGen
         )))
-      fes[[length(fes) + 1]] <- sum(isFeasible)-1
+      fes[[length(fes) + 1]] <- sum(isFeasible)
+      
+      
+      if (sum(isFeasible)>0) {
+        indicatorTmp[iRun+1] <- out$hv[length(out$hv),]
+        print(indicatorTmp)
+        indicatorArcIGD[iRun+1] <- 0
+        objsTmp <- extractNonDominatedSolutions(my.data, isFeasible)
+        objsTmp2 <- convertEvalObjectives(objsTmp)
+        rankFeasible <- rankUnion(objsTmp2, T) #T or F???
+        # archive <<- subset(archive, rankFeasible == 1)
+        # 
+        
+        # cat(sum(rankFeasible == 1),
+        #     " solutions are nondominated\n",
+        #     sep = "")
+        
+        # calculateIndicator(iRun2, objsTmp2, refPoint)
+        # if (is.null(archive))
+        # archive <- objsTmp2
+        # indicatorArcIGD[iRun2] <- calcIGD(archive[, 1:2], Yref)
+        }
+        else{
+          indicatorTmp[iRun+1] <- 0
+          indicatorArcIGD[iRun+1] <- 0
+          rankFeasible <- 0
+        }
       ndom[[length(ndom) + 1]] <- sum(rankFeasible == 1)
     }
     if (variant == "de") {
@@ -311,12 +329,16 @@ for (fun in fun.names) {
   
   #HV/IGD values over evaluations for "median" iteraction
   print("last variant for")
-  variants<- c("None", "MRDL", "Random", "R.I.", "Norm")
-  # variants<- c("None")
+
+  variants<- c("None", "MRDL", "R.I.", "Norm")
+  # variants<- c("None", "Norm")
   for (variant in variants) {
-    none.median <-
-      df[which(df[df$algorithm == variant, ]$HV == median(df[df$algorithm == variant, ]$HV)), ]
-    
+    temp <-
+      df[which(df$HV == median(df[df$algorithm == variant, ]$HV)), ]
+    none.median <- temp[temp$algorithm==variant,]
+    print(variant)
+    print(none.median)
+    print(none.median$rep)
     cat(variant, ": ",none.median$rep)
     
     if (variant == "None") name = "de"
@@ -341,6 +363,11 @@ for (fun in fun.names) {
         my.gen = gen,
         flag = 1
       )
+    my.data <- out$my.data2
+    isFeasible <- extractFeasible(my.data)
+    if ((sum(isFeasible)) == 0) out$hv <- rep(0, length(out$hv))
+    # print(sum(isFeasible))
+    # print(out$hv
     # plot(out$my.data2[,1:2])
     if (name == "de") {
       de_hv.plot <- data.frame(out$nfe, out$hv, "None")
@@ -384,17 +411,17 @@ for (fun in fun.names) {
       data.frame(rad_hv.plot),
       data.frame(de_hv.plot),
       data.frame(norm_hv.plot),
-      data.frame(gra_hv.plot),
-      data.frame(random_hv.plot)
+      data.frame(gra_hv.plot)
+#      data.frame(random_hv.plot)
     )
-  df3 <-
-    rbind(
-      data.frame(rad_igd.plot),
-      data.frame(de_igd.plot),
-      data.frame(norm_igd.plot),
-      data.frame(gra_igd.plot),
-      data.frame(random_igd.plot)
-    )
+  # df3 <-
+  #   rbind(
+  #     data.frame(rad_igd.plot),
+  #     data.frame(de_igd.plot),
+  #     data.frame(norm_igd.plot),
+  #     data.frame(gra_igd.plot),
+  #     data.frame(random_igd.plot)
+  #   )
   
   pathname <- paste0("../files/", fun, "hv_all.png")
   p2 <-
@@ -405,12 +432,12 @@ for (fun in fun.names) {
   ggsave(filename = pathname, device = "png")
   
   
-  pathname <- paste0("../files/", fun, "igd_all.png")
-  p3 <- ggplot(df3, aes(Evaluations, IGD, group = Priority.Function)) +
-    geom_line(aes(color = Priority.Function)) #+
-  # geom_point(aes(shape = name, color = name))#+
-  p3
-  ggsave(filename = pathname, device = "png")
+  # pathname <- paste0("../files/", fun, "igd_all.png")
+  # p3 <- ggplot(df3, aes(Evaluations, IGD, group = Priority.Function)) +
+  #   geom_line(aes(color = Priority.Function)) #+
+  # # geom_point(aes(shape = name, color = name))#+
+  # p3
+  # ggsave(filename = pathname, device = "png")
   
   create_graphs(df, fun.names, 2)
   

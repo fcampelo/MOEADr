@@ -546,27 +546,27 @@ moead <-
       V       <- XY$V
       Archive <- XY$Archive
       
-      if (update$UseArchive == TRUE &&
-          update$nsga == TRUE) {
-        comb.popX <- rbind(X, Archive$X, Archive2$X)
-        comb.popY <- rbind(Y, Archive$Y, Archive2$Y)
-        comb.popVv <- cbind(V$v, Archive$V$v, Archive2$V$v)
-        
-        comb.popVCmatrix <- rbind(V$Cmatrix, Archive$V$Cmatrix, Archive2$V$Cmatrix)
-        comb.popVVmatrix <- rbind(V$Vmatrix, Archive$V$Vmatrix, Archive2$V$Vmatrix)
-    
-        sorting <- selNondom(fitness = t(comb.popY),
-                                             n.select = dim(W)[1])
-        Archive2$X <- comb.popX[sorting,]
-        Archive2$Y <- comb.popY[sorting,]
-        
-        divisor <- dim(W)[1]
-        for (i in 1:divisor){
-          Archive2$V$v[i] <- comb.popVv[(sorting[i]%%divisor)+1, ceiling(sorting[i]/divisor)]
-        }
-        Archive2$V$Vmatrix <- comb.popVVmatrix[sorting,]
-        Archive2$V$Cmatrix <- comb.popVCmatrix[sorting,]
-      }
+      # if (update$UseArchive == TRUE &&
+      #     update$nsga == TRUE) {
+      #   comb.popX <- rbind(X, Archive$X, Archive2$X)
+      #   comb.popY <- rbind(Y, Archive$Y, Archive2$Y)
+      #   comb.popVv <- cbind(V$v, Archive$V$v, Archive2$V$v)
+      #   
+      #   comb.popVCmatrix <- rbind(V$Cmatrix, Archive$V$Cmatrix, Archive2$V$Cmatrix)
+      #   comb.popVVmatrix <- rbind(V$Vmatrix, Archive$V$Vmatrix, Archive2$V$Vmatrix)
+      # 
+      #   sorting <- selNondom(fitness = t(comb.popY),
+      #                                        n.select = dim(W)[1])
+      #   Archive2$X <- comb.popX[sorting,]
+      #   Archive2$Y <- comb.popY[sorting,]
+      #   
+      #   divisor <- dim(W)[1]
+      #   for (i in 1:divisor){
+      #     Archive2$V$v[i] <- comb.popVv[(sorting[i]%%divisor)+1, ceiling(sorting[i]/divisor)]
+      #   }
+      #   Archive2$V$Vmatrix <- comb.popVVmatrix[sorting,]
+      #   Archive2$V$Cmatrix <- comb.popVCmatrix[sorting,]
+      # }
       if (!nullRA) {
         if (resource.allocation$name == "DRA") {
           if (iter %% resource.allocation$dt == 0) {
@@ -643,6 +643,9 @@ moead <-
       
       pdGen <- formatC(iter, width = 3, format = "d", flag = "0")
       write_feather(as.data.frame(Y), paste0(my.file.n, "rep_",seed,"_",pdGen,"_Y"))
+      if (fun == "moon"){
+        write_feather(as.data.frame(Y), paste0(my.file.n, "rep_",seed,"_",pdGen,"_cons"))
+      }
       write_feather(as.data.frame(cbind(iter, nfe-old_nfe)), paste0(my.file.n, "iter_nfe_",seed,"_",pdGen))
       old_nfe <- nfe
       if(nullRA) usage[[length(usage)+1]] <- rep(1, dim(W)[1])
