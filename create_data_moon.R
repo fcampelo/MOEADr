@@ -5,7 +5,7 @@ source("graphical_analysis.R")
 setwd("~/MOEADr/")
 nPop <- 350
 # nRun <- 21
-nRun <- 2
+nRun <- 21
 nObj <- 3 # fix even if single obj
 # number of variables
 nVar <- 2
@@ -94,7 +94,7 @@ for (fun in fun.names) {
   print("2nd variant for")
   for (variant in variants) {
     # init with zero
-    print(variant)
+    # print(variant)
     initialValueM <- 0
     initialValue <<- initialValueM
     indicatorArc <<- matrix(initialValue, nrow = 1)
@@ -113,8 +113,6 @@ for (fun in fun.names) {
     temp <- as.data.frame(temp)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
-      
-      print()
       gen <- as.integer(temp[iRun2, ])
       # print("data")
       # print(runIdPre)
@@ -130,7 +128,7 @@ for (fun in fun.names) {
         )
       
       my.data <- out$my.data2
-      print(tail(out$hv))
+      # print(tail(out$hv))
       if (variant == "de") {
         de_median_hvs <-
           rbind(de_median_hvs, data.frame(out$hv, rep(1:gen), out$nfe))
@@ -181,7 +179,7 @@ for (fun in fun.names) {
       
       if (sum(isFeasible)>0) {
         indicatorTmp[iRun+1] <- out$hv[length(out$hv),]
-        print(indicatorTmp)
+        # print(indicatorTmp)
         indicatorArcIGD[iRun+1] <- 0
         objsTmp <- extractNonDominatedSolutions(my.data, isFeasible)
         objsTmp2 <- convertEvalObjectives(objsTmp)
@@ -337,7 +335,7 @@ for (fun in fun.names) {
       df[which(df$HV == median(df[df$algorithm == variant, ]$HV)), ]
     none.median <- temp[temp$algorithm==variant,]
     print(variant)
-    print(none.median)
+    # print(none.median)
     print(none.median$rep)
     cat(variant, ": ",none.median$rep)
     
