@@ -12,7 +12,8 @@ extractFeasible <- function(data, isFilteredByCons = T) {
   if (isFilteredByCons) {
     stopifnot(length(consColnames) == nCon)
     for (i in 1:nCon) {
-      fPart <- ifelse(data[, nObj + i] >= 0, T, F)
+      # if (i==2) data[, nObj + i + 2]<-abs(data[, nObj + i + 2])
+      fPart <- ifelse(data[, nObj + i + 2] >= 0, T, F)
       isFeasible <- isFeasible & fPart
     }
   } else {
@@ -139,6 +140,10 @@ read.data <- function(fun, runIdPre, iRun, my.gen, flag = 0, n.obj=NULL){
     zpdGen <- formatC(iGen2, width = generationDig, format = "d", flag = "0") #zero padded
     # tgt <- paste(filePath, runIdPre, zpdRun, runIdPost, objsFilePre, zpdGen, objsFilePost, sep = "")
     # if (is.null(n.obj)) 
+    if (fun == "moon") {
+      tgt <- paste0(runIdPre,"/", fun,"_rep_",iRun2,"_",zpdGen,"_cons")
+      consData <- read_feather(tgt)
+    }
     tgt <- paste0(runIdPre,"/", fun,"_rep_",iRun2,"_",zpdGen,"_Y")
     # else tgt <- paste0(runIdPre,"/", fun,"_",n.obj,"_", "_rep_",iRun2,"_",zpdGen,"_Y")
     # objsData <- read.table(tgt, header = F, sep = "\t")
@@ -148,8 +153,7 @@ read.data <- function(fun, runIdPre, iRun, my.gen, flag = 0, n.obj=NULL){
     # exit()
     # tgt <- paste(filePath, runIdPre, zpdRun, runIdPost, varsFilePre, zpdGen, varsFilePost, sep = "")
     # varsData <- read.table(tgt, header = F, sep = "\t")
-    # tgt <- paste(filePath, runIdPre, zpdRun, runIdPost, consFilePre, zpdGen, consFilePost, sep = "")
-    # consData <- read.table(tgt, header = F, sep = "\t")
+    
     nr1 <- nrow(objsData)
     gen <- rep(iGen2, each = nr1)
     evals <- rep((nr1prev + 1):(nr1prev + nPop+1), length = nr1)
@@ -161,14 +165,14 @@ read.data <- function(fun, runIdPre, iRun, my.gen, flag = 0, n.obj=NULL){
     
     # UF1_iter_nfe_1_001
     # if (is.null(n.obj)) 
-      tgt <- paste0(runIdPre,"/", fun,"_iter_nfe_",iRun2,"_",zpdGen)
+    tgt <- paste0(runIdPre,"/", fun,"_iter_nfe_",iRun2,"_",zpdGen)
     # else tgt <- paste0(runIdPre,"/", fun,"_",n.obj,"_","_iter_nfe_",iRun2,"_",zpdGen)
     # objsData <- read.table(tgt, header = F, sep = "\t")
     temp <- as.matrix(read_feather(tgt))
     if (i > 1) nfe[i,1] <- temp[,2] + nfe[i-1,1]  
     else nfe[i,1] <- temp[,2]
     
-    consData <- rep(0, nr1)
+    # consData <- rep(0, nr1)
     varsData <- rep(0, nr1)
     # print(evals)
     
