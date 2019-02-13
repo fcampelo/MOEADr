@@ -328,6 +328,7 @@ moead <-
     }
     # check resource allocation
     if (!is.null(resource.allocation)) {
+      
       nullRA <- FALSE
     }# check moon problem
     # if (problem$name != "problem.moon") {
@@ -440,20 +441,27 @@ moead <-
         
       }
       else{
-        # if (resource.allocation$name == "DRA") {
-        #     idx.tour <-
-        #       selTournament(fitness = -Pi,
-        #                     n.select = size,
-        #                     k = 10)
-        #     indexes <- append(idx.bounday, idx.tour)  
-        # }
-        # else{
+        if (resource.allocation$name == "DRA") {
+            idx.tour <-
+              selTournament(fitness = -Pi,
+                            n.select = size,
+                            k = 10)
+            indexes <- append(idx.bounday, idx.tour)
+        }
+        else{
           rand.seq <- runif(length(Pi))
           indexes <- which(rand.seq <= Pi)
-          if (length(indexes) < 3 || is.null(length(indexes))) {
-            indexes <- which(rand.seq <= 1)
+          if(nullRA) {
+            usage[[length(usage)+1]] <- rep(1, dim(W)[1])
           }
-        # }
+          else {
+            usage[[length(usage)+1]] <- as.integer(rand.seq <= Pi) 
+            if (length(indexes) < 3 || is.null(length(indexes))) {
+              indexes <- which(rand.seq <= 1)
+              usage[[length(usage)]] <- as.integer(rand.seq <= 1)
+            }
+          }
+        }
         Xt <- X
         temp.X <- X
         X <- X[indexes, ]
@@ -648,8 +656,8 @@ moead <-
       }
       write_feather(as.data.frame(cbind(iter, nfe-old_nfe)), paste0(my.file.n, "iter_nfe_",seed,"_",pdGen))
       old_nfe <- nfe
-      if(nullRA) usage[[length(usage)+1]] <- rep(1, dim(W)[1])
-      else usage[[length(usage)+1]] <- as.integer(rand.seq <= Pi)
+      
+        
       
     }
     # =========================== End Iterative cycle ========================== #
