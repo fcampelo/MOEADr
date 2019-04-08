@@ -328,7 +328,6 @@ moead <-
     }
     # check resource allocation
     if (!is.null(resource.allocation)) {
-      
       nullRA <- FALSE
     }# check moon problem
     # if (problem$name != "problem.moon") {
@@ -382,7 +381,7 @@ moead <-
         Pi <- ra$Pi
         oldObj <- ra$oldObj
         idx.bounday <- ra$idx.bounday
-
+        
         size <- floor(dim(W)[1] / 5) - problem$m
       }
       else if (resource.allocation$name == "GRA") {
@@ -396,7 +395,7 @@ moead <-
         # idx.bounday <- ra$idx.bounday
         # size <- floor(dim(W)[1] / 5) - problem$m
       }
-    else{
+      else{
         Pi <- init_p(W, 1)
       }
     }
@@ -412,7 +411,7 @@ moead <-
     
     usage <- list(rep(1, dim(W)[1]))
     # Reduce("+",usage)
-    old_nfe <- nfe
+    
     while (keep.running) {
       # Update iteration counter
       iter <- iter + 1
@@ -441,27 +440,20 @@ moead <-
         
       }
       else{
-        if (resource.allocation$name == "DRA") {
-            idx.tour <-
-              selTournament(fitness = -Pi,
-                            n.select = size,
-                            k = 10)
-            indexes <- append(idx.bounday, idx.tour)
+        # if (resource.allocation$name == "DRA") {
+        #     idx.tour <-
+        #       selTournament(fitness = -Pi,
+        #                     n.select = size,
+        #                     k = 10)
+        #     indexes <- append(idx.bounday, idx.tour)  
+        # }
+        # else{
+        rand.seq <- runif(length(Pi))
+        indexes <- which(rand.seq <= Pi)
+        if (length(indexes) < 3 || is.null(length(indexes))) {
+          indexes <- which(rand.seq <= 1)
         }
-        else{
-          rand.seq <- runif(length(Pi))
-          indexes <- which(rand.seq <= Pi)
-          if(nullRA) {
-            usage[[length(usage)+1]] <- rep(1, dim(W)[1])
-          }
-          else {
-            usage[[length(usage)+1]] <- as.integer(rand.seq <= Pi) 
-            if (length(indexes) < 3 || is.null(length(indexes))) {
-              indexes <- which(rand.seq <= 1)
-              usage[[length(usage)]] <- as.integer(rand.seq <= 1)
-            }
-          }
-        }
+        # }
         Xt <- X
         temp.X <- X
         X <- X[indexes, ]
@@ -473,7 +465,7 @@ moead <-
       B  <- BP$B.variation[indexes,]
       P  <- BP$P[indexes, indexes]
       temp.P  <- BP$P
-        
+      
       # Perform variation
       
       Xv      <- do.call(perform_variation,
@@ -554,27 +546,27 @@ moead <-
       V       <- XY$V
       Archive <- XY$Archive
       
-      # if (update$UseArchive == TRUE &&
-      #     update$nsga == TRUE) {
-      #   comb.popX <- rbind(X, Archive$X, Archive2$X)
-      #   comb.popY <- rbind(Y, Archive$Y, Archive2$Y)
-      #   comb.popVv <- cbind(V$v, Archive$V$v, Archive2$V$v)
-      #   
-      #   comb.popVCmatrix <- rbind(V$Cmatrix, Archive$V$Cmatrix, Archive2$V$Cmatrix)
-      #   comb.popVVmatrix <- rbind(V$Vmatrix, Archive$V$Vmatrix, Archive2$V$Vmatrix)
-      # 
-      #   sorting <- selNondom(fitness = t(comb.popY),
-      #                                        n.select = dim(W)[1])
-      #   Archive2$X <- comb.popX[sorting,]
-      #   Archive2$Y <- comb.popY[sorting,]
-      #   
-      #   divisor <- dim(W)[1]
-      #   for (i in 1:divisor){
-      #     Archive2$V$v[i] <- comb.popVv[(sorting[i]%%divisor)+1, ceiling(sorting[i]/divisor)]
-      #   }
-      #   Archive2$V$Vmatrix <- comb.popVVmatrix[sorting,]
-      #   Archive2$V$Cmatrix <- comb.popVCmatrix[sorting,]
-      # }
+      if (update$UseArchive == TRUE &&
+          update$nsga == TRUE) {
+        comb.popX <- rbind(X, Archive$X, Archive2$X)
+        comb.popY <- rbind(Y, Archive$Y, Archive2$Y)
+        comb.popVv <- cbind(V$v, Archive$V$v, Archive2$V$v)
+        
+        comb.popVCmatrix <- rbind(V$Cmatrix, Archive$V$Cmatrix, Archive2$V$Cmatrix)
+        comb.popVVmatrix <- rbind(V$Vmatrix, Archive$V$Vmatrix, Archive2$V$Vmatrix)
+        
+        sorting <- selNondom(fitness = t(comb.popY),
+                             n.select = dim(W)[1])
+        Archive2$X <- comb.popX[sorting,]
+        Archive2$Y <- comb.popY[sorting,]
+        
+        divisor <- dim(W)[1]
+        for (i in 1:divisor){
+          Archive2$V$v[i] <- comb.popVv[(sorting[i]%%divisor)+1, ceiling(sorting[i]/divisor)]
+        }
+        Archive2$V$Vmatrix <- comb.popVVmatrix[sorting,]
+        Archive2$V$Cmatrix <- comb.popVCmatrix[sorting,]
+      }
       if (!nullRA) {
         if (resource.allocation$name == "DRA") {
           if (iter %% resource.allocation$dt == 0) {
@@ -623,11 +615,11 @@ moead <-
           }
         }          
       }
-      # if (problem$name == "problem.moon" && (stopcrit[[1]]$maxeval< (nfe + dim(W)[1]))){
-      #   V <- Archive2$V
-      #   X <- Archive2$X
-      #   Y <- Archive2$Y
-      # }
+      if (problem$name == "problem.moon" && (stopcrit[[1]]$maxeval< (nfe + dim(W)[1]))){
+        V <- Archive2$V
+        X <- Archive2$X
+        Y <- Archive2$Y
+      }
       
       # ========== Stop Criteria
       # Calculate iteration time
@@ -651,13 +643,9 @@ moead <-
       
       pdGen <- formatC(iter, width = 3, format = "d", flag = "0")
       write_feather(as.data.frame(Y), paste0(my.file.n, "rep_",seed,"_",pdGen,"_Y"))
-      if (fun == "moon"){
-        write_feather(as.data.frame(Y), paste0(my.file.n, "rep_",seed,"_",pdGen,"_cons"))
-      }
-      write_feather(as.data.frame(cbind(iter, nfe-old_nfe)), paste0(my.file.n, "iter_nfe_",seed,"_",pdGen))
-      old_nfe <- nfe
       
-        
+      if(nullRA) usage[[length(usage)+1]] <- rep(1, dim(W)[1])
+      else usage[[length(usage)+1]] <- as.integer(rand.seq <= Pi)
       
     }
     # =========================== End Iterative cycle ========================== #
@@ -676,8 +664,7 @@ moead <-
     }
     
     # Output
-    # if (problem$name == "problem.moon" && update$nsga == TRUE){
-    if (problem$name == "problem.moon"){
+    if (problem$name == "problem.moon" && update$nsga == TRUE){
       my.iter <- with_options(
         c(scipen = 999), 
         str_pad(iter, 4, pad = "0")
@@ -702,14 +689,7 @@ moead <-
       system(paste("cp ", filename, dest))
     }
     
-    write_feather(as.data.frame(difftime(Sys.time(), time.start)), paste0(my.file.n, "time_",seed,"_",pdGen))
-    destfile <- paste0(my.file.n, "info")
-    temp <- data.frame()
-    if(file.exists(destfile)){
-      temp <- read_feather(destfile)
-    }
-    my.iter <- rbind(temp, iter)
-    write_feather(my.iter, destfile)  
+    
     
     out <- list(
       X           = X,
