@@ -613,6 +613,11 @@ moead <-
       colnames(Archive$W) <- paste0("f", 1:ncol(Archive$W))
     }
     
+    temp <- read_feather(paste0(my.file.n, "info"))
+    temp <- as.data.frame(temp)
+    temp <- rbind(temp, iter)
+    write_feather(temp, paste0(my.file.n, "info"))
+    
     # Output
     out <- list(
       X           = X,

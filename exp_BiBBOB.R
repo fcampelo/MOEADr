@@ -14,7 +14,7 @@ source("resource.allocation.R")
 source("utils.R")
 source("moead.R")
 
-repetitions <- 21
+repetitions <- 1
 
 algorithms <- c("moead.de")
 
@@ -44,14 +44,14 @@ stopcrit  <- list(list(name    = "maxeval",
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  for (i in 1:55) {#44 and 29
+  for (i in 44:44) {#44 and 29
     fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
   }
   
   my.data <- data.frame()
   for (algo in algorithms) {
     print(algo)
-    id = 1
+    id = 44
     for (fun in fun.names1) {
       print(fun)
       problem <-
@@ -181,3 +181,4 @@ for (n.obj in n.objs) {
     }
   }
 }
+
