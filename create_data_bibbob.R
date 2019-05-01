@@ -15,8 +15,6 @@ nCon <- 1
 
 refPoint <- matrix(c(1.0, 1.0), nrow = 1, ncol = 2)
 
-#evaluation points
-# check.points <- c(20000, 40000, 60000, 80000, 100000, 120000, 140000)
 
 # things
 objsColnames <- paste("#obj", 1:nObj, sep = "")
@@ -30,9 +28,8 @@ fun.names <- list("BiObjBBOB1")
 #   fun.names[[length(fun.names) + 1]] = paste0("UF", i)
 #   # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
 # }
-# variants <- c("gra", "norm", "rad", "random", "de")
-variants <- c("de", "dra", "rad", "gra")
-# variants <- c("de", "norm")
+
+variants <- c("de", "dra", "rad")
 
 for (fun in fun.names) {
   print(fun)
@@ -50,7 +47,6 @@ for (fun in fun.names) {
   print("first variant for")
   for (variant in variants) {
     runIdPre <- paste0("../", variant)
-    # temp <- read_feather(paste0("../",variant, "/UF1_info"))
     temp <- read_feather(paste0("../", variant, "/", fun, "_info"))
     temp <- as.data.frame(temp)
     for (iRun2 in 1:nRun) {
@@ -71,7 +67,7 @@ for (fun in fun.names) {
   }
   
   de_median_gen <- data.frame()
-  gra_median_gen <- data.frame()
+  # gra_median_gen <- data.frame()
   dra_median_gen <- data.frame()
   # random_median_gen <- data.frame()
   rad_median_gen <- data.frame()
@@ -79,29 +75,18 @@ for (fun in fun.names) {
   
   de_median_hvs <- data.frame()
   dra_median_hvs <- data.frame()
-  gra_median_hvs <- data.frame()
+  # gra_median_hvs <- data.frame()
   # random_median_hvs <- data.frame()
   rad_median_hvs <- data.frame()
   # norm_median_hvs <- data.frame()
   
-  # de_median_igds <- data.frame()
-  # gra_median_igds <- data.frame()
-  # random_median_igds <- data.frame()
-  # rad_median_igds <- data.frame()
-  # norm_median_igds <- data.frame()
-  
-  # Yref <-
-  #   as.matrix(read.table(paste0("inst/extdata/pf_data/", fun, ".dat")))
   #loop for getting scaled data, HV/IGD values over evaluations for all iteractions
   print("2nd variant for")
   for (variant in variants) {
-    # init with zero
-    # print(variant)
     initialValueM <- 0
     initialValue <<- initialValueM
     indicatorArc <<- matrix(initialValue, nrow = 1)
     indicatorTmp <<- matrix(initialValue, nrow = nRun)
-    # indicatorArcIGD <<- matrix(initialValue, nrow = nRun)
     
     times <- list()
     ndom <- list()
@@ -110,16 +95,11 @@ for (fun in fun.names) {
     df <- data.frame()
     df2 <- data.frame()
     df3 <- data.frame()
-    # temp <- read_feather(paste0("../",variant, "/UF1_info"))
     temp <- read_feather(paste0("../", variant, "/", fun, "_info"))
     temp <- as.data.frame(temp)
     for (iRun2 in 1:nRun) {
       iRun <- iRun2 - 1
       gen <- as.integer(temp[iRun2, ])
-      # print("data")
-      # print(runIdPre)
-      # print(iRun)
-      # print(gen)
       out <-
         read.data(
           fun = fun,
@@ -130,47 +110,31 @@ for (fun in fun.names) {
         )
       
       my.data <- out$my.data2
-      # print(tail(out$hv))
       if (variant == "de") {
         de_median_hvs <-
-          rbind(de_median_hvs, data.frame(out$hv, rep(1:gen), out$nfe))
-        # de_median_igds <-
-        #   rbind(de_median_igds, data.frame(out$igd, rep(1:gen), out$nfe))
-      }
+          rbind(de_median_hvs, data.frame(out$hv, rep(1:gen), out$nfe))}
       else if (variant == "rad") {
         rad_median_hvs <-
           rbind(rad_median_hvs, data.frame(out$hv, rep(1:gen), out$nfe))
-        # rad_median_igds <-
-        #   rbind(rad_median_igds, data.frame(out$igd, rep(1:gen), out$nfe))
       }
       else if (variant == "gra") {
         gra_median_hvs <-
           rbind(gra_median_hvs, data.frame(out$hv, rep(1:gen), out$nfe))
-        # gra_median_igds <-
-        #   rbind(gra_median_igds, data.frame(out$igd, rep(1:gen), out$nfe))
       }
       else if (variant == "dra") {
         dra_median_hvs <-
           rbind(dra_median_hvs, data.frame(out$hv, rep(1:gen), out$nfe))
-        # gra_median_igds <-
-        #   rbind(gra_median_igds, data.frame(out$igd, rep(1:gen), out$nfe))
       }
       else if (variant == "norm") {
         norm_median_hvs <-
           rbind(norm_median_hvs, data.frame(out$hv, rep(1:gen), out$nfe))
-        # norm_median_igds <-
-        #   rbind(norm_median_igds, data.frame(out$igd, rep(1:gen), out$nfe))
       }
       else if (variant == "random") {
         random_median_hvs <-
           rbind(random_median_hvs, data.frame(out$hv, rep(1:gen), out$nfe))
-        # random_median_igds <-
-        #   rbind(random_median_igds,
-        #         data.frame(out$igd, rep(1:gen), out$nfe))
       }
       
       isFeasible <- extractFeasible(my.data)
-      # cat("\n", sum(isFeasible), " solutions are feasible\n", sep = "")
       
       isFoundFeasible <<- T
       
@@ -187,26 +151,12 @@ for (fun in fun.names) {
       
       if (sum(isFeasible)>0) {
         indicatorTmp[iRun+1] <- out$hv[length(out$hv),]
-        # print(indicatorTmp)
-        # indicatorArcIGD[iRun+1] <- 0
         objsTmp <- extractNonDominatedSolutions(my.data, isFeasible)
         objsTmp2 <- convertEvalObjectives(objsTmp)
-        rankFeasible <- rankUnion(objsTmp2, T) #T or F???
-        # archive <<- subset(archive, rankFeasible == 1)
-        # 
-        
-        # cat(sum(rankFeasible == 1),
-        #     " solutions are nondominated\n",
-        #     sep = "")
-        
-        # calculateIndicator(iRun2, objsTmp2, refPoint)
-        # if (is.null(archive))
-        # archive <- objsTmp2
-        # indicatorArcIGD[iRun2] <- (archive[, 1:2], Yref)
+        rankFeasible <- rankUnion(objsTmp2, T) 
       }
       else{
         indicatorTmp[iRun+1] <- 0
-        # indicatorArcIGD[iRun+1] <- 0
         rankFeasible <- 0
       }
       ndom[[length(ndom) + 1]] <- sum(rankFeasible == 1)
@@ -284,7 +234,6 @@ for (fun in fun.names) {
         )
       colnames(dra_median_gen) <-
         c("HV",
-          # "IGD",
           "fesiable",
           "nondominated",
           "time",
@@ -338,7 +287,7 @@ for (fun in fun.names) {
       data.frame(rad_median_gen),
       data.frame(de_median_gen),
       # data.frame(norm_median_gen),
-      data.frame(gra_median_gen),
+      # data.frame(gra_median_gen),
       data.frame(dra_median_gen)
       # data.frame(random_median_gen)
     )
@@ -357,14 +306,13 @@ for (fun in fun.names) {
   #HV/IGD values over evaluations for "median" iteraction
   print("last variant for")
   
-  variants<- c("None", "MRDL","DRA", "GRA")
+  variants<- c("None", "MRDL","DRA")
   # variants<- c("None", "Norm")
   for (variant in variants) {
     temp <-
       df[which(df$HV == median(df[df$algorithm == variant, ]$HV)), ]
     none.median <- temp[temp$algorithm==variant,]
     print(variant)
-    # print(none.median)
     print(none.median$rep)
     cat(variant, ": ",none.median$rep)
     
@@ -394,21 +342,14 @@ for (fun in fun.names) {
     my.data <- out$my.data2
     isFeasible <- extractFeasible(my.data)
     if ((sum(isFeasible)) == 0) out$hv <- rep(0, length(out$hv))
-    # print(sum(isFeasible))
-    # print(out$hv
-    # plot(out$my.data2[,1:2])
     if (name == "de") {
       de_hv.plot <- data.frame(out$nfe, out$hv, "None")
       names(de_hv.plot) <- c("Evaluations", "HV", "Priority.Function")
-      # de_igd.plot <- data.frame(out$nfe, out$igd, "None")
-      # names(de_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
     }
     else if (name == "rad") {
       rad_hv.plot <- data.frame(out$nfe, out$hv, "MRDL")
       names(rad_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
-      # rad_igd.plot <- data.frame(out$nfe, out$igd, "MRDL")
-      # names(rad_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
     }
     # else if (name == "norm") {
     #   norm_hv.plot <- data.frame(out$nfe, out$hv, "Norm")
@@ -421,22 +362,16 @@ for (fun in fun.names) {
       gra_hv.plot <- data.frame(out$nfe, out$hv, "R.I.")
       names(gra_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
-      # gra_igd.plot <- data.frame(out$nfe, out$igd, "R.I.")
-      # names(gra_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
     }
     else if (name == "random") {
       random_hv.plot <- data.frame(out$nfe, out$hv, "Random")
       names(random_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
-      # random_igd.plot <- data.frame(out$nfe, out$igd, "Random")
-      # names(random_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
     }
     else if (name == "dra") {
       dra_hv.plot <- data.frame(out$nfe, out$hv, "DRA")
       names(dra_hv.plot) <-
         c("Evaluations", "HV", "Priority.Function")
-      # random_igd.plot <- data.frame(out$nfe, out$igd, "Random")
-      # names(random_igd.plot) <- c("Evaluations", "IGD", "Priority.Function")
     }
     
   }
