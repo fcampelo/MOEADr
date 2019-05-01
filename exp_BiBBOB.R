@@ -14,7 +14,7 @@ source("resource.allocation.R")
 source("utils.R")
 source("moead.R")
 
-repetitions <- 1
+repetitions <- 21
 
 algorithms <- c("moead.de")
 
