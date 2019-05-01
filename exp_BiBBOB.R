@@ -1,4 +1,4 @@
-# rm(list = ls(all = TRUE))
+rm(list = ls(all = TRUE))
 setwd("~/MOEADr/R/")
 library(smoof)
 library(MOEADr)
@@ -89,7 +89,7 @@ for (n.obj in n.objs) {
           stopcrit = stopcrit,
           scaling = scaling,
           showpars = list(show.iters = "none", showevery = 100),
-          seed = 19,
+          seed = j,
           my.file.n = my.file.n
         )
         
@@ -101,7 +101,7 @@ for (n.obj in n.objs) {
           stopcrit = stopcrit,
           scaling = scaling,
           showpars = list(show.iters = "none", showevery = 100),
-          seed = 19,
+          seed = j,
           resource.allocation = resource.allocation.DRA,
           my.file.n = my.file.n
         )
@@ -133,7 +133,7 @@ for (n.obj in n.objs) {
           stopcrit = stopcrit,
           scaling = scaling,
           showpars = list(show.iters = "none", showevery = 10),
-          seed = 19,
+          seed = j,
           resource.allocation = resource.allocation.RAD,
           my.file.n = my.file.n
         )
