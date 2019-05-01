@@ -8,18 +8,21 @@ library(ecr)
 library(mco)
 library(feather)
 library(withr)
-lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
+# lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
+source("load.DTLZ.function.R")
+source("resource.allocation.R")
+source("utils.R")
 
 repetitions <-  21
 dimension <- 100
 algorithms <- c("moead.de")
 
 #uniform weight
-resource.allocation.DRA <- list(name = "DRA", dt = 20)
-resource.allocation.GRA <- list(name = "GRA", dt = 20)
-resource.allocation.RAD <- list(name = "RAD", dt = 20)
-resource.allocation.NORM <- list(name = "norm", dt = 20)
-resource.allocation.RANDOM <- list(name = "random", dt = 20)
+resource.allocation.DRA <- list(name = "DRA", dt = 20, selection = "random")
+resource.allocation.GRA <- list(name = "GRA", dt = 20, selection = "random")
+resource.allocation.RAD <- list(name = "RAD", dt = 20, selection = "random")
+resource.allocation.NORM <- list(name = "norm", dt = 20, selection = "random")
+resource.allocation.RANDOM <- list(name = "random", dt = 20, selection = "random")
 
 
 decomp <- list(name = "SLD", H = 349)

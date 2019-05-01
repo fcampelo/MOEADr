@@ -269,6 +269,7 @@ moead <-
            seed = NULL,
            # Seed for PRNG
            resource.allocation = NULL,
+           # File to save iteraction data
            my.file.n = NULL,
            # List:  resource
            ...)
@@ -300,7 +301,7 @@ moead <-
       if (is.null(stopcrit))
         stopcrit  = preset$stopcrit
       if (is.null(resource.allocation))
-        nullRA  = TRUE
+        nullRA    = TRUE
     }
     
     
@@ -329,10 +330,7 @@ moead <-
     # check resource allocation
     if (!is.null(resource.allocation)) {
       nullRA <- FALSE
-    }# check moon problem
-    # if (problem$name != "problem.moon") {
-    #   my.file.n <- NULL
-    # }
+    }
     
     
     # ============ End Error catching and default value definitions ============ #
@@ -345,15 +343,13 @@ moead <-
     if (is.null(update$UseArchive)) {
       update$UseArchive <- FALSE
     }
-    Archive2 = list(X = NULL, Y = NULL, V = list(v = NULL, Cmatrix = NULL, Vmatrix = NULL))
+    # Archive2 = list(X = NULL, Y = NULL, V = list(v = NULL, Cmatrix = NULL, Vmatrix = NULL))
     # =========================== End Algorithm setup ========================== #
     
     # =========================== Initial definitions ========================== #
     # Generate weigth vectors
     W  <- generate_weights(decomp = decomp,
                            m      = problem$m)
-    
-    if(isTRUE(update$ws_transformation)) W <- ws_transformation(W)
     
     # Generate initial population
     X  <- create_population(N       = nrow(W),
@@ -363,60 +359,41 @@ moead <-
     YV <- evaluate_population(
       X       = X,
       problem = problem,
-      nfe     = nfe,
-      iter = 0,
-      my.file.n = my.file.n
+      nfe     = nfe
     )
+    
     Y   <- YV$Y
     V   <- YV$V
     nfe <- YV$nfe
     
     # fixed neighbours
-    if (!nullRA) {
-      if (resource.allocation$name == "DRA") {
-        scaling <- list()
-        scaling$name <- "simple"
-        ra <- init_dra(neighbors, aggfun, X, W, Y, scaling)
-        scaling   <- preset$scaling
-        Pi <- ra$Pi
-        oldObj <- ra$oldObj
-        idx.bounday <- ra$idx.bounday
-        
-        size <- floor(dim(W)[1] / 5) - problem$m
-      }
-      else if (resource.allocation$name == "GRA") {
-        dt.bigZ <- list()
-        ra <- init_gra(neighbors, aggfun, X, W, Y)
-        Pi <- ra$Pi
-      }
-      if (resource.allocation$name == "RAD") {
-        ra <- init_rad(neighbors, aggfun, X, W, Y)
-        Pi <- ra$Pi
-        # idx.bounday <- ra$idx.bounday
-        # size <- floor(dim(W)[1] / 5) - problem$m
-      }
-      else{
-        Pi <- init_p(W, 1)
+    ## resource allocation
+    indexes <- seq.int(1, dim(W)[1])
+    Pi <- init_p(W, 1)
+    if (!nullRA){
+      if (resource.allocation$name == "DRA" && resource.allocation$selection == "tour"){
+        out <- calculate_DRA(resource.allocation, neighbors, aggfun, X, W, Y, preset, problem)
+        idx.bounday <- out$idx.bounday
+        idx.tour <- out$idx.tour
+        oldObj <- out$oldObj
       }
     }
-    indexes <- seq.int(1, dim(W)[1])
-    
     # ========================= End Initial definitions ======================== #
     
     # ============================= Iterative cycle ============================ #
     keep.running  <- TRUE      # stop criteria flag
     iter          <- 0         # counter: iterations
+    
+    # save iteraction data on file
     pdGen <- formatC(iter, width = 3, format = "d", flag = "0")
     write_feather(as.data.frame(Y), paste0(my.file.n, "rep_",seed,"_",pdGen,"_Y"))
     
+    # calculating usage of resource by subproblem
     usage <- list(rep(1, dim(W)[1]))
-    # Reduce("+",usage)
     
     while (keep.running) {
       # Update iteration counter
       iter <- iter + 1
-      # print("iter")
-      # print(iter)
       if ("save.iters" %in% names(moead.input.pars)) {
         if (moead.input.pars$save.iters == TRUE)
           saveRDS(as.list(environment()),
@@ -425,7 +402,7 @@ moead <-
       
       # ========== Neighborhoods
       # Define/update neighborhood probability matrix
-      # ALL RA skips this step
+      # ALL RA skips this step - what
       BP <- define_neighborhood(neighbors = neighbors,
                                 v.matrix  = switch(neighbors$name,
                                                    lambda = W,
@@ -440,20 +417,24 @@ moead <-
         
       }
       else{
-        # if (resource.allocation$name == "DRA") {
-        #     idx.tour <-
-        #       selTournament(fitness = -Pi,
-        #                     n.select = size,
-        #                     k = 10)
-        #     indexes <- append(idx.bounday, idx.tour)  
-        # }
-        # else{
-        rand.seq <- runif(length(Pi))
-        indexes <- which(rand.seq <= Pi)
-        if (length(indexes) < 3 || is.null(length(indexes))) {
-          indexes <- which(rand.seq <= 1)
+        if (resource.allocation$selection == "tour") {
+          size <- floor(dim(W)[1] / 5) - problem$m
+          idx.tour <-
+            selTournament(fitness = -Pi,
+                          n.select = size,
+                          k = 10)
+          indexes <- append(idx.bounday, idx.tour)
+          iteration_usage <- rep(0, dim(W)[1])
+          iteration_usage[indexes] <- 1
         }
-        # }
+        else if (resource.allocation$selection == "random"){
+          rand.seq <- runif(length(Pi))
+          indexes <- which(rand.seq <= Pi)
+          if (length(indexes) < 3 || is.null(length(indexes))) {
+            indexes <- which(rand.seq <= 1)
+          }
+          iteration_usage <- (rand.seq <= Pi)
+        }
         Xt <- X
         temp.X <- X
         X <- X[indexes, ]
@@ -461,28 +442,32 @@ moead <-
         temp.Y <- Y
         Y <- Y[indexes, ]
         Vt <- V
+        
       }
+      
+      
       B  <- BP$B.variation[indexes,]
-      P  <- BP$P[indexes, indexes]
+      ## TODO: i dont know for what Im using temp.P
       temp.P  <- BP$P
+      P  <- BP$P[indexes, indexes]
+      
+      
       
       # Perform variation
-      
       Xv      <- do.call(perform_variation,
                          args = as.list(environment()))
       X       <- Xv$X
       ls.args <- Xv$ls.args
       nfe     <- nfe + Xv$var.nfe
+      
       # ========== Evaluation
       # Evaluate offspring population on objectives
-      
       YV <- evaluate_population(
         X       = X,
         problem = problem,
-        nfe     = nfe,
-        iter = iter,
-        my.file.n = my.file.n
+        nfe     = nfe
       )  
+      
       Y   <- YV$Y
       V   <- YV$V
       nfe <- YV$nfe
@@ -494,21 +479,12 @@ moead <-
         Y <- temp.Y
         P <- temp.P
       }
+      
       # ========== Scalarization
       # Objective scaling and estimation of 'ideal' and 'nadir' points
-      if (problem$name != "problem.moon"){
-        normYs <- scale_objectives(Y       = Y,
-                                   Yt      = Yt,
-                                   scaling = scaling)        
-      }
-      else{
-        minP <- getminP(rbind(Y, Yt))
-        maxP <- getmaxP(rbind(Y, Yt))
-        normYs <- list(Y    = Y,
-                       Yt   = Yt,
-                       minP = minP,
-                       maxP = maxP)  
-      }
+      normYs <- scale_objectives(Y       = Y,
+                                 Yt      = Yt,
+                                 scaling = scaling)  
       
       # Scalarization by neighborhood.
       # bigZ is an [(T+1) x N] matrix, in which each column has the T scalarized
@@ -529,7 +505,6 @@ moead <-
       # (which takes into account both the performance value and constraint
       # handling policy, if any)
       B  <- BP$B.order
-      
       sel.indx <- order_neighborhood(
         bigZ       = bigZ,
         B          = B,
@@ -546,27 +521,7 @@ moead <-
       V       <- XY$V
       Archive <- XY$Archive
       
-      if (update$UseArchive == TRUE &&
-          update$nsga == TRUE) {
-        comb.popX <- rbind(X, Archive$X, Archive2$X)
-        comb.popY <- rbind(Y, Archive$Y, Archive2$Y)
-        comb.popVv <- cbind(V$v, Archive$V$v, Archive2$V$v)
-        
-        comb.popVCmatrix <- rbind(V$Cmatrix, Archive$V$Cmatrix, Archive2$V$Cmatrix)
-        comb.popVVmatrix <- rbind(V$Vmatrix, Archive$V$Vmatrix, Archive2$V$Vmatrix)
-        
-        sorting <- selNondom(fitness = t(comb.popY),
-                             n.select = dim(W)[1])
-        Archive2$X <- comb.popX[sorting,]
-        Archive2$Y <- comb.popY[sorting,]
-        
-        divisor <- dim(W)[1]
-        for (i in 1:divisor){
-          Archive2$V$v[i] <- comb.popVv[(sorting[i]%%divisor)+1, ceiling(sorting[i]/divisor)]
-        }
-        Archive2$V$Vmatrix <- comb.popVVmatrix[sorting,]
-        Archive2$V$Cmatrix <- comb.popVCmatrix[sorting,]
-      }
+      
       if (!nullRA) {
         if (resource.allocation$name == "DRA") {
           if (iter %% resource.allocation$dt == 0) {
@@ -574,7 +529,6 @@ moead <-
             Pi <- dra(newObj, oldObj, Pi)
             oldObj <- newObj
           }
-          
         }
         if (resource.allocation$name == "GRA") {
           if (iter > resource.allocation$dt) {
@@ -615,11 +569,14 @@ moead <-
           }
         }          
       }
-      if (problem$name == "problem.moon" && (stopcrit[[1]]$maxeval< (nfe + dim(W)[1]))){
-        V <- Archive2$V
-        X <- Archive2$X
-        Y <- Archive2$Y
-      }
+      
+      # save iteraction data on file
+      pdGen <- formatC(iter, width = 3, format = "d", flag = "0")
+      write_feather(as.data.frame(Y), paste0(my.file.n, "rep_",seed,"_",pdGen,"_Y"))
+      
+      # calculate priority resource
+      if(nullRA) usage[[length(usage)+1]] <- rep(1, dim(W)[1])
+      else usage[[length(usage)+1]] <- as.integer(iteration_usage)
       
       # ========== Stop Criteria
       # Calculate iteration time
@@ -640,13 +597,6 @@ moead <-
       # ========== Print
       # Echo whatever is demanded
       print_progress(iter.times, showpars)
-      
-      pdGen <- formatC(iter, width = 3, format = "d", flag = "0")
-      write_feather(as.data.frame(Y), paste0(my.file.n, "rep_",seed,"_",pdGen,"_Y"))
-      
-      if(nullRA) usage[[length(usage)+1]] <- rep(1, dim(W)[1])
-      else usage[[length(usage)+1]] <- as.integer(rand.seq <= Pi)
-      
     }
     # =========================== End Iterative cycle ========================== #
     
@@ -664,40 +614,12 @@ moead <-
     }
     
     # Output
-    if (problem$name == "problem.moon" && update$nsga == TRUE){
-      my.iter <- with_options(
-        c(scipen = 999), 
-        str_pad(iter, 4, pad = "0")
-      )
-      filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_vars_eval.txt")
-      write.table(X,
-                  file = filename,
-                  row.names = FALSE, sep = "\t",  col.names=FALSE)
-      path <- paste0(my.file.n, "th_run/optimizer/interface/")
-      system(paste("./moon_mop",path))
-      
-      filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_vars_eval.txt")
-      dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_vars_eval.txt")
-      system(paste("cp ", filename, dest))
-      
-      filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_objs_eval.txt")
-      dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_objs_eval.txt")
-      system(paste("cp ", filename, dest))
-      
-      filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_cons_eval.txt")
-      dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_cons_eval.txt")
-      system(paste("cp ", filename, dest))
-    }
-    
-    
-    
     out <- list(
       X           = X,
       Y           = Y,
       V           = V,
       W           = W,
       Archive     = Archive,
-      Archive2     = Archive2,
       ideal       = apply(Y, 2, min),
       nadir       = apply(Y, 2, max),
       nfe         = nfe,
@@ -705,7 +627,7 @@ moead <-
       time        = difftime(Sys.time(), time.start, units = "secs"),
       seed        = seed,
       inputConfig = moead.input.pars,
-      usage = usage
+      usage       = usage
     )
     class(out) <- c("moead", "list")
     

@@ -1,4 +1,4 @@
-rm(list = ls(all = TRUE))
+# rm(list = ls(all = TRUE))
 setwd("~/MOEADr/R/")
 library(smoof)
 library(MOEADr)
@@ -8,18 +8,22 @@ library(ecr)
 library(mco)
 library(feather)
 library(withr)
-lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
+# lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
+source("load.DTLZ.function.R")
+source("resource.allocation.R")
+source("utils.R")
+source("moead.R")
 
-repetitions <-  3
+repetitions <- 1
 
 algorithms <- c("moead.de")
 
 #uniform weight
-resource.allocation.DRA <- list(name = "DRA", dt = 20)
-resource.allocation.GRA <- list(name = "GRA", dt = 20)
-resource.allocation.RAD <- list(name = "RAD", dt = 20)
-resource.allocation.NORM <- list(name = "norm", dt = 20)
-resource.allocation.RANDOM <- list(name = "random", dt = 20)
+resource.allocation.DRA <- list(name = "DRA", dt = 20, selection = "tour")
+resource.allocation.GRA <- list(name = "GRA", dt = 20, selection = "random")
+resource.allocation.RAD <- list(name = "RAD", dt = 20, selection = "random")
+resource.allocation.NORM <- list(name = "norm", dt = 20, selection = "random")
+resource.allocation.RANDOM <- list(name = "random", dt = 20, selection = "random")
 
 
 decomp <- list(name = "SLD", H = 149)
@@ -40,14 +44,14 @@ stopcrit  <- list(list(name    = "maxeval",
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  for (i in 1:9) {
+  for (i in 44:44) {#44 and 29
     fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
   }
   
   my.data <- data.frame()
   for (algo in algorithms) {
     print(algo)
-    id = 1
+    id = 44
     for (fun in fun.names1) {
       print(fun)
       problem <-
@@ -77,62 +81,62 @@ for (n.obj in n.objs) {
         
         cat("rep:", j)
         
-        my.file.n <- paste0("../../de/",fun,"_")
-        moead.de <- moead(
-          problem  = problem.zdt1,
-          preset   = preset_moead(algo),
-          decomp = decomp,
-          stopcrit = stopcrit,
-          scaling = scaling,
-          showpars = list(show.iters = "none", showevery = 100),
-          seed = j,
-          my.file.n = my.file.n
-        )
-        
-        # my.file.n <- paste0("../../dra/",fun,"_")
-        # moead.dra <- moead(
+        # my.file.n <- paste0("../../de/",fun,"_")
+        # moead.de <- moead(
         #   problem  = problem.zdt1,
         #   preset   = preset_moead(algo),
         #   decomp = decomp,
         #   stopcrit = stopcrit,
         #   scaling = scaling,
         #   showpars = list(show.iters = "none", showevery = 100),
-        #   seed = j,
-        #   resource.allocation = resource.allocation.DRA,
+        #   seed = 19,
         #   my.file.n = my.file.n
         # )
         
-        
-        # gra.awt
-        my.file.n <- paste0("../../gra/",fun,"_")
-        moead.gra <- moead(
+        my.file.n <- paste0("../../dra/",fun,"_")
+        moead.dra <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
-          decomp = decomp2,
+          decomp = decomp,
           stopcrit = stopcrit,
           scaling = scaling,
           showpars = list(show.iters = "none", showevery = 100),
-          seed = j,
-          update = update2,
-          resource.allocation = resource.allocation.GRA,
+          seed = 19,
+          resource.allocation = resource.allocation.DRA,
           my.file.n = my.file.n
         )
+        
+        
+        # gra.awt
+        # my.file.n <- paste0("../../gra/",fun,"_")
+        # moead.gra <- moead(
+        #   problem  = problem.zdt1,
+        #   preset   = preset_moead(algo),
+        #   decomp = decomp2,
+        #   stopcrit = stopcrit,
+        #   scaling = scaling,
+        #   showpars = list(show.iters = "none", showevery = 100),
+        #   seed = j,
+        #   update = update2,
+        #   resource.allocation = resource.allocation.GRA,
+        #   my.file.n = my.file.n
+        # )
         
         # write_feather(as.data.frame(moead.gra$Y), my.file.n)
         
         # ondb
-        # my.file.n <- paste0("../../rad/",fun,"_")
-        # moead.rad <- moead(
-        #   problem  = problem.zdt1,
-        #   preset   = preset_moead(algo),
-        #   decomp = decomp,
-        #   stopcrit = stopcrit,
-        #   scaling = scaling,
-        #   showpars = list(show.iters = "none", showevery = 10),
-        #   seed = j,
-        #   resource.allocation = resource.allocation.RAD,
-        #   my.file.n = my.file.n
-        # )
+        my.file.n <- paste0("../../rad/",fun,"_")
+        moead.rad <- moead(
+          problem  = problem.zdt1,
+          preset   = preset_moead(algo),
+          decomp = decomp,
+          stopcrit = stopcrit,
+          scaling = scaling,
+          showpars = list(show.iters = "none", showevery = 10),
+          seed = 19,
+          resource.allocation = resource.allocation.RAD,
+          my.file.n = my.file.n
+        )
         
         # my.file.n <- paste0("../../norm_",fun,"/")
         # moead.norm <- moead(

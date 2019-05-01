@@ -19,7 +19,8 @@ norm_vec2 <- function(x) {
 
 
 projection <- function(a, b, epsilon = 1e-50) {
-  return(c(sum(a * b) / sum(a ^ 2) + epsilon) * a)
+  # return(c(sum(a * b) / sum(a ^ 2) + epsilon) * a)
+  return((a * b) / (sqrt(sum(a ^ 2)) + epsilon) * a)
 }
 
 
@@ -109,7 +110,7 @@ online_diversity <-
     p <-  my.out
     p <- (p - min(p)) / ((max(p) - min(p)) + epsilon)
     # out <- list(p = 1 - p, dm = my.out)
-    out <- list(p = 1-p, dm = my.out)
+    out <- list(p = 1 - p, dm = my.out)
     return(out)
   }
 
@@ -130,14 +131,14 @@ dra <- function(newObj, oldObj, Pi) {
 }
 
 init_dra <- function(neighbors, aggfun, X, W, Y, scaling) {
+  
+  Pi <- init_p(W, 1)
+  
   BP <- define_neighborhood(neighbors = neighbors,
                             v.matrix  = switch(neighbors$name,
                                                lambda = W,
                                                x      = X),
                             iter      = 1)
-  # for DRA - do not this hardcoded
-  Pi <- init_p(W, 1)
-  
   my.identity <- diag(dim(W)[2])
   idx <- list()
   for (i in 1:dim(W)[1]) {
@@ -157,9 +158,6 @@ init_dra <- function(neighbors, aggfun, X, W, Y, scaling) {
                              scaling = scaling)
   
   # Scalarization by neighborhood.
-  # bigZ is an [(T+1) x N] matrix, in which each column has the T scalarized
-  # values for the solutions in the neighborhood of one subproblem, plus the
-  # scalarized value for the incumbent solution for that subproblem.
   B  <- BP$B.scalarize
   bigZ <- scalarize_values(
     normYs  = normYs,
@@ -171,27 +169,11 @@ init_dra <- function(neighbors, aggfun, X, W, Y, scaling) {
   return(list (
     Pi      = Pi,
     oldObj = oldObj,
-    idx.bounday = idx.bounday#,
-    # BP = BP
+    idx.bounday = idx.bounday
   ))
 }
 
-init_gra <- function(neighbors, aggfun, X, W, Y) {
-  # for GRA - do not this hardcoded
-  Pi <- init_p(W, 1)
-  
-  return(list (Pi      = Pi))
-}
-
-init_rad <- function(neighbors, aggfun, X, W, Y) {
-  # for GRA - do not this hardcoded
-  Pi <- init_p(W, 1)
-  
-  return(list (Pi      = Pi))
-}
-
-
-
+#this is a alternative to the decomp methods
 ws_transformation <- function(W, epsilon = 1e-50) {
   temp <- t(apply(W, 1, function(W) {
     1 / (W + epsilon)
@@ -218,4 +200,17 @@ by_jacobian <- function(problem, offspring, epsilon = 1e-50) {
   u <- apply(jacobian(problem, offspring), 2, sum)
   u <- (u - min(u)) / ((max(u) - min(u)) + epsilon)
   return (u)
+}
+
+
+
+calculate_DRA <- function(resource.allocation, neighbors, aggfun, X, W, Y, preset, problem) {
+  scaling   <- preset$scaling
+  ra <- init_dra(neighbors, aggfun, X, W, Y, scaling)
+  oldObj <- ra$oldObj
+  idx.bounday <- ra$idx.bounday
+  idx.tour <- ra$idx.tour
+  size <- floor(dim(W)[1] / 5) - problem$m
+  out <- list (idx.bounday = idx.bounday, idx.tour = idx.tour, oldObj = oldObj)
+  return (out)
 }

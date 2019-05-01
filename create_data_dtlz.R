@@ -111,8 +111,6 @@ temp <- as.data.frame(temp)
     runIdPre <- paste0("../", variant)
     df <- data.frame()
     df2 <- data.frame()
-    # temp <- read_feather(paste0("../",variant, "/UF1_info"))
-   # temp <- read_feather(paste0("../", variant, "/", fun, "_2_info"))
     temp <- read_feather(paste0("../", variant, "/", fun, "_info"))
     temp <- as.data.frame(temp)
     for (iRun2 in 1:nRun) {
