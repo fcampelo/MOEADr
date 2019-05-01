@@ -618,7 +618,7 @@ moead <-
       temp <- rbind(temp, iter)  
     }
     else{
-      temp <- iter
+      temp <- as.data.frame(iter)
     }
     write_feather(temp, paste0(my.file.n, "info"))
     
