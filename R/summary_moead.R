@@ -42,21 +42,23 @@ summary.moead <- function(object,
                                 viol.threshold  = 1e-6,
                                 ndigits         = 3,
                                 ref.point       = NULL,
-                                ref.front       = NULL)
+                                ref.front       = NULL,
+                                show.output     = NULL)
 {
 
   # Error checking
   nullRP <- is.null(ref.point)
   nullRF <- is.null(ref.front)
+  nullShowOutput <- is.null(show.output)
   assertthat::assert_that(
     "moead" %in% class(object),
     is.logical(useArchive),
     is.numeric(viol.threshold) && viol.threshold >= 0,
     assertthat::is.count(ndigits),
     nullRP || is.numeric(ref.point),
-    nullRP || length(ref.point) == ncol(Y),
+    nullRP || length(ref.point) == ncol(object$Y),
     nullRF || is.numeric(ref.front),
-    nullRF || ncol(ref.front) == ncol(Y))
+    nullRF || ncol(ref.front) == ncol(object$Y))
 
   # ===========================================================================
   # Calculate information for summary
@@ -88,29 +90,36 @@ summary.moead <- function(object,
       ref.point <- nadir.est
     }
     hv <- emoa::dominated_hypervolume(points = t(Y), ref = ref.point)
+    hv.front <- emoa::dominated_hypervolume(points = t(ref.front), ref = ref.point)
+    hv.scaled <- hv/hv.front
   }
 
 
   # ===========================================================================
   # Plot summary list
-
-  cat("\nSummary of MOEA/D run")
-  cat("\n#====================================")
-  cat("\nTotal function evaluations: ", object$nfe)
-  cat("\nTotal iterations: ", object$n.iter)
-  cat("\nPopulation size: ", npts)
-  cat("\nFeasible points found: ", nfeas,
-      paste0("(", signif(100 * nfeas / npts, 3), "%"),
-      "of total)")
-  cat("\nNondominated points found: ", nndom,
-      paste0("(", signif(100 * nndom / npts, 3), "%"),
-      "of total)")
-  cat("\nEstimated ideal point: ", round(ideal.est, ndigits))
-  cat("\nEstimated nadir point: ", round(nadir.est, ndigits))
-  if(!nullRF) cat("\nEstimated IGD: ", igd)
-  if("emoa" %in% rownames(utils::installed.packages())) {
-    cat("\nEstimated HV: ", hv)
-    cat("\nRef point used for HV: ", ref.point)
-  } else cat("\n\nPlease install package 'emoa' to calculate hypervolume.")
-  cat("\n#====================================")
+  if (!nullShowOutput){
+    cat("\nSummary of MOEA/D run")
+    cat("\n#====================================")
+    cat("\nTotal function evaluations: ", object$nfe)
+    cat("\nTotal iterations: ", object$n.iter)
+    cat("\nPopulation size: ", npts)
+    cat("\nFeasible points found: ", nfeas,
+        paste0("(", signif(100 * nfeas / npts, 3), "%"),
+        "of total)")
+    cat("\nNondominated points found: ", nndom,
+        paste0("(", signif(100 * nndom / npts, 3), "%"),
+        "of total)")
+    cat("\nEstimated ideal point: ", round(ideal.est, ndigits))
+    cat("\nEstimated nadir point: ", round(nadir.est, ndigits))
+    if(!nullRF) cat("\nEstimated IGD: ", igd)
+    if("emoa" %in% rownames(utils::installed.packages())) {
+      cat("\nEstimated HV: ", hv)
+      cat("\nEstimated HV (HV(Y)/HV(ref.front): ", hv.scaled)
+      cat("\nRef point used for HV: ", ref.point)
+    } else cat("\n\nPlease install package 'emoa' to calculate hypervolume.")
+    cat("\n#====================================")
+  }
+  
+  out <- list(hv.scaled = hv.scaled, hv = hv, igd = igd, nndom = nndom)
+  return(out)
 }

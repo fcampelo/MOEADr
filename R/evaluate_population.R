@@ -36,10 +36,8 @@
 #' Decomposition. Journal of Statistical Software \doi{10.18637/jss.v092.i06}\cr
 #'
 
-evaluate_population <- function(X, problem, nfe, iter, my.file.n = NULL)
+evaluate_population <- function(X, problem, nfe)
 {
-  input.pars <- as.list(sys.call())[-1]
-  if (!is.null(my.file.n)) my.file.n <- eval(input.pars$my.file.n)
   
   # ========== Error catching and default value definitions
   # Input "problem" is assumed to have been already verified in
@@ -49,108 +47,63 @@ evaluate_population <- function(X, problem, nfe, iter, my.file.n = NULL)
                           ncol(X) == length(problem$xmax),
                           nfe == as.integer(nfe),
                           nfe >= 0)
-
+  
   # ==========
-
+  
   # Denormalize population
-  if (problem$name == "problem.moon") {
-    my.iter <- with_options(
-      c(scipen = 999), 
-      str_pad(iter, 4, pad = "0")
-    )
-    filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_vars_eval.txt")
-    write.table(X,
-                file = filename,
-                row.names = FALSE, sep = "\t",  col.names=FALSE)
-    path <- paste0(my.file.n, "th_run/optimizer/interface/")
-    system(paste("./moon_mop",path))
-    # get evaluations from file
-    Y <- as.matrix(read.csv(paste0(my.file.n, "th_run/optimizer/interface/pop_objs_eval.txt"), sep = "\t", stringsAsFactors =  F, header = F))
-    filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_vars_eval.txt")
-    dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_vars_eval.txt")
-    system(paste("cp ", filename, dest))
-    
-    filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_objs_eval.txt")
-    dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_objs_eval.txt")
-    system(paste("cp ", filename, dest))
-  }
-  else{
-    X <- denormalize_population(X, problem)
-    
-    # Prepare arguments for function call
-    fun.args <- as.list(formals(problem$name))
-    
-    my.args  <- sapply(names(fun.args),
-                       FUN      = function(argname, pars, args){
-                         if(argname %in% names(pars)) {
-                           args[argname] <- pars[argname]
-                         }
-                         return(args[[argname]])},
-                       pars     = problem,
-                       args     = fun.args,
-                       simplify = FALSE)
-    
-    my.args[[grep("[x|X]",
-                  names(my.args))]] <- X
-    
-    Y <- do.call(problem$name,
-                 args = my.args)
-  }
+  X <- denormalize_population(X, problem)
+  
+  # Prepare arguments for function call
+  fun.args <- as.list(formals(problem$name))
+  
+  my.args  <- sapply(names(fun.args),
+                     FUN      = function(argname, pars, args){
+                       if(argname %in% names(pars)) {
+                         args[argname] <- pars[argname]
+                       }
+                       return(args[[argname]])},
+                     pars     = problem,
+                     args     = fun.args,
+                     simplify = FALSE)
+  
+  my.args[[grep("[x|X]",
+                names(my.args))]] <- X
+  
+  Y <- do.call(problem$name,
+               args = my.args)
+  
   if ("constraints" %in% names(problem))
   {
-    if(problem$name == "problem.moon") {
-      # get constrains from file
-      my.iter <- with_options(
-        c(scipen = 999), 
-        str_pad(iter, 4, pad = "0")
-      )
-      filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_cons_eval.txt")
-      cons <- as.matrix(read.csv(filename, sep = "\t", stringsAsFactors =  F, header = F))
-      # print(head(cons))
-      # print(abs(cons))
-      # # print(head(abs(pmin(cons, 0))))
-      # exit()
-      Vmatrix <- pmax(cons,0)
-      # Vmatrix <- pmax(abs(cons),0)
-      V <- list(Cmatrix = cons, Vmatrix = Vmatrix, v = rowSums(Vmatrix))
-      
-      # filename <- paste0(my.file.n, "th_run/optimizer/interface/pop_cons_eval.txt")
-      dest <- paste0(my.file.n, "th_run/optimizer/interface/gen",my.iter,"_pop_cons_eval.txt")
-      system(paste("cp ", filename, dest))
-    }
-    else{
-      con <- problem$constraints
-      if (is.null(con$epsilon)) con$epsilon <- 0
-      
-      # Prepare arguments for function call
-      vfun.args <- as.list(formals(con$name))
-      
-      my.vargs  <- sapply(names(vfun.args),
-                          FUN      = function(argname, pars, args){
-                            if(argname %in% names(pars)) {
-                              args[argname] <- pars[argname]
-                            }
-                            return(args[[argname]])},
-                          pars     = con,
-                          args     = vfun.args,
-                          simplify = FALSE)
-      
-      my.vargs[[grep("[x|X]",
-                     names(my.vargs))]] <- X
-      
-      V <- do.call(con$name,
-                   args = my.vargs)
-    }
+    con <- problem$constraints
+    if (is.null(con$epsilon)) con$epsilon <- 0
     
+    # Prepare arguments for function call
+    vfun.args <- as.list(formals(con$name))
+    
+    my.vargs  <- sapply(names(vfun.args),
+                        FUN      = function(argname, pars, args){
+                          if(argname %in% names(pars)) {
+                            args[argname] <- pars[argname]
+                          }
+                          return(args[[argname]])},
+                        pars     = con,
+                        args     = vfun.args,
+                        simplify = FALSE)
+    
+    my.vargs[[grep("[x|X]",
+                   names(my.vargs))]] <- X
+    
+    V <- do.call(con$name,
+                 args = my.vargs)
   }
   else
   {
     V <- NULL
   }
-
+  
   # Update evaluations counter in the calling environment
   nfe <- nfe + nrow(X)
-
+  
   R <- list(Y   = Y,
             V   = V,
             nfe = nfe)
