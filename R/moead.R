@@ -612,10 +612,14 @@ moead <-
       Archive$W           <- W
       colnames(Archive$W) <- paste0("f", 1:ncol(Archive$W))
     }
-    
-    temp <- read_feather(paste0(my.file.n, "info"))
-    temp <- as.data.frame(temp)
-    temp <- rbind(temp, iter)
+    if(file.exists(paste0(my.file.n, "info"))){
+      temp <- read_feather(paste0(my.file.n, "info"))
+      temp <- as.data.frame(temp)
+      temp <- rbind(temp, iter)  
+    }
+    else{
+      temp <- iter
+    }
     write_feather(temp, paste0(my.file.n, "info"))
     
     # Output
