@@ -18,8 +18,8 @@ norm_vec2 <- function(x) {
 }
 
 
-projection <- function(a, b, epsilon = 1e-50) {
-  return ((a*b)/norm(a, type="2")*a)
+projection <- function(p, d, epsilon = 1e-50) {
+  return (sum(p*d)/(norm(d, type="2")^2)*d)
 }
 
 
@@ -93,8 +93,8 @@ online_diversity <-
             d.convs <-
               (offspring[indexes_j[[j]],] - parent[indexes_i[[j]],]) + epsilon
             # projection calculation
-            proj.c <- projection(d.convs, c.line)
-            proj.p <- projection(d.convs, p.line)
+            proj.c <- projection(c.line, d.convs)
+            proj.p <- projection(p.line, d.convs)
             
             # calculate the norm of the vectors: numerator and demoniator of equation (7)
             a <- norm(p.line - proj.p, type = "2")
