@@ -52,9 +52,7 @@ define_neighborhood <- function(neighbors, v.matrix, iter) {
     length(neighbors$delta.p) == 1,
     is_within(neighbors$delta.p, 0, 1, strict = FALSE)
   )
-  print("entrou")
   if (iter == 1 || neighbors$name != "lambda") {
-    print("entrou no if")
     BP <- list(
       B = NULL,
       P = NULL,

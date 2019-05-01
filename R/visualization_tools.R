@@ -11,7 +11,7 @@ library(pracma)
 library(withr)
 library(ggplot2)
 
-
+tool1 <- function(){
 Resources <- Reduce("+", moead.rad$usage)
 Subproblem <- 1:length(Resources)
 b <- data.frame(Resources, Subproblem)
@@ -38,3 +38,4 @@ v <- ggplot(b, aes(Subproblem, Resources)) +geom_line()+ theme(axis.text = eleme
                                                                    face = "bold"
                                                                  ))+ geom_hline(yintercept = 200, colour = "red")+ ylim(0,400)
 v +labs(title=paste0("MOEA/D-DRA - F44"))
+}
