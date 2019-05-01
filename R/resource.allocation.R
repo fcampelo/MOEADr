@@ -19,8 +19,7 @@ norm_vec2 <- function(x) {
 
 
 projection <- function(a, b, epsilon = 1e-50) {
-  # return(c(sum(a * b) / sum(a ^ 2) + epsilon) * a)
-  return((a * b) / (sqrt(sum(a ^ 2)) + epsilon) * a)
+  return ((a*b)/norm(a, type="2")*a)
 }
 
 

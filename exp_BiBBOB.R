@@ -44,14 +44,14 @@ stopcrit  <- list(list(name    = "maxeval",
 for (n.obj in n.objs) {
   print(n.obj)
   fun.names1 <- list()
-  for (i in 44:44) {#44 and 29
+  for (i in 1:55) {#44 and 29
     fun.names1[[length(fun.names1) + 1]] = paste0("BiObjBBOB", i)
   }
   
   my.data <- data.frame()
   for (algo in algorithms) {
     print(algo)
-    id = 44
+    id = 1
     for (fun in fun.names1) {
       print(fun)
       problem <-
@@ -81,17 +81,17 @@ for (n.obj in n.objs) {
         
         cat("rep:", j)
         
-        # my.file.n <- paste0("../../de/",fun,"_")
-        # moead.de <- moead(
-        #   problem  = problem.zdt1,
-        #   preset   = preset_moead(algo),
-        #   decomp = decomp,
-        #   stopcrit = stopcrit,
-        #   scaling = scaling,
-        #   showpars = list(show.iters = "none", showevery = 100),
-        #   seed = 19,
-        #   my.file.n = my.file.n
-        # )
+        my.file.n <- paste0("../../de/",fun,"_")
+        moead.de <- moead(
+          problem  = problem.zdt1,
+          preset   = preset_moead(algo),
+          decomp = decomp,
+          stopcrit = stopcrit,
+          scaling = scaling,
+          showpars = list(show.iters = "none", showevery = 100),
+          seed = 19,
+          my.file.n = my.file.n
+        )
         
         my.file.n <- paste0("../../dra/",fun,"_")
         moead.dra <- moead(
