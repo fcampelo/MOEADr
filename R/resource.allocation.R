@@ -84,8 +84,8 @@ online_diversity <-
             d.convs <-
               (offspring[indexes_j[[j]],] - parent[indexes_i[[j]],]) + epsilon
             # projection calculation
-            proj.c <- projection(c.line, d.convs)
-            proj.p <- projection(p.line, d.convs)
+            proj.c <- projection(d.convs, c.line)
+            proj.p <- projection(d.convs, p.line)
             
             # calculate the norm of the vectors: numerator and demoniator of equation (7)
             a <- norm(p.line - proj.p, type = "2")
