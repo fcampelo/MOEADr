@@ -8,11 +8,11 @@ library(ecr)
 library(mco)
 library(feather)
 library(withr)
-# lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
-source("load.DTLZ.function.R")
-source("resource.allocation.R")
-source("utils.R")
-source("moead.R")
+lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
+# source("load.DTLZ.function.R")
+# source("resource.allocation.R")
+# source("utils.R")
+# source("moead.R")
 
 repetitions <- 1
 
