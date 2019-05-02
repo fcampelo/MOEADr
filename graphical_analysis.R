@@ -187,7 +187,7 @@ read.data <-
       
       # UF1_iter_nfe_1_001
       # if (is.null(n.obj))
-      tgt <- paste0(runIdPre, "/", fun, "_iter_nfe_", iRun2, "_", zpdGen)
+      tgt <- 0
       # else tgt <- paste0(runIdPre,"/", fun,"_",n.obj,"_","_iter_nfe_",iRun2,"_",zpdGen)
       # objsData <- read.table(tgt, header = F, sep = "\t")
       temp <- as.matrix(read_feather(tgt))
@@ -232,7 +232,7 @@ read.data <-
       my.data2 = my.data2,
       hv = hv,
       igd = igd,
-      nfe = nfe
+      nfe = 0
     )
     return (out)
   }
