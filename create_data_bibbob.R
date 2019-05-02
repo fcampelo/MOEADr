@@ -4,8 +4,8 @@ setwd("~/MOEADr/")
 source("graphical_analysis.R")
 setwd("~/MOEADr/")
 nPop <- 150
-# nRun <- 21
-nRun <- 3
+
+nRun <- 21
 nObj <- 2 # fix even if single obj
 # number of variables
 nVar <- 2
@@ -23,11 +23,11 @@ consColnames <- paste("#con", 1:nCon, sep = "")
 
 
 # Fun names
-fun.names <- list("BiObjBBOB1")
-# for (i in 1:10) {
-#   fun.names[[length(fun.names) + 1]] = paste0("UF", i)
-#   # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
-# }
+# fun.names <- list("BiObjBBOB1")
+for (i in 1:10) {
+  fun.names[[length(fun.names) + 1]] = paste0("BiObjBBOB", i)
+  # fun.names[[length(fun.names) + 1]] = paste0("DTLZ", i)
+}
 
 variants <- c("de", "dra", "rad")
 
