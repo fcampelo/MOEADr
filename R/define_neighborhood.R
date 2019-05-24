@@ -92,7 +92,6 @@ define_neighborhood <- function(neighbors, v.matrix, iter) {
     BP$fullP[,] <- 1 / ncol(BP$fullP)
     
   } else {
-    print("entrou no else")
     # just get the existing matrix
     call.env <- parent.frame()
     assertthat::assert_that("BP" %in% names(call.env))

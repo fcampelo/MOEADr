@@ -12,7 +12,6 @@ extractFeasible <- function(data, isFilteredByCons = T) {
   if (isFilteredByCons) {
     stopifnot(length(consColnames) == nCon)
     for (i in 1:nCon) {
-      # if (i==2) data[, nObj + i + 2]<-abs(data[, nObj + i + 2])
       fPart <- ifelse(data[, nObj + i + 2] >= 0, T, F)
       isFeasible <- isFeasible & fPart
     }
@@ -26,7 +25,6 @@ extractFeasible <- function(data, isFilteredByCons = T) {
 extractNonDominatedSolutions <- function(data, isFeasible) {
   idxFeasible <- ifelse(isFeasible == T, 1:nrow(data), 0)
   idxFeasible <- subset(idxFeasible, idxFeasible > 0)
-  #objsTmp <<- as.matrix(data[idxFeasible, 1:(2 + nObj)]) # for output
   objsTmp <-
     as.matrix(data[idxFeasible, 1:(nObj + nCon)]) # for output
   objsTmp
@@ -211,8 +209,6 @@ read.data <-
     runDig <- 3
     generationDig <- 3
     nr1prev <- 0
-    # cat("gen = ")
-    # print(runIdPre)
     hv <- matrix(0, nrow = gen)
     igd <- matrix(0, nrow = gen)
     nfe <- matrix(0, nrow = gen)
@@ -220,9 +216,7 @@ read.data <-
     for (i in 1:my.gen) {
       iGen2 <- i
       iGen <- i - 1
-      # cat(iGen, ", ")
       filePath <- fun
-      # runIdPre <- ""
       runIdPost <- ""
       objsFilePre <- ""
       varsFilePre <- ""
@@ -231,43 +225,25 @@ read.data <-
       varsFilePost <- ""
       consFilePost <- ""
       
-      # zpdRun <- formatC(iRun, width = runDig, format = "d", flag = "0") #zero padded
+
       zpdGen <-
         formatC(iGen2,
                 width = generationDig,
                 format = "d",
                 flag = "0") #zero padded
-      # tgt <- paste(filePath, runIdPre, zpdRun, runIdPost, objsFilePre, zpdGen, objsFilePost, sep = "")
-      # if (is.null(n.obj))
       if (fun == "moon") {
         tgt <- paste0(runIdPre, "/", fun, "_rep_", iRun2, "_", zpdGen, "_cons")
         consData <- read_feather(tgt)
 >>>>>>> graphical analysis - bibbob w/out igd
       }
       tgt <- paste0(runIdPre, "/", fun, "_rep_", iRun2, "_", zpdGen, "_Y")
-      # else tgt <- paste0(runIdPre,"/", fun,"_",n.obj,"_", "_rep_",iRun2,"_",zpdGen,"_Y")
-      # objsData <- read.table(tgt, header = F, sep = "\t")
       objsData <- as.matrix(read_feather(tgt))
-      # print(objsData[,1:nObj])
-      # print(objsData[,1:nObj])
-      # exit()
-      # tgt <- paste(filePath, runIdPre, zpdRun, runIdPost, varsFilePre, zpdGen, varsFilePost, sep = "")
-      # varsData <- read.table(tgt, header = F, sep = "\t")
       
       nr1 <- nrow(objsData)
       gen <- rep(iGen2, each = nr1)
       evals <- rep((nr1prev + 1):(nr1prev + nPop + 1), length = nr1)
       zeroObj <- matrix(0.0, nrow = dim(objsData)[1], ncol = 1)
-      # temp <- data.frame(objsData[, 1:nObj], consData, varsData, gen, evals)
-      # temp <- data.frame(objsData[, 1:nObj], gen, evals)
-      # colnames(temp) <- c(objsColnames, consColnames, varsColnames, "#Gen", "#Eval")
-      # my.data2 <- rbind(my.data, data.frame(objsData[, 1:nObj], gen, evals))
-      
-      # UF1_iter_nfe_1_001
-      # if (is.null(n.obj))
       tgt <- 0
-      # else tgt <- paste0(runIdPre,"/", fun,"_",n.obj,"_","_iter_nfe_",iRun2,"_",zpdGen)
-      # objsData <- read.table(tgt, header = F, sep = "\t")
       temp <- as.matrix(read_feather(tgt))
       if (i > 1)
         nfe[i, 1] <- temp[, 2] + nfe[i - 1, 1]
@@ -276,13 +252,10 @@ read.data <-
       
       consData <- rep(0, nr1)
       varsData <- rep(0, nr1)
-      # print(evals)
       
       nr1prev <<- nr1prev + nPop
       if (flag == 1) {
-        # objsData[, 1:nObj] <- (sweep(objsData[, 1:nObj], 2, abs(min.val), "+"))
         if (fun != "moon") {
-          #igd[i, 1] <- calcIGD(objsData[, 1:nObj], Yref)
           a <- (sweep(objsData[, 1:nObj], 2, min.val))
           b <- ((max.val - min.val) + 1e-50)
           objsData[, 1:nObj] <- sweep(a, 2, b, "/")
@@ -291,9 +264,7 @@ read.data <-
           emoa::dominated_hypervolume(t(as.matrix(objsData[, 1:nObj])), t(as.matrix(refPoint)))
       }
       if (i == my.gen && flag == 2) {
-        # objsData[, 1:nObj] <- objsData[, 1:nObj] + abs(min.val)
         if (fun != "moon") {
-          # igd[i, 1] <- calcIGD(objsData[, 1:nObj], Yref)
           a <- (sweep(objsData[, 1:nObj], 2, min.val))
           b <- ((max.val - min.val) + 1e-50)
           objsData[, 1:nObj] <- sweep(a, 2, b, "/")
@@ -362,15 +333,6 @@ create_graphs <-
                     size = 24,
                     face = "bold"
                   )) + geom_jitter(height = 0, width = 0.1)
-    # p + geom_boxplot(width = 0.4, alpha = 0.65) + theme(axis.text = element_text(size =
-    #                                                                                20),
-    #                                                     axis.title =
-    #                                                       element_text(size = 24)) + theme(plot.title = element_text(
-    #                                                         color = "blue",
-    #                                                         size = 24,
-    #                                                         face = "bold"
-    #                                                       )) + geom_jitter(height = 0, width = 0.1)
-    # p +labs(title=paste0("HV - ",fun),
     p <- p + labs(title = paste0("HV - ",my.data$fun),
                   x = "Priority Function")
     p <- p + theme(legend.position = "none")
@@ -380,7 +342,7 @@ create_graphs <-
     pathname <- paste0("../files/", my.data$fun, "_IGD.png")
     p <-
       ggplot(my.data, aes(algorithm, IGD)) + geom_boxplot(aes(fill = algorithm))
-    # ggtitle(fun)
+
     p <-
       p + theme(axis.text = element_text(size =
                                            20),
