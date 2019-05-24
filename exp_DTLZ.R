@@ -1,4 +1,4 @@
-# rm(list = ls(all = TRUE))
+rm(list = ls(all = TRUE))
 setwd("~/MOEADr/R/")
 library(smoof)
 library(MOEADr)
@@ -8,11 +8,11 @@ library(ecr)
 library(mco)
 library(feather)
 library(withr)
-# lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
-source("load.DTLZ.function.R")
-source("resource.allocation.R")
-source("utils.R")
-source("moead.R")
+lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
+# source("load.DTLZ.function.R")
+# source("resource.allocation.R")
+# source("utils.R")
+# source("moead.R")
 
 repetitions <-  1
 dimension <- 100
@@ -136,6 +136,8 @@ for (n.obj in n.objs) {
           seed = j,
           resource.allocation = resource.allocation.NORM
         )
+        
+        test(moead.norm)
         
         # moead.random <- moead(
         #   problem  = problem.zdt1,

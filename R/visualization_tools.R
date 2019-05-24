@@ -43,7 +43,7 @@ v +labs(title=paste0("MOEA/D-DRA - F44"))
 }
 
 
-
+test <- function(moea){
 accumulate_by <- function(dat, var) {
   var <- lazyeval::f_eval(var, dat)
   lvls <- plotly:::getLevels(var)
@@ -52,27 +52,24 @@ accumulate_by <- function(dat, var) {
   })
   dplyr::bind_rows(dats)
 }
-
-
-moea <- moead.rad
 # moea <- normRA
 # moea <- original
 
 pareto.front <- data.frame(moea$plot.paretofront[-1,])
 resources <- data.frame(moea$plot.resources[-1,])
-# pareto.set <- data.frame(moea$plot.paretoset[-1,])
+pareto.set <- data.frame(moea$plot.paretoset[-1,])
 pareto.front$f1 <- as.numeric(pareto.front$f1)
 pareto.front$f2 <- as.numeric(pareto.front$f2)
 pareto.front$stage <- as.numeric(pareto.front$stage)
 pareto.front$Nondominated <- as.numeric(pareto.front$non.dominated)
 resources$Subproblem <- as.numeric(resources$Subproblem)
 resources$Resources <- as.numeric(resources$Resources)
-iteration.data$stage <- unlist(iteration.data$stage)
-# bad, 1:which size?
+
 # names(pareto.set) <- c(rep(paste0("PS", 1:100)), "stage")
 
 # iteration.data <- cbind(pareto.set, pareto.front, resources)
-iteration.data <- data.frame(cbind(pareto.front, resources))
+iteration.data <- data.frame(cbind(pareto.front, resources, pareto.set))
+iteration.data$stage <- unlist(iteration.data$stage)
 
 # bad, do apply  on levels
 iteration.data$f1 <- (iteration.data$f1 - min(iteration.data$f1))/(max(iteration.data$f1) - min(iteration.data$f1))
@@ -91,19 +88,30 @@ for (i in 1:max(iteration.data$stage)){
   # igds[[i]] <- igd <- calcIGD(Y, Yref = ref.front)
 }
 
-# for (i in 1:max(iteration.data$stage)){
-#   temp <- iteration.data[iteration.data$stage==i,]
-#   temp <- temp[,1:100]
-#   paretoset <- matrix(unlist(temp[,-ncol(temp)]), ncol = ncol(temp)-1, nrow = nrow(temp))
-#   paretoset.pca <- prcomp(paretoset, center = TRUE, scale = TRUE)
-#   df.pca <- rbind(df.pca, data.frame(i, paretoset.pca$x[,1], paretoset.pca$x[,3]))
-#   
-# }
 
-# names(df.pca) <- c("stage", "Comp.1", "Comp.2") 
-# df.pca$Nondominated <- as.numeric(iteration.data$non.dominated)
-# df.pca$Resources <- as.numeric(iteration.data$Resources)
-# df.pca$Subproblem <- as.numeric(iteration.data$Subproblem)
+for (i in 1:max(iteration.data$stage)){
+  if (exists('ref.front')){
+    Y <- rbind(iteration.data[iteration.data$stage==i,]$f1, iteration.data[iteration.data$stage==i,]$f2)
+    igds[[i]] <- igd <- calcIGD(Y, Yref = ref.front)
+  }else{
+    igds[[i]] <- 0
+  }
+}
+
+
+for (i in 1:max(iteration.data$stage)){
+  temp <- iteration.data[iteration.data$stage==i,]
+  temp <- temp[ ,(length(iteration.data)-length(pareto.set)+2):length(iteration.data)-1]
+  paretoset <- matrix(unlist(temp[,-ncol(temp)]), ncol = ncol(temp)-1, nrow = nrow(temp))
+  paretoset.pca <- prcomp(paretoset, center = TRUE, scale = TRUE)
+  df.pca <- rbind(df.pca, data.frame(i, paretoset.pca$x[,1], paretoset.pca$x[,3]))
+
+}
+
+names(df.pca) <- c("stage", "Comp.1", "Comp.2")
+df.pca$Nondominated <- as.numeric(iteration.data$non.dominated)
+df.pca$Resources <- as.numeric(iteration.data$Resources)
+df.pca$Subproblem <- as.numeric(iteration.data$Subproblem)
 
 hvs <- data.frame(unlist(hvs), 1:max(iteration.data$stage))
 names(hvs) <- c("hv", "stage") 
@@ -112,11 +120,11 @@ hvs2 <- hvs %>%
 hvs2$stage <- hvs2$frame
 
 
-# igds <- data.frame(unlist(igds), 1:max(iteration.data$stage))
-# names(igds) <- c("igd", "stage") 
-# igds2 <- igds %>%
-#   accumulate_by(~stage)
-# igds2$stage <- igds2$frame
+igds <- data.frame(unlist(igds), 1:max(iteration.data$stage))
+names(igds) <- c("igd", "stage")
+igds2 <- igds %>%
+  accumulate_by(~stage)
+igds2$stage <- igds2$frame
 
 # resource/subproblem with size by by nondom
 resource.problem <- iteration.data %>%
@@ -136,7 +144,7 @@ resource.problem <- iteration.data %>%
     text = ~ paste("Nondominated: ", Nondominated, '<br>Subproblem:', Subproblem), 
     hoverinfo = 'text'
   ) %>%
-  layout(title = "Resource Allocation (1) Pareto Front - size by nondominated (2),  Pareto Front - size by nondominated (3),"
+  layout(title = "Line 1: (1)-RA (2)-PF (size: resource) (3)-PF (size by nondominated) <br> Line 2; (1)-HV (2)-IGD (3)-PS-PCA"
     ) 
 
 # pareto front with size by nondominated
@@ -176,20 +184,20 @@ pf.resource <- iteration.data %>%
   ) 
 
 # pareto set
-# ps.pca <- df.pca %>%
-#   plot_ly(
-#     x = ~ Comp.1,
-#     y = ~ Comp.2,
-#     frame = ~ stage,
-#     type = 'scatter',
-#     mode = 'markers',
-#     showlegend = F,
-#     colors = c('black', 'blue'),
-#     color = ~ Nondominated,
-#     marker = list(size = ~ log(Resources+1)*5, opacity = 0.5),
-#     text = ~ paste("Nondominated: ", Nondominated, '<br>Subproblem:', Subproblem), 
-#     hoverinfo = 'text'
-#   ) 
+ps.pca <- df.pca %>%
+  plot_ly(
+    x = ~ Comp.1,
+    y = ~ Comp.2,
+    frame = ~ stage,
+    type = 'scatter',
+    mode = 'markers',
+    showlegend = F,
+    colors = c('black', 'blue'),
+    color = ~ Nondominated,
+    marker = list(size = ~ log(Resources+1)*5, opacity = 0.5),
+    text = ~ paste("Nondominated: ", Nondominated, '<br>Subproblem:', Subproblem),
+    hoverinfo = 'text'
+  )
 
 
 
@@ -207,13 +215,13 @@ hv.plot <- hvs2 %>%
     ) %>%
   layout(
     xaxis = list(
-      title = "Day",
+      # title = "Day",
       range = c(0,max(hvs2$stage)),
       zeroline = F,
       showgrid = F
-    ),xaxis = list(
-      title = "Day",
-      range = c(0,max(hvs2$stage)),
+    ),yaxis = list(
+      # title = "Day",
+      range = c(0,max(hvs2$hv)*1.2),
       zeroline = F,
       showgrid = F
     )
@@ -234,7 +242,7 @@ igd.plot <- igds2 %>%
     mode = 'lines',
     showlegend = F,
     colors = c('black', 'blue'),
-    fill = 'tozeroy', 
+    fill = 'tozeroy',
     fillcolor='rgba(58, 83, 155, 0.5)',
     line = list(color = 'rgba(58, 83, 155, 1)')
     ) %>%
@@ -250,12 +258,14 @@ igd.plot <- igds2 %>%
     frame = 100,
     transition = 0,
     redraw = FALSE
-  ) 
+  )
 
-p <- subplot(resource.problem, pf.resource, pf.nondominated, hv.plot, nrows = 2)%>%
+p <- subplot(resource.problem, pf.resource, pf.nondominated, hv.plot, igd.plot, ps.pca, nrows = 2)%>%
   animation_slider(
     currentvalue = list(
       prefix = "Iteration "
     )
   )
+p
 htmlwidgets::saveWidget(p, "index.html")
+}
