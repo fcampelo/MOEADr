@@ -68,7 +68,6 @@ variation_diffmut <- function(X, P, B, Phi = NULL, basis = 'rand', ...){
                              size    = 3,
                              replace = FALSE,
                              prob    = P[, i]) }))
-
   if (is.null(Phi)) {
     Phi <- matrix(stats::runif(dimX[1]),
                   nrow  = dimX[1],
@@ -106,7 +105,6 @@ variation_diffmut <- function(X, P, B, Phi = NULL, basis = 'rand', ...){
                      colSums(wgi.W * X[B[i, indx, drop = FALSE], ])
                    }))
   }
-
   # Perform mutations and return
   return(Xb + Phi * (X[R[, 2], , drop = FALSE] - X[R[, 3], , drop = FALSE]))
 }

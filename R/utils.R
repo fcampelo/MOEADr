@@ -81,3 +81,20 @@ init_p <- function(W, value = 0.5){
 subsetting <- function(var, rand.seq, p){
   return(var[rand.seq < p,])
 }
+
+
+scaling_Y <- function(Y, X){
+  minP <- getminP(rbind(Y, X))
+  maxP <- getmaxP(rbind(Y, X))
+  
+  MinP <- matrix(rep(minP, times = nrow(Y)),
+                 nrow  = nrow(Y),
+                 byrow = TRUE)
+  MaxP <- matrix(rep(maxP, times = nrow(Y)),
+                 nrow  = nrow(Y),
+                 byrow = TRUE)
+  
+  # Perform linear scaling
+  Y    <- (Y - MinP) / (MaxP - MinP + 1e-16)
+  return (Y)
+}

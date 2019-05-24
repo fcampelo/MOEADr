@@ -269,8 +269,6 @@ moead <-
            seed = NULL,
            # Seed for PRNG
            resource.allocation = NULL,
-           # File to save iteraction data
-           my.file.n = NULL,
            # List:  resource
            ...)
 
@@ -356,23 +354,31 @@ moead <-
                             problem = problem)
     
     # Evaluate population on objectives
-    YV <- evaluate_population(
-      X       = X,
-      problem = problem,
-      nfe     = nfe
-    )
+    YV <- evaluate_population(X       = X,
+                              problem = problem,
+                              nfe     = nfe)
     
     Y   <- YV$Y
     V   <- YV$V
     nfe <- YV$nfe
-    
     # fixed neighbours
     ## resource allocation
     indexes <- seq.int(1, dim(W)[1])
     Pi <- init_p(W, 1)
-    if (!nullRA){
-      if (resource.allocation$name == "DRA" && resource.allocation$selection == "tour"){
-        out <- calculate_DRA(resource.allocation, neighbors, aggfun, X, W, Y, preset, problem)
+    if (!nullRA) {
+      if (resource.allocation$name == "GRA")
+        dt.bigZ <- list()
+      if (resource.allocation$name == "DRA" &&
+          resource.allocation$selection == "tour") {
+        out <-
+          calculate_DRA(resource.allocation,
+                        neighbors,
+                        aggfun,
+                        X,
+                        W,
+                        Y,
+                        preset,
+                        problem)
         idx.bounday <- out$idx.bounday
         idx.tour <- out$idx.tour
         oldObj <- out$oldObj
@@ -384,12 +390,12 @@ moead <-
     keep.running  <- TRUE      # stop criteria flag
     iter          <- 0         # counter: iterations
     
-    # save iteraction data on file
-    pdGen <- formatC(iter, width = 3, format = "d", flag = "0")
-    write_feather(as.data.frame(Y), paste0(my.file.n, "rep_",seed,"_",pdGen,"_Y"))
     
-    # calculating usage of resource by subproblem
+    # calculating usage of resource by subproblem and any other visualization info
     usage <- list(rep(1, dim(W)[1]))
+    plot.resources <- list(rep(0, dim(W)[1]))
+    plot.paretofront <- list(rep(0, dim(W)[1]))
+    plot.paretoset <- list(rep(0, dim(W)[1]))
     
     while (keep.running) {
       # Update iteration counter
@@ -408,50 +414,48 @@ moead <-
                                                    lambda = W,
                                                    x      = X),
                                 iter      = iter)
-      if (nullRA) {
+      # ========== Variation
+      # Store current popula tion
+      # Store current population give indexes for resource allocation
+      # resource allocation for DRA
         # ========== Variation
         # Store current population
-        Xt <- X
-        Yt <- Y
-        Vt <- V
-        
-      }
-      else{
-        if (resource.allocation$selection == "tour") {
-          size <- floor(dim(W)[1] / 5) - problem$m
-          idx.tour <-
-            selTournament(fitness = -Pi,
-                          n.select = size,
-                          k = 10)
-          indexes <- append(idx.bounday, idx.tour)
-          iteration_usage <- rep(0, dim(W)[1])
-          iteration_usage[indexes] <- 1
-        }
-        else if (resource.allocation$selection == "random"){
-          rand.seq <- runif(length(Pi))
-          indexes <- which(rand.seq <= Pi)
-          if (length(indexes) < 3 || is.null(length(indexes))) {
-            indexes <- which(rand.seq <= 1)
+      Xt <- X
+      Yt <- Y
+      Vt <- V
+      if (!nullRA) {
+        rand.seq <- init_p(W, 1)
+        if (iter > resource.allocation$dt) {
+          if (resource.allocation$selection == "tour") {
+            size <- floor(dim(W)[1] / 5) - problem$m
+            idx.tour <-
+              selTournament(fitness = -Pi,
+                            n.select = size,
+                            k = 10)
+            indexes <- append(idx.bounday, idx.tour)
+            iteration_usage <- rep(0, dim(W)[1])
+            iteration_usage[indexes] <- 1
           }
-          iteration_usage <- (rand.seq <= Pi)
+          else if (resource.allocation$selection == "random") {
+            rand.seq <- runif(length(Pi))
+            indexes <- which(rand.seq <= Pi)
+            if (length(indexes) < 3 || is.null(length(indexes))) {
+              indexes <- which(rand.seq <= 1)
+            }
+            
+          }
         }
-        Xt <- X
+        iteration_usage <- (rand.seq <= Pi)
         temp.X <- X
-        X <- X[indexes, ]
-        Yt <- Y
+        X <- X[indexes,]
         temp.Y <- Y
-        Y <- Y[indexes, ]
-        Vt <- V
-        
+        Y <- Y[indexes,]
       }
-      
       
       B  <- BP$B.variation[indexes,]
       ## TODO: i dont know for what Im using temp.P
-      temp.P  <- BP$P
+      # temp.P  <- BP$P
       P  <- BP$P[indexes, indexes]
-      
-      
       
       # Perform variation
       Xv      <- do.call(perform_variation,
@@ -459,14 +463,11 @@ moead <-
       X       <- Xv$X
       ls.args <- Xv$ls.args
       nfe     <- nfe + Xv$var.nfe
-      
       # ========== Evaluation
       # Evaluate offspring population on objectives
-      YV <- evaluate_population(
-        X       = X,
-        problem = problem,
-        nfe     = nfe
-      )  
+      YV <- evaluate_population(X       = X,
+                                problem = problem,
+                                nfe     = nfe)
       
       Y   <- YV$Y
       V   <- YV$V
@@ -474,17 +475,19 @@ moead <-
       
       if (!nullRA) {
         temp.X[indexes, ] <- X
+        # print("temp.X")
+        # print(X==temp.X)
         X <- temp.X
         temp.Y[indexes, ] <- Y
         Y <- temp.Y
-        P <- temp.P
+        # P <- temp.P
       }
       
       # ========== Scalarization
       # Objective scaling and estimation of 'ideal' and 'nadir' points
       normYs <- scale_objectives(Y       = Y,
                                  Yt      = Yt,
-                                 scaling = scaling)  
+                                 scaling = scaling)
       
       # Scalarization by neighborhood.
       # bigZ is an [(T+1) x N] matrix, in which each column has the T scalarized
@@ -557,26 +560,36 @@ moead <-
             old.dm <- init_p(W, 0)
           parent <- Y
         }
-        if (resource.allocation$name == "norm"){
+        if (resource.allocation$name == "norm") {
           if (iter > resource.allocation$dt) {
             Pi <- by_norm(offspring_x = X, parent_x = parent)
           }
           parent <- X
         }
-        if (resource.allocation$name == "random"){
+        if (resource.allocation$name == "random") {
           if (iter > resource.allocation$dt) {
             Pi <- by_random(dim(W)[1])
           }
-        }          
+        }
       }
       
-      # save iteraction data on file
-      pdGen <- formatC(iter, width = 3, format = "d", flag = "0")
-      write_feather(as.data.frame(Y), paste0(my.file.n, "rep_",seed,"_",pdGen,"_Y"))
-      
       # calculate priority resource
-      if(nullRA) usage[[length(usage)+1]] <- rep(1, dim(W)[1])
-      else usage[[length(usage)+1]] <- as.integer(iteration_usage)
+      if (nullRA)
+        usage[[length(usage) + 1]] <- rep(1, dim(W)[1])
+      else
+        usage[[length(usage) + 1]] <- as.integer(iteration_usage)
+      
+      paretofront <-
+        cbind(Y, stage = iter, find_nondominated_points(Y))
+      plot.paretofront <- rbind(plot.paretofront, paretofront)
+      paretoset <- cbind(X, stage = iter)
+      plot.paretoset <- rbind(plot.paretoset, paretoset)
+      resources <-
+        cbind(Reduce("+", usage),
+              1:dim(W)[1],
+              stage = iter,
+              find_nondominated_points(Y))
+      plot.resources <- rbind(plot.resources, resources)
       
       # ========== Stop Criteria
       # Calculate iteration time
@@ -607,21 +620,18 @@ moead <-
     colnames(W) <- paste0("f", 1:ncol(W))
     
     if (!is.null(Archive)) {
-      Archive$X <- denormalize_population(Archive$X, problem)
+      Archive$X <-
+        denormalize_population(Archive$X, problem, find_nondominated_points(Y))
       colnames(Archive$Y) <- paste0("f", 1:ncol(Archive$Y))
       Archive$W           <- W
       colnames(Archive$W) <- paste0("f", 1:ncol(Archive$W))
     }
-    if(file.exists(paste0(my.file.n, "info"))){
-      temp <- read_feather(paste0(my.file.n, "info"))
-      temp <- as.data.frame(temp)
-      temp <- rbind(temp, iter)  
-    }
-    else{
-      temp <- as.data.frame(iter)
-    }
-    write_feather(temp, paste0(my.file.n, "info"))
     
+    colnames(plot.paretofront) <-
+      c(paste0("f", 1:ncol(Y)), "stage", "non-dominated")
+    colnames(plot.paretoset) <- c(paste0("f", 1:ncol(X)), "stage")
+    colnames(plot.resources) <-
+      c("Resources", "Subproblem", "stage", "non-dominated")
     # Output
     out <- list(
       X           = X,
@@ -636,7 +646,10 @@ moead <-
       time        = difftime(Sys.time(), time.start, units = "secs"),
       seed        = seed,
       inputConfig = moead.input.pars,
-      usage       = usage
+      usage       = usage,
+      plot.paretofront = plot.paretofront,
+      plot.paretoset = plot.paretoset,
+      plot.resources = plot.resources
     )
     class(out) <- c("moead", "list")
     

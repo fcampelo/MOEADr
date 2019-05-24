@@ -65,7 +65,9 @@ summary.moead <- function(object,
     Y <- object$Y
     V <- object$V
   }
-
+  hv.scaled <- 0
+  igd <- 0
+  
   feas.idx <- rep(TRUE, nrow(Y))
   if(!is.null(V)) feas.idx <- (rowSums(V$Vmatrix > viol.threshold) == 0)
 
@@ -85,8 +87,8 @@ summary.moead <- function(object,
       ref.point <- nadir.est
     }
     hv <- emoa::dominated_hypervolume(points = t(Y), ref = ref.point)
-    hv.front <- emoa::dominated_hypervolume(points = t(ref.front), ref = ref.point)
-    hv.scaled <- hv/hv.front
+    if (!nullRF) hv.front <- emoa::dominated_hypervolume(points = t(ref.front), ref = ref.point)
+    if (!nullRF) hv.scaled <- hv/hv.front
   }
 
 

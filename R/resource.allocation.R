@@ -18,8 +18,12 @@ norm_vec2 <- function(x) {
 }
 
 
-projection <- function(p, d, epsilon = 1e-50) {
-  return (sum(p*d)/(norm(d, type="2")^2)*d)
+# projection <- function(p, d, epsilon = 1e-50) {
+#   return (sum(p*d)/(norm(d, type="2")^2)*d)
+# }
+
+projection <- function(a, b, epsilon = 1e-50) {
+  return(c(sum(a * b) / sum(a ^ 2) + epsilon) * a)
 }
 
 
