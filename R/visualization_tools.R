@@ -258,4 +258,4 @@ p <- subplot(resource.problem, pf.resource, pf.nondominated, hv.plot, nrows = 2)
       prefix = "Iteration "
     )
   )
-p
+htmlwidgets::saveWidget(p, "index.html")
