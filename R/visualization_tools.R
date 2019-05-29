@@ -1,5 +1,3 @@
-# rm(list = ls(all = TRUE))
-setwd("~/MOEADr/R/")
 library(smoof)
 library(MOEADr)
 library(emoa)
@@ -42,8 +40,6 @@ v <- ggplot(b, aes(Subproblem, Resources)) +geom_line()+ theme(axis.text = eleme
 v +labs(title=paste0("MOEA/D-DRA - F44"))
 }
 
-
-test <- function(moea){
 accumulate_by <- function(dat, var) {
   var <- lazyeval::f_eval(var, dat)
   lvls <- plotly:::getLevels(var)
@@ -52,12 +48,15 @@ accumulate_by <- function(dat, var) {
   })
   dplyr::bind_rows(dats)
 }
-# moea <- normRA
-# moea <- original
 
-pareto.front <- data.frame(moea$plot.paretofront[-1,])
-resources <- data.frame(moea$plot.resources[-1,])
-pareto.set <- data.frame(moea$plot.paretoset[-1,])
+visuEvol <- function(moea, name, ref.front=NULL){
+  curDir <- getwd()
+  setwd("~/MOEADr/dataExp/")
+
+
+pareto.front <- data.frame(moea$plot.paretofront)
+resources <- data.frame(moea$plot.resources)
+pareto.set <- data.frame(moea$plot.paretoset)
 pareto.front$f1 <- as.numeric(pareto.front$f1)
 pareto.front$f2 <- as.numeric(pareto.front$f2)
 pareto.front$stage <- as.numeric(pareto.front$stage)
@@ -65,15 +64,17 @@ pareto.front$Nondominated <- as.numeric(pareto.front$non.dominated)
 resources$Subproblem <- as.numeric(resources$Subproblem)
 resources$Resources <- as.numeric(resources$Resources)
 
-# names(pareto.set) <- c(rep(paste0("PS", 1:100)), "stage")
+ncols <- ncol(pareto.front)-3
+pareto.front[,1:ncols] <- scaling_Y(pareto.front[,1:ncols], pareto.front[,1:ncols])
+
 
 # iteration.data <- cbind(pareto.set, pareto.front, resources)
 iteration.data <- data.frame(cbind(pareto.front, resources, pareto.set))
 iteration.data$stage <- unlist(iteration.data$stage)
 
 # bad, do apply  on levels
-iteration.data$f1 <- (iteration.data$f1 - min(iteration.data$f1))/(max(iteration.data$f1) - min(iteration.data$f1))
-iteration.data$f2 <- (iteration.data$f2 - min(iteration.data$f2))/(max(iteration.data$f2) - min(iteration.data$f2))
+# iteration.data$f1 <- (iteration.data$f1 - min(iteration.data$f1))/(max(iteration.data$f1) - min(iteration.data$f1))
+# iteration.data$f2 <- (iteration.data$f2 - min(iteration.data$f2))/(max(iteration.data$f2) - min(iteration.data$f2))
 
 df.pca <- data.frame()
 iteration.data$stage <- unlist(iteration.data$stage)
@@ -85,12 +86,11 @@ igds <- list(rep(0, max(iteration.data$stage)))
 for (i in 1:max(iteration.data$stage)){
   Y <- rbind(iteration.data[iteration.data$stage==i,]$f1, iteration.data[iteration.data$stage==i,]$f2)
   hvs[[i]] <- emoa::dominated_hypervolume(points = Y, ref = rep(1.1,dim(moea$W)[2]))
-  # igds[[i]] <- igd <- calcIGD(Y, Yref = ref.front)
 }
 
 
 for (i in 1:max(iteration.data$stage)){
-  if (exists('ref.front')){
+  if (!is.null(ref.front)){
     Y <- rbind(iteration.data[iteration.data$stage==i,]$f1, iteration.data[iteration.data$stage==i,]$f2)
     igds[[i]] <- igd <- calcIGD(Y, Yref = ref.front)
   }else{
@@ -194,6 +194,7 @@ ps.pca <- df.pca %>%
     showlegend = F,
     colors = c('black', 'blue'),
     color = ~ Nondominated,
+    alpha=0.5,
     marker = list(size = ~ log(Resources+1)*5, opacity = 0.5),
     text = ~ paste("Nondominated: ", Nondominated, '<br>Subproblem:', Subproblem),
     hoverinfo = 'text'
@@ -266,6 +267,81 @@ p <- subplot(resource.problem, pf.resource, pf.nondominated, hv.plot, igd.plot, 
       prefix = "Iteration "
     )
   )
-p
-htmlwidgets::saveWidget(p, "index.html")
+htmlwidgets::saveWidget(p, name)
+setwd(curDir)
 }
+
+
+savePlotData <- function (moea, name, j){
+  curDir <- getwd()
+  setwd("~/MOEADr/R/")
+  write_feather(data.frame(moea$X), paste0('../dataExp/', name, j,'_X'))
+  write_feather(data.frame(moea$Y), paste0('../dataExp/', name, j,'_Y'))
+  
+  temp <- moea$plot.paretofront[-1,]
+  temp <- apply(temp, 2, unlist)
+  temp<-as.data.frame(temp)
+  write_feather(temp, paste0('../dataExp', name, j,'_plot.paretofront'))
+  
+  temp <- as.data.frame(moea$plot.resources[-1,])
+  temp <- apply(temp, 2, unlist)
+  temp<-as.data.frame(temp)
+  write_feather(temp, paste0('../dataExp/', name, j,'_plot.resources'))
+  
+  temp <- as.data.frame(moea$plot.paretoset[-1,])
+  temp <- apply(temp, 2, unlist)
+  temp<-as.data.frame(temp)
+  write_feather(temp, paste0('../dataExp/', name, j,'_plot.paretoset'))
+  
+  temp <- as.data.frame(moea$W)
+  temp <- apply(temp, 2, unlist)
+  temp<-as.data.frame(temp)
+  write_feather(temp, paste0('../dataExp/', name, j,'_W'))
+  
+  temp <- as.data.frame(moea$nfe)
+  temp <- apply(temp, 2, unlist)
+  temp<-as.data.frame(temp)
+  write_feather(temp, paste0('../dataExp/', name, j,'_nfe'))
+  
+  temp <- as.data.frame(moea$n.iter)
+  temp <- apply(temp, 2, unlist)
+  temp<-as.data.frame(temp)
+  write_feather(temp, paste0('../dataExp/', name, j,'_iter'))
+  
+  temp <- as.data.frame(moea$time)
+  temp <- apply(temp, 2, unlist)
+  temp<-as.data.frame(temp)
+  write_feather(temp, paste0('../dataExp/', name, j,'_time'))
+  setwd(curDir)
+}
+
+loadPlotData <- function (name, j){
+  curDir <- getwd()
+  setwd("~/MOEADr/R/")
+  X <- read_feather(paste0('../dataExp/', name, j,'_X'))
+  Y <- read_feather(paste0('../dataExp/', name, j,'_Y'))
+  plot.paretofront <- read_feather(paste0('../dataExp', name, j,'_plot.paretofront'))
+  plot.resources <- read_feather(paste0('../dataExp/', name, j,'_plot.resources'))
+  plot.paretoset <- read_feather(paste0('../dataExp/', name, j,'_plot.paretoset'))
+  iter <- read_feather(paste0('../dataExp/', name, j,'_iter'))
+  time <- read_feather(paste0('../dataExp/', name, j,'_time'))
+  W <- read_feather(paste0('../dataExp/', name, j,'_W'))
+  nfe <- read_feather(paste0('../dataExp/', name, j,'_nfe'))
+  
+  out <- list(
+    X           = X,
+    Y           = Y,
+    W           = W,
+    nfe         = nfe,
+    n.iter      = iter,
+    time        = time,
+    plot.paretofront = plot.paretofront,
+    plot.paretoset = plot.paretoset,
+    plot.resources = plot.resources,
+    moead.norm = FALSE
+  )
+  return(out)
+  setwd(curDir)
+}
+
+

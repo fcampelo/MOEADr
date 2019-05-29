@@ -369,7 +369,7 @@ moead <-
       if (resource.allocation$name == "GRA")
         dt.bigZ <- list()
       if (resource.allocation$name == "DRA" &&
-          resource.allocation$selection == "tour") {
+          resource.allocation$selection == "dra") {
         out <-
           calculate_DRA(resource.allocation,
                         neighbors,
@@ -426,7 +426,7 @@ moead <-
       if (!nullRA) {
         rand.seq <- init_p(W, 1)
         if (iter > resource.allocation$dt) {
-          if (resource.allocation$selection == "tour") {
+          if (resource.allocation$selection == "dra") {
             size <- floor(dim(W)[1] / 5) - problem$m
             idx.tour <-
               selTournament(fitness = -Pi,
@@ -442,7 +442,12 @@ moead <-
             if (length(indexes) < 3 || is.null(length(indexes))) {
               indexes <- which(rand.seq <= 1)
             }
-            
+          }
+          else if (resource.allocation$selection == "tour"){
+            indexes <-
+              selTournament(fitness = -Pi,
+                            n.select = dim(W)[1]*0.05,
+                            k = 10)
           }
         }
         iteration_usage <- (rand.seq <= Pi)
@@ -563,6 +568,9 @@ moead <-
         if (resource.allocation$name == "norm") {
           if (iter > resource.allocation$dt) {
             Pi <- by_norm(offspring_x = X, parent_x = parent)
+          }
+          if (resource.allocation$type == "inverse"){
+            Pi <- (-1)*Pi
           }
           parent <- X
         }
