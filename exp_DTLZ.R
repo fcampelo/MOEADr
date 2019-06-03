@@ -23,7 +23,7 @@ resource.allocation.DRA <- list(name = "DRA", dt = 20, selection = "dra", type =
 resource.allocation.GRA <- list(name = "GRA", dt = 20, selection = "random", type = "NULL")
 resource.allocation.RAD <- list(name = "RAD", dt = 20, selection = "random", type = "NULL")
 resource.allocation.NORM <- list(name = "norm", dt = 20, selection = "random", type = "NULL")
-resource.allocation.NORM.tour <- list(name = "norm", dt = 1, selection = "tour", type = "NULL")
+resource.allocation.NORM.tour <- list(name = "norm", dt = 20, selection = "tour", type = "NULL")
 resource.allocation.NORM.inverse <- list(name = "norm", dt = 20, selection = "random", type = "inverse")
 resource.allocation.RANDOM <- list(name = "random", dt = 20, selection = "random", type = "NULL")
 
@@ -36,8 +36,8 @@ scaling$name <- "simple"
 n.objs <- c(2)
 
 
-stopcrit  <- list(list(name    = "maxiter",
-                       maxiter = 100))
+stopcrit  <- list(list(name    = "maxeval",
+                       maxeval = 30000))
 
 for (n.obj in n.objs) {
   id <- 1
@@ -91,7 +91,7 @@ for (n.obj in n.objs) {
           showpars = list(show.iters = "none", showevery = 100),
           seed = j
         )
-        savePlotData(moea = moead.de, name = "moead.de", j = j)
+        savePlotData(moea = moead.de, name = paste0(fun,"_moead.de"), j = j)
         # 
         # moead.dra <- moead(
         #   problem  = problem.zdt1,
@@ -140,7 +140,7 @@ for (n.obj in n.objs) {
           resource.allocation = resource.allocation.NORM
         )
         # 
-        savePlotData(moea = moead.norm, name = "moead.norm", j = j)
+        savePlotData(moea = moead.norm, name = paste0(fun,"moead.norm"), j = j)
         # 
         moead.norm.inverse <- moead(
           problem  = problem.zdt1,
@@ -153,7 +153,7 @@ for (n.obj in n.objs) {
           resource.allocation = resource.allocation.NORM.inverse
         )
 
-        savePlotData(moea = moead.norm.inverse, name = "moead.norm.inverse", j = j)
+        savePlotData(moea = moead.norm.inverse, name = paste0(fun,"moead.norm.inverse"), j = j)
         # 
         moead.norm.tournament <- moead(
           problem  = problem.zdt1,
@@ -166,7 +166,7 @@ for (n.obj in n.objs) {
           resource.allocation = resource.allocation.NORM.tour
         )
         
-        savePlotData(moea = moead.norm.tournament, name = "moead.norm.tournament", j = j)
+        savePlotData(moea = moead.norm.tournament, name = paste0(fun,"moead.norm.tournament"), j = j)
         
         # moead.random <- moead(
         #   problem  = problem.zdt1,
