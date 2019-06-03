@@ -11,32 +11,32 @@ library(pracma)
 library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
-repetitions <-  21
+repetitions <-  1
 algorithms <- c("moead.de")
 
 #uniform weight
 resource.allocation.DRA <- list(name = "DRA", dt = 2)
 resource.allocation.GRA <- list(name = "GRA", dt = 2)
 resource.allocation.RAD <- list(name = "RAD", dt = 2)
-resource.allocation.NORM <- list(name = "norm", dt = 2)
+resource.allocation.NORM <- list(name = "norm", dt = 2, type = "NULL", selection = "random")
 resource.allocation.RANDOM <- list(name = "random", dt = 2)
 
 update <- preset_moead("moead.de")$update
-update$UseArchive <- TRUE
-decomp <- list(name = "SLD", H = 99)
+update$name <- "best"
+
+decomp <- list(name = "SLD", H = 18)
 
 n.obj <- 3
 
 
-stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 60000))
+stopcrit  <- list(list(name    = "maxiter",
+                       maxiter = 10))
 
 scaling <- list()
 scaling$name <- "simple"
 
 d <- 2
 fun <- "moon"
-my.data <- data.frame()
 setwd("~/MOEADr/R/")
 for (algo in algorithms) {
   print(algo)
@@ -54,8 +54,6 @@ for (algo in algorithms) {
     
     cat("rep:", j)
     
-    
-    my.file.n <- paste0("../../de/",fun,"_")
     moead.de <- moead(
       problem  = problem.zdt1,
       preset   = preset_moead(algo),
@@ -64,46 +62,9 @@ for (algo in algorithms) {
       constraint = list(name = "penalty", beta=0.95),
       scaling = scaling,
       showpars = list(show.iters = "none", showevery = 100),
-      seed = j,
-      my.file.n = my.file.n#,
-      # update = update
+      seed = j
     )
-    # exit()
     
-    
-    # gra.awt
-    my.file.n <- paste0("../../gra/",fun,"_")
-    moead.gra <- moead(
-      problem  = problem.zdt1,
-      preset   = preset_moead(algo),
-      decomp = decomp,
-      stopcrit = stopcrit,
-      constraint = list(name = "penalty", beta=0.95),
-      scaling = scaling,
-      showpars = list(show.iters = "none", showevery = 100),
-      seed = j,
-      resource.allocation = resource.allocation.GRA,
-      my.file.n = my.file.n
-    )
-    # 
-    # # write_feather(as.data.frame(moead.gra$Y), my.file.n)
-    # 
-    # # ondb
-    my.file.n <- paste0("../../rad/",fun,"_")
-    moead.rad <- moead(
-      problem  = problem.zdt1,
-      preset   = preset_moead(algo),
-      decomp = decomp,
-      stopcrit = stopcrit,
-      constraint = list(name = "penalty", beta=0.95),
-      scaling = scaling,
-      showpars = list(show.iters = "none", showevery = 10),
-      seed = j,
-      resource.allocation = resource.allocation.RAD,
-      my.file.n = my.file.n
-    )
-    #
-    my.file.n <- paste0("../../norm/",fun,"_")
     moead.norm <- moead(
       problem  = problem.zdt1,
       preset   = preset_moead(algo),
@@ -113,9 +74,7 @@ for (algo in algorithms) {
       scaling = scaling,
       showpars = list(show.iters = "none", showevery = 10),
       seed = j,
-      resource.allocation = resource.allocation.NORM,
-      my.file.n = my.file.n#,
-      # update = update
+      resource.allocation = resource.allocation.NORM
     )
     # print("this exit")
     # exit()

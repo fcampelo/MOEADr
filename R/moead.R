@@ -354,18 +354,30 @@ moead <-
                             problem = problem)
     
     # Evaluate population on objectives
-    YV <- evaluate_population(X       = X,
-                              problem = problem,
-                              nfe     = nfe)
+    ## aqui tem problema com a lua
+    if (problem$name == "problem.moon") {
+      YV <- evaluate_population_moon(
+        X       = X,
+        problem = problem,
+        nfe     = nfe,
+        iter = 0
+      )
+    } else{
+      YV <- evaluate_population(X       = X,
+                                problem = problem,
+                                nfe     = nfe)
+    }
     
     Y   <- YV$Y
     V   <- YV$V
     nfe <- YV$nfe
     # fixed neighbours
     ## resource allocation
-    indexes <- seq.int(1, dim(W)[1])
+    indexes <- (1:dim(W)[1])
     Pi <- init_p(W, 1)
     if (!nullRA) {
+      idx.bounday = NULL
+      idx.tour = NULL
       if (resource.allocation$name == "GRA")
         dt.bigZ <- list()
       if (resource.allocation$name == "DRA" &&
@@ -418,48 +430,31 @@ moead <-
       # Store current popula tion
       # Store current population give indexes for resource allocation
       # resource allocation for DRA
-        # ========== Variation
-        # Store current population
+      # ========== Variation
+      # Store current population
       Xt <- X
       Yt <- Y
       Vt <- V
       if (!nullRA) {
-        rand.seq <- init_p(W, 1)
-        if (iter > resource.allocation$dt) {
-          if (resource.allocation$selection == "dra") {
-            size <- floor(dim(W)[1] / 5) - problem$m
-            idx.tour <-
-              selTournament(fitness = -Pi,
-                            n.select = size,
-                            k = 10)
-            indexes <- append(idx.bounday, idx.tour)
-            iteration_usage <- rep(0, dim(W)[1])
-            iteration_usage[indexes] <- 1
-          }
-          else if (resource.allocation$selection == "random") {
-            rand.seq <- runif(length(Pi))
-            indexes <- which(rand.seq <= Pi)
-            if (length(indexes) < 3 || is.null(length(indexes))) {
-              indexes <- which(rand.seq <= 1)
-            }
-          }
-          else if (resource.allocation$selection == "tour"){
-            indexes <-
-              selTournament(fitness = -Pi,
-                            n.select = dim(W)[1]*0.05,
-                            k = 10)
-          }
-        }
-        iteration_usage <- (rand.seq <= Pi)
-        temp.X <- X
-        X <- X[indexes,]
-        temp.Y <- Y
-        Y <- Y[indexes,]
+        out <- calc_idx(
+          iter,
+          resource.allocation,
+          W,
+          Pi,
+          X,
+          Y,
+          idx.bounday = idx.bounday,
+          idx.tour = idx.bounday
+        )
+        indexes <- out$indexes
+        temp.Y = out$temp.Y 
+        temp.X = out$temp.X
+        Y = out$Y
+        X = out$X
+        iteration_usage = out$iteration_usage
       }
       
-      B  <- BP$B.variation[indexes,]
-      ## TODO: i dont know for what Im using temp.P
-      # temp.P  <- BP$P
+      B  <- BP$B.variation[indexes, ]
       P  <- BP$P[indexes, indexes]
       
       # Perform variation
@@ -470,22 +465,37 @@ moead <-
       nfe     <- nfe + Xv$var.nfe
       # ========== Evaluation
       # Evaluate offspring population on objectives
-      YV <- evaluate_population(X       = X,
-                                problem = problem,
-                                nfe     = nfe)
-      
+      if (problem$name == "problem.moon") {
+        if (!nullRA) {
+          temp.X[indexes,] <- X
+          X <- temp.X
+        }
+        YV <- evaluate_population_moon(
+          X       = X,
+          problem = problem,
+          nfe     = nfe,
+          iter = iter
+        )
+        
+        temp.X <- X
+        X <- X[indexes, ]
+      }
+      else{
+        YV <- evaluate_population(X       = X,
+                                  problem = problem,
+                                  nfe     = nfe)
+      }
       Y   <- YV$Y
       V   <- YV$V
       nfe <- YV$nfe
       
       if (!nullRA) {
-        temp.X[indexes, ] <- X
-        # print("temp.X")
-        # print(X==temp.X)
+        temp.X[indexes,] <- X
         X <- temp.X
-        temp.Y[indexes, ] <- Y
-        Y <- temp.Y
-        # P <- temp.P
+        if (problem$name != "problem.moon") {
+          temp.Y[indexes,] <- Y
+          Y <- temp.Y
+        }
       }
       
       # ========== Scalarization
@@ -499,6 +509,7 @@ moead <-
       # values for the solutions in the neighborhood of one subproblem, plus the
       # scalarized value for the incumbent solution for that subproblem.
       # write.table(class(normYs$Y), "scalarize10.txt")
+      # B  <- BP$B.scalarize[indexes,]
       B  <- BP$B.scalarize
       bigZ <- scalarize_values(
         normYs  = normYs,
@@ -512,6 +523,7 @@ moead <-
       # of one neighborhood (plus incumbent), sorted by their "selection quality"
       # (which takes into account both the performance value and constraint
       # handling policy, if any)
+      # B  <- BP$B.order[indexes,]
       B  <- BP$B.order
       sel.indx <- order_neighborhood(
         bigZ       = bigZ,
@@ -533,7 +545,7 @@ moead <-
       if (!nullRA) {
         if (resource.allocation$name == "DRA") {
           if (iter %% resource.allocation$dt == 0) {
-            newObj <- bigZ[neighbors$T + 1,]
+            newObj <- bigZ[neighbors$T + 1, ]
             Pi <- dra(newObj, oldObj, Pi)
             oldObj <- newObj
           }
@@ -569,8 +581,8 @@ moead <-
           if (iter > resource.allocation$dt) {
             Pi <- by_norm(offspring_x = X, parent_x = parent)
           }
-          if (resource.allocation$type == "inverse"){
-            Pi <- (-1)*Pi
+          if (resource.allocation$type == "inverse") {
+            Pi <- (-1) * Pi
           }
           parent <- X
         }

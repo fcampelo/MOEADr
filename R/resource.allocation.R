@@ -1,7 +1,7 @@
 ONRA <- function(dt.bigZ, bigZ, my.T, epsilon = 1e-50) {
   # dt <- apply(X = dt.bigZ, MARGIN = 2, sum)
-  dt <- dt.bigZ[my.T + 1,]
-  z <- bigZ[my.T + 1,]
+  dt <- dt.bigZ[my.T + 1, ]
+  z <- bigZ[my.T + 1, ]
   u <- (dt - z) / dt
   if (max(u) == 0) {
     p <- rep(1, length(u))
@@ -39,13 +39,13 @@ find_indexes <- function(offspring, parent) {
     # equation (4)
     
     for (i in 1:nrow(parent)) {
-      set <- rbind(parent[i,], offspring[j,])
+      set <- rbind(parent[i, ], offspring[j, ])
       if (is_maximally_dominated(set)[1]) {
         if (!found) {
           indexes_j <- append(indexes_j, j)
           found <- TRUE
         }
-        aux <- norm(parent[i,] - offspring[j,], type = "2")
+        aux <- norm(parent[i, ] - offspring[j, ], type = "2")
         if (min.value > aux) {
           # for equation (6) and (5)
           min.value <- aux
@@ -80,13 +80,13 @@ online_diversity <-
         for (j in 1:length(indexes_j)) {
           # diversity measurement: aumount of diversity loss of an ind. solution between 2 generations
           #condition for eq (7)
-          c.line <- offspring[i,] - offspring[indexes_j[[j]],]
-          p.line <- parent[i,] - parent[indexes_i[[j]],]
+          c.line <- offspring[i, ] - offspring[indexes_j[[j]], ]
+          p.line <- parent[i, ] - parent[indexes_i[[j]], ]
           
           if (c.line != 0 && p.line != 0) {
             #equation (3)
             d.convs <-
-              (offspring[indexes_j[[j]],] - parent[indexes_i[[j]],]) + epsilon
+              (offspring[indexes_j[[j]], ] - parent[indexes_i[[j]], ]) + epsilon
             # projection calculation
             proj.c <- projection(c.line, d.convs)
             proj.p <- projection(p.line, d.convs)
@@ -134,7 +134,6 @@ dra <- function(newObj, oldObj, Pi) {
 }
 
 init_dra <- function(neighbors, aggfun, X, W, Y, scaling) {
-  
   Pi <- init_p(W, 1)
   
   BP <- define_neighborhood(neighbors = neighbors,
@@ -146,7 +145,7 @@ init_dra <- function(neighbors, aggfun, X, W, Y, scaling) {
   idx <- list()
   for (i in 1:dim(W)[1]) {
     for (j in 1:dim(my.identity)[1]) {
-      my.sum <- sum(round(W[i,], 2) == my.identity[j,])
+      my.sum <- sum(round(W[i, ], 2) == my.identity[j, ])
       if (my.sum == dim(W)[2]) {
         idx[[length(idx) + 1]] <- i
       }
@@ -168,7 +167,7 @@ init_dra <- function(neighbors, aggfun, X, W, Y, scaling) {
     B       = B,
     aggfun  = aggfun
   )
-  oldObj <- bigZ[neighbors$T + 1,]
+  oldObj <- bigZ[neighbors$T + 1, ]
   return(list (
     Pi      = Pi,
     oldObj = oldObj,
@@ -207,13 +206,94 @@ by_jacobian <- function(problem, offspring, epsilon = 1e-50) {
 
 
 
-calculate_DRA <- function(resource.allocation, neighbors, aggfun, X, W, Y, preset, problem) {
-  scaling   <- preset$scaling
-  ra <- init_dra(neighbors, aggfun, X, W, Y, scaling)
-  oldObj <- ra$oldObj
-  idx.bounday <- ra$idx.bounday
-  idx.tour <- ra$idx.tour
-  size <- floor(dim(W)[1] / 5) - problem$m
-  out <- list (idx.bounday = idx.bounday, idx.tour = idx.tour, oldObj = oldObj)
-  return (out)
-}
+calculate_DRA <-
+  function(resource.allocation,
+           neighbors,
+           aggfun,
+           X,
+           W,
+           Y,
+           preset,
+           problem) {
+    scaling   <- preset$scaling
+    ra <- init_dra(neighbors, aggfun, X, W, Y, scaling)
+    oldObj <- ra$oldObj
+    idx.bounday <- ra$idx.bounday
+    idx.tour <- ra$idx.tour
+    size <- floor(dim(W)[1] / 5) - problem$m
+    out <-
+      list (idx.bounday = idx.bounday,
+            idx.tour = idx.tour,
+            oldObj = oldObj)
+    return (out)
+  }
+
+
+calc_idx <-
+  function(iter,
+           resource.allocation,
+           W,
+           Pi,
+           X, Y,
+           idx.bounday = NULL,
+           idx.tour = NULL) {
+    rand.seq <- init_p(W, 1)
+    indexes <- 1:dim(W)[1]
+    iteration_usage <- rep(1, dim(W)[1])
+    
+    if (iter > resource.allocation$dt) {
+      if (resource.allocation$selection == "dra") {
+        size <- floor(dim(W)[1] / 5) - problem$m
+        idx.tour <-
+          selTournament(fitness = -Pi,
+                        n.select = size,
+                        k = 10)
+        indexes <- append(idx.bounday, idx.tour)
+        iteration_usage[!indexes] <- 0
+      }
+      
+      else if (resource.allocation$selection == "random") {
+        rand.seq <- runif(length(Pi))
+        indexes <- which(rand.seq <= Pi)
+        if (length(indexes) < 3 || is.null(length(indexes))) {
+          indexes <- which(rand.seq <= 1)
+        }
+        iteration_usage <- (rand.seq <= Pi)
+      }
+      
+      else if (resource.allocation$selection == "tour") {
+        found <- 0
+        size <- ceiling(dim(W)[1] * 0.5)
+        k <- ceiling(dim(W)[1] * 0.05)
+        indexes <- vector(length = size)
+        temp.idx <- !vector(length = size)
+        while (TRUE) {
+          indexes[temp.idx] <- selTournament(fitness = -Pi,
+                                             n.select = size - found,
+                                             k = k)
+          if (length(unique(indexes)) == length(indexes)) {
+            break
+          } else {
+            temp.idx <- !unique(indexes)
+            indexes <- unique(indexes)
+            found <- found + length(indexes)
+          }
+        }
+        iteration_usage[!indexes] <- 0
+      }
+    }
+    temp.X <- X
+    X <- X[indexes,]
+    temp.Y <- Y
+    Y <- Y[indexes,]
+    out <-
+      list(
+        indexes = indexes,
+        temp.Y = temp.Y,
+        temp.X = temp.X,
+        Y = Y,
+        X = X,
+        iteration_usage = iteration_usage
+      )
+    return(out)
+  }
