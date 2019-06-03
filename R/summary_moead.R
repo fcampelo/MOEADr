@@ -122,6 +122,6 @@ summary.moead <- function(object,
     cat("\n#====================================")
   }
   
-  out <- list(hv.scaled = hv.scaled, hv = hv, igd = igd, nndom = nndom)
+  out <- list(hv.scaled = hv.scaled, hv = hv, igd = igd, nndom = nndom, nfeas = nfeas)
   return(out)
 }

@@ -15,8 +15,8 @@ lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 # source("moead.R")
 
 results <- data.frame()
-for(i in 1:3){
-  
+for(i in 1:7){
+
 moead.norm <- loadPlotData(name = "moead.norm", j = i)  
 moead.norm.inverse <- loadPlotData(name = "moead.norm.inverse", j = i)  
 moead.norm.tournament <- loadPlotData(name = "moead.norm.tournament", j = i)  
@@ -95,9 +95,9 @@ id.norm.tournament <- which(results[results$name == "norm.tournament",]$hv == ag
 moead.norm <- loadPlotData(name = "moead.norm", j = id.norm)
 moead.norm.inverse <- loadPlotData(name = "moead.norm.inverse", j = id.norm.inverse)
 moead.norm.tournament <- loadPlotData(name = "moead.norm.tournament", j = id.norm.tournament)
-plot(moead.norm$Y)
-plot(moead.norm.inverse$Y)
-plot(moead.norm.tournament$Y)
+# plot(moead.norm$Y)
+# plot(moead.norm.inverse$Y)
+# plot(moead.norm.tournament$Y)
 visuEvol(moead.norm, "moead.norm")
 visuEvol(moead.norm.inverse, "moead.norm.inverse")
 visuEvol(moead.norm.tournament, "moead.norm.tournament")

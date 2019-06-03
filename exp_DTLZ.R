@@ -14,7 +14,7 @@ lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 # source("utils.R")
 # source("moead.R")
 
-repetitions <-  7
+repetitions <-  1
 dimension <- 100
 algorithms <- c("moead.de")
 
@@ -23,7 +23,7 @@ resource.allocation.DRA <- list(name = "DRA", dt = 20, selection = "dra", type =
 resource.allocation.GRA <- list(name = "GRA", dt = 20, selection = "random", type = "NULL")
 resource.allocation.RAD <- list(name = "RAD", dt = 20, selection = "random", type = "NULL")
 resource.allocation.NORM <- list(name = "norm", dt = 20, selection = "random", type = "NULL")
-resource.allocation.NORM.tour <- list(name = "norm", dt = 20, selection = "tour", type = "NULL")
+resource.allocation.NORM.tour <- list(name = "norm", dt = 1, selection = "tour", type = "NULL")
 resource.allocation.NORM.inverse <- list(name = "norm", dt = 20, selection = "random", type = "inverse")
 resource.allocation.RANDOM <- list(name = "random", dt = 20, selection = "random", type = "NULL")
 
@@ -36,8 +36,8 @@ scaling$name <- "simple"
 n.objs <- c(2)
 
 
-stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 30000))
+stopcrit  <- list(list(name    = "maxiter",
+                       maxiter = 100))
 
 for (n.obj in n.objs) {
   id <- 1
@@ -82,15 +82,16 @@ for (n.obj in n.objs) {
         cat("rep:", j)
         
   
-        # moead.de <- moead(
-        #   problem  = problem.zdt1,
-        #   preset   = preset_moead(algo),
-        #   decomp = decomp,
-        #   stopcrit = stopcrit,
-        #   scaling = scaling,
-        #   showpars = list(show.iters = "none", showevery = 100),
-        #   seed = j
-        # )
+        moead.de <- moead(
+          problem  = problem.zdt1,
+          preset   = preset_moead(algo),
+          decomp = decomp,
+          stopcrit = stopcrit,
+          scaling = scaling,
+          showpars = list(show.iters = "none", showevery = 100),
+          seed = j
+        )
+        savePlotData(moea = moead.de, name = "moead.de", j = j)
         # 
         # moead.dra <- moead(
         #   problem  = problem.zdt1,
@@ -128,32 +129,32 @@ for (n.obj in n.objs) {
         #   resource.allocation = resource.allocation.RAD
         # )
         
-        # moead.norm <- moead(
-        #   problem  = problem.zdt1,
-        #   preset   = preset_moead(algo),
-        #   decomp = decomp,
-        #   stopcrit = stopcrit,
-        #   scaling = scaling,
-        #   showpars = list(show.iters = "none", showevery = 10),
-        #   seed = j,
-        #   resource.allocation = resource.allocation.NORM
-        # )
+        moead.norm <- moead(
+          problem  = problem.zdt1,
+          preset   = preset_moead(algo),
+          decomp = decomp,
+          stopcrit = stopcrit,
+          scaling = scaling,
+          showpars = list(show.iters = "none", showevery = 10),
+          seed = j,
+          resource.allocation = resource.allocation.NORM
+        )
         # 
-        # savePlotData(moea = moead.norm, name = "moead.norm", j = j)
+        savePlotData(moea = moead.norm, name = "moead.norm", j = j)
         # 
-        # moead.norm.inverse <- moead(
-        #   problem  = problem.zdt1,
-        #   preset   = preset_moead(algo),
-        #   decomp = decomp,
-        #   stopcrit = stopcrit,
-        #   scaling = scaling,
-        #   showpars = list(show.iters = "none", showevery = 10),
-        #   seed = j,
-        #   resource.allocation = resource.allocation.NORM.inverse
-        # )
+        moead.norm.inverse <- moead(
+          problem  = problem.zdt1,
+          preset   = preset_moead(algo),
+          decomp = decomp,
+          stopcrit = stopcrit,
+          scaling = scaling,
+          showpars = list(show.iters = "none", showevery = 10),
+          seed = j,
+          resource.allocation = resource.allocation.NORM.inverse
+        )
+
+        savePlotData(moea = moead.norm.inverse, name = "moead.norm.inverse", j = j)
         # 
-        # savePlotData(moea = moead.norm.inverse, name = "moead.norm.inverse", j = j)
-        
         moead.norm.tournament <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
