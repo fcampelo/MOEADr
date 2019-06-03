@@ -13,13 +13,18 @@ lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 # source("resource.allocation.R")
 # source("utils.R")
 # source("moead.R")
+fun.names1 <- list()
+for (i in 4:4) {
+  fun.names1[[length(fun.names1) + 1]] = paste0("DTLZ", i)
+}
 
 results <- data.frame()
-for(i in 1:7){
+for (fun in fun.names1) {
+for(i in 1:1){
 
-moead.norm <- loadPlotData(name = "moead.norm", j = i)  
-moead.norm.inverse <- loadPlotData(name = "moead.norm.inverse", j = i)  
-moead.norm.tournament <- loadPlotData(name = "moead.norm.tournament", j = i)  
+moead.norm <- loadPlotData(name = paste0(fun,"moead.norm"), j = i)  
+moead.norm.inverse <- loadPlotData(name = paste0(fun,"moead.norm.inverse"), j = i)  
+moead.norm.tournament <- loadPlotData(name = paste0(fun,"moead.norm.tournament"), j = i)  
   
 class(moead.norm) <- "moead"
 class(moead.norm.inverse) <- "moead"
@@ -79,7 +84,7 @@ results <- rbind(results, norm, norm.inverse, norm.tournament)
 # moead.random$Y <- moead.random$Y.original
 # moead.norm$Y <- moead.norm$Y.original
 }
-
+}
 print(aggregate(results$hv, median, by = list(results$name)))
 print(aggregate(results$igd, median, by = list(results$name)))
 

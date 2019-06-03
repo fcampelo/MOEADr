@@ -281,7 +281,7 @@ savePlotData <- function (moea, name, j){
   temp <- moea$plot.paretofront[-1,]
   temp <- apply(temp, 2, unlist)
   temp<-as.data.frame(temp)
-  write_feather(temp, paste0('../dataExp', name, j,'_plot.paretofront'))
+  write_feather(temp, paste0('../dataExp/', name, j,'_plot.paretofront'))
   
   temp <- as.data.frame(moea$plot.resources[-1,])
   temp <- apply(temp, 2, unlist)
@@ -320,7 +320,7 @@ loadPlotData <- function (name, j){
   setwd("~/MOEADr/R/")
   X <- read_feather(paste0('../dataExp/', name, j,'_X'))
   Y <- read_feather(paste0('../dataExp/', name, j,'_Y'))
-  plot.paretofront <- read_feather(paste0('../dataExp', name, j,'_plot.paretofront'))
+  plot.paretofront <- read_feather(paste0('../dataExp/', name, j,'_plot.paretofront'))
   plot.resources <- read_feather(paste0('../dataExp/', name, j,'_plot.resources'))
   plot.paretoset <- read_feather(paste0('../dataExp/', name, j,'_plot.paretoset'))
   iter <- read_feather(paste0('../dataExp/', name, j,'_iter'))
