@@ -14,7 +14,7 @@ lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 # source("utils.R")
 # source("moead.R")
 
-repetitions <-  1
+repetitions <-  21
 dimension <- 100
 algorithms <- c("moead.de")
 
@@ -44,7 +44,7 @@ for (n.obj in n.objs) {
   print(n.obj)
   if (n.obj==3) decomp <- list(name = "SLD", H = 25)
   fun.names1 <- list()
-  for (i in 4:4) {
+  for (i in 1:7) {
     fun.names1[[length(fun.names1) + 1]] = paste0("DTLZ", i)
   }
   
