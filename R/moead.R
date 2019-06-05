@@ -371,9 +371,11 @@ moead <-
     Y   <- YV$Y
     V   <- YV$V
     nfe <- YV$nfe
-    # fixed neighbours
-    ## resource allocation
+    # fixed indexes for reproducibility
     indexes <- (1:dim(W)[1])
+    
+    # ========== Resource Allocation
+    # init variables given resource allocation method
     Pi <- init_p(W, 1)
     if (!nullRA) {
       idx.bounday = NULL
@@ -403,6 +405,7 @@ moead <-
     iter          <- 0         # counter: iterations
     
     
+    # ========== Visualization Tools
     # calculating usage of resource by subproblem and any other visualization info
     usage <- list(rep(1, dim(W)[1]))
     plot.resources <- list(rep(0, dim(W)[1]))
@@ -428,13 +431,12 @@ moead <-
                                 iter      = iter)
       # ========== Variation
       # Store current popula tion
-      # Store current population give indexes for resource allocation
-      # resource allocation for DRA
-      # ========== Variation
-      # Store current population
       Xt <- X
       Yt <- Y
       Vt <- V
+      # ========== Resource Allocation
+      # find indexes of solutions given their priority value (Pi)
+      # Store current population give indexes for resource allocation
       if (!nullRA) {
         out <- calc_idx(
           iter,
@@ -456,17 +458,21 @@ moead <-
       
       B  <- BP$B.variation[indexes, ]
       P  <- BP$P[indexes, indexes]
-      
       # Perform variation
       Xv      <- do.call(perform_variation,
                          args = as.list(environment()))
       X       <- Xv$X
       ls.args <- Xv$ls.args
       nfe     <- nfe + Xv$var.nfe
+      
       # ========== Evaluation
       # Evaluate offspring population on objectives
+
+      # for the moon problem we use a diff method for evaluating solutions
       if (problem$name == "problem.moon") {
         if (!nullRA) {
+          # ========== Resource Allocation
+          # this is needed for the combo: moon problem and priority functions
           temp.X[indexes,] <- X
           X <- temp.X
         }
@@ -489,9 +495,12 @@ moead <-
       V   <- YV$V
       nfe <- YV$nfe
       
+      # ========== Resource Allocation
+      # updating the whole pop with the prioritized solutions in X
       if (!nullRA) {
         temp.X[indexes,] <- X
         X <- temp.X
+        # this is needed for the combo: moon problem and priority functions
         if (problem$name != "problem.moon") {
           temp.Y[indexes,] <- Y
           Y <- temp.Y
@@ -541,7 +550,9 @@ moead <-
       V       <- XY$V
       Archive <- XY$Archive
       
-      
+      # ========== Resource Allocation
+      # this is very ugly
+      # these steps are much specific for each priority function.
       if (!nullRA) {
         if (resource.allocation$name == "DRA") {
           if (iter %% resource.allocation$dt == 0) {
@@ -593,7 +604,8 @@ moead <-
         }
       }
       
-      # calculate priority resource
+      # ========== Visualization Tools
+      # calculating usage of resource by subproblem and any other visualization info
       if (nullRA)
         usage[[length(usage) + 1]] <- rep(1, dim(W)[1])
       else
@@ -647,6 +659,8 @@ moead <-
       colnames(Archive$W) <- paste0("f", 1:ncol(Archive$W))
     }
     
+    # ========== Visualization Tools
+    # polishing output names
     colnames(plot.paretofront) <-
       c(paste0("f", 1:ncol(Y)), "stage", "non-dominated")
     colnames(plot.paretoset) <- c(paste0("f", 1:ncol(X)), "stage")

@@ -33,6 +33,7 @@
 #'
 summary.moead <- function(object,
                                 ...,
+                                scaling.reference = NULL, 
                                 useArchive      = FALSE,
                                 viol.threshold  = 1e-6,
                                 ndigits         = 3,
@@ -40,7 +41,6 @@ summary.moead <- function(object,
                                 ref.front       = NULL,
                                 show.output     = NULL)
 {
-
   # Error checking
   nullRP <- is.null(ref.point)
   nullRF <- is.null(ref.front)
@@ -86,7 +86,9 @@ summary.moead <- function(object,
           using the maximum in each dimension instead.")
       ref.point <- nadir.est
     }
-    hv <- emoa::dominated_hypervolume(points = t(Y), ref = ref.point)
+    if (!is.null(scaling.reference)) hv <- emoa::dominated_hypervolume(points = t(scaling_Y(Y, scaling.reference)), ref = ref.point)
+    else hv <- emoa::dominated_hypervolume(points = t(Y), ref = ref.point)
+    
     if (!nullRF) hv.front <- emoa::dominated_hypervolume(points = t(ref.front), ref = ref.point)
     if (!nullRF) hv.scaled <- hv/hv.front
   }

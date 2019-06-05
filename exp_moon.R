@@ -32,7 +32,7 @@ n.obj <- 3
 
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 60000))
+                       maxeval = 30000))
 
 scaling <- list()
 scaling$name <- "simple"
