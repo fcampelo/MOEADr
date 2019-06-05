@@ -22,11 +22,10 @@ algorithms <- c("moead.de")
 resource.allocation.DRA <- list(name = "DRA", dt = 20, selection = "dra", type = "NULL")
 resource.allocation.GRA <- list(name = "GRA", dt = 20, selection = "random", type = "NULL")
 resource.allocation.RAD <- list(name = "RAD", dt = 20, selection = "random", type = "NULL")
-resource.allocation.NORM <- list(name = "norm", dt = 20, selection = "random", type = "NULL")
-resource.allocation.NORM.tour <- list(name = "norm", dt = 20, selection = "tour", type = "NULL")
-resource.allocation.NORM.inverse <- list(name = "norm", dt = 20, selection = "random", type = "inverse")
+resource.allocation.NORM <- list(name = "norm", dt = 2, selection = "random", type = "NULL")
 resource.allocation.RANDOM <- list(name = "random", dt = 20, selection = "random", type = "NULL")
-
+resource.allocation.NORM.tour <- list(name = "norm", dt = 1, selection = "tour", type = "NULL", size = 0.2, k = 0.02)
+resource.allocation.NORM.inverse <- list(name = "norm", dt = 1, selection = "random", type = "inverse")
 
 decomp <- list(name = "SLD", H = 349)
 
@@ -91,7 +90,7 @@ for (n.obj in n.objs) {
           showpars = list(show.iters = "none", showevery = 100),
           seed = j
         )
-        savePlotData(moea = moead.de, name = paste0(fun,"_moead.de"), j = j)
+        savePlotData(moea = moead.de, name = paste0(fun,"moead.de"), j = j)
         # 
         # moead.dra <- moead(
         #   problem  = problem.zdt1,

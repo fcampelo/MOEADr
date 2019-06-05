@@ -7,13 +7,19 @@ library(feather)
 library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 fun.names1 <- list()
-for (i in 4:4) {
+
+number.fun <- 7
+repetitions <- 21
+
+for (i in 1:number.fun) {
   fun.names1[[length(fun.names1) + 1]] = paste0("DTLZ", i)
 }
 
 results <- data.frame()
+ref1 <- data.frame()
 for (fun in fun.names1) {
-  for (i in 1:1) {
+  for (i in 1:repetitions) {
+    moead.de <- loadPlotData(name = paste0(fun, "moead.de"), j = i)
     moead.norm <- loadPlotData(name = paste0(fun, "moead.norm"), j = i)
     moead.norm.inverse <-
       loadPlotData(name = paste0(fun, "moead.norm.inverse"), j = i)
@@ -21,49 +27,51 @@ for (fun in fun.names1) {
       loadPlotData(name = paste0(fun, "moead.norm.tournament"),
                    j = i)
     
+    ref1 <-
+      rbind(ref1, moead.norm.inverse$Y,
+            moead.norm.tournament$Y,
+            moead.de$Y,
+            moead.norm$Y)
+  }
+  
+  for (i in 1:repetitions) {
+    moead.de <- loadPlotData(name = paste0(fun, "moead.de"), j = i)
+    moead.norm <- loadPlotData(name = paste0(fun, "moead.norm"), j = i)
+    moead.norm.inverse <-
+      loadPlotData(name = paste0(fun, "moead.norm.inverse"), j = i)
+    moead.norm.tournament <-
+      loadPlotData(name = paste0(fun, "moead.norm.tournament"),
+                   j = i)
+    
+    class(moead.de) <- "moead"
     class(moead.norm) <- "moead"
     class(moead.norm.inverse) <- "moead"
     class(moead.norm.tournament) <- "moead"
-    moead.norm$Y.original <- moead.norm$Y
-    moead.norm.inverse$Y.original <- moead.norm.inverse$Y
-    moead.norm.tournament$Y.original <- moead.norm.tournament$Y
     
     Yref <-
       as.matrix(read.table(paste0(
         "../inst/extdata/pf_data/", fun, ".2D.pf"
       )))
     colnames(Yref) <- c("f1", "f2")
-    
-    ref1 <-
-      rbind(moead.norm.inverse$Y,
-            moead.norm.tournament$Y,
-            moead.norm$Y)
-    ref2 <-
-      rbind(moead.norm.inverse$Y,
-            moead.norm.tournament$Y,
-            moead.norm$Y,
-            Yref)
-    
-    moead.norm$Y.scaled <- scaling_Y(moead.norm$Y, ref1)
-    moead.norm.inverse$Y.scaled <- scaling_Y(moead.norm.inverse$Y, ref1)
-    moead.norm.tournament$Y.scaled <-
-      scaling_Y(moead.norm.tournament$Y, ref1)
-    Yref <- scaling_Y(Yref, ref2)
-    
-    moead.norm$Y <- moead.norm$Y.scaled
-    moead.norm.inverse$Y <- moead.norm.inverse$Y.scaled
-    moead.norm.tournament$Y <- moead.norm.tournament$Y.scaled
-    
-    
+  
+    de <-
+      data.frame(summary(
+        moead.de,
+        scaling.reference = ref1,
+        ref.point = c(1.1, 1.1),
+        ref.front = Yref,
+      ), name = "de.data")
     norm <-
       data.frame(summary(
         moead.norm,
+        scaling.reference = ref1,
         ref.point = c(1.1, 1.1),
-        ref.front = Yref
+        ref.front = Yref,
       ), name = "norm.data")
     norm.inverse <-
       data.frame(summary(
         moead.norm.inverse,
+        scaling.reference = ref1,
         ref.point = c(1.1, 1.1),
         ref.front = Yref
       ),
@@ -71,11 +79,12 @@ for (fun in fun.names1) {
     norm.tournament <-
       data.frame(summary(
         moead.norm.tournament,
+        scaling.reference = ref1,
         ref.point = c(1.1, 1.1),
         ref.front = Yref
       ),
       name = "norm.tournament")
-    results <- rbind(results, norm, norm.inverse, norm.tournament)
+    results <- rbind(results, de, norm, norm.inverse, norm.tournament)
     
   }
 }
@@ -97,12 +106,23 @@ id.norm.tournament <-
 
 
 ####
-moead.norm <- loadPlotData(name = "moead.norm", j = id.norm)
+moead.de <- loadPlotData(name = paste0(fun, "_moead.de"), j = i)
+moead.norm <- loadPlotData(name = paste0(fun, "moead.norm"), j = i)
 moead.norm.inverse <-
-  loadPlotData(name = "moead.norm.inverse", j = id.norm.inverse)
+  loadPlotData(name = paste0(fun, "moead.norm.inverse"), j = i)
 moead.norm.tournament <-
-  loadPlotData(name = "moead.norm.tournament", j = id.norm.tournament)
+  loadPlotData(name = paste0(fun, "moead.norm.tournament"),
+               j = i)
 
-visuEvol(moead.norm, "moead.norm")
-visuEvol(moead.norm.inverse, "moead.norm.inverse")
-visuEvol(moead.norm.tournament, "moead.norm.tournament")
+moead.de$Y <- scaling_Y(moead.de$Y, ref1)
+moead.norm$Y <- scaling_Y(moead.norm$Y, ref1)
+moead.norm.inverse$Y <- scaling_Y(moead.norm.inverse$Y, ref1)
+moead.norm.tournament$Y <- scaling_Y(moead.norm.tournament$Y, ref1)
+plot(moead.de$Y, main = "moead.de")
+plot(moead.norm$Y, main = "moead.norm")
+plot(moead.norm.inverse$Y, main = "moead.norm.inverse")
+plot(moead.norm.tournament$Y, main = "moead.tournament")
+# visuEvol(moead.norm, paste0(fun, "moead.de"))
+# visuEvol(moead.norm,paste0(fun, "moead.de"))
+# visuEvol(moead.norm.inverse, paste0(fun, "moead.de"))
+# visuEvol(moead.norm.tournament, "moead.norm.tournament")
