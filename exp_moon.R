@@ -11,26 +11,28 @@ library(pracma)
 library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
-repetitions <-  21
+repetitions <-  1
 algorithms <- c("moead.de")
 
 #uniform weight
-resource.allocation.DRA <- list(name = "DRA", dt = 2)
 resource.allocation.GRA <- list(name = "GRA", dt = 2)
-resource.allocation.RAD <- list(name = "RAD", dt = 2)
-resource.allocation.NORM <- list(name = "norm", dt = 2, type = "NULL", selection = "random")
-resource.allocation.RANDOM <- list(name = "random", dt = 2)
+resource.allocation.NORM <- list(name = "norm", dt = 1, selection = "random", type = "NULL")
+resource.allocation.NORM.tour <- list(name = "norm", dt = 1, selection = "tour", type = "inverse", size = 0.2, k = 0.02)
+resource.allocation.NORM.inverse <- list(name = "norm", dt = 1, selection = "random", type = "inverse")
+resource.allocation.RANDOM <- list(name = "random", dt = 1)
 
 update <- preset_moead("moead.de")$update
-update$name <- "best"
+update$UseArchive <- TRUE
 
-decomp <- list(name = "SLD", H = 18)
+
+constraint.best.de = list(name = "penalty", beta=0.95)
+variation <- preset_moead("moead.de")$variation
 
 n.obj <- 3
 
 
-stopcrit  <- list(list(name    = "maxiter",
-                       maxiter = 10))
+stopcrit  <- list(list(name    = "maxeval",
+                       maxeval = 60000))
 
 scaling <- list()
 scaling$name <- "simple"
@@ -51,18 +53,20 @@ for (algo in algorithms) {
   )
   ref.points <- matrix(c(1.0, 0.0, 1.0), nrow = 1, ncol = 3)
   for (j in 1:repetitions) {
-    
+    decomp <- list(name = "SLD", H = 30)
     cat("rep:", j)
     
     moead.de <- moead(
       problem  = problem.zdt1,
       preset   = preset_moead(algo),
       decomp = decomp,
+      variation = variation,
       stopcrit = stopcrit,
-      constraint = list(name = "penalty", beta=0.95),
+      constraint = constraint.best.de,
       scaling = scaling,
       showpars = list(show.iters = "none", showevery = 100),
-      seed = j
+      seed = j,
+      update = update
     )
     
     moead.norm <- moead(
@@ -70,28 +74,41 @@ for (algo in algorithms) {
       preset   = preset_moead(algo),
       decomp = decomp,
       stopcrit = stopcrit,
-      constraint = list(name = "penalty", beta=0.95),
+      variation = variation,
+      constraint = constraint.best.de,
       scaling = scaling,
       showpars = list(show.iters = "none", showevery = 10),
       seed = j,
+      update = update,
       resource.allocation = resource.allocation.NORM
     )
-    # print("this exit")
-    # exit()
-    # 
-    # my.file.n <- paste0("../../random/",fun,"_")
-    # moead.random <- moead(
-    #   problem  = problem.zdt1,
-    #   preset   = preset_moead(algo),
-    #   decomp = decomp,
-    #   stopcrit = stopcrit,
-    #   constraint = list(name = "penalty", beta=0.95),
-    #   scaling = scaling,
-    #   showpars = list(show.iters = "none", showevery = 10),
-    #   seed = j,
-    #   resource.allocation = resource.allocation.RANDOM,
-    #   my.file.n = my.file.n
-    # )
-  
+
+    moead.norm.inverse <- moead(
+      problem  = problem.zdt1,
+      preset   = preset_moead(algo),
+      decomp = decomp,
+      stopcrit = stopcrit,
+      variation = variation,
+      constraint= constraint.best.de,
+      scaling = scaling,
+      showpars = list(show.iters = "none", showevery = 10),
+      seed = j,
+      update = update,
+      resource.allocation = resource.allocation.NORM.inverse
+    )
+    # decomp <- list(name = "SLD", H = 30)
+    moead.norm.tour <- moead(
+      problem  = problem.zdt1,
+      preset   = preset_moead(algo),
+      decomp = decomp,
+      stopcrit = stopcrit,
+      variation = variation,
+      constraint = constraint.best.de,
+      scaling = scaling,
+      showpars = list(show.iters = "none", showevery = 10),
+      seed = j,
+      update = update,
+      resource.allocation = resource.allocation.NORM.tour
+    )
   }
 }
