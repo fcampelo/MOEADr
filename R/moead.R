@@ -641,7 +641,7 @@ moead <-
     
     if (!is.null(Archive)) {
       Archive$X <-
-        denormalize_population(Archive$X, problem, find_nondominated_points(Y))
+        denormalize_population(Archive$X, problem)
       colnames(Archive$Y) <- paste0("f", 1:ncol(Archive$Y))
       Archive$W           <- W
       colnames(Archive$W) <- paste0("f", 1:ncol(Archive$W))

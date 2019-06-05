@@ -263,8 +263,8 @@ calc_idx <-
       
       else if (resource.allocation$selection == "tour") {
         found <- 0
-        size <- ceiling(dim(W)[1] * 0.5)
-        k <- ceiling(dim(W)[1] * 0.05)
+        size <- ceiling(dim(W)[1] * resource.allocation$size)
+        k <- ceiling(dim(W)[1] * resource.allocation$k)
         indexes <- vector(length = size)
         temp.idx <- !vector(length = size)
         while (TRUE) {

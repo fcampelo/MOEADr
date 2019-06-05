@@ -33,16 +33,12 @@ update_population <- function(update, ...){
     arch.args <- updt.args
     arch.args$constraint$name <- "vbr"
     arch.args$constraint$type <- "ts"
-
     # Make sure that the very best solution for each subproblem is always
     # attributed to it in the Archive, regardless of neighborhoods
     arch.args$update$name <- "best"
     arch.args$update$Tr   <- nrow(arch.args$X)
     arch.args$update$nr   <- nrow(arch.args$X)
 
-    # Update Archive
-    # NextPop$Archive       <- do.call("updt_best",
-    #                                 args = arch.args)
     NextPop$Archive       <- do.call("updt_restricted",
                                       args = arch.args)
   } else NextPop$Archive <- NULL

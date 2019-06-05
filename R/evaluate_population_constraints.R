@@ -89,6 +89,7 @@ evaluate_population_moon <- function(X, problem, nfe, iter, cons = NULL)
           stringsAsFactors =  F,
           header = F
         ))
+      cons <- (-1)*cons
       
       # I dont know why did I do this - no moead.r parece que tem que ser contraints maior que zero
       # Vmatrix <- pmax(cons, 0)
