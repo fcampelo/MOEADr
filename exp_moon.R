@@ -11,28 +11,23 @@ library(pracma)
 library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
-repetitions <-  1
+repetitions <-1
 algorithms <- c("moead.de")
 
 #uniform weight
 resource.allocation.GRA <- list(name = "GRA", dt = 2)
 resource.allocation.NORM <- list(name = "norm", dt = 1, selection = "random", type = "NULL")
-resource.allocation.NORM.tour <- list(name = "norm", dt = 1, selection = "tour", type = "inverse", size = 0.2, k = 0.02)
+resource.allocation.NORM.tour <- list(name = "norm", dt = 1, selection = "tour", type = "NULL", size = 0.2, k = 0.02)
 resource.allocation.NORM.inverse <- list(name = "norm", dt = 1, selection = "random", type = "inverse")
 resource.allocation.RANDOM <- list(name = "random", dt = 1)
 
-update <- preset_moead("moead.de")$update
-update$UseArchive <- TRUE
-
-
 constraint.best.de = list(name = "penalty", beta=0.95)
-variation <- preset_moead("moead.de")$variation
 
 n.obj <- 3
 
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 30000))
+                       maxeval = 60000))
 
 scaling <- list()
 scaling$name <- "simple"
@@ -51,64 +46,89 @@ for (algo in algorithms) {
       name      = "unitary_constraints",# constraint function routine
       epsilon   = 0.95) # tolerance for equality constraints
   )
-  ref.points <- matrix(c(1.0, 0.0, 1.0), nrow = 1, ncol = 3)
+  
+    problem <- list(
+    name       = "problem.moon",
+    xmin       = rep(0, d),
+    xmax       = rep(1, d),
+    m          = n.obj# tolerance for equality constraints
+  )
   for (j in 1:repetitions) {
-    decomp <- list(name = "SLD", H = 30)
+    decomp <- list(name = "SLD", H = 50)
     cat("rep:", j)
     
-    moead.de <- moead(
+    # moead.de <- moead(
+    #   problem  = problem,
+    #   preset   = preset_moead(algo),
+    #   decomp = decomp,
+    #   stopcrit = stopcrit,
+    #   scaling = scaling,
+    #   showpars = list(show.iters = "none", showevery = 100),
+    #   seed = j
+    # )
+    # savePlotData(moea = moead.de, name = paste0(fun,"moead.de"), j = j)
+    
+    moead.de.c <- moead(
       problem  = problem.zdt1,
       preset   = preset_moead(algo),
       decomp = decomp,
-      variation = variation,
       stopcrit = stopcrit,
       constraint = constraint.best.de,
       scaling = scaling,
       showpars = list(show.iters = "none", showevery = 100),
-      seed = j,
-      update = update
+      seed = j
     )
+    moead.de.c$X <- moead.de.c$u.archive$X
+    moead.de.c$X <- moead.de.c$u.archive$Y
+    moead.de.c$V$Vmatrix <- moead.de.c$u.archive$Vmatrix
+    savePlotData(moea = moead.de.c, name = paste0(fun,"moead.de.c"), j = j)
     
     moead.norm <- moead(
       problem  = problem.zdt1,
       preset   = preset_moead(algo),
       decomp = decomp,
       stopcrit = stopcrit,
-      variation = variation,
       constraint = constraint.best.de,
       scaling = scaling,
       showpars = list(show.iters = "none", showevery = 10),
       seed = j,
-      update = update,
       resource.allocation = resource.allocation.NORM
     )
-
+    moead.norm$X <- moead.norm$u.archive$X
+    moead.norm$X <- moead.norm$u.archive$Y
+    moead.norm$V$Vmatrix <- moead.norm$u.archive$Vmatrix
+    savePlotData(moea = moead.norm, name = paste0(fun,"moead.norm"), j = j)
+    
     moead.norm.inverse <- moead(
       problem  = problem.zdt1,
       preset   = preset_moead(algo),
       decomp = decomp,
       stopcrit = stopcrit,
-      variation = variation,
       constraint= constraint.best.de,
       scaling = scaling,
       showpars = list(show.iters = "none", showevery = 10),
       seed = j,
-      update = update,
       resource.allocation = resource.allocation.NORM.inverse
     )
-    # decomp <- list(name = "SLD", H = 30)
+    moead.norm.inverse$X <- moead.norm.inverse$u.archive$X
+    moead.norm.inverse$X <- moead.norm.inverse$u.archive$Y
+    moead.norm.inverse$V$Vmatrix <- moead.norm.inverse$u.archive$Vmatrix
+    savePlotData(moea = moead.norm.inverse, name = paste0(fun,"moead.norm.inverse"), j = j)
+    
     moead.norm.tour <- moead(
       problem  = problem.zdt1,
       preset   = preset_moead(algo),
       decomp = decomp,
       stopcrit = stopcrit,
-      variation = variation,
       constraint = constraint.best.de,
       scaling = scaling,
       showpars = list(show.iters = "none", showevery = 10),
       seed = j,
-      update = update,
       resource.allocation = resource.allocation.NORM.tour
     )
+    moead.norm.tour$X <- moead.norm.tour$u.archive$X
+    moead.norm.tour$X <- moead.norm.tour$u.archive$Y
+    moead.norm.tour$V$Vmatrix <- moead.norm.tour$u.archive$Vmatrix
+    savePlotData(moea = moead.norm.tour, name = paste0(fun,"moead.norm.tour"), j = j)
   }
 }
