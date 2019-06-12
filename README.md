@@ -1,7 +1,7 @@
 # MOEADr
 R package MOEADr, a modular implementation of the Multiobjective Evolutionary Algorithm with Decomposition (MOEA/D) framework modified to include Resource Allocation. 
 
-Branch containing the code and the paper (diversityMOEAD.pdf) of the **GECCO poster Using Diversity as a Priority Function for Resource Allocation on MOEA/D**
+Branch containing the code and the paper (diversityMOEAD.pdf) of the GECCO poster **Using Diversity as a Priority Function for Resource Allocation on MOEA/D**
 
 
 ABSTRACT
