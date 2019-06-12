@@ -16,8 +16,9 @@ for (i in 1:number.fun) {
 }
 
 results <- data.frame()
-ref1 <- data.frame()
+#ref1 <- data.frame()
 for (fun in fun.names1) {
+  ref1 <- data.frame()
   for (i in 1:repetitions) {
     moead.de <- loadPlotData(name = paste0(fun, "moead.de"), j = i)
     moead.norm <- loadPlotData(name = paste0(fun, "moead.norm"), j = i)
@@ -83,16 +84,17 @@ for (fun in fun.names1) {
         ref.point = c(1.1, 1.1),
         ref.front = Yref
       ),
-      name = "norm.tournament")
-    results <- rbind(results, de, norm, norm.inverse, norm.tournament)
-    
+      name = "norm.tournament")  
   }
+  results <- rbind(results, cbind(rbind(de, norm, norm.inverse, norm.tournament), fun))
+#print(results)
+#exit()
 }
-print(aggregate(results$hv, median, by = list(results$name)))
-print(aggregate(results$igd, median, by = list(results$name)))
+print(aggregate(results$hv, median, by = list(results$name, results$fun)))
+print(aggregate(results$igd, median, by = list(results$name, results$fun)))
 
-agg.hv <- aggregate(results$hv, median, by = list(results$name))
-agg.igd <- aggregate(results$igd, median, by = list(results$name))
+agg.hv <- aggregate(results$hv, median, by = list(results$name, results$fun))
+agg.igd <- aggregate(results$igd, median, by = list(results$name, results$fun))
 
 id.norm <-
   which(results[results$name == "norm.data", ]$hv == agg.hv[agg.hv$Group.1 ==
