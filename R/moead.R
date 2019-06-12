@@ -398,6 +398,11 @@ moead <-
         oldObj <- out$oldObj
       }
     }
+    
+    # ========== Unbounded (internal) Archive
+    # u.archive <- data.frame(matrix(ncol = 3))
+    # names(u.archive) <- c("X", "Y", "Vmatrix")
+    u.archive <- setNames(replicate(3,data.frame()), c("X", "Y", "Vmatrix"))
     # ========================= End Initial definitions ======================== #
     
     # ============================= Iterative cycle ============================ #
@@ -603,6 +608,13 @@ moead <-
           }
         }
       }
+      # ========== Unbounded (internal) Archive
+      if (problem$name == "problem.moon") {
+        nndom <- find_nondominated_points(Y)
+        u.archive$X <- rbind(u.archive$X, X[nndom,])
+        u.archive$Y <- rbind(u.archive$Y, Y[nndom,])
+        u.archive$Vmatrix <- rbind(u.archive$Vmatrix, V$Vmatrix[nndom,])
+      }
       
       # ========== Visualization Tools
       # calculating usage of resource by subproblem and any other visualization info
@@ -683,7 +695,8 @@ moead <-
       usage       = usage,
       plot.paretofront = plot.paretofront,
       plot.paretoset = plot.paretoset,
-      plot.resources = plot.resources
+      plot.resources = plot.resources,
+      u.archive = u.archive
     )
     class(out) <- c("moead", "list")
     

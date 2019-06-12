@@ -94,6 +94,9 @@ print(aggregate(results$igd, median, by = list(results$name)))
 agg.hv <- aggregate(results$hv, median, by = list(results$name))
 agg.igd <- aggregate(results$igd, median, by = list(results$name))
 
+id.de <-
+  which(results[results$name == "de.data", ]$hv == agg.hv[agg.hv$Group.1 ==
+                                                              "de.data", ]$x)
 id.norm <-
   which(results[results$name == "norm.data", ]$hv == agg.hv[agg.hv$Group.1 ==
                                                               "norm.data", ]$x)
@@ -106,13 +109,13 @@ id.norm.tournament <-
 
 
 ####
-moead.de <- loadPlotData(name = paste0(fun, "_moead.de"), j = i)
-moead.norm <- loadPlotData(name = paste0(fun, "moead.norm"), j = i)
+moead.de <- loadPlotData(name = paste0(fun, "_moead.de"), j = id.de)
+moead.norm <- loadPlotData(name = paste0(fun, "moead.norm"), j = id.norm)
 moead.norm.inverse <-
-  loadPlotData(name = paste0(fun, "moead.norm.inverse"), j = i)
+  loadPlotData(name = paste0(fun, "moead.norm.inverse"), j = id.norm.inverse)
 moead.norm.tournament <-
   loadPlotData(name = paste0(fun, "moead.norm.tournament"),
-               j = i)
+               j = id.norm.tournament)
 
 moead.de$Y <- scaling_Y(moead.de$Y, ref1)
 moead.norm$Y <- scaling_Y(moead.norm$Y, ref1)
