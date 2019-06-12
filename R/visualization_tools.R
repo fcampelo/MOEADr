@@ -275,8 +275,16 @@ setwd(curDir)
 savePlotData <- function (moea, name, j){
   curDir <- getwd()
   setwd("~/MOEADr/R/")
-  write_feather(data.frame(moea$X), paste0('../dataExp/', name, j,'_X'))
-  write_feather(data.frame(moea$Y), paste0('../dataExp/', name, j,'_Y'))
+  
+  if(is.null(moea$Archive)){
+    write_feather(data.frame(moea$X), paste0('../dataExp/', name, j,'_X'))
+    write_feather(data.frame(moea$Y), paste0('../dataExp/', name, j,'_Y'))
+  }
+  else{
+    write_feather(data.frame(moea$Archive$X), paste0('../dataExp/', name, j,'_X'))
+    write_feather(data.frame(moea$Archive$Y), paste0('../dataExp/', name, j,'_Y'))
+  }
+  
   
   temp <- moea$plot.paretofront[-1,]
   temp <- apply(temp, 2, unlist)
@@ -313,6 +321,21 @@ savePlotData <- function (moea, name, j){
   temp<-as.data.frame(temp)
   write_feather(temp, paste0('../dataExp/', name, j,'_time'))
   setwd(curDir)
+  
+  if (!is.null(moea$V)){
+    temp <- as.data.frame(moea$V$Vmatrix)
+    temp <- apply(temp, 2, unlist)
+    temp<-as.data.frame(temp)
+    write_feather(temp, paste0('../dataExp/', name, j,'_Vmatrix'))
+    setwd(curDir)
+  }
+  if (!is.null(moea$Archive$V)){
+    temp <- as.data.frame(moea$Archive$V$Vmatrix)
+    temp <- apply(temp, 2, unlist)
+    temp<-as.data.frame(temp)
+    write_feather(temp, paste0('../dataExp/', name, j,'_Vmatrix'))
+    setwd(curDir)
+  }
 }
 
 loadPlotData <- function (name, j){
@@ -327,6 +350,7 @@ loadPlotData <- function (name, j){
   time <- read_feather(paste0('../dataExp/', name, j,'_time'))
   W <- read_feather(paste0('../dataExp/', name, j,'_W'))
   nfe <- read_feather(paste0('../dataExp/', name, j,'_nfe'))
+  Vmatrix <- read_feather(paste0('../dataExp/', name, j,'_Vmatrix'))
   
   out <- list(
     X           = X,
@@ -335,6 +359,7 @@ loadPlotData <- function (name, j){
     nfe         = nfe,
     n.iter      = iter,
     time        = time,
+    Vmatrix = Vmatrix,
     plot.paretofront = plot.paretofront,
     plot.paretoset = plot.paretoset,
     plot.resources = plot.resources,
