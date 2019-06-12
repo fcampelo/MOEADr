@@ -350,7 +350,7 @@ loadPlotData <- function (name, j){
   time <- read_feather(paste0('../dataExp/', name, j,'_time'))
   W <- read_feather(paste0('../dataExp/', name, j,'_W'))
   nfe <- read_feather(paste0('../dataExp/', name, j,'_nfe'))
-  Vmatrix <- read_feather(paste0('../dataExp/', name, j,'_Vmatrix'))
+  # Vmatrix <- read_feather(paste0('../dataExp/', name, j,'_Vmatrix'))
   
   out <- list(
     X           = X,
