@@ -8,8 +8,8 @@ library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 fun.names1 <- list()
 
-number.fun <- 7
-repetitions <- 21
+number.fun <- 1
+repetitions <- 1
 
 for (i in 1:number.fun) {
   fun.names1[[length(fun.names1) + 1]] = paste0("DTLZ", i)
@@ -111,7 +111,7 @@ id.norm.tournament <-
 
 
 ####
-moead.de <- loadPlotData(name = paste0(fun, "_moead.de"), j = id.de)
+moead.de <- loadPlotData(name = paste0(fun, "moead.de"), j = id.de)
 moead.norm <- loadPlotData(name = paste0(fun, "moead.norm"), j = id.norm)
 moead.norm.inverse <-
   loadPlotData(name = paste0(fun, "moead.norm.inverse"), j = id.norm.inverse)
