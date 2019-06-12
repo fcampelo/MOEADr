@@ -32,7 +32,7 @@ n.objs <- c(3)
 id <- 8
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 70000))
+                       maxeval = 30000))
 
 for (n.obj in n.objs) {
   print(n.obj)
@@ -75,7 +75,6 @@ for (n.obj in n.objs) {
       # ref.points <- rep(1, problem.zdt1$m)
       
       for (j in 1:repetitions) {
-        J<- j+1
         moead.de.data <- list()
         moead.dra.data <- list()
         moead.gra.data <- list()
@@ -85,7 +84,7 @@ for (n.obj in n.objs) {
         
         cat("rep:", j)
         
-        my.file.n <- paste0("../../de/",fun,"_")
+        
         moead.de <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
@@ -93,42 +92,46 @@ for (n.obj in n.objs) {
           stopcrit = stopcrit,
           scaling = scaling,
           showpars = list(show.iters = "none", showevery = 100),
-          seed = j,
-          my.file.n = my.file.n
+          seed = j
         )
+        savePlotData(moea = moead.de, name = paste0(fun,"moead.de"), j = j)
+        # 
+        # moead.dra <- moead(
+        #   problem  = problem.zdt1,
+        #   preset   = preset_moead(algo),
+        #   decomp = decomp,
+        #   stopcrit = stopcrit,
+        #   scaling = scaling,
+        #   showpars = list(show.iters = "none", showevery = 100),
+        #   seed = j,
+        #   resource.allocation = resource.allocation.DRA
+        # )
+        # 
+        # 
+        # # gra.awt
+        # moead.gra <- moead(
+        #   problem  = problem.zdt1,
+        #   preset   = preset_moead(algo),
+        #   decomp = decomp,
+        #   stopcrit = stopcrit,
+        #   scaling = scaling,
+        #   showpars = list(show.iters = "none", showevery = 100),
+        #   seed = j,
+        #   resource.allocation = resource.allocation.GRA,
+        #   my.file.n = my.file.n
+        # )
+        # 
+        # moead.rad <- moead(
+        #   problem  = problem.zdt1,
+        #   preset   = preset_moead(algo),
+        #   decomp = decomp,
+        #   stopcrit = stopcrit,
+        #   scaling = scaling,
+        #   showpars = list(show.iters = "none", showevery = 10),
+        #   seed = j,
+        #   resource.allocation = resource.allocation.RAD
+        # )
         
-        
-        # gra.awt
-        my.file.n <- paste0("../../gra/",fun,"_")
-        moead.gra <- moead(
-          problem  = problem.zdt1,
-          preset   = preset_moead(algo),
-          decomp = decomp,
-          stopcrit = stopcrit,
-          scaling = scaling,
-          showpars = list(show.iters = "none", showevery = 100),
-          seed = j,
-          resource.allocation = resource.allocation.GRA,
-          my.file.n = my.file.n
-        )
-        
-        # write_feather(as.data.frame(moead.gra$Y), my.file.n)
-        
-        # ondb
-        my.file.n <- paste0("../../rad/",fun,"_")
-        moead.rad <- moead(
-          problem  = problem.zdt1,
-          preset   = preset_moead(algo),
-          decomp = decomp,
-          stopcrit = stopcrit,
-          scaling = scaling,
-          showpars = list(show.iters = "none", showevery = 10),
-          seed = j,
-          resource.allocation = resource.allocation.RAD,
-          my.file.n = my.file.n
-        )
-        #
-        my.file.n <- paste0("../../norm/",fun,"_")
         moead.norm <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
@@ -137,12 +140,12 @@ for (n.obj in n.objs) {
           scaling = scaling,
           showpars = list(show.iters = "none", showevery = 10),
           seed = j,
-          resource.allocation = resource.allocation.NORM,
-          my.file.n = my.file.n
+          resource.allocation = resource.allocation.NORM
         )
-
-        my.file.n <- paste0("../../random/",fun,"_")
-        moead.random <- moead(
+        # 
+        savePlotData(moea = moead.norm, name = paste0(fun,"moead.norm"), j = j)
+        # 
+        moead.norm.inverse <- moead(
           problem  = problem.zdt1,
           preset   = preset_moead(algo),
           decomp = decomp,
@@ -150,9 +153,34 @@ for (n.obj in n.objs) {
           scaling = scaling,
           showpars = list(show.iters = "none", showevery = 10),
           seed = j,
-          resource.allocation = resource.allocation.RANDOM,
-          my.file.n = my.file.n
+          resource.allocation = resource.allocation.NORM.inverse
         )
+        
+        savePlotData(moea = moead.norm.inverse, name = paste0(fun,"moead.norm.inverse"), j = j)
+        # 
+        moead.norm.tournament <- moead(
+          problem  = problem.zdt1,
+          preset   = preset_moead(algo),
+          decomp = decomp,
+          stopcrit = stopcrit,
+          scaling = scaling,
+          showpars = list(show.iters = "none", showevery = 10),
+          seed = j,
+          resource.allocation = resource.allocation.NORM.tour
+        )
+        
+        savePlotData(moea = moead.norm.tournament, name = paste0(fun,"moead.norm.tournament"), j = j)
+        
+        # moead.random <- moead(
+        #   problem  = problem.zdt1,
+        #   preset   = preset_moead(algo),
+        #   decomp = decomp,
+        #   stopcrit = stopcrit,
+        #   scaling = scaling,
+        #   showpars = list(show.iters = "none", showevery = 10),
+        #   seed = j,
+        #   resource.allocation = resource.allocation.RANDOM
+        # )
         # exit()
         # 
         # 
