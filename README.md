@@ -3,7 +3,7 @@ R package MOEADr, a modular implementation of the Multiobjective Evolutionary Al
 
 Please [read the paper](diversityMOEAD.pdf)
 
-Please [read the poster](Poster_GECCO_Priority_Functions.pdf.pdf)
+Please [read the poster](Poster_GECCO_Priority_Functions.pdf)
 
 Branch containing the code and the paper (diversityMOEAD.pdf) of the GECCO poster **Using Diversity as a Priority Function for Resource Allocation on MOEA/D**
 
