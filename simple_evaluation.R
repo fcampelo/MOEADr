@@ -93,25 +93,28 @@ for (fun in fun.names1) {
 print(aggregate(results$hv, median, by = list(results$name, results$fun)))
 print(aggregate(results$igd, median, by = list(results$name, results$fun)))
 
-agg.hv <- aggregate(results$hv, median, by = list(results$name, results$fun))
-agg.igd <- aggregate(results$igd, median, by = list(results$name, results$fun))
-
-id.de <-
-  which(results[results$name == "de.data", ]$hv == agg.hv[agg.hv$Group.1 ==
-                                                              "de.data", ]$x)
-id.norm <-
-  which(results[results$name == "norm.data", ]$hv == agg.hv[agg.hv$Group.1 ==
-                                                              "norm.data", ]$x)
-id.norm.inverse <-
-  which(results[results$name == "norm.inverse.data", ]$hv == agg.hv[agg.hv$Group.1 ==
-                                                                      "norm.inverse.data", ]$x)
-id.norm.tournament <-
-  which(results[results$name == "norm.tournament", ]$hv == agg.hv[agg.hv$Group.1 ==
-                                                                    "norm.tournament", ]$x)
-
 
 ####
 for (fun in fun.names1) {
+
+  agg.hv <- aggregate(results$hv, median, by = list(results$name, results$fun))
+  agg.igd <- aggregate(results$igd, median, by = list(results$name, results$fun))
+  
+  id.de <-
+    which(results[results$name == "de.data", ]$hv == agg.hv[agg.hv$Group.1 ==
+                                                              "de.data", ]$x)
+  id.norm <-
+    which(results[results$name == "norm.data", ]$hv == agg.hv[agg.hv$Group.1 ==
+                                                                "norm.data", ]$x)
+  id.norm.inverse <-
+    which(results[results$name == "norm.inverse.data", ]$hv == agg.hv[agg.hv$Group.1 ==
+                                                                        "norm.inverse.data", ]$x)
+  id.norm.tournament <-
+    which(results[results$name == "norm.tournament", ]$hv == agg.hv[agg.hv$Group.1 ==
+                                                                      "norm.tournament", ]$x)
+  
+  
+  
 moead.de <- loadPlotData(name = paste0(fun, "moead.de"), j = id.de)
 moead.norm <- loadPlotData(name = paste0(fun, "moead.norm"), j = id.norm)
 moead.norm.inverse <-
@@ -124,10 +127,6 @@ moead.de$Y <- scaling_Y(moead.de$Y, ref1)
 moead.norm$Y <- scaling_Y(moead.norm$Y, ref1)
 moead.norm.inverse$Y <- scaling_Y(moead.norm.inverse$Y, ref1)
 moead.norm.tournament$Y <- scaling_Y(moead.norm.tournament$Y, ref1)
-#plot(moead.de$y, main = "moead.de")
-#plot(moead.norm$y, main = "moead.norm")
-#plot(moead.norm.inverse$y, main = "moead.norm.inverse")
-#plot(moead.norm.tournament$y, main = "moead.tournament")
 visuEvol(moead.de, paste0(fun, "visu.moead.de"))
 visuEvol(moead.norm,paste0(fun, "visu.moead.norm"))
 visuEvol(moead.norm.inverse, paste0(fun, "visu.moead.inverse"))
