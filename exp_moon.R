@@ -11,7 +11,7 @@ library(pracma)
 library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
-repetitions <-1
+repetitions <- 21
 algorithms <- c("moead.de")
 
 #uniform weight
@@ -53,8 +53,8 @@ for (algo in algorithms) {
     xmax       = rep(1, d),
     m          = n.obj# tolerance for equality constraints
   )
-  for (j in 1:repetitions) {
-    decomp <- list(name = "SLD", H = 50)
+  for (j in (1+30):(repetitions+30)) {
+decomp <- list(name = "SLD", H = 50)
     cat("rep:", j)
     
     # moead.de <- moead(
@@ -79,7 +79,7 @@ for (algo in algorithms) {
       seed = j
     )
     moead.de.c$X <- moead.de.c$u.archive$X
-    moead.de.c$X <- moead.de.c$u.archive$Y
+    moead.de.c$Y <- moead.de.c$u.archive$Y
     moead.de.c$V$Vmatrix <- moead.de.c$u.archive$Vmatrix
     savePlotData(moea = moead.de.c, name = paste0(fun,"moead.de.c"), j = j)
     
@@ -95,7 +95,7 @@ for (algo in algorithms) {
       resource.allocation = resource.allocation.NORM
     )
     moead.norm$X <- moead.norm$u.archive$X
-    moead.norm$X <- moead.norm$u.archive$Y
+    moead.norm$Y <- moead.norm$u.archive$Y
     moead.norm$V$Vmatrix <- moead.norm$u.archive$Vmatrix
     savePlotData(moea = moead.norm, name = paste0(fun,"moead.norm"), j = j)
     
@@ -111,7 +111,7 @@ for (algo in algorithms) {
       resource.allocation = resource.allocation.NORM.inverse
     )
     moead.norm.inverse$X <- moead.norm.inverse$u.archive$X
-    moead.norm.inverse$X <- moead.norm.inverse$u.archive$Y
+    moead.norm.inverse$Y <- moead.norm.inverse$u.archive$Y
     moead.norm.inverse$V$Vmatrix <- moead.norm.inverse$u.archive$Vmatrix
     savePlotData(moea = moead.norm.inverse, name = paste0(fun,"moead.norm.inverse"), j = j)
     
@@ -127,7 +127,7 @@ for (algo in algorithms) {
       resource.allocation = resource.allocation.NORM.tour
     )
     moead.norm.tour$X <- moead.norm.tour$u.archive$X
-    moead.norm.tour$X <- moead.norm.tour$u.archive$Y
+    moead.norm.tour$Y <- moead.norm.tour$u.archive$Y
     moead.norm.tour$V$Vmatrix <- moead.norm.tour$u.archive$Vmatrix
     savePlotData(moea = moead.norm.tour, name = paste0(fun,"moead.norm.tour"), j = j)
   }
