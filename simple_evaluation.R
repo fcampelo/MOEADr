@@ -7,9 +7,9 @@ library(feather)
 library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 fun.names1 <- list()
-
-number.fun <- 1
-repetitions <- 1
+source("visualization_tools.R")
+number.fun <- 7
+repetitions <- 21
 
 for (i in 1:number.fun) {
   fun.names1[[length(fun.names1) + 1]] = paste0("DTLZ", i)
@@ -111,6 +111,7 @@ id.norm.tournament <-
 
 
 ####
+for (fun in fun.names1) {
 moead.de <- loadPlotData(name = paste0(fun, "moead.de"), j = id.de)
 moead.norm <- loadPlotData(name = paste0(fun, "moead.norm"), j = id.norm)
 moead.norm.inverse <-
@@ -123,11 +124,12 @@ moead.de$Y <- scaling_Y(moead.de$Y, ref1)
 moead.norm$Y <- scaling_Y(moead.norm$Y, ref1)
 moead.norm.inverse$Y <- scaling_Y(moead.norm.inverse$Y, ref1)
 moead.norm.tournament$Y <- scaling_Y(moead.norm.tournament$Y, ref1)
-plot(moead.de$Y, main = "moead.de")
-plot(moead.norm$Y, main = "moead.norm")
-plot(moead.norm.inverse$Y, main = "moead.norm.inverse")
-plot(moead.norm.tournament$Y, main = "moead.tournament")
-# visuEvol(moead.norm, paste0(fun, "moead.de"))
-# visuEvol(moead.norm,paste0(fun, "moead.de"))
-# visuEvol(moead.norm.inverse, paste0(fun, "moead.de"))
-# visuEvol(moead.norm.tournament, "moead.norm.tournament")
+#plot(moead.de$y, main = "moead.de")
+#plot(moead.norm$y, main = "moead.norm")
+#plot(moead.norm.inverse$y, main = "moead.norm.inverse")
+#plot(moead.norm.tournament$y, main = "moead.tournament")
+visuEvol(moead.de, paste0(fun, "visu.moead.de"))
+visuEvol(moead.norm,paste0(fun, "visu.moead.norm"))
+visuEvol(moead.norm.inverse, paste0(fun, "visu.moead.inverse"))
+visuEvol(moead.norm.tournament, paste0("visu.moead.norm.tournament"))
+}
