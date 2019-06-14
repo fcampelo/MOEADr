@@ -11,7 +11,7 @@ library(pracma)
 library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
-repetitions <- 3
+repetitions <- 21
 algorithms <- c("moead.de")
 
 #uniform weight
@@ -53,7 +53,7 @@ for (algo in algorithms) {
     xmax       = rep(1, d),
     m          = n.obj# tolerance for equality constraints
   )
-  for (j in 1:repetitions) {
+  for (j in (1+30):(repetitions+30)) {
 decomp <- list(name = "SLD", H = 50)
     cat("rep:", j)
     
