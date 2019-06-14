@@ -320,7 +320,7 @@ savePlotData <- function (moea, name, j){
   temp <- apply(temp, 2, unlist)
   temp<-as.data.frame(temp)
   write_feather(temp, paste0('../dataExp/', name, j,'_time'))
-  setwd(curDir)
+  
   
   if (!is.null(moea$V)){
     temp <- as.data.frame(moea$V$Vmatrix)
@@ -329,13 +329,14 @@ savePlotData <- function (moea, name, j){
     write_feather(temp, paste0('../dataExp/', name, j,'_Vmatrix'))
     setwd(curDir)
   }
-  if (!is.null(moea$Archive$V)){
-    temp <- as.data.frame(moea$Archive$V$Vmatrix)
-    temp <- apply(temp, 2, unlist)
-    temp<-as.data.frame(temp)
-    write_feather(temp, paste0('../dataExp/', name, j,'_Vmatrix'))
-    setwd(curDir)
-  }
+  # if (!is.null(moea$Archive$V)){
+  #   temp <- as.data.frame(moea$Archive$V$Vmatrix)
+  #   temp <- apply(temp, 2, unlist)
+  #   temp<-as.data.frame(temp)
+  #   write_feather(temp, paste0('../dataExp/', name, j,'_Vmatrix'))
+  #   setwd(curDir)
+  # }
+  setwd(curDir)
 }
 
 loadPlotData <- function (name, j){
@@ -350,7 +351,7 @@ loadPlotData <- function (name, j){
   time <- read_feather(paste0('../dataExp/', name, j,'_time'))
   W <- read_feather(paste0('../dataExp/', name, j,'_W'))
   nfe <- read_feather(paste0('../dataExp/', name, j,'_nfe'))
-  # Vmatrix <- read_feather(paste0('../dataExp/', name, j,'_Vmatrix'))
+  Vmatrix <- read_feather(paste0('../dataExp/', name, j,'_Vmatrix'))
   
   out <- list(
     X           = X,
