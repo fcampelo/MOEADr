@@ -105,17 +105,17 @@ for (n.obj in n.objs) {
         # 
         # 
         # # gra.awt
-        # moead.gra <- moead(
-        #   problem  = problem.zdt1,
-        #   preset   = preset_moead(algo),
-        #   decomp = decomp,
-        #   stopcrit = stopcrit,
-        #   scaling = scaling,
-        #   showpars = list(show.iters = "none", showevery = 100),
-        #   seed = j,
-        #   resource.allocation = resource.allocation.GRA,
-        #   my.file.n = my.file.n
-        # )
+        moead.gra <- moead(
+           problem  = problem.zdt1,
+           preset   = preset_moead(algo),
+           decomp = decomp,
+           stopcrit = stopcrit,
+           scaling = scaling,
+           showpars = list(show.iters = "none", showevery = 100),
+           seed = j,
+           resource.allocation = resource.allocation.GRA,
+           my.file.n = my.file.n
+         )
         # 
         # moead.rad <- moead(
         #   problem  = problem.zdt1,
