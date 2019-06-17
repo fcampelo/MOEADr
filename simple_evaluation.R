@@ -8,8 +8,8 @@ library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 fun.names1 <- list()
 source("visualization_tools.R")
-number.fun <- 7
-repetitions <- 21
+number.fun <- 21
+repetitions <- 7
 
 for (i in 1:number.fun) {
   fun.names1[[length(fun.names1) + 1]] = paste0("DTLZ", i)
