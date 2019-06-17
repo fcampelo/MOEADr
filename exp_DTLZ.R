@@ -14,7 +14,7 @@ lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 # source("utils.R")
 # source("moead.R")
 
-repetitions <-  21
+repetitions <-  1
 dimension <- 100
 algorithms <- c("moead.de")
 
@@ -36,7 +36,7 @@ n.objs <- c(2)
 
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 30000))
+                       maxeval = 3000))
 
 for (n.obj in n.objs) {
   id <- 1

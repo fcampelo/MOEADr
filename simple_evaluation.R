@@ -8,8 +8,8 @@ library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 fun.names1 <- list()
 source("visualization_tools.R")
-number.fun <- 21
-repetitions <- 7
+number.fun <- 7
+repetitions <- 1
 
 for (i in 1:number.fun) {
   fun.names1[[length(fun.names1) + 1]] = paste0("DTLZ", i)
@@ -97,20 +97,21 @@ print(aggregate(results$igd, median, by = list(results$name, results$fun)))
 ####
 for (fun in fun.names1) {
 
-  agg.hv <- aggregate(results$hv, median, by = list(results$name, results$fun))
-  agg.igd <- aggregate(results$igd, median, by = list(results$name, results$fun))
   
+  # agg.igd <- aggregate(results$igd, median, by = list(results$name, results$fun))
+  temp.results <- results[results$fun == fun, ]
+  agg.hv <- aggregate(temp.results$hv, median, by = list(temp.results$name, temp.results$fun))
   id.de <-
-    which(results[results$name == "de.data", ]$hv == agg.hv[agg.hv$Group.1 ==
+    which(temp.results[temp.results$name == "de.data", ]$hv == agg.hv[agg.hv$Group.1 ==
                                                               "de.data", ]$x)
   id.norm <-
-    which(results[results$name == "norm.data", ]$hv == agg.hv[agg.hv$Group.1 ==
+    which(temp.results[temp.results$name == "norm.data", ]$hv == agg.hv[agg.hv$Group.1 ==
                                                                 "norm.data", ]$x)
   id.norm.inverse <-
-    which(results[results$name == "norm.inverse.data", ]$hv == agg.hv[agg.hv$Group.1 ==
+    which(temp.results[temp.results$name == "norm.inverse.data", ]$hv == agg.hv[agg.hv$Group.1 ==
                                                                         "norm.inverse.data", ]$x)
   id.norm.tournament <-
-    which(results[results$name == "norm.tournament", ]$hv == agg.hv[agg.hv$Group.1 ==
+    which(temp.results[temp.results$name == "norm.tournament", ]$hv == agg.hv[agg.hv$Group.1 ==
                                                                       "norm.tournament", ]$x)
   
   
@@ -127,8 +128,8 @@ moead.de$Y <- scaling_Y(moead.de$Y, ref1)
 moead.norm$Y <- scaling_Y(moead.norm$Y, ref1)
 moead.norm.inverse$Y <- scaling_Y(moead.norm.inverse$Y, ref1)
 moead.norm.tournament$Y <- scaling_Y(moead.norm.tournament$Y, ref1)
-visuEvol(moead.de, paste0(fun, "visu.moead.de"))
-visuEvol(moead.norm,paste0(fun, "visu.moead.norm"))
-visuEvol(moead.norm.inverse, paste0(fun, "visu.moead.inverse"))
-visuEvol(moead.norm.tournament, paste0("visu.moead.norm.tournament"))
+visuEvol(moead.de, paste0("visu/", fun, "visu.moead.de.html"))
+visuEvol(moead.norm,paste0("visu/", fun, "visu.moead.norm.html"))
+visuEvol(moead.norm.inverse, paste0("visu/", fun, "visu.moead.inverse.html"))
+visuEvol(moead.norm.tournament, paste0("visu/", fun, "visu.moead.norm.tournament.html"))
 }
