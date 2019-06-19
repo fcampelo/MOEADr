@@ -8,8 +8,8 @@ library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 fun.names1 <- list()
 source("visualization_tools.R")
-number.fun <- 7
-repetitions <- 1
+number.fun <- 2
+repetitions <- 21
 
 for (i in 1:number.fun) {
   fun.names1[[length(fun.names1) + 1]] = paste0("DTLZ", i)
@@ -93,11 +93,26 @@ for (fun in fun.names1) {
 print(aggregate(results$hv, median, by = list(results$name, results$fun)))
 print(aggregate(results$igd, median, by = list(results$name, results$fun)))
 
-
+write_feather(results, "../dataExp/results_DTLZ")
 ####
 for (fun in fun.names1) {
 
-  
+  ref1 <- data.frame()
+  for (i in 1:repetitions) {
+    moead.de <- loadPlotData(name = paste0(fun, "moead.de"), j = i)
+    moead.norm <- loadPlotData(name = paste0(fun, "moead.norm"), j = i)
+    moead.norm.inverse <-
+      loadPlotData(name = paste0(fun, "moead.norm.inverse"), j = i)
+    moead.norm.tournament <-
+      loadPlotData(name = paste0(fun, "moead.norm.tournament"),
+                   j = i)
+
+    ref1 <-
+      rbind(ref1, moead.norm.inverse$Y,
+            moead.norm.tournament$Y,
+            moead.de$Y,
+            moead.norm$Y)
+  }
   # agg.igd <- aggregate(results$igd, median, by = list(results$name, results$fun))
   temp.results <- results[results$fun == fun, ]
   agg.hv <- aggregate(temp.results$hv, median, by = list(temp.results$name, temp.results$fun))
@@ -128,8 +143,8 @@ moead.de$Y <- scaling_Y(moead.de$Y, ref1)
 moead.norm$Y <- scaling_Y(moead.norm$Y, ref1)
 moead.norm.inverse$Y <- scaling_Y(moead.norm.inverse$Y, ref1)
 moead.norm.tournament$Y <- scaling_Y(moead.norm.tournament$Y, ref1)
-visuEvol(moead.de, paste0("visu/", fun, "visu.moead.de.html"))
-visuEvol(moead.norm,paste0("visu/", fun, "visu.moead.norm.html"))
-visuEvol(moead.norm.inverse, paste0("visu/", fun, "visu.moead.inverse.html"))
-visuEvol(moead.norm.tournament, paste0("visu/", fun, "visu.moead.norm.tournament.html"))
+visuEvol(moead.de, paste0(fun, "visu.moead.de.html"))
+visuEvol(moead.norm,paste0(fun, "visu.moead.norm.html"))
+visuEvol(moead.norm.inverse, paste0(fun, "visu.moead.inverse.html"))
+visuEvol(moead.norm.tournament, paste0(fun, "visu.moead.norm.tournament.html"))
 }
