@@ -49,7 +49,7 @@ accumulate_by <- function(dat, var) {
   dplyr::bind_rows(dats)
 }
 
-visuEvol <- function(moea, name, ref.front=NULL){
+visuEvol <- function(moea, name, fun, ref.front=NULL){
   curDir <- getwd()
   setwd("~/MOEADr/dataExp/")
 
@@ -78,25 +78,25 @@ iteration.data$stage <- unlist(iteration.data$stage)
 
 #df.pca <- data.frame()
 iteration.data$stage <- unlist(iteration.data$stage)
-# Yref <-
-#   as.matrix(read.table(paste0("inst/extdata/pf_data/DTLZ4.2D.pf")))
+ Yref <-
+   as.matrix(read.table(paste0("inst/extdata/pf_data/",fun,".2D.pf")))
 
 hvs <- list(rep(0, max(iteration.data$stage)))
-#igds <- list(rep(0, max(iteration.data$stage)))
+igds <- list(rep(0, max(iteration.data$stage)))
 for (i in 1:max(iteration.data$stage)){
   Y <- rbind(iteration.data[iteration.data$stage==i,]$f1, iteration.data[iteration.data$stage==i,]$f2)
   hvs[[i]] <- emoa::dominated_hypervolume(points = Y, ref = rep(1.1,dim(moea$W)[2]))
 }
 
 
-#for (i in 1:max(iteration.data$stage)){
-#  if (!is.null(ref.front)){
-#    Y <- rbind(iteration.data[iteration.data$stage==i,]$f1, iteration.data[iteration.data$stage==i,]$f2)
-#    igds[[i]] <- igd <- calcIGD(Y, Yref = ref.front)
-#  }else{
-#    igds[[i]] <- 0
-#  }
-#}
+for (i in 1:max(iteration.data$stage)){
+  if (!is.null(ref.front)){
+    Y <- rbind(iteration.data[iteration.data$stage==i,]$f1, iteration.data[iteration.data$stage==i,]$f2)
+    igds[[i]] <- igd <- calcIGD(Y, Yref = ref.front)
+  }else{
+    igds[[i]] <- -1
+  }
+}
 
 
 #for (i in 1:max(iteration.data$stage)){
@@ -120,11 +120,11 @@ hvs2 <- hvs %>%
 hvs2$stage <- hvs2$frame
 
 
-#igds <- data.frame(unlist(igds), 1:max(iteration.data$stage))
-#names(igds) <- c("igd", "stage")
-#igds2 <- igds %>%
-#  accumulate_by(~stage)
-#igds2$stage <- igds2$frame
+igds <- data.frame(unlist(igds), 1:max(iteration.data$stage))
+names(igds) <- c("igd", "stage")
+igds2 <- igds %>%
+  accumulate_by(~stage)
+igds2$stage <- igds2$frame
 
 # resource/subproblem with size by by nondom
 resource.problem <- iteration.data %>%
@@ -135,16 +135,16 @@ resource.problem <- iteration.data %>%
     type = 'scatter',
     mode = 'markers',
     showlegend = F,
-    colors = c('black', 'blue'),
-    color = ~ Nondominated,
-    alpha = 0.5,
-    # marker = list(size = ~ (Nondominated+1)*5, opacity = 0.5),
+    colors = (palette="Spectral"),
+    color = ~ Subproblem,
+    #alpha = 0.5,
+    marker = list(size = ~ (Nondominated+1)*5, opacity = 0.5),
     stroke = I("black"),
     strokes = ~ Nondominated,
     text = ~ paste("Nondominated: ", Nondominated, '<br>Subproblem:', Subproblem), 
     hoverinfo = 'text'
   ) %>%
-  layout(title = "Line 1: (1)-RA (2)-PF (size: resource) (3)-PF (size by nondominated) <br> Line 2; (1)-HV (2)-IGD (3)-PS-PCA"
+  layout(title = "Line 1: (1)-RA (2)-PF (3)-PF <br> Line 2: (1)-HV (2)-IGD"
     ) 
 
 # pareto front with size by nondominated
@@ -156,11 +156,12 @@ pf.nondominated <- iteration.data %>%
     type = 'scatter',
     mode = 'markers',
     showlegend = F,
-    colors = c('black', 'blue'),
+    colors = (palette="OrRd"),
     color = ~ Nondominated,
     stroke = I("black"),
     strokes = ~ Nondominated,
-    marker = list(size = ~ (Nondominated+1)*5, opacity = 0.5),
+    alpha = 0.5, 
+    #marker = list(size = ~ (Nondominated+1)*5, opacity = 0.5),
     text = ~ paste("Nondominated: ", Nondominated, '<br>Subproblem:', Subproblem), 
     hoverinfo = 'text'
   ) 
@@ -174,11 +175,12 @@ pf.resource <- iteration.data %>%
     type = 'scatter',
     mode = 'markers',
     showlegend = F,
-    colors = c('black', 'blue'),
-    color = ~ Nondominated,
+    colors = (palette="Spectral"),
+    color = ~ Subproblem,
     stroke = I("black"),
     strokes = ~ Nondominated,
-    marker = list(size = ~ log(Resources+1)*5, opacity = 0.5),
+    alpha = 0.5,
+    #marker = list(size = ~ log(Resources+1)*5, opacity = 0.5),
     text = ~ paste("Nondominated: ", Nondominated, '<br>Subproblem:', Subproblem), 
     hoverinfo = 'text'
   ) 
@@ -235,33 +237,33 @@ hv.plot <- hvs2 %>%
   ) 
 
 
-#igd.plot <- igds2 %>%
-#  plot_ly(
-#    y = ~ igd,
-#    frame = ~ stage,
-#    type = 'scatter',
-#    mode = 'lines',
-#    showlegend = F,
-#    colors = c('black', 'blue'),
-#    fill = 'tozeroy',
-#    fillcolor='rgba(58, 83, 155, 0.5)',
-#    line = list(color = 'rgba(58, 83, 155, 1)')
-#    ) %>%
-#  layout(
-#    xaxis = list(
+igd.plot <- igds2 %>%
+  plot_ly(
+    y = ~ igd,
+    frame = ~ stage,
+    type = 'scatter',
+    mode = 'lines',
+    showlegend = F,
+    colors = c('black', 'blue'),
+    fill = 'tozeroy',
+    fillcolor='rgba(58, 83, 155, 0.5)',
+    line = list(color = 'rgba(58, 83, 155, 1)')
+    ) %>%
+  layout(
+    xaxis = list(
 #      title = "Day",
-#      range = c(0,max(hvs2$stage)),
-#      zeroline = F,
- #     showgrid = F
-#    )
-#  ) %>%
-#  animation_opts(
-#    frame = 100,
-#    transition = 0,
-#    redraw = FALSE
-#  )
+      range = c(0,max(igds2$stage)),
+      zeroline = F,
+     showgrid = F
+    )
+  ) %>%
+  animation_opts(
+    frame = 100,
+    transition = 0,
+    redraw = FALSE
+  )
 
-p <- subplot(resource.problem, pf.resource, pf.nondominated, hv.plot,  nrows = 2)%>%
+p <- subplot(resource.problem, pf.resource, pf.nondominated, hv.plot, igd_plot,  nrows = 2)%>%
   animation_slider(
     currentvalue = list(
       prefix = "Iteration "
@@ -351,7 +353,7 @@ loadPlotData <- function (name, j){
   time <- read_feather(paste0('../dataExp/', name, j,'_time'))
   W <- read_feather(paste0('../dataExp/', name, j,'_W'))
   nfe <- read_feather(paste0('../dataExp/', name, j,'_nfe'))
-  Vmatrix <- read_feather(paste0('../dataExp/', name, j,'_Vmatrix'))
+  #Vmatrix <- read_feather(paste0('../dataExp/', name, j,'_Vmatrix'))
   
   out <- list(
     X           = X,
