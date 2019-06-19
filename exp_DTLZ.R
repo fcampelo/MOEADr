@@ -14,7 +14,7 @@ lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 # source("utils.R")
 # source("moead.R")
 
-repetitions <-  1
+repetitions <-  7
 dimension <- 100
 algorithms <- c("moead.de")
 
@@ -24,8 +24,8 @@ resource.allocation.GRA <- list(name = "GRA", dt = 20, selection = "random", typ
 resource.allocation.RAD <- list(name = "RAD", dt = 20, selection = "random", type = "NULL")
 resource.allocation.NORM <- list(name = "norm", dt = 2, selection = "random", type = "NULL")
 resource.allocation.RANDOM <- list(name = "random", dt = 20, selection = "random", type = "NULL")
-resource.allocation.NORM.tour <- list(name = "norm", dt = 1, selection = "tour", type = "NULL", size = 0.2, k = 0.02)
-resource.allocation.NORM.inverse <- list(name = "norm", dt = 1, selection = "random", type = "inverse")
+resource.allocation.NORM.tour <- list(name = "norm", dt = 2, selection = "tour", type = "NULL", size = 0.2, k = 0.02)
+resource.allocation.NORM.inverse <- list(name = "norm", dt = 2, selection = "random", type = "inverse")
 
 decomp <- list(name = "SLD", H = 349)
 
@@ -36,7 +36,7 @@ n.objs <- c(2)
 
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 3000))
+                       maxeval = 30000))
 
 for (n.obj in n.objs) {
   id <- 1
@@ -105,17 +105,17 @@ for (n.obj in n.objs) {
         # 
         # 
         # # gra.awt
-        moead.gra <- moead(
-           problem  = problem.zdt1,
-           preset   = preset_moead(algo),
-           decomp = decomp,
-           stopcrit = stopcrit,
-           scaling = scaling,
-           showpars = list(show.iters = "none", showevery = 100),
-           seed = j,
-           resource.allocation = resource.allocation.GRA,
-           my.file.n = my.file.n
-         )
+        #moead.gra <- moead(
+        #   problem  = problem.zdt1.
+        #   preset   = preset_moead(algo),
+        #   decomp = decomp,
+        #   stopcrit = stopcrit,
+        #   scaling = scaling,
+        #   showpars = list(show.iters = "none", showevery = 100),
+        #   seed = j,
+        #   resource.allocation = resource.allocation.GRA,
+        #   my.file.n = my.file.n
+        # )
         # 
         # moead.rad <- moead(
         #   problem  = problem.zdt1,
