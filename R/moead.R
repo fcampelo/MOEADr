@@ -330,7 +330,6 @@ moead <-
       nullRA <- FALSE
     }
     
-    
     # ============ End Error catching and default value definitions ============ #
     
     # ============================= Algorithm setup ============================ #
@@ -598,7 +597,7 @@ moead <-
             Pi <- by_norm(offspring_x = X, parent_x = parent)
           }
           if (resource.allocation$type == "inverse") {
-            Pi <- (-1) * Pi
+            Pi <- 1+(-1) * Pi
           }
           parent <- X
         }
@@ -618,10 +617,13 @@ moead <-
       
       # ========== Visualization Tools
       # calculating usage of resource by subproblem and any other visualization info
-      if (nullRA)
+      if (nullRA){
         usage[[length(usage) + 1]] <- rep(1, dim(W)[1])
-      else
+      }
+      else{
         usage[[length(usage) + 1]] <- as.integer(iteration_usage)
+      }
+        
       
       paretofront <-
         cbind(Y, stage = iter, find_nondominated_points(Y))
@@ -634,7 +636,6 @@ moead <-
               stage = iter,
               find_nondominated_points(Y))
       plot.resources <- rbind(plot.resources, resources)
-      
       # ========== Stop Criteria
       # Calculate iteration time
       elapsed.time <- as.numeric(difftime(
