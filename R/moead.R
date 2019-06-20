@@ -440,7 +440,7 @@ moead <- function(preset = NULL,     # List:  Set of strategy/components
 
   # Output
   out <- list(X           = X,
-              Y        = Y,
+              Y           = Y,
               V           = V,
               W           = W,
               Archive     = Archive,
@@ -456,3 +456,4 @@ moead <- function(preset = NULL,     # List:  Set of strategy/components
   return(out)
   # ================================ End Output ============================== #
 }
+
