@@ -239,8 +239,7 @@ calc_idx <-
            idx.tour = NULL) {
     rand.seq <- init_p(W, 1)
     indexes <- 1:dim(W)[1]
-    iteration_usage <- rep(1, dim(W)[1])
-    
+    iteration_usage <- rep(TRUE, dim(W)[1])
     if (iter > resource.allocation$dt) {
       if (resource.allocation$selection == "dra") {
         size <- floor(dim(W)[1] / 5) - problem$m
@@ -255,20 +254,23 @@ calc_idx <-
       else if (resource.allocation$selection == "random") {
         rand.seq <- runif(length(Pi))
         indexes <- which(rand.seq <= Pi)
+        iteration_usage <- (rand.seq <= Pi)
         if (length(indexes) < 3 || is.null(length(indexes))) {
           indexes <- which(rand.seq <= 1)
+          iteration_usage <- (rand.seq <= Pi)
         }
-        iteration_usage <- (rand.seq <= Pi)
       }
       
       else if (resource.allocation$selection == "tour") {
+        # print(Pi)
         found <- 0
         size <- ceiling(dim(W)[1] * resource.allocation$size)
         k <- ceiling(dim(W)[1] * resource.allocation$k)
         indexes <- vector(length = size)
         temp.idx <- !vector(length = size)
+        # without repeted subproblems
         while (TRUE) {
-          indexes[temp.idx] <- selTournament(fitness = -Pi,
+          indexes[temp.idx] <- selTournament(fitness = Pi,
                                              n.select = size - found,
                                              k = k)
           if (length(unique(indexes)) == length(indexes)) {
@@ -279,7 +281,10 @@ calc_idx <-
             found <- found + length(indexes)
           }
         }
-        iteration_usage[!indexes] <- 0
+        # print(indexes)
+        iteration_usage[-indexes] <- FALSE
+        # print(iteration_usage[indexes])
+        # print(iteration_usage[-indexes])
       }
     }
     temp.X <- X
@@ -295,5 +300,6 @@ calc_idx <-
         X = X,
         iteration_usage = iteration_usage
       )
+    print(iteration_usage)
     return(out)
   }
