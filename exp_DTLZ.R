@@ -14,7 +14,7 @@ lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 # source("utils.R")
 # source("moead.R")
 
-repetitions <-  7
+repetitions <-  21
 dimension <- 100
 algorithms <- c("moead.de")
 
@@ -22,10 +22,10 @@ algorithms <- c("moead.de")
 resource.allocation.DRA <- list(name = "DRA", dt = 20, selection = "dra", type = "NULL")
 resource.allocation.GRA <- list(name = "GRA", dt = 20, selection = "random", type = "NULL")
 resource.allocation.RAD <- list(name = "RAD", dt = 20, selection = "random", type = "NULL")
-resource.allocation.NORM <- list(name = "norm", dt = 2, selection = "random", type = "NULL")
+resource.allocation.NORM <- list(name = "norm", dt = 20, selection = "random", type = "NULL")
 resource.allocation.RANDOM <- list(name = "random", dt = 20, selection = "random", type = "NULL")
 resource.allocation.NORM.tour <- list(name = "norm", dt = 2, selection = "tour", type = "NULL", size = 0.2, k = 0.02)
-resource.allocation.NORM.inverse <- list(name = "norm", dt = 2, selection = "random", type = "inverse")
+resource.allocation.NORM.inverse <- list(name = "norm", dt = 20, selection = "random", type = "inverse")
 
 decomp <- list(name = "SLD", H = 349)
 
@@ -105,17 +105,17 @@ for (n.obj in n.objs) {
         # 
         # 
         # # gra.awt
-        #moead.gra <- moead(
-        #   problem  = problem.zdt1.
-        #   preset   = preset_moead(algo),
-        #   decomp = decomp,
-        #   stopcrit = stopcrit,
-        #   scaling = scaling,
-        #   showpars = list(show.iters = "none", showevery = 100),
-        #   seed = j,
-        #   resource.allocation = resource.allocation.GRA,
-        #   my.file.n = my.file.n
-        # )
+        moead.gra <- moead(
+           problem  = problem.zdt1,
+           preset   = preset_moead(algo),
+           decomp = decomp,
+           stopcrit = stopcrit,
+           scaling = scaling,
+           showpars = list(show.iters = "none", showevery = 100),
+           seed = j,
+           resource.allocation = resource.allocation.GRA,
+        )
+	savePlotData(moea = moead.gra, name = paste0(fun, "moead.gra"), j = j)
         # 
         # moead.rad <- moead(
         #   problem  = problem.zdt1,
@@ -154,29 +154,30 @@ for (n.obj in n.objs) {
 
         savePlotData(moea = moead.norm.inverse, name = paste0(fun,"moead.norm.inverse"), j = j)
         # 
-        moead.norm.tournament <- moead(
-          problem  = problem.zdt1,
-          preset   = preset_moead(algo),
-          decomp = decomp,
-          stopcrit = stopcrit,
-          scaling = scaling,
-          showpars = list(show.iters = "none", showevery = 10),
-          seed = j,
-          resource.allocation = resource.allocation.NORM.tour
-        )
+        #moead.norm.tournament <- moead(
+        #  problem  = problem.zdt1,
+        #  preset   = preset_moead(algo),
+        #  decomp = decomp,
+        #  stopcrit = stopcrit,
+        #  scaling = scaling,
+        #  showpars = list(show.iters = "none", showevery = 10),
+        #  seed = j,
+        #  resource.allocation = resource.allocation.NORM.tour
+        #)
         
-        savePlotData(moea = moead.norm.tournament, name = paste0(fun,"moead.norm.tournament"), j = j)
+        #savePlotData(moea = moead.norm.tournament, name = paste0(fun,"moead.norm.tournament"), j = j)
         
-        # moead.random <- moead(
-        #   problem  = problem.zdt1,
-        #   preset   = preset_moead(algo),
-        #   decomp = decomp,
-        #   stopcrit = stopcrit,
-        #   scaling = scaling,
-        #   showpars = list(show.iters = "none", showevery = 10),
-        #   seed = j,
-        #   resource.allocation = resource.allocation.RANDOM
-        # )
+        moead.random <- moead(i
+           problem  = problem.zdt1,
+           preset   = preset_moead(algo),
+           decomp = decomp,
+           stopcrit = stopcrit,
+           scaling = scaling,
+       	   showpars = list(show.iters = "none", showevery = 10),
+           seed = j,
+           resource.allocation = resource.allocation.RANDOM
+         )
+	savePlotData(moea = moead.random, name = paste0(fun, "moead.random"), j=j)
         # exit()
         # 
         # 
