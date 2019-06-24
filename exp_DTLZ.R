@@ -106,6 +106,10 @@ for (n.obj in n.objs) {
         # 
         # 
         # # gra.awt
+<<<<<<< HEAD
+=======
+
+>>>>>>> exp dtlz
         moead.gra <- moead(
            problem  = problem.zdt1,
            preset   = preset_moead(algo),
@@ -117,6 +121,10 @@ for (n.obj in n.objs) {
            resource.allocation = resource.allocation.GRA,
         )
 	savePlotData(moea = moead.gra, name = paste0(fun, "moead.gra"), j = j)
+<<<<<<< HEAD
+=======
+
+>>>>>>> exp dtlz
         # 
         # moead.rad <- moead(
         #   problem  = problem.zdt1,
