@@ -15,7 +15,7 @@ lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 # source("utils.R")
 # source("moead.R")
 
-repetitions <-  21
+repetitions <-  7
 dimension <- 100
 algorithms <- c("moead.de")
 
@@ -27,6 +27,9 @@ resource.allocation.NORM <- list(name = "norm", dt = 20, selection = "random", t
 resource.allocation.RANDOM <- list(name = "random", dt = 20, selection = "random", type = "NULL")
 resource.allocation.NORM.tour <- list(name = "norm", dt = 2, selection = "tour", type = "NULL", size = 0.2, k = 0.02)
 resource.allocation.NORM.inverse <- list(name = "norm", dt = 20, selection = "random", type = "inverse")
+
+
+#>>>>>>> 346300857a2c03e33ec0e9754de1bd887a7eb546
 
 decomp <- list(name = "SLD", H = 349)
 
@@ -106,6 +109,7 @@ for (n.obj in n.objs) {
         # 
         # 
         # # gra.awt
+<<<<<<< HEAD
         moead.gra <- moead(
            problem  = problem.zdt1,
            preset   = preset_moead(algo),
@@ -117,6 +121,19 @@ for (n.obj in n.objs) {
            resource.allocation = resource.allocation.GRA,
         )
 	savePlotData(moea = moead.gra, name = paste0(fun, "moead.gra"), j = j)
+=======
+        #moead.gra <- moead(
+        #   problem  = problem.zdt1.
+        #   preset   = preset_moead(algo),
+        #   decomp = decomp,
+        #   stopcrit = stopcrit,
+        #   scaling = scaling,
+        #   showpars = list(show.iters = "none", showevery = 100),
+        #   seed = j,
+        #   resource.allocation = resource.allocation.GRA,
+        #   my.file.n = my.file.n
+        # )
+>>>>>>> 346300857a2c03e33ec0e9754de1bd887a7eb546
         # 
         # moead.rad <- moead(
         #   problem  = problem.zdt1,
