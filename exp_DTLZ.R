@@ -167,7 +167,7 @@ for (n.obj in n.objs) {
         
         #savePlotData(moea = moead.norm.tournament, name = paste0(fun,"moead.norm.tournament"), j = j)
         
-        moead.random <- moead(i
+        moead.random <- moead(
            problem  = problem.zdt1,
            preset   = preset_moead(algo),
            decomp = decomp,
