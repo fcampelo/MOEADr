@@ -51,6 +51,18 @@ accumulate_by <- function(dat, var) {
   dplyr::bind_rows(dats)
 }
 
+saveWidgetFix <- function (widget,file,...) {
+  ## A wrapper to saveWidget which compensates for arguable BUG in
+  ## saveWidget which requires `file` to be in current working
+  ## directory.
+  wd<-getwd()
+  on.exit(setwd(wd))
+  outDir<-dirname(file)
+  file<-basename(file)
+  setwd(outDir);
+  htmlwidgets::saveWidget(widget,file=file,...)
+}
+
 visuEvol <- function(moea,
                      name,
                      fun,
