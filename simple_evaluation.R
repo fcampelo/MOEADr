@@ -25,7 +25,7 @@ for (fun in fun.names1) {
     moead.norm.inverse <-
       loadPlotData(name = paste0(fun, "moead.norm.inverse"), j = i)
     moead.random <-
-      loadPlotData(name = paste0(fun, "moead.norm.random"),
+      loadPlotData(name = paste0(fun, "moead.random"),
                    j = i)
     moead.R.I. <-
       loadPlotData(name = paste0(fun, "moead.gra"),
