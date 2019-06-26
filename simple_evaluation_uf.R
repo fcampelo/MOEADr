@@ -8,13 +8,14 @@ library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 fun.names1 <- list()
 source("visualization_tools.R")
-number.fun <- 10
+number.fun <- 1
 repetitions <- 21
-# 
+#
+
 # for (i in 1:number.fun) {
 #   fun.names1[[length(fun.names1) + 1]] = paste0("DTLZ", i)
 # }
-for (i in 2:2) {
+for (i in 1:number.fun) {
   fun.names1[[length(fun.names1) + 1]] = paste0("UF", i)
 }
 
@@ -149,17 +150,23 @@ for (fun in fun.names1) {
   
   
   p <- visuEvol(moead.de, "MOEA/D-DE - No Resource Allocation", fun, ref1)
-  htmlwidgets::saveWidget(p, file = paste0("~/MOEADr/dataExp/visu/", fun, "_visual_", "MOEA/D-DE - No Resource Allocation", ".html"))
+  file <- paste0("~/MOEADr/dataExp/visu/", fun, "_visual_", "MOEAD_DE_None", ".html")
+  saveWidgetFix(p, file)
   
   p <- visuEvol(moead.norm, "MOEA/D-DE - Norm Resource Allocation", fun, ref1)
-  htmlwidgets::saveWidget(p, file = paste0("~/MOEADr/dataExp/visu/", fun, "_visual_", "MOEA/D-DE - Norm Resource Allocation", ".html"))
+  file <- paste0("~/MOEADr/dataExp/visu/", fun, "_visual_", "MOEAD_DE_Norm", ".html")
+  saveWidgetFix(p, file)
   
   p <- visuEvol(moead.norm.inverse, "MOEA/D-DE - (1-Norm) Resource Allocation", fun, ref1)
-  htmlwidgets::saveWidget(p, file = paste0("~/MOEADr/dataExp/visu/", fun, "_visual_", "MOEA/D-DE - (1-Norm) Resource Allocation", ".html"))
+  file <- paste0("~/MOEADr/dataExp/visu/", fun, "_visual_", "MOEAD_DE_InverseNorm", ".html")
+  saveWidgetFix(p, file)
   
   p <- visuEvol(moead.random, "MOEA/D-DE - Random Resource Allocation", fun, ref1)
-  htmlwidgets::saveWidget(p, file = paste0("~/MOEADr/dataExp/visu/", fun, "_visual_", "MOEA/D-DE - Random Resource Allocation", ".html"))
+  file <- paste0("~/MOEADr/dataExp/visu/", fun, "_visual_", "MOEAD_DE_Random", ".html")
+  saveWidgetFix(p, file)
   
   p <- visuEvol(moead.R.I., "MOEA/D-DE - R.I. Resource Allocation", fun, ref1)
-  htmlwidgets::saveWidget(p, file = paste0("~/MOEADr/dataExp/visu/", fun, "_visual_", "MOEA/D-DE - R.I. Resource Allocation", ".html"))
+  file <- paste0("~/MOEADr/dataExp/visu/", fun, "_visual_", "MOEAD_DE_RI", ".html")
+  saveWidgetFix(p, file)
+  
 }
