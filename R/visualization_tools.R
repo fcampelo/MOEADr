@@ -56,9 +56,7 @@ visuEvol <- function(moea,
                      fun,
                      ref.front = NULL,
                      test = TRUE) {
-  curDir <- getwd()
-  setwd("~/MOEADr/dataExp/")
-  
+
   
   pareto.front <- data.frame(moea$plot.paretofront)
   resources <- data.frame(moea$plot.resources)
@@ -292,16 +290,11 @@ visuEvol <- function(moea,
             # g,
             nrows = 2) %>%
     animation_slider(currentvalue = list(prefix = "Iteration ", font = list(color="red")), redraw = FALSE, frame = 100) %>% layout(title = paste(fun, name))
-  
-  htmlwidgets::saveWidget(p, file = paste0("~/MOEADr/dataExp/visu/", fun, "_visual_", name, ".html"))
-  # return(p)
+  return(p)
 }
 
 
 savePlotData <- function (moea, name, j) {
-  curDir <- getwd()
-  setwd("~/MOEADr/R/")
-  
   if (is.null(moea$Archive)) {
     write_feather(data.frame(moea$X), paste0('../dataExp/', name, j, '_X'))
     write_feather(data.frame(moea$Y), paste0('../dataExp/', name, j, '_Y'))
@@ -332,42 +325,39 @@ savePlotData <- function (moea, name, j) {
   temp <- as.data.frame(moea$W)
   temp <- apply(temp, 2, unlist)
   temp <- as.data.frame(temp)
-  write_feather(temp, paste0('../dataExp/', name, j, '_W'))
+  write_feather(temp, paste0('~/MOEADr/dataExp/', name, j, '_W'))
   
   temp <- as.data.frame(moea$nfe)
   temp <- apply(temp, 2, unlist)
   temp <- as.data.frame(temp)
-  write_feather(temp, paste0('../dataExp/', name, j, '_nfe'))
+  write_feather(temp, paste0('~/MOEADr/dataExp/', name, j, '_nfe'))
   
   temp <- as.data.frame(moea$n.iter)
   temp <- apply(temp, 2, unlist)
   temp <- as.data.frame(temp)
-  write_feather(temp, paste0('../dataExp/', name, j, '_iter'))
+  write_feather(temp, paste0('~/MOEADr/dataExp/', name, j, '_iter'))
   
   temp <- as.data.frame(moea$time)
   temp <- apply(temp, 2, unlist)
   temp <- as.data.frame(temp)
-  write_feather(temp, paste0('../dataExp/', name, j, '_time'))
+  write_feather(temp, paste0('~/MOEADr/dataExp/', name, j, '_time'))
   
-
-  setwd(curDir)
 }
 
 loadPlotData <- function (name, j) {
-  curDir <- getwd()
-  setwd("~/MOEADr/R/")
-  X <- read_feather(paste0('../dataExp/', name, j, '_X'))
-  Y <- read_feather(paste0('../dataExp/', name, j, '_Y'))
+  
+  X <- read_feather(paste0('~/MOEADr/dataExp/', name, j, '_X'))
+  Y <- read_feather(paste0('~/MOEADr/dataExp/', name, j, '_Y'))
   plot.paretofront <-
-    read_feather(paste0('../dataExp/', name, j, '_plot.paretofront'))
+    read_feather(paste0('~/MOEADr/dataExp/', name, j, '_plot.paretofront'))
   plot.resources <-
-    read_feather(paste0('../dataExp/', name, j, '_plot.resources'))
+    read_feather(paste0('~/MOEADr/dataExp/', name, j, '_plot.resources'))
   # plot.paretoset <-
   #   read_feather(paste0('../dataExp/', name, j, '_plot.paretoset'))
-  iter <- read_feather(paste0('../dataExp/', name, j, '_iter'))
-  time <- read_feather(paste0('../dataExp/', name, j, '_time'))
-  W <- read_feather(paste0('../dataExp/', name, j, '_W'))
-  nfe <- read_feather(paste0('../dataExp/', name, j, '_nfe'))
+  iter <- read_feather(paste0('~/MOEADr/dataExp/', name, j, '_iter'))
+  time <- read_feather(paste0('~/MOEADr/dataExp/', name, j, '_time'))
+  W <- read_feather(paste0('~/MOEADr/dataExp/', name, j, '_W'))
+  nfe <- read_feather(paste0('~/MOEADr/dataExp/', name, j, '_nfe'))
   
   out <- list(
     X           = X,
@@ -383,5 +373,5 @@ loadPlotData <- function (name, j) {
     moead.norm = FALSE
   )
   return(out)
-  setwd(curDir)
+
 }
