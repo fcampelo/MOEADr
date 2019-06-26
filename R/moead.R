@@ -414,7 +414,7 @@ moead <-
     usage <- list(rep(1, dim(W)[1]))
     plot.resources <- list(rep(0, dim(W)[1]))
     plot.paretofront <- list(rep(0, dim(W)[1]))
-    plot.paretoset <- list(rep(0, dim(W)[1]))
+    # plot.paretoset <- list(rep(0, dim(W)[1]))
     
     while (keep.running) {
       # Update iteration counter
@@ -628,8 +628,8 @@ moead <-
       paretofront <-
         cbind(Y, stage = iter, find_nondominated_points(Y))
       plot.paretofront <- rbind(plot.paretofront, paretofront)
-      paretoset <- cbind(X, stage = iter)
-      plot.paretoset <- rbind(plot.paretoset, paretoset)
+      # paretoset <- cbind(X, stage = iter)
+      # plot.paretoset <- rbind(plot.paretoset, paretoset)
       resources <-
         cbind(Reduce("+", usage),
               1:dim(W)[1],
@@ -676,7 +676,7 @@ moead <-
     # polishing output names
     colnames(plot.paretofront) <-
       c(paste0("f", 1:ncol(Y)), "stage", "non-dominated")
-    colnames(plot.paretoset) <- c(paste0("f", 1:ncol(X)), "stage")
+    # colnames(plot.paretoset) <- c(paste0("f", 1:ncol(X)), "stage")
     colnames(plot.resources) <-
       c("Resources", "Subproblem", "stage", "non-dominated")
     # Output
@@ -695,7 +695,7 @@ moead <-
       inputConfig = moead.input.pars,
       usage       = usage,
       plot.paretofront = plot.paretofront,
-      plot.paretoset = plot.paretoset,
+      # plot.paretoset = plot.paretoset,
       plot.resources = plot.resources,
       u.archive = u.archive
     )
