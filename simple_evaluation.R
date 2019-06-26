@@ -8,8 +8,8 @@ library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 fun.names1 <- list()
 source("visualization_tools.R")
-number.fun <- 2
-repetitions <- 21
+number.fun <- 7
+repetitions <- 1
 
 for (i in 1:number.fun) {
   fun.names1[[length(fun.names1) + 1]] = paste0("DTLZ", i)
@@ -24,13 +24,17 @@ for (fun in fun.names1) {
     moead.norm <- loadPlotData(name = paste0(fun, "moead.norm"), j = i)
     moead.norm.inverse <-
       loadPlotData(name = paste0(fun, "moead.norm.inverse"), j = i)
-    moead.norm.tournament <-
-      loadPlotData(name = paste0(fun, "moead.norm.tournament"),
+    moead.random <-
+      loadPlotData(name = paste0(fun, "moead.norm.random"),
+                   j = i)
+    moead.R.I. <-
+      loadPlotData(name = paste0(fun, "moead.gra"),
                    j = i)
     
     ref1 <-
-      rbind(ref1, moead.norm.inverse$Y,
-            moead.norm.tournament$Y,
+      rbind(ref1, moead.random$Y,
+            moead.R.I.$Y,
+            moead.norm.inverse$Y,
             moead.de$Y,
             moead.norm$Y)
   }
@@ -40,14 +44,18 @@ for (fun in fun.names1) {
     moead.norm <- loadPlotData(name = paste0(fun, "moead.norm"), j = i)
     moead.norm.inverse <-
       loadPlotData(name = paste0(fun, "moead.norm.inverse"), j = i)
-    moead.norm.tournament <-
-      loadPlotData(name = paste0(fun, "moead.norm.tournament"),
+    moead.random <-
+      loadPlotData(name = paste0(fun, "moead.random"),
+                   j = i)
+    moead.R.I. <-
+      loadPlotData(name = paste0(fun, "moead.gra"),
                    j = i)
     
     class(moead.de) <- "moead"
     class(moead.norm) <- "moead"
     class(moead.norm.inverse) <- "moead"
-    class(moead.norm.tournament) <- "moead"
+    class(moead.random) <- "moead"
+    class(moead.R.I) <- "moead"
     
     Yref <-
       as.matrix(read.table(paste0(
@@ -59,60 +67,53 @@ for (fun in fun.names1) {
       data.frame(summary(
         moead.de,
         scaling.reference = ref1,
-        ref.point = c(1.1, 1.1),
+        ref.point = c(1, 1),
         ref.front = Yref,
       ), name = "de.data")
     norm <-
       data.frame(summary(
         moead.norm,
         scaling.reference = ref1,
-        ref.point = c(1.1, 1.1),
+        ref.point = c(1, 1),
         ref.front = Yref,
       ), name = "norm.data")
     norm.inverse <-
       data.frame(summary(
         moead.norm.inverse,
         scaling.reference = ref1,
-        ref.point = c(1.1, 1.1),
+        ref.point = c(1, 1),
         ref.front = Yref
       ),
       name = "norm.inverse.data")
-    norm.tournament <-
+    random <-
       data.frame(summary(
-        moead.norm.tournament,
+        moead.random,
         scaling.reference = ref1,
-        ref.point = c(1.1, 1.1),
+        ref.point = c(1, 1),
         ref.front = Yref
       ),
-      name = "norm.tournament")  
+      name = "random.data")
+    R.I. <-
+      data.frame(summary(
+        moead.R.I.,
+        scaling.reference = ref1,
+        ref.point = c(1, 1),
+        ref.front = Yref
+      ),
+      name = "R.I.data")
   }
-  results <- rbind(results, cbind(rbind(de, norm, norm.inverse, norm.tournament), fun))
+  results <- rbind(results, cbind(rbind(de, norm, norm.inverse, random, R.I.), fun))
 #print(results)
 #exit()
 }
 print(aggregate(results$hv, median, by = list(results$name, results$fun)))
 print(aggregate(results$igd, median, by = list(results$name, results$fun)))
+write_feather(results, "results")
 
-write_feather(results, "../dataExp/results_DTLZ")
 ####
 for (fun in fun.names1) {
 
-  ref1 <- data.frame()
-  for (i in 1:repetitions) {
-    moead.de <- loadPlotData(name = paste0(fun, "moead.de"), j = i)
-    moead.norm <- loadPlotData(name = paste0(fun, "moead.norm"), j = i)
-    moead.norm.inverse <-
-      loadPlotData(name = paste0(fun, "moead.norm.inverse"), j = i)
-    moead.norm.tournament <-
-      loadPlotData(name = paste0(fun, "moead.norm.tournament"),
-                   j = i)
-
-    ref1 <-
-      rbind(ref1, moead.norm.inverse$Y,
-            moead.norm.tournament$Y,
-            moead.de$Y,
-            moead.norm$Y)
-  }
+  
   # agg.igd <- aggregate(results$igd, median, by = list(results$name, results$fun))
   temp.results <- results[results$fun == fun, ]
   agg.hv <- aggregate(temp.results$hv, median, by = list(temp.results$name, temp.results$fun))
@@ -125,9 +126,12 @@ for (fun in fun.names1) {
   id.norm.inverse <-
     which(temp.results[temp.results$name == "norm.inverse.data", ]$hv == agg.hv[agg.hv$Group.1 ==
                                                                         "norm.inverse.data", ]$x)
-  id.norm.tournament <-
-    which(temp.results[temp.results$name == "norm.tournament", ]$hv == agg.hv[agg.hv$Group.1 ==
-                                                                      "norm.tournament", ]$x)
+  id.R.I. <-
+    which(temp.results[temp.results$name == "R.I.data", ]$hv == agg.hv[agg.hv$Group.1 ==
+                                                                      "R.I.data", ]$x)
+  random <-
+    which(temp.results[temp.results$name == "random.data", ]$hv == agg.hv[agg.hv$Group.1 ==
+                                                                      "random.data", ]$x)
   
   
   
@@ -135,16 +139,15 @@ moead.de <- loadPlotData(name = paste0(fun, "moead.de"), j = id.de)
 moead.norm <- loadPlotData(name = paste0(fun, "moead.norm"), j = id.norm)
 moead.norm.inverse <-
   loadPlotData(name = paste0(fun, "moead.norm.inverse"), j = id.norm.inverse)
-moead.norm.tournament <-
-  loadPlotData(name = paste0(fun, "moead.norm.tournament"),
-               j = id.norm.tournament)
+moead.random <-
+  loadPlotData(name = paste0(fun, "moead.random"), j = id.norm.inverse)
+moead.R.I. <-
+  loadPlotData(name = paste0(fun, "moead.gra"), j = id.norm.inverse)
 
-moead.de$Y <- scaling_Y(moead.de$Y, ref1)
-moead.norm$Y <- scaling_Y(moead.norm$Y, ref1)
-moead.norm.inverse$Y <- scaling_Y(moead.norm.inverse$Y, ref1)
-moead.norm.tournament$Y <- scaling_Y(moead.norm.tournament$Y, ref1)
-visuEvol(moead.de, paste0(fun, "visu.moead.de.html"))
-visuEvol(moead.norm,paste0(fun, "visu.moead.norm.html"))
-visuEvol(moead.norm.inverse, paste0(fun, "visu.moead.inverse.html"))
-visuEvol(moead.norm.tournament, paste0(fun, "visu.moead.norm.tournament.html"))
+
+visuEvol(moead.de, paste0("dataExp/visu/", fun, "visu.moead.de.html"), fun, ref1)
+visuEvol(moead.norm,paste0("dataExp/visu/", fun, "visu.moead.norm.html"), fun, ref1)
+visuEvol(moead.norm.inverse, paste0("dataExp/visu/", fun, "visu.moead.inverse.html"), fun, ref1)
+visuEvol(moead.random, paste0("dataExp/visu/", fun, "visu.moead.random.html"), fun, ref1)
+visuEvol(moead.R.I., paste0("dataExp/visu/", fun, "visu.moead.R.I.html"), fun, ref1)
 }
