@@ -9,7 +9,7 @@ lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 fun.names1 <- list()
 source("visualization_tools.R")
 number.fun <- 7
-repetitions <- 1
+repetitions <- 21
 
 for (i in 1:number.fun) {
   fun.names1[[length(fun.names1) + 1]] = paste0("DTLZ", i)
@@ -145,9 +145,18 @@ moead.R.I. <-
   loadPlotData(name = paste0(fun, "moead.gra"), j = id.norm.inverse)
 
 
-visuEvol(moead.de, "MOEA/D-DE - No Resource Allocation", fun, ref1)
-visuEvol(moead.norm, "MOEA/D-DE - Norm Resource Allocation", fun, ref1)
-visuEvol(moead.norm.inverse, "MOEA/D-DE - (1-Norm) Resource Allocation", fun, ref1)
-visuEvol(moead.random, "MOEA/D-DE - Random Resource Allocation", fun, ref1)
-visuEvol(moead.R.I., "MOEA/D-DE - R.I. Resource Allocation", fun, ref1)
+p <- visuEvol(moead.de, "MOEA/D-DE - No Resource Allocation", fun, ref1)
+htmlwidgets::saveWidget(p, file = paste0("~/MOEADr/dataExp/visu/", fun, "_visual_", "MOEA/D-DE - No Resource Allocation", ".html"))
+
+p <- visuEvol(moead.norm, "MOEA/D-DE - Norm Resource Allocation", fun, ref1)
+htmlwidgets::saveWidget(p, file = paste0("~/MOEADr/dataExp/visu/", fun, "_visual_", "MOEA/D-DE - Norm Resource Allocation", ".html"))
+
+p <- visuEvol(moead.norm.inverse, "MOEA/D-DE - (1-Norm) Resource Allocation", fun, ref1)
+htmlwidgets::saveWidget(p, file = paste0("~/MOEADr/dataExp/visu/", fun, "_visual_", "MOEA/D-DE - (1-Norm) Resource Allocation", ".html"))
+
+p <- visuEvol(moead.random, "MOEA/D-DE - Random Resource Allocation", fun, ref1)
+htmlwidgets::saveWidget(p, file = paste0("~/MOEADr/dataExp/visu/", fun, "_visual_", "MOEA/D-DE - Random Resource Allocation", ".html"))
+
+p <- visuEvol(moead.R.I., "MOEA/D-DE - R.I. Resource Allocation", fun, ref1)
+htmlwidgets::saveWidget(p, file = paste0("~/MOEADr/dataExp/visu/", fun, "_visual_", "MOEA/D-DE - R.I. Resource Allocation", ".html"))
 }
