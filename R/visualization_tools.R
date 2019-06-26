@@ -17,11 +17,11 @@ tool1 <- function() {
   b <- data.frame(Resources, Subproblem)
   v <-
     ggplot(b, aes(Subproblem, Resources)) + geom_line(size = 2) + theme(axis.text = element_text(size =
-                                                                                           14*2),
+                                                                                           14*3),
                                                                 axis.title =
-                                                                  element_text(size = 16*2, face = "bold")) + theme(plot.title = element_text(
+                                                                  element_text(size = 16*3, face = "bold")) + theme(plot.title = element_text(
                                                                     color = "blue",
-                                                                    size = 24*2,
+                                                                    size = 24*3,
                                                                     face = "bold"
                                                                   )) + geom_hline(yintercept = 200, colour = "red") + ylim(0, 400)
   v + labs(title = paste0("MOEA/D 2-Norm - UF9"))
@@ -32,11 +32,11 @@ tool1 <- function() {
   b <- data.frame(Resources, Subproblem)
   v <-
     ggplot(b, aes(Subproblem, Resources)) + geom_line(size = 2) + theme(axis.text = element_text(size =
-                                                                                           14*2),
+                                                                                           14*3),
                                                                 axis.title =
-                                                                  element_text(size = 16*2, face = "bold")) + theme(plot.title = element_text(
+                                                                  element_text(size = 16*3, face = "bold")) + theme(plot.title = element_text(
                                                                     color = "blue",
-                                                                    size = 24*2,
+                                                                    size = 24*3,
                                                                     face = "bold"
                                                                   )) + geom_hline(yintercept = 200, colour = "red") + ylim(0, 400)
   v + labs(title = paste0("MOEA/D R.I. - UF9"))
@@ -292,7 +292,9 @@ visuEvol <- function(moea,
             # g,
             nrows = 2) %>%
     animation_slider(currentvalue = list(prefix = "Iteration ", font = list(color="red")), redraw = FALSE, frame = 100) %>% layout(title = paste(fun, name))
-  return(p)
+  
+  htmlwidgets::saveWidget(p, file = paste0("~/MOEADr/dataExp/visu/", fun, "_visual_", name, ".html"))
+  # return(p)
 }
 
 
