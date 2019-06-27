@@ -8,10 +8,10 @@ library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 fun.names1 <- list()
 source("visualization_tools.R")
-number.fun <- 1
+number.fun <- 2
 repetitions <- 1
 
-for (i in 1:number.fun) {
+for (i in 2:number.fun) {
   fun.names1[[length(fun.names1) + 1]] = paste0("DTLZ", i)
 }
 
@@ -59,7 +59,7 @@ for (fun in fun.names1) {
     
     Yref <-
       as.matrix(read.table(paste0(
-        "../inst/extdata/pf_data/", fun, ".2D.pf"
+        "~/MOEADr/inst/extdata/pf_data/", fun, ".2D.pf"
       )))
     colnames(Yref) <- c("f1", "f2")
   
@@ -116,21 +116,21 @@ for (fun in fun.names1) {
   
   # agg.igd <- aggregate(results$igd, median, by = list(results$name, results$fun))
   temp.results <- results[results$fun == fun, ]
-  agg.hv <- aggregate(temp.results$hv, median, by = list(temp.results$name, temp.results$fun))
+  agg.hv <- aggregate(temp.results$igd, median, by = list(temp.results$name, temp.results$fun))
   id.de <-
-    which(temp.results[temp.results$name == "de.data", ]$hv == agg.hv[agg.hv$Group.1 ==
+    which(temp.results[temp.results$name == "de.data", ]$igd == agg.hv[agg.hv$Group.1 ==
                                                               "de.data", ]$x)
   id.norm <-
-    which(temp.results[temp.results$name == "norm.data", ]$hv == agg.hv[agg.hv$Group.1 ==
+    which(temp.results[temp.results$name == "norm.data", ]$igd == agg.hv[agg.hv$Group.1 ==
                                                                 "norm.data", ]$x)
   id.norm.inverse <-
-    which(temp.results[temp.results$name == "norm.inverse.data", ]$hv == agg.hv[agg.hv$Group.1 ==
+    which(temp.results[temp.results$name == "norm.inverse.data", ]$igd == agg.hv[agg.hv$Group.1 ==
                                                                         "norm.inverse.data", ]$x)
   id.R.I. <-
-    which(temp.results[temp.results$name == "R.I.data", ]$hv == agg.hv[agg.hv$Group.1 ==
+    which(temp.results[temp.results$name == "R.I.data", ]$igd == agg.hv[agg.hv$Group.1 ==
                                                                       "R.I.data", ]$x)
   random <-
-    which(temp.results[temp.results$name == "random.data", ]$hv == agg.hv[agg.hv$Group.1 ==
+    which(temp.results[temp.results$name == "random.data", ]$igd == agg.hv[agg.hv$Group.1 ==
                                                                       "random.data", ]$x)
   
   
