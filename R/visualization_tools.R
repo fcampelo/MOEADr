@@ -131,7 +131,6 @@ visuEvol <- function(moea,
       emoa::dominated_hypervolume(points = Y, ref = rep(1, dim(moea$W)[2]))
   }
   
-  print()
   hvs <- data.frame(unlist(hvs), 1:max(iteration.data$stage))
   names(hvs) <- c("hv", "stage")
   hvs2 <- hvs %>%
