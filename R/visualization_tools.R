@@ -102,9 +102,9 @@ visuEvol <- function(moea,
       )))
   }
   
-  temp <- data.frame(Yref)
+  # temp <- data.frame(Yref)
   
-  g<-ggplot(temp, aes(x=V1, y=V2))+geom_line()
+  # g<-ggplot(temp, aes(x=V1, y=V2))+geom_line()
   
   hvs <- list(rep(0, max(iteration.data$stage)))
   igds <- list(rep(0, max(iteration.data$stage)))
