@@ -11,7 +11,8 @@ variation_polymut(X, etam, pm, eps = 1e-06, ...)
 
 \item{etam}{mutation constant}
 
-\item{pm}{variable-wise probability of mutation}
+\item{pm}{variable-wise probability of mutation (numeric value 0 <= pm <= 1,
+or use "n" for setting it as (1 / problem dimension).)}
 
 \item{eps}{small constant used to prevent divisions by zero}
 

@@ -14,7 +14,8 @@
 #'
 #' @param X Population matrix
 #' @param etam mutation constant
-#' @param pm variable-wise probability of mutation
+#' @param pm variable-wise probability of mutation (numeric value 0 <= pm <= 1,
+#'           or use "n" for setting it as (1 / problem dimension).)
 #' @param eps small constant used to prevent divisions by zero
 #' @param ... other parameters (included for compatibility with generic call)
 #'
@@ -52,6 +53,8 @@ variation_polymut <- function(X, etam, pm, eps = 1e-6, ...) {
 variation_polymut_original <- function(X, etam, pm, eps = 1e-6, ...){
 
   # ========== Error catching and default value definitions
+  if (identical(tolower(pm), "n")) pm <- 1 / ncol(X)
+
   assertthat::assert_that(
     is.numeric(X) && is.matrix(X),
     is.numeric(etam) && etam > 0,
