@@ -1,3 +1,9 @@
+# MOEADr 1.1.1 (ongoing)
+* Minor update in `variation_polymut()` to allow probability of mutation as 
+(1 / problem dimension) (by setting `pm = "n"`)
+* Minor change in `preset_moead()`
+
+
 # MOEADr 1.0.3
 * Changed output class of moead() to _moead_ (instead of _moeadoutput_). All 
   related functions (plot, summary) and documentation were updated.
