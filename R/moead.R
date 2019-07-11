@@ -269,7 +269,8 @@ moead <-
            seed = NULL,
            # Seed for PRNG
            resource.allocation = NULL,
-           # List:  resource
+           # List:  resource,
+           two_step = NULL,
            ...)
 
 # other parameters
@@ -351,7 +352,7 @@ moead <-
     # Generate initial population
     X  <- create_population(N       = nrow(W),
                             problem = problem)
-    
+  
     # Evaluate population on objectives
     ## aqui tem problema com a lua
     if (problem$name == "problem.moon") {
@@ -408,10 +409,9 @@ moead <-
     keep.running  <- TRUE      # stop criteria flag
     iter          <- 0         # counter: iterations
     
-    
     # ========== Visualization Tools
     # calculating usage of resource by subproblem and any other visualization info
-    usage <- list(rep(1, dim(W)[1]))
+    usage <- list()
     plot.resources <- list(rep(0, dim(W)[1]))
     plot.paretofront <- list(rep(0, dim(W)[1]))
     # plot.paretoset <- list(rep(0, dim(W)[1]))
@@ -450,7 +450,8 @@ moead <-
           X,
           Y,
           idx.bounday = idx.bounday,
-          idx.tour = idx.bounday
+          idx.tour = idx.bounday,
+          two_step = two_step
         )
         indexes <- out$indexes
         temp.Y = out$temp.Y 
@@ -593,13 +594,16 @@ moead <-
           parent <- Y
         }
         if (resource.allocation$name == "norm") {
-          if (iter > resource.allocation$dt) {
-            Pi <- by_norm(offspring_x = X, parent_x = parent)
-          }
-          if (resource.allocation$type == "inverse") {
-            Pi <- 1+(-1) * Pi
-          }
-          parent <- X
+          if(!is.null(two_step)) two_step$parentY <- Y
+          # if(is.null(two_step)){
+            if (iter > 2) {
+              Pi <- by_norm(offspring_x = X, parent_x = parent)
+            }
+            if (resource.allocation$type == "inverse") {
+              Pi <- 1+(-1) * Pi
+            }
+            parent <- X
+          # }
         }
         if (resource.allocation$name == "random") {
           if (iter > resource.allocation$dt) {
@@ -623,7 +627,6 @@ moead <-
       else{
         usage[[length(usage) + 1]] <- as.integer(iteration_usage)
       }
-        
       
       paretofront <-
         cbind(Y, stage = iter, find_nondominated_points(Y))

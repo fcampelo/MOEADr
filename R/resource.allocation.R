@@ -236,11 +236,13 @@ calc_idx <-
            Pi,
            X, Y,
            idx.bounday = NULL,
-           idx.tour = NULL) {
+           idx.tour = NULL,
+           two_step = NULL) {
     rand.seq <- init_p(W, 1)
     indexes <- 1:dim(W)[1]
     iteration_usage <- rep(TRUE, dim(W)[1])
-    if (iter > resource.allocation$dt) {
+    if(is.null(two_step)){
+      if (iter > resource.allocation$dt) {
       if (resource.allocation$selection == "dra") {
         size <- floor(dim(W)[1] / 5) - problem$m
         idx.tour <-
@@ -286,7 +288,34 @@ calc_idx <-
         # print(iteration_usage[indexes])
         # print(iteration_usage[-indexes])
       }
+      }
+    }else{
+      if(iter < resource.allocation$dt){
+        indexes <- c(1, dim(W)[1], sample(2:dim(W)[1]-1, 1))  
+        
+        iteration_usage <- init_p(W, 0)
+        iteration_usage[indexes] <- 1
+        # iteration_usage <- (rand.seq <= Pi)
+      }
+      else{
+        # if (sum(two_step$parentY[1,] - Y[1,]) < 0.1 || sum(two_step$parentY[dim(W)[1],] - Y[dim(W)[1],]) < 0.1){
+          two_step <- NULL
+          rand.seq <- runif(length(Pi))
+          indexes <- which(rand.seq <= Pi)
+          iteration_usage <- (rand.seq <= Pi)
+          if (length(indexes) < 3 || is.null(length(indexes))) {
+            indexes <- which(rand.seq <= 1)
+            iteration_usage <- (rand.seq <= Pi)
+          }
+        # }
+        # else {
+        #   indexes <- c(1, dim(W)[1], round(dim(W)[1]/2))  
+        #   iteration_usage <- init_p(W, 0)
+        #   iteration_usage[indexes] <- 1
+        # }
+      }
     }
+    
     temp.X <- X
     X <- X[indexes,]
     temp.Y <- Y
@@ -300,10 +329,6 @@ calc_idx <-
         X = X,
         iteration_usage = iteration_usage
       )
-
-
-
-
-
+     
     return(out)
   }

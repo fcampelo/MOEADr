@@ -17,13 +17,13 @@ tool1 <- function() {
   b <- data.frame(Resources, Subproblem)
   v <-
     ggplot(b, aes(Subproblem, Resources)) + geom_line(size = 2) + theme(axis.text = element_text(size =
-                                                                                           14*3),
-                                                                axis.title =
-                                                                  element_text(size = 16*3, face = "bold")) + theme(plot.title = element_text(
-                                                                    color = "blue",
-                                                                    size = 24*3,
-                                                                    face = "bold"
-                                                                  )) + geom_hline(yintercept = 200, colour = "red") + ylim(0, 400)
+                                                                                                   14*3),
+                                                                        axis.title =
+                                                                          element_text(size = 16*3, face = "bold")) + theme(plot.title = element_text(
+                                                                            color = "blue",
+                                                                            size = 24*3,
+                                                                            face = "bold"
+                                                                          )) + geom_hline(yintercept = 200, colour = "red") + ylim(0, 400)
   v + labs(title = paste0("MOEA/D 2-Norm - UF9"))
   
   
@@ -32,13 +32,13 @@ tool1 <- function() {
   b <- data.frame(Resources, Subproblem)
   v <-
     ggplot(b, aes(Subproblem, Resources)) + geom_line(size = 2) + theme(axis.text = element_text(size =
-                                                                                           14*3),
-                                                                axis.title =
-                                                                  element_text(size = 16*3, face = "bold")) + theme(plot.title = element_text(
-                                                                    color = "blue",
-                                                                    size = 24*3,
-                                                                    face = "bold"
-                                                                  )) + geom_hline(yintercept = 200, colour = "red") + ylim(0, 400)
+                                                                                                   14*3),
+                                                                        axis.title =
+                                                                          element_text(size = 16*3, face = "bold")) + theme(plot.title = element_text(
+                                                                            color = "blue",
+                                                                            size = 24*3,
+                                                                            face = "bold"
+                                                                          )) + geom_hline(yintercept = 200, colour = "red") + ylim(0, 400)
   v + labs(title = paste0("MOEA/D R.I. - UF9"))
 }
 
@@ -68,7 +68,7 @@ visuEvol <- function(moea,
                      fun,
                      ref.front = NULL,
                      test = TRUE) {
-
+  
   
   pareto.front <- data.frame(moea$plot.paretofront)
   resources <- data.frame(moea$plot.resources)
@@ -112,23 +112,24 @@ visuEvol <- function(moea,
   for (i in 1:max(iteration.data$stage)) {
     if (!is.null(ref.front)) {
       Y <-
-        rbind(iteration.data[iteration.data$stage == i, ]$f1, iteration.data[iteration.data$stage ==
+        cbind(iteration.data[iteration.data$stage == i, ]$f1, iteration.data[iteration.data$stage ==
                                                                                i, ]$f2)
-      igds[[i]] <- igd <- calcIGD(Y, Yref = Yref)
+      igds[[i]] <- calcIGD(Y, Yref = Yref)
     } else{
       igds[[i]] <- -1
     }
   }
   
-  iteration.data[, 1:2] <-
-    scaling_Y(iteration.data[, 1:2], ref1)
+  # iteration.data[, 1:2] <-
+  #   scaling_Y(iteration.data[, 1:2], ref1)
   
   for (i in 1:max(iteration.data$stage)) {
     Y <-
       rbind(iteration.data[iteration.data$stage == i, ]$f1, iteration.data[iteration.data$stage ==
                                                                              i, ]$f2)
     hvs[[i]] <-
-      emoa::dominated_hypervolume(points = Y, ref = rep(1, dim(moea$W)[2]))
+      emoa::dominated_hypervolume(points = Y, ref = c(max(ref.front[,1]), max(ref.front[,2])))
+    # emoa::dominated_hypervolume(points = Y, ref = rep(1, dim(moea$W)[2]))
   }
   
   hvs <- data.frame(unlist(hvs), 1:max(iteration.data$stage))
@@ -300,7 +301,7 @@ visuEvol <- function(moea,
             igd.plot,
             # g,
             nrows = 2) %>%
-    animation_slider(currentvalue = list(prefix = "Iteration ", font = list(color="red")), redraw = FALSE, frame = 100) %>% layout(title = paste(fun, name))
+    animation_slider(currentvalue = list(prefix = "Iteration ", font = list(color="red")), redraw = FALSE, frame = 100) %>% layout(title = paste(fun, name), plot_bgcolor="lightgray")
   return(p)
 }
 
@@ -384,5 +385,5 @@ loadPlotData <- function (name, j) {
     moead.norm = FALSE
   )
   return(out)
-
+  
 }
