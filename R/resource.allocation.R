@@ -264,7 +264,6 @@ calc_idx <-
       }
       
       else if (resource.allocation$selection == "tour") {
-        # print(Pi)
         found <- 0
         size <- ceiling(dim(W)[1] * resource.allocation$size)
         k <- ceiling(dim(W)[1] * resource.allocation$k)
@@ -283,10 +282,7 @@ calc_idx <-
             found <- found + length(indexes)
           }
         }
-        # print(indexes)
         iteration_usage[-indexes] <- FALSE
-        # print(iteration_usage[indexes])
-        # print(iteration_usage[-indexes])
       }
       }
     }else{
@@ -295,10 +291,8 @@ calc_idx <-
         
         iteration_usage <- init_p(W, 0)
         iteration_usage[indexes] <- 1
-        # iteration_usage <- (rand.seq <= Pi)
       }
       else{
-        # if (sum(two_step$parentY[1,] - Y[1,]) < 0.1 || sum(two_step$parentY[dim(W)[1],] - Y[dim(W)[1],]) < 0.1){
           two_step <- NULL
           rand.seq <- runif(length(Pi))
           indexes <- which(rand.seq <= Pi)
@@ -307,12 +301,6 @@ calc_idx <-
             indexes <- which(rand.seq <= 1)
             iteration_usage <- (rand.seq <= Pi)
           }
-        # }
-        # else {
-        #   indexes <- c(1, dim(W)[1], round(dim(W)[1]/2))  
-        #   iteration_usage <- init_p(W, 0)
-        #   iteration_usage[indexes] <- 1
-        # }
       }
     }
     
