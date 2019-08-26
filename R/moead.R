@@ -473,29 +473,9 @@ moead <-
       # ========== Evaluation
       # Evaluate offspring population on objectives
 
-      # for the moon problem we use a diff method for evaluating solutions
-      if (problem$name == "problem.moon") {
-        if (!nullRA) {
-          # ========== Resource Allocation
-          # this is needed for the combo: moon problem and priority functions
-          temp.X[indexes,] <- X
-          X <- temp.X
-        }
-        YV <- evaluate_population_moon(
-          X       = X,
-          problem = problem,
-          nfe     = nfe,
-          iter = iter
-        )
-        
-        temp.X <- X
-        X <- X[indexes, ]
-      }
-      else{
-        YV <- evaluate_population(X       = X,
-                                  problem = problem,
-                                  nfe     = nfe)
-      }
+      YV <- evaluate_population(X       = X,
+                                problem = problem,
+                                nfe     = nfe)
       Y   <- YV$Y
       V   <- YV$V
       nfe <- YV$nfe
@@ -505,11 +485,6 @@ moead <-
       if (!nullRA) {
         temp.X[indexes,] <- X
         X <- temp.X
-        # this is needed for the combo: moon problem and priority functions
-        if (problem$name != "problem.moon") {
-          temp.Y[indexes,] <- Y
-          Y <- temp.Y
-        }
       }
       
       # ========== Scalarization
@@ -610,13 +585,6 @@ moead <-
             Pi <- by_random(dim(W)[1])
           }
         }
-      }
-      # ========== Unbounded (internal) Archive
-      if (problem$name == "problem.moon") {
-        nndom <- find_nondominated_points(Y)
-        u.archive$X <- rbind(u.archive$X, X[nndom,])
-        u.archive$Y <- rbind(u.archive$Y, Y[nndom,])
-        u.archive$Vmatrix <- rbind(u.archive$Vmatrix, V$Vmatrix[nndom,])
       }
       
       # ========== Visualization Tools
