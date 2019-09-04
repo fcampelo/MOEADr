@@ -25,7 +25,7 @@
 #'
 #' @export
 
-perform_variation <- function(variation, X, iter, ...){
+perform_variation <- function(variation, X, iter, problem, ...){
   # Get all input parameters
   # var.input.pars <- as.list(environment()) # <------ for debugging
   var.input.pars <- as.list(sys.call())[-1]

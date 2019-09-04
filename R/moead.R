@@ -180,7 +180,7 @@
 #' sphere     <- function(x){sum((x + seq_along(x) * 0.1) ^ 2)}
 #' rastringin <- function(x){
 #'                 x.shift <- x - seq_along(x) * 0.1
-#'                 sum((x.shift) ^ 2 - 10 * cos(2 * pi * x.shift) + 10)}
+#'                 sum((x.shift) ^ 2 - 10 * cos(2 * Pi * x.shift) + 10)}
 #' problem.sr <- function(X){
 #'                 t(apply(X, MARGIN = 1,
 #'                 FUN = function(X){c(sphere(X), rastringin(X))}))}
@@ -268,9 +268,11 @@ moead <-
            # List:  echoing behavior
            seed = NULL,
            # Seed for PRNG
-           resource.allocation = NULL,
+           resource.allocation = list(name = "none", selection = "none", dt = 2),
            # List:  resource,
            two_step = NULL,
+           # List: priority function i two steps
+           # TODO: remove this
            ...)
 
 # other parameters
@@ -282,6 +284,7 @@ moead <-
                 "moead_env.rds")
     }
     # ============================ Set parameters ============================== #
+    
     if (!is.null(preset)) {
       if (is.null(problem))
         problem   = preset$problem
@@ -299,10 +302,13 @@ moead <-
         scaling   = preset$scaling
       if (is.null(stopcrit))
         stopcrit  = preset$stopcrit
-      if (is.null(resource.allocation))
-        nullRA    = TRUE
+      nullRA <-
+        ifelse(
+          test = is.null(resource.allocation$name),
+          yes = T,
+          no = F
+        )
     }
-    
     
     
     # ============== Error catching and default value definitions ============== #
@@ -326,10 +332,6 @@ moead <-
       assertthat::assert_that(assertthat::is.count(seed))
       set.seed(seed)               # set PRNG seed
     }
-    # check resource allocation
-    if (!is.null(resource.allocation)) {
-      nullRA <- FALSE
-    }
     
     # ============ End Error catching and default value definitions ============ #
     
@@ -341,7 +343,6 @@ moead <-
     if (is.null(update$UseArchive)) {
       update$UseArchive <- FALSE
     }
-    # Archive2 = list(X = NULL, Y = NULL, V = list(v = NULL, Cmatrix = NULL, Vmatrix = NULL))
     # =========================== End Algorithm setup ========================== #
     
     # =========================== Initial definitions ========================== #
@@ -352,57 +353,24 @@ moead <-
     # Generate initial population
     X  <- create_population(N       = nrow(W),
                             problem = problem)
-  
+    
     # Evaluate population on objectives
-    ## aqui tem problema com a lua
-    if (problem$name == "problem.moon") {
-      YV <- evaluate_population_moon(
-        X       = X,
-        problem = problem,
-        nfe     = nfe,
-        iter = 0
-      )
-    } else{
-      YV <- evaluate_population(X       = X,
-                                problem = problem,
-                                nfe     = nfe)
-    }
+    YV <- evaluate_population(X       = X,
+                              problem = problem,
+                              nfe     = nfe)
     
     Y   <- YV$Y
     V   <- YV$V
     nfe <- YV$nfe
-    # fixed indexes for reproducibility
-    indexes <- (1:dim(W)[1])
     
-    # ========== Resource Allocation
-    # init variables given resource allocation method
-    Pi <- init_p(W, 1)
-    if (!nullRA) {
-      idx.bounday = NULL
-      idx.tour = NULL
-      if (resource.allocation$name == "GRA")
-        dt.bigZ <- list()
-      if (resource.allocation$name == "DRA" &&
-          resource.allocation$selection == "dra") {
-        out <-
-          calculate_DRA(resource.allocation,
-                        neighbors,
-                        aggfun,
-                        X,
-                        W,
-                        Y,
-                        preset,
-                        problem)
-        idx.bounday <- out$idx.bounday
-        idx.tour <- out$idx.tour
-        oldObj <- out$oldObj
-      }
-    }
+    # ========== Initialize Resource Allocation
+    init_ra <- resource_allocation_init(resource.allocation, W)
     
-    # ========== Unbounded (internal) Archive
-    # u.archive <- data.frame(matrix(ncol = 3))
-    # names(u.archive) <- c("X", "Y", "Vmatrix")
-    u.archive <- setNames(replicate(3,data.frame()), c("X", "Y", "Vmatrix"))
+    priority.values <- init_ra$priority.values
+    idx.boundary <- init_ra$idx.boundary
+    two_step <- init_ra$two_step
+    
+    
     # ========================= End Initial definitions ======================== #
     
     # ============================= Iterative cycle ============================ #
@@ -411,10 +379,11 @@ moead <-
     
     # ========== Visualization Tools
     # calculating usage of resource by subproblem and any other visualization info
+    #TODO updated by priority function or by neighborhood
     usage <- list()
     plot.resources <- list(rep(0, dim(W)[1]))
     plot.paretofront <- list(rep(0, dim(W)[1]))
-    # plot.paretoset <- list(rep(0, dim(W)[1]))
+    plot.paretoset <- list(rep(0, dim(W)[1]))
     
     while (keep.running) {
       # Update iteration counter
@@ -427,7 +396,6 @@ moead <-
       
       # ========== Neighborhoods
       # Define/update neighborhood probability matrix
-      # ALL RA skips this step - what
       BP <- define_neighborhood(neighbors = neighbors,
                                 v.matrix  = switch(neighbors$name,
                                                    lambda = W,
@@ -438,54 +406,56 @@ moead <-
       Xt <- X
       Yt <- Y
       Vt <- V
-      # ========== Resource Allocation
-      # find indexes of solutions given their priority value (Pi)
-      # Store current population give indexes for resource allocation
-      if (!nullRA) {
-        out <- calc_idx(
-          iter,
-          resource.allocation,
-          W,
-          Pi,
-          X,
-          Y,
-          idx.bounday = idx.bounday,
-          idx.tour = idx.bounday,
-          two_step = two_step
-        )
-        indexes <- out$indexes
-        temp.Y = out$temp.Y 
-        temp.X = out$temp.X
-        Y = out$Y
-        X = out$X
-        iteration_usage = out$iteration_usage
-      }
+      # ========== Resource Allocation - Selecting solutions given Priority Function values
+      # find indexes of solutions given their priority value (priority.values)
       
+      select_solutions <- resource_allocation_select(
+        iter = iter,
+        resource.allocation = resource.allocation,
+        W = W,
+        priority.values = priority.values,
+        idx.boundary = idx.boundary,
+        two_step = two_step,
+        problem = problem
+      )
+      # indexes are used by Resource Allocation methods. if none, it is equal to the vector 1
+      indexes <- select_solutions$indexes
+      iteration_usage = select_solutions$iteration_usage
+      # indexes are used by Resource Allocation methods. if none, it is equal to the vector 1
+      # Store current population (X) and its objective values (Y)  in temp.X, temp.Y
+      # given indexes select solutions to change
+      temp.X <- X
+      temp.Y <- Y
+      X <- X[indexes,]
+      Y <- Y[indexes,]
+      # indexes are used by Resource Allocation methods. if none, it is equal to the vector 1
       B  <- BP$B.variation[indexes, ]
+      # indexes ere used by Resource Allocation methods. if none, it is equal to the vector 1
       P  <- BP$P[indexes, indexes]
+      # ========== Variation
       # Perform variation
       Xv      <- do.call(perform_variation,
                          args = as.list(environment()))
+      
       X       <- Xv$X
       ls.args <- Xv$ls.args
       nfe     <- nfe + Xv$var.nfe
-      
       # ========== Evaluation
       # Evaluate offspring population on objectives
-
       YV <- evaluate_population(X       = X,
                                 problem = problem,
                                 nfe     = nfe)
       Y   <- YV$Y
       V   <- YV$V
       nfe <- YV$nfe
+      # ========== Resource Allocation - Combine old solutions with the new ones
+      # updating the whole pop with the prioritized solutions in X and in Y
+      # indexes are used by Resource Allocation methods. if none, it is equal to the vector 1
+      temp.X[indexes,] <- X
+      X <- temp.X
+      temp.Y[indexes,] <- Y
+      Y <- temp.Y
       
-      # ========== Resource Allocation
-      # updating the whole pop with the prioritized solutions in X
-      if (!nullRA) {
-        temp.X[indexes,] <- X
-        X <- temp.X
-      }
       
       # ========== Scalarization
       # Objective scaling and estimation of 'ideal' and 'nadir' points
@@ -497,7 +467,6 @@ moead <-
       # bigZ is an [(T+1) x N] matrix, in which each column has the T scalarized
       # values for the solutions in the neighborhood of one subproblem, plus the
       # scalarized value for the incumbent solution for that subproblem.
-      # write.table(class(normYs$Y), "scalarize10.txt")
       # B  <- BP$B.scalarize[indexes,]
       B  <- BP$B.scalarize
       bigZ <- scalarize_values(
@@ -506,7 +475,6 @@ moead <-
         B       = B,
         aggfun  = aggfun
       )
-      
       # Calculate selection indices
       # sel.indx is an [N x (T+1)] matrix, in which each row contains the indices
       # of one neighborhood (plus incumbent), sorted by their "selection quality"
@@ -523,6 +491,7 @@ moead <-
       )
       # ========== Update
       # Update population
+      old.X <- X
       XY <- do.call(update_population,
                     args = as.list(environment()))
       X       <- XY$X
@@ -530,62 +499,52 @@ moead <-
       V       <- XY$V
       Archive <- XY$Archive
       
-      # ========== Resource Allocation
-      # this is very ugly
-      # these steps are much specific for each priority function.
-      if (!nullRA) {
-        if (resource.allocation$name == "DRA") {
-          if (iter %% resource.allocation$dt == 0) {
-            newObj <- bigZ[neighbors$T + 1, ]
-            Pi <- dra(newObj, oldObj, Pi)
-            oldObj <- newObj
-          }
-        }
-        if (resource.allocation$name == "GRA") {
-          if (iter > resource.allocation$dt) {
-            index <- ((iter - 1) %% resource.allocation$dt) + 1
-            Pi <-
-              ONRA(dt.bigZ[[index]], bigZ, neighbors$T, epsilon = 1e-50)
-            dt.bigZ[[index]] <- bigZ
-          }
-          else{
-            dt.bigZ[[length(dt.bigZ) + 1]] <- bigZ
-          }
-        }
-        if (resource.allocation$name == "RAD") {
-          if (iter > resource.allocation$dt) {
-            diversity <-
-              online_diversity(
-                offspring = Y,
-                parent = parent,
-                W = W,
-                old.dm = old.dm
-              )
-            Pi <- diversity$p
-            old.dm <- diversity$dm
-          }
-          else
-            old.dm <- init_p(W, 0)
-          parent <- Y
-        }
-        if (resource.allocation$name == "norm") {
-          if(!is.null(two_step)) two_step$parentY <- Y
-          # if(is.null(two_step)){
-            if (iter > 2) {
-              Pi <- by_norm(offspring_x = X, parent_x = parent)
-            }
-            if (resource.allocation$type == "inverse") {
-              Pi <- 1+(-1) * Pi
-            }
-            parent <- X
-          # }
-        }
-        if (resource.allocation$name == "random") {
-          if (iter > resource.allocation$dt) {
-            Pi <- by_random(dim(W)[1])
-          }
-        }
+      
+      # ========== Resource Allocation - Update Priority function values
+      # bad workaround with the problem of not having this values at the first iterations!
+      if (iter <= resource.allocation$dt) {
+        dt.Y <- Y
+        dt.X <- X
+        init_ra$dt.bigZ[[length(init_ra$dt.bigZ) + 1]] <- bigZ
       }
+      #parameters for RI
+      index <- ((iter - 1) %% resource.allocation$dt) + 1
+      dt.bigZ <- init_ra$dt.bigZ[[index]]
+      neighbors.T <- neighbors$T
+      
+      #parameters for DRA
+      newObj <- bigZ[neighbors$T + 1, ]
+      oldObj <- init_ra$oldObj
+      if(is.null(oldObj)) oldObj <- newObj # means is not going to be used ever 
+      #parameters for RAD
+      dt.dm <- init_p(W, 0)
+      updates <- resource_allocation_update(
+        iter,
+        resource.allocation,
+        priority.values,
+        bigZ,
+        dt.bigZ,
+        neighbors.T,
+        Y,
+        dt.Y,
+        W,
+        dt.dm,
+        X,
+        dt.X,
+        newObj,
+        oldObj
+      )
+      oldObj <- newObj
+      dt.Y <- Y
+      dt.X <- X
+    
+      if (iter > resource.allocation$dt) {
+        init_ra$dt.bigZ[[index]] <- bigZ
+      }
+      
+      #returns
+      priority.values <- updates$priority.values
+      old.dm <- updates$dm
       
       # ========== Visualization Tools
       # calculating usage of resource by subproblem and any other visualization info
@@ -593,20 +552,27 @@ moead <-
         usage[[length(usage) + 1]] <- rep(1, dim(W)[1])
       }
       else{
-        usage[[length(usage) + 1]] <- as.integer(iteration_usage)
+        usage[[length(usage) + 1]] <- as.numeric(iteration_usage)
       }
+      changed <- rep(0,dim(W)[1])
+      selected <- rep(0,dim(W)[1])
+      neighbors_updated <- rep(0,dim(W)[1])
+      
+      changed[(rowSums(old.X!=X) > 0L)] <- 1
+      selected[as.logical(usage[[length(usage)]])] <- changed[as.logical(usage[[length(usage)]])]
+      neighbors_updated <- changed-selected
       
       paretofront <-
         cbind(Y, stage = iter, find_nondominated_points(Y))
       plot.paretofront <- rbind(plot.paretofront, paretofront)
-      # paretoset <- cbind(X, stage = iter)
-      # plot.paretoset <- rbind(plot.paretoset, paretoset)
+      
       resources <-
         cbind(Reduce("+", usage),
               1:dim(W)[1],
               stage = iter,
-              find_nondominated_points(Y))
+              find_nondominated_points(Y), selected, neighbors_updated)
       plot.resources <- rbind(plot.resources, resources)
+      
       # ========== Stop Criteria
       # Calculate iteration time
       elapsed.time <- as.numeric(difftime(
@@ -615,7 +581,7 @@ moead <-
         units = "secs"
       ))
       iter.times[iter] <- ifelse(
-        iter == 1,
+        test = iter == 1,
         yes = as.numeric(elapsed.time),
         no  = as.numeric(elapsed.time) - sum(iter.times)
       )
@@ -647,9 +613,8 @@ moead <-
     # polishing output names
     colnames(plot.paretofront) <-
       c(paste0("f", 1:ncol(Y)), "stage", "non-dominated")
-    # colnames(plot.paretoset) <- c(paste0("f", 1:ncol(X)), "stage")
     colnames(plot.resources) <-
-      c("Resources", "Subproblem", "stage", "non-dominated")
+      c("Resources", "Subproblem", "stage", "non-dominated", "selected_priority_function", "neighbors_updated")
     # Output
     out <- list(
       X           = X,
@@ -667,8 +632,7 @@ moead <-
       usage       = usage,
       plot.paretofront = plot.paretofront,
       # plot.paretoset = plot.paretoset,
-      plot.resources = plot.resources,
-      u.archive = u.archive
+      plot.resources = plot.resources
     )
     class(out) <- c("moead", "list")
     
