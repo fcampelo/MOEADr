@@ -25,3 +25,5 @@ Rprof.out
 inst/doc
 MOEADr.Rproj
 R/DB
+
+dataExp/*
