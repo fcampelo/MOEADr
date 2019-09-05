@@ -269,10 +269,7 @@ moead <-
            seed = NULL,
            # Seed for PRNG
            resource.allocation = list(name = "none", selection = "none", dt = 2),
-           # List:  resource,
-           two_step = NULL,
-           # List: priority function i two steps
-           # TODO: remove this
+           # List:  resource
            ...)
 
 # other parameters
@@ -353,7 +350,7 @@ moead <-
     # Generate initial population
     X  <- create_population(N       = nrow(W),
                             problem = problem)
-    
+  
     # Evaluate population on objectives
     YV <- evaluate_population(X       = X,
                               problem = problem,
@@ -378,12 +375,10 @@ moead <-
     iter          <- 0         # counter: iterations
     
     # ========== Visualization Tools
-    # calculating usage of resource by subproblem and any other visualization info
-    #TODO updated by priority function or by neighborhood
+    # calculating usage of resource by subproblem and any other visualization infoc
     usage <- list()
     plot.resources <- list(rep(0, dim(W)[1]))
     plot.paretofront <- list(rep(0, dim(W)[1]))
-    plot.paretoset <- list(rep(0, dim(W)[1]))
     
     while (keep.running) {
       # Update iteration counter
@@ -408,7 +403,6 @@ moead <-
       Vt <- V
       # ========== Resource Allocation - Selecting solutions given Priority Function values
       # find indexes of solutions given their priority value (priority.values)
-      
       select_solutions <- resource_allocation_select(
         iter = iter,
         resource.allocation = resource.allocation,
@@ -456,7 +450,6 @@ moead <-
       temp.Y[indexes,] <- Y
       Y <- temp.Y
       
-      
       # ========== Scalarization
       # Objective scaling and estimation of 'ideal' and 'nadir' points
       normYs <- scale_objectives(Y       = Y,
@@ -498,8 +491,6 @@ moead <-
       Y       <- XY$Y
       V       <- XY$V
       Archive <- XY$Archive
-      
-      
       # ========== Resource Allocation - Update Priority function values
       # bad workaround with the problem of not having this values at the first iterations!
       if (iter <= resource.allocation$dt) {
@@ -561,11 +552,9 @@ moead <-
       changed[(rowSums(old.X!=X) > 0L)] <- 1
       selected[as.logical(usage[[length(usage)]])] <- changed[as.logical(usage[[length(usage)]])]
       neighbors_updated <- changed-selected
-      
       paretofront <-
         cbind(Y, stage = iter, find_nondominated_points(Y))
       plot.paretofront <- rbind(plot.paretofront, paretofront)
-      
       resources <-
         cbind(Reduce("+", usage),
               1:dim(W)[1],
@@ -631,7 +620,6 @@ moead <-
       inputConfig = moead.input.pars,
       usage       = usage,
       plot.paretofront = plot.paretofront,
-      # plot.paretoset = plot.paretoset,
       plot.resources = plot.resources
     )
     class(out) <- c("moead", "list")
