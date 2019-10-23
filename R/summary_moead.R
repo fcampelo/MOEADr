@@ -89,7 +89,7 @@ summary.moead <- function(object,
     if (!is.null(scaling.reference)) hv <- emoa::dominated_hypervolume(points = t(scaling_Y(Y, scaling.reference)), ref = ref.point)
     else hv <- emoa::dominated_hypervolume(points = t(Y), ref = ref.point)
     
-    if (!nullRF) hv.front <- emoa::dominated_hypervolume(points = t(ref.front), ref = ref.point)
+    if (!nullRF) hv.front <- emoa::dominated_hypervolume(points = t(scaling_Y(Yref, scaling.reference)), ref = ref.point)
     if (!nullRF) hv.scaled <- hv/hv.front
   }
 
@@ -119,6 +119,6 @@ summary.moead <- function(object,
     cat("\n#====================================")
   }
   
-  out <- list(hv.scaled = hv.scaled, hv = hv, igd = igd, nndom = nndom, nfeas = nfeas)
+  out <- list(hv.scaled = hv.scaled, hv = hv, hv.front = hv.front, igd = igd, nndom = nndom, nfeas = nfeas)
   return(out)
 }
