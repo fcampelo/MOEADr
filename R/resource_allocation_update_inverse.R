@@ -15,7 +15,6 @@ resource_allocation_update_inverse <- function(iter,
                                                ...) {
   if (iter > 2) {
     priority.values <- by_norm(X = X, dt.X = dt.X)
-    # priority.values <- 1 + (-1) * priority.values
     priority.values <- 1 - priority.values
   }
   out <- list(priority.values = priority.values)

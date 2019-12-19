@@ -73,7 +73,9 @@ summary.moead <- function(object,
 
   npts  <- nrow(Y)
   nfeas <- sum(feas.idx)
-  nndom <- sum(find_nondominated_points(Y[feas.idx, ]))
+  nndom.idx <- find_nondominated_points(Y[feas.idx, ])
+  nndom <- sum(nndom.idx)
+  
 
   ideal.est <- apply(Y[feas.idx, ], 2, min)
   nadir.est <- apply(Y[feas.idx, ], 2, max)
@@ -86,8 +88,12 @@ summary.moead <- function(object,
           using the maximum in each dimension instead.")
       ref.point <- nadir.est
     }
+    Y <- Y[which(nndom.idx==T),]
+    
     if (!is.null(scaling.reference)) hv <- emoa::dominated_hypervolume(points = t(scaling_Y(Y, scaling.reference)), ref = ref.point)
     else hv <- emoa::dominated_hypervolume(points = t(Y), ref = ref.point)
+    
+    hv.front <- NULL
     
     if (!nullRF) hv.front <- emoa::dominated_hypervolume(points = t(scaling_Y(Yref, scaling.reference)), ref = ref.point)
     if (!nullRF) hv.scaled <- hv/hv.front

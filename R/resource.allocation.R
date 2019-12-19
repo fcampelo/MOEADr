@@ -188,21 +188,21 @@ ws_transformation <- function(W, epsilon = 1e-50) {
 
 
 
-by_norm <- function(parent_x, offspring_x, epsilon = 1e-50) {
-  u <- apply(offspring_x - parent_x, 1, norm, type = "2")
-  u <- (u - min(u)) / ((max(u) - min(u)) + epsilon)
-  return (u)
-}
-
-by_random <- function(len) {
-  return(runif(len))
-}
-
-by_jacobian <- function(problem, offspring, epsilon = 1e-50) {
-  u <- apply(jacobian(problem, offspring), 2, sum)
-  u <- (u - min(u)) / ((max(u) - min(u)) + epsilon)
-  return (u)
-}
+# by_norm <- function(parent_x, offspring_x, epsilon = 1e-50) {
+#   u <- apply(offspring_x - parent_x, 1, norm, type = "2")
+#   u <- (u - min(u)) / ((max(u) - min(u)) + epsilon)
+#   return (u)
+# }
+# 
+# by_random <- function(len) {
+#   return(runif(len))
+# }
+# 
+# by_jacobian <- function(problem, offspring, epsilon = 1e-50) {
+#   u <- apply(jacobian(problem, offspring), 2, sum)
+#   u <- (u - min(u)) / ((max(u) - min(u)) + epsilon)
+#   return (u)
+# }
 
 
 

@@ -13,6 +13,9 @@ resource_allocation_update_rad <- function(iter,
                                            newObj,
                                            oldObj,
                                            ...) {
+  
+  out <- list(priority.values = priority.values,
+              dt.dm = dt.dm)
   if (iter > resource.allocation$dt) {
     diversity <-
       online_diversity(
@@ -70,12 +73,14 @@ find_indexes <- function(Y, dt.Y) {
 
 
 
+
 online_diversity <-
   function(Y, dt.Y, W, dt.dm, epsilon = 1e-50) {
     out <-
       find_indexes(apply(Y, 2, sample), dt.Y)
     indexes_i <- out$i
     indexes_j <- out$j
+    
     # my.out <- rep(.Machine$double.xmin, nrow(Y))
     my.out <- rep(.Machine$double.xmin, nrow(Y))
     
@@ -119,6 +124,7 @@ online_diversity <-
     p <-  my.out
     p <- (p - min(p)) / ((max(p) - min(p)) + epsilon)
     # out <- list(p = 1 - p, dm = my.out)
-    out <- list(p = 1 - p, dm = my.out)
+    out <- list(p = p, dm = my.out)
     return(out)
   }
+

@@ -423,14 +423,16 @@ moead <-
       X <- X[indexes,]
       Y <- Y[indexes,]
       # indexes are used by Resource Allocation methods. if none, it is equal to the vector 1
+      # print(iter)
+      # print(dim(BP$B.variation))
       B  <- BP$B.variation[indexes, ]
+      # print(dim(B))
       # indexes ere used by Resource Allocation methods. if none, it is equal to the vector 1
       P  <- BP$P[indexes, indexes]
       # ========== Variation
       # Perform variation
       Xv      <- do.call(perform_variation,
                          args = as.list(environment()))
-      
       X       <- Xv$X
       ls.args <- Xv$ls.args
       nfe     <- nfe + Xv$var.nfe
@@ -545,21 +547,13 @@ moead <-
       else{
         usage[[length(usage) + 1]] <- as.numeric(iteration_usage)
       }
-      changed <- rep(0,dim(W)[1])
-      selected <- rep(0,dim(W)[1])
-      neighbors_updated <- rep(0,dim(W)[1])
       
-      changed[(rowSums(old.X!=X) > 0L)] <- 1
-      selected[as.logical(usage[[length(usage)]])] <- changed[as.logical(usage[[length(usage)]])]
-      neighbors_updated <- changed-selected
       paretofront <-
-        cbind(Y, stage = iter, find_nondominated_points(Y))
+        cbind(Y, stage = iter)
       plot.paretofront <- rbind(plot.paretofront, paretofront)
       resources <-
         cbind(Reduce("+", usage),
-              1:dim(W)[1],
-              stage = iter,
-              find_nondominated_points(Y), selected, neighbors_updated)
+              stage = iter)
       plot.resources <- rbind(plot.resources, resources)
       
       # ========== Stop Criteria
@@ -601,9 +595,9 @@ moead <-
     # ========== Visualization Tools
     # polishing output names
     colnames(plot.paretofront) <-
-      c(paste0("f", 1:ncol(Y)), "stage", "non-dominated")
+      c(paste0("f", 1:ncol(Y)), "stage")
     colnames(plot.resources) <-
-      c("Resources", "Subproblem", "stage", "non-dominated", "selected_priority_function", "neighbors_updated")
+      c("Resources", "stage")
     # Output
     out <- list(
       X           = X,
@@ -618,7 +612,6 @@ moead <-
       time        = difftime(Sys.time(), time.start, units = "secs"),
       seed        = seed,
       inputConfig = moead.input.pars,
-      usage       = usage,
       plot.paretofront = plot.paretofront,
       plot.resources = plot.resources
     )

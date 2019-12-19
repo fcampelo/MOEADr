@@ -329,10 +329,10 @@ visuEvol <- function(moea,
 }
 
 
-savePlotData <- function (moea, name, j) {
+savePlotData <- function (moea, name, j,wd = '~/dataExp/') {
   if (is.null(moea$Archive)) {
-    write_feather(data.frame(moea$X), paste0('~/dataExp/', name, j, '_X'))
-    write_feather(data.frame(moea$Y), paste0('~/dataExp/', name, j, '_Y'))
+    write_feather(data.frame(moea$X), paste0(wd, name, j, '_X'))
+    write_feather(data.frame(moea$Y), paste0(wd, name, j, '_Y'))
   }
   else{
     write_feather(data.frame(moea$Archive$X),
@@ -345,12 +345,12 @@ savePlotData <- function (moea, name, j) {
   temp <- moea$plot.paretofront[-1,]
   temp <- apply(temp, 2, unlist)
   temp <- as.data.frame(temp)
-  write_feather(temp, paste0('~/dataExp/', name, j, '_plot.paretofront'))
+  write_feather(temp, paste0(wd, name, j, '_plot.paretofront'))
   
   temp <- as.data.frame(moea$plot.resources[-1,])
   temp <- apply(temp, 2, unlist)
   temp <- as.data.frame(temp)
-  write_feather(temp, paste0('~/dataExp/', name, j, '_plot.resources'))
+  write_feather(temp, paste0(wd, name, j, '_plot.resources'))
   
   # temp <- as.data.frame(moea$plot.paretoset[-1, ])
   # temp <- apply(temp, 2, unlist)
@@ -360,36 +360,36 @@ savePlotData <- function (moea, name, j) {
   temp <- as.data.frame(moea$W)
   temp <- apply(temp, 2, unlist)
   temp <- as.data.frame(temp)
-  write_feather(temp, paste0('~/dataExp/', name, j, '_W'))
+  write_feather(temp, paste0(wd, name, j, '_W'))
   
   temp <- as.data.frame(moea$nfe)
   temp <- apply(temp, 2, unlist)
   temp <- as.data.frame(temp)
-  write_feather(temp, paste0('~/dataExp/', name, j, '_nfe'))
+  write_feather(temp, paste0(wd, name, j, '_nfe'))
   
   temp <- as.data.frame(moea$n.iter)
   temp <- apply(temp, 2, unlist)
   temp <- as.data.frame(temp)
-  write_feather(temp, paste0('~/dataExp/', name, j, '_iter'))
+  write_feather(temp, paste0(wd, name, j, '_iter'))
   
   temp <- as.data.frame(moea$time)
   temp <- apply(temp, 2, unlist)
   temp <- as.data.frame(temp)
-  write_feather(temp, paste0('~/dataExp/', name, j, '_time'))
+  write_feather(temp, paste0(wd, name, j, '_time'))
   
 }
 
-loadPlotData <- function (name, j) {
-  X <- read_feather(paste0('~/dataExp/', name, j, '_X'))
-  Y <- read_feather(paste0('~/dataExp/', name, j, '_Y'))
+loadPlotData <- function (name, j,wd='~/dataExp/') {
+  X <- read_feather(paste0(wd, name, j, '_X'))
+  Y <- read_feather(paste0(wd, name, j, '_Y'))
   plot.paretofront <-
-    read_feather(paste0('~/dataExp/', name, j, '_plot.paretofront'))
+    read_feather(paste0(wd, name, j, '_plot.paretofront'))
   plot.resources <-
-    read_feather(paste0('~/dataExp/', name, j, '_plot.resources'))
-  iter <- read_feather(paste0('~/dataExp/', name, j, '_iter'))
-  time <- read_feather(paste0('~/dataExp/', name, j, '_time'))
-  W <- read_feather(paste0('~/dataExp/', name, j, '_W'))
-  nfe <- read_feather(paste0('~/dataExp/', name, j, '_nfe'))
+    read_feather(paste0(wd, name, j, '_plot.resources'))
+  iter <- read_feather(paste0(wd, name, j, '_iter'))
+  time <- read_feather(paste0(wd, name, j, '_time'))
+  W <- read_feather(paste0(wd, name, j, '_W'))
+  nfe <- read_feather(paste0(wd, name, j, '_nfe'))
   
   out <- list(
     X           = X,

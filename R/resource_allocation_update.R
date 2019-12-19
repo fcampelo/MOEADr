@@ -35,7 +35,7 @@ resource_allocation_update <-
     updated       <- do.call(function_name,
                              args = updt.args)
     priority.values <- updated$priority.values
-    dt.dm <- ifelse(test = resource.allocation$name == "RAD", yes = updated$iteration_usage, no = dt.dm)
+    dt.dm <- ifelse(test = resource.allocation$name == "RAD", yes = updated$dt.dm, no = dt.dm)
     out <-
       list(priority.values = priority.values,
            dt.dm = dt.dm)
