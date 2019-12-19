@@ -8,7 +8,7 @@ library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
 num_pf <- 11
-begin <- 1
+begin <- 10
 
 repetitions <-  21
 dimension <- 100 # dimenstion <= 40 when using BiBBOB
