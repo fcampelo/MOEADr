@@ -4,7 +4,7 @@
   (1 / problem dimension) (by setting `pm = "n"`)
   * Minor change in `preset_moead()`
 * Added CITATION information to paper in the Journal of Statistical Software. 
-* Updated documentation to include references to JSS paper.
+
 
 
 # MOEADr 1.0.3

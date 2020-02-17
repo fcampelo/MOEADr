@@ -1,6 +1,7 @@
 ## Changes and notes
 * Added CITATION information pointing to paper in the Journal of Statistical Software.
 * The DOI in the CITATION is for a new JSS publication that will be registered after publication on CRAN.
+* Updated documentation to include references to JSS paper.
 
 ## Test environments
 * macOS Mojave 10.15.3, R version 3.6.2, x86_64-apple-darwin15.6.0 (64-bit), 
