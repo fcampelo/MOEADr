@@ -53,7 +53,7 @@ Second, the parameters in the function definition must include: the solution set
 matrix $X$, the local parameters for the function, and finally an ellipsis argument to
 catch any other inputs passed by the main *moead()* call, such as objective
 values and former solution sets. If you want examples of using these parameters
-please look at the sourcecode for some of the variation operators included, such as the Binomial Recombination operator (*variation_binrec*)
+please look at the source code for some of the variation operators included, such as the Binomial Recombination operator (*variation_binrec*)
 
 Other component classes follow similar rules. Please look at existing
 implementations as basis for new ideas.

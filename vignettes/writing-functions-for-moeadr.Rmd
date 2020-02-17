@@ -114,7 +114,7 @@ The neighborhood assignment function is `define_neighborhood()`, which is called
     - the function must output a list object containing the following matrices:
     - **B**: each row represents the neighborhood of a subproblem as indices (first element is the subproblem index, and the following `neighbors$T - 1` elements are the neighbor indices). This is a _N x T_ matrix.
     - **P**: matrix of probabilities of selection to be used in the sampling of solutions for variation operators. Each element \eqn{p_{i,j}} represents the probability of using the solution associated with the _j_-th subproblem when performing a variation operator (e.g., recombination) for the _i_-th subproblem. This is an _N x N_ matrix.
-    - **fullB**: same as **B**, but assuming that the neighborhood size is equal to the number of subproblems (i.e., requlting in an _N x N_ matrix.
+    - **fullB**: same as **B**, but assuming that the neighborhood size is equal to the number of subproblems (i.e., resulting in an _N x N_ matrix.
     - **fullP**: same as **P**, but with all elements set as `1 / N`.
 
 ### Other guidelines and requirements:  

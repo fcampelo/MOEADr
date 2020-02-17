@@ -36,7 +36,7 @@ The **MOEADr** package requires the multi objective problem to be defined as a
 function that receives the entire solution set as a matrix, and return the
 objective values also as a matrix. For details see the [Problem
 Definition](problem-definition.html) vignette. We will achieve this requirement
-by wraping the sphere function and the rastrigin function as follows:
+by wrapping the sphere function and the rastrigin function as follows:
 
 ```{r}
 problem.sr <- function(X) {

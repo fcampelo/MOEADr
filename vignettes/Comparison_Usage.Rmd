@@ -283,7 +283,7 @@ third column, together with the figure following, provides the consensus value
 of each component, measured as the rate of occurrence of each component in the
 seven final configurations returned by the Iterated Racing procedure. These
 results suggest that the automated assembling and tuning method reached a
-reasonably solit consensus, in terms of the components used as well as the
+reasonably solid consensus, in terms of the components used as well as the
 values returned for the numeric parameters.
 
 |**Component**|**Value**|**Consensus**|
@@ -327,7 +327,7 @@ converged to two operators instead of a single one can be explained by the fact
 that these situations are equivalent, coupled with the absence of any pressure
 towards more parsimonious expressions of the Variation Stack in the setup.
 
-Another seemingly counterintuitive aspect of the final configurations reached is
+Another seemingly counter intuitive aspect of the final configurations reached is
 the absence of local search. A possible explanation lies in the interaction
 between the variation operators chosen (differential mutation + binomial
 recombination) with the type of neighborhood (by $x$, with a very strong bias

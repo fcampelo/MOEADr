@@ -24,3 +24,5 @@
 # Rprof temporary files
 Rprof.out
 inst/doc
+doc
+Meta

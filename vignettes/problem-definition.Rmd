@@ -14,14 +14,14 @@ This is a short guide to defining the problem structure for running MOEA/Ds usin
 
 - Structure of the input variable `problem`
 - Structure of objective function routines, given as `problem$name`
-- structure of constraing function routines, given as `problem$constraint$name`
+- structure of constraint function routines, given as `problem$constraint$name`
 
 A general description of the algorithm and the component-based interpretation behind the MOEADr package is available in our paper^[F. Campelo, L.S. Batista and C. Aranha, "A Component-Wise Perspective on Multiobjective Evolutionary Algorithms based on Decomposition", in preparation.]
 
 # Problem structure
 In the MOEADr package, all information regarding the problem is input as a list 
 variable `problem`. This parameter must contain enough information for the 
-algorithm to corretly evaluate all the objective and constraint functions, as
+algorithm to correctly evaluate all the objective and constraint functions, as
 documented in function `moead()` and replicated below for convenience.
 
 The `problem` list must contain the following required fields:

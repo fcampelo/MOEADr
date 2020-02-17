@@ -3,3 +3,5 @@
 ^.*\.yml$
 ^cran-comments.md$
 docs$
+^doc$
+^Meta$
