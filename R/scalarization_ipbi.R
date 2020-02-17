@@ -21,12 +21,17 @@
 #' "Inverted PBI in MOEA/D and its impact on the search performance on multi
 #' and many-objective optimization."
 #' Proceedings of the 2014 Annual Conference on Genetic and
-#' Evolutionary Computation (GECCO), 2014.
+#' Evolutionary Computation (GECCO), 2014.\cr
 #'
 #' H. Sato,
 #' "Analysis of inverted PBI and comparison with other scalarizing functions in
 #' decomposition based MOEAs."
-#' Journal of Heuristics 21(6):819-849, 2015
+#' Journal of Heuristics 21(6):819-849, 2015\cr
+#'
+#' F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+#' Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+#' Decomposition. Journal of Statistical Software <doi:10.18637/jss.v092.i06>\cr
+#'
 #'
 #' @examples
 #' W      <- generate_weights(decomp = list(name = "sld", H = 19), m = 2)

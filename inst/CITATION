@@ -1,0 +1,21 @@
+bibentry(bibtype = "Article",
+  title        = "The {MOEADr} Package: A Component-Based Framework for Multiobjective Evolutionary Algorithms Based on Decomposition",
+  author       = c(person(given = "Felipe",
+                          family = "Campelo",
+                          email = "f.campelo@aston.ac.uk"),
+                   person(given = c("Lucas", "S."),
+                          family = "Batista",
+                          email = "lusoba@ufmg.br"),
+                   person(given = "Claus",
+                          family = "Aranha",
+                          email = "caranha@cs.tsukuba.ac.jp")),
+  journal      = "Journal of Statistical Software",
+  year         = "2020",
+  volume       = "92",
+  number       = "6",
+  pages        = "1--39",
+  doi          = "10.18637/jss.v092.i06",
+
+  header       = "To cite MOEADr in publications use:"
+)
+

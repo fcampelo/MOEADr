@@ -1,20 +1,17 @@
 ## Changes and notes
-* Fixed minor error in vignette "Fine tuning MOEADr using irace";
-* Fixed minor error in final Archive composition in `moead()`;
-* `moead()` output objects now contain the input configuration used 
-  for running the algorithm, for easier reproducibility;
-* Fixed problem in `moead()` that was compromising reproducibility when running
-  with `irace`;
-* Changed output class of moead() to _moead_ (instead of _moeadoutput_). All 
-  related functions (plot, summary) and documentation were updated.
-* Added S3 print function, changed class of the outputs of 
-  _moead()_ to **moead** (instead of **moeadoutput**).
+* Added CITATION information pointing to paper in the Journal of Statistical Software.
+* The DOI in the CITATION is for a new JSS publication that will be registered after publication on CRAN.
 
 ## Test environments
-* local OS X 10.12.6 install, R 3.4.1
-* Ubuntu 14.04.5 LTS (on travis-ci v 3.1.0), R version 3.4.2
-* win-builder (release and devel)
+* macOS Mojave 10.15.3, R version 3.6.2, x86_64-apple-darwin15.6.0 (64-bit), 
+using `devtools::check()`
+* Ubuntu 14.04.5 LTS (on **travis-ci v6.2.1**), R version 3.6.1
+* win-builder, using `devtools::check_win_devel()` and  `devtools::check_win_release()`
+* Windows Server 2008 R2 SP1, R-devel, 32/64 bit, using `devtools::check_rhub()`
+* Ubuntu Linux 16.04 LTS, R-release, GCC, using `devtools::check_rhub()`
+* Fedora Linux, R-devel, clang, gfortran, using `devtools::check_rhub()`
 
 ## R CMD check results
-0 errors | 0 warnings | 0 notes
-R CMD check succeeded
+Duration: 50.5s  
+0 errors | 0 warnings | 0 notes  
+R CMD check succeeded  

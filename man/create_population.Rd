@@ -10,7 +10,7 @@ create_population(N, problem)
 \item{N}{population size}
 
 \item{problem}{list of named problem parameters. See Section
-\code{Problem Description} of the \code{\link[=moead]{moead()}} documentation for details.}
+\verb{Problem Description} of the \code{\link[=moead]{moead()}} documentation for details.}
 }
 \value{
 A population matrix X for the MOEA/D.
@@ -23,6 +23,13 @@ This routine creates a population matrix for the MOEA/D. Currently only a
 multivariate uniform distribution is implemented. All points are created
 within the standardized space \eqn{0 \le x_i \le 1, i = 1,...,n_v}.
 }
+\section{References}{
+
+F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+Decomposition. Journal of Statistical Software \url{doi:10.18637/jss.v092.i06}\cr
+}
+
 \examples{
 ex.problem <- list(name = "example_problem",
                    xmin = rep(-1, 5),

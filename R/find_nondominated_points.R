@@ -20,14 +20,15 @@
 #' @export
 
 find_nondominated_points <- function(Y) {
+
   idxDominators <- vector(mode = "list", nrow(Y))
   idxDominatees <- vector(mode = "list", nrow(Y))
   for (i in 1:(nrow(Y) - 1)) {
     for (j in i:nrow(Y)) {
-      if (all(Y[i, ] <= Y[j, ]) && (Y[i, ] != Y[j, ])) {  ## i dominates j
+      if (all(Y[i, ] <= Y[j, ]) && any(Y[i, ] != Y[j, ])) {  ## i dominates j
         idxDominators[[j]] = c(idxDominators[[j]], i)
         idxDominatees[[i]] = c(idxDominatees[[i]], j)
-      } else if (all(Y[j, ] <= Y[i, ]) && (Y[j, ] != Y[i, ])) {  ## j dominates i
+      } else if (all(Y[j, ] <= Y[i, ]) && any(Y[j, ] != Y[i, ])) {  ## j dominates i
         idxDominators[[i]] = c(idxDominators[[i]], j)
         idxDominatees[[j]] = c(idxDominatees[[j]], i)
       }

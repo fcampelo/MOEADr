@@ -31,7 +31,7 @@ This R implementation of the Simulated Binary Crossover reproduces the C code
 implementation available in the R package \strong{emoa} 0.5-0, by Olaf Mersmann.
 The differences between the present version and the original one are:
 \itemize{
-\item The operator is performed on the variables scaled to the \code{[0, 1]}
+\item The operator is performed on the variables scaled to the \verb{[0, 1]}
 interval, which simplifies the calculations.
 \item Calculations are vectorized over variables, which also simplifies
 the implementation.
@@ -41,6 +41,10 @@ the implementation.
 
 Deb, K. and Agrawal, R. B. (1995) Simulated binary crossover for continuous
 search space. Complex Systems, 9 115-148 \cr
+
+F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+Decomposition. Journal of Statistical Software \url{doi:10.18637/jss.v092.i06}\cr
 
 Olaf Mersmann (2012). emoa: Evolutionary Multiobjective
 Optimization Algorithms. R package version 0.5-0.\cr

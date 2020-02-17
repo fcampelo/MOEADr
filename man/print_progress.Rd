@@ -13,9 +13,9 @@ print_progress(iter.times, showpars)
 output of \code{\link[=moead]{moead()}}. Parameter \code{showpars} can have the
 following key-value pairs:
 \itemize{
-\item \code{$show.iters}: type of output ("dots", "numbers", or "none"). If
+\item \verb{$show.iters}: type of output ("dots", "numbers", or "none"). If
 not present in \code{showpars}, it defaults to "numbers";
-\item \code{$showevery}: positive integer that determines how frequently
+\item \verb{$showevery}: positive integer that determines how frequently
 the routine echoes something to the terminal. If not present in
 \code{showpars}, it defaults to \code{10}.
 }}
@@ -23,3 +23,10 @@ the routine echoes something to the terminal. If not present in
 \description{
 Echoes progress of MOEA/D to the terminal for the MOEADr package
 }
+\section{References}{
+
+F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+Decomposition. Journal of Statistical Software \url{doi:10.18637/jss.v092.i06}\cr
+}
+

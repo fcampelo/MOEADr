@@ -49,6 +49,13 @@
 #' @return List object containing the update population matrix (`X`),
 #' and its corresponding matrix of objective function values (`Y`) and
 #' constraint value list (`V`).
+#'
+#' @export
+#'
+#' @section References:
+#' F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+#' Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+#' Decomposition. Journal of Statistical Software <doi:10.18637/jss.v092.i06>\cr
 
 updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
                       normYs, W, BP, constraint, aggfun, ...){

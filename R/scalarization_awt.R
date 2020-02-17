@@ -17,11 +17,16 @@
 #' @section References:
 #' Y. Qi, X. Ma, F. Liu, L. Jiao, J. Sun, and J. Wu, “MOEA/D with
 #' adaptive weight adjustment,” Evolutionary Computation, vol. 22,
-#' no. 2, pp. 231–264, 2013.
+#' no. 2, pp. 231–264, 2013.\cr
 #'
 #' R. Wang, T. Zhang, and B. Guo, “An enhanced MOEA/D using uniform
 #' directions and a pre-organization procedure,” in IEEE Congress on
-#' Evolutionary Computation, Cancun, Mexico, 2013, pp. 2390–2397.
+#' Evolutionary Computation, Cancun, Mexico, 2013, pp. 2390–2397.\cr
+#'
+#' F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+#' Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+#' Decomposition. Journal of Statistical Software <doi:10.18637/jss.v092.i06>\cr
+#'
 #'
 #' @examples
 #' W    <- generate_weights(decomp = list(name = "sld", H = 19), m = 2)

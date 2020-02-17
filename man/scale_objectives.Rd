@@ -20,7 +20,7 @@ details).}
 }
 \value{
 List object containing scaled objective function value matrices
-\code{Y} and \code{Yt}, as well as estimates of the "ideal" point \code{minP`` and "nadir" point}maxP`.
+\code{Y} and \code{Yt}, as well as estimates of the "ideal" point \verb{minP`` and "nadir" point }maxP`.
 }
 \description{
 Performs scaling of the objective function values for the MOEADr package
@@ -37,3 +37,10 @@ estimated ideal and nadir points, calculated from the available points in
 \code{Y} and \code{Yt} at each iteration.
 }
 }
+\section{References}{
+
+F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+Decomposition. Journal of Statistical Software \url{doi:10.18637/jss.v092.i06}\cr
+}
+

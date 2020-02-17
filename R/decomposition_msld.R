@@ -28,6 +28,10 @@
 #' Algorithm Based on Dominance and Decomposition",
 #' IEEE Trans. Evol. Comp. 19(5):694-716, 2015. DOI: 10.1109/TEVC.2014.2373386
 #'
+#' F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+#' Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+#' Decomposition. Journal of Statistical Software <doi:10.18637/jss.v092.i06>\cr
+#'
 #' @examples
 #' decomp <- list(name = "msld", H = c(5, 3), tau = c(.9, .5), .nobj = 4)
 #' W <- decomposition_msld(decomp)

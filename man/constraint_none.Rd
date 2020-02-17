@@ -19,8 +19,8 @@ incumbent solution}
 generic call)}
 }
 \value{
-\code{[ N x (T+1) ]} matrix of preference indices. Each row \code{i} contains
-a permutation of \code{{1, 2, ..., (T+1)}}, where \code{1,...,T} correspond
+\verb{[ N x (T+1) ]} matrix of preference indices. Each row \code{i} contains
+a permutation of \verb{\{1, 2, ..., (T+1)\}}, where \verb{1,...,T} correspond
 to the solutions contained in the neighborhood of the i-th subproblem,
 \code{B[i, ]}, and \code{T+1} corresponds to the incumbent solution for that
 subproblem. The order of the permutation is defined by the increasing values
@@ -34,3 +34,10 @@ Construct the preference index matrix based only on performance values.
 This function ignores the violation values when constructing the preference
 index matrix, using only the scalarized performance values.
 }
+\section{References}{
+
+F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+Decomposition. Journal of Statistical Software \url{doi:10.18637/jss.v092.i06}\cr
+}
+

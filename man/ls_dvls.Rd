@@ -4,8 +4,20 @@
 \alias{ls_dvls}
 \title{Differential vector-based local search}
 \usage{
-ls_dvls(Xt, Yt, Vt, B, W, which.x, trunc.x, problem, scaling, aggfun,
-  constraint, ...)
+ls_dvls(
+  Xt,
+  Yt,
+  Vt,
+  B,
+  W,
+  which.x,
+  trunc.x,
+  problem,
+  scaling,
+  aggfun,
+  constraint,
+  ...
+)
 }
 \arguments{
 \item{Xt}{Matrix of incumbent solutions}
@@ -26,17 +38,17 @@ local search}
 by local search should be truncated to the variable limits of the problem.}
 
 \item{problem}{list of named problem parameters. See Section
-\code{Problem Description} of the \code{\link[=moead]{moead()}} documentation for details.}
+\verb{Problem Description} of the \code{\link[=moead]{moead()}} documentation for details.}
 
 \item{scaling}{list containing the scaling parameters (see \code{\link[=moead]{moead()}} for
 details).}
 
 \item{aggfun}{List containing the aggregation function parameters. See
-Section \code{Scalar Aggregation Functions} of the \code{\link[=moead]{moead()}} documentation for
+Section \verb{Scalar Aggregation Functions} of the \code{\link[=moead]{moead()}} documentation for
 details.}
 
 \item{constraint}{list containing the parameters defining the constraint
-handling method. See Section \code{Constraint Handling} of the \code{\link[=moead]{moead()}}
+handling method. See Section \verb{Constraint Handling} of the \code{\link[=moead]{moead()}}
 documentation for details.}
 
 \item{...}{other parameters (included for compatibility with generic call)}
@@ -61,6 +73,10 @@ and should not be called directly by the user.
 
 B. Chen, W. Zeng, Y. Lin, D. Zhang,
 "A new local search-based multiobjective optimization algorithm",
-IEEE Trans. Evolutionary Computation 19(1):50-73, 2015.
+IEEE Trans. Evolutionary Computation 19(1):50-73, 2015.\cr
+
+F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+Decomposition. Journal of Statistical Software \url{doi:10.18637/jss.v092.i06}\cr
 }
 

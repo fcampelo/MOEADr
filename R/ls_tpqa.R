@@ -37,7 +37,12 @@
 #' Y.-C. Jiao, C. Dang, Y. Leung, Y. Hao,
 #' "A modification to the new version of the prices algorithm for continuous
 #' global optimization problems",
-#' J. Global Optimization 36(4):609-626, 2006.
+#' J. Global Optimization 36(4):609-626, 2006.\cr
+#'
+#' F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+#' Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+#' Decomposition. Journal of Statistical Software <doi:10.18637/jss.v092.i06>\cr
+#'
 #'
 #' @return Matrix \code{X}' containing the modified population
 #'

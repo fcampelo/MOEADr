@@ -80,15 +80,17 @@
 #'
 #' `[Runarsson2000]` T. Runarsson, X. Yao,
 #' "Stochastic ranking for constrained evolutionary optimization",
-#' IEEE Transactions on Evolutionary Computation4(3):284–294, 2000.
+#' IEEE Transactions on Evolutionary Computation4(3):284–294, 2000.\cr
 #'
 #' `[Asafuddoula2014]` M. Asafuddoula, T. Ray, R. Sarker, K. Alam,
 #' "An adaptive constraint handling approach embedded MOEA/D,”
-#' 2012 IEEE Congress on Evolutionary Computation (CEC).
+#' 2012 IEEE Congress on Evolutionary Computation (CEC).\cr
 #'
-#' `[Campelo2017]` F. Campelo, L.S. Batista, C. Aranha,
-#' "A Component-Wise Perspective on Multiobjective Evolutionary Algorithms
-#' based on Decomposition". In preparation, 2017.
+#' `[Campelo2017]`  F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr}
+#' Package: A Component-Based Framework for Multiobjective Evolutionary
+#' Algorithms Based on Decomposition. Journal of Statistical Software
+#' <doi:10.18637/jss.v092.i06>\cr
+#'
 #'
 
 constraint_vbr <- function(bigZ, bigV, type = c("ts", "sr", "vt"), pf = NULL, ...)

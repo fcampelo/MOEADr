@@ -33,7 +33,11 @@
 #' @section References:
 #' B. Chen, W. Zeng, Y. Lin, D. Zhang,
 #' "A new local search-based multiobjective optimization algorithm",
-#' IEEE Trans. Evolutionary Computation 19(1):50-73, 2015.
+#' IEEE Trans. Evolutionary Computation 19(1):50-73, 2015.\cr
+#'
+#' F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+#' Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+#' Decomposition. Journal of Statistical Software <doi:10.18637/jss.v092.i06>\cr
 #'
 #' @return List object with fields `X` (matrix containing the modified points,
 #' with points that did not undergo local search indicated as NA) and `nfe`

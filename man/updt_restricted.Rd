@@ -8,7 +8,7 @@ updt_restricted(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, ...)
 }
 \arguments{
 \item{update}{List containing the population update parameters. See
-Section \code{Update Strategies} of the \code{\link[=moead]{moead()}} documentation for
+Section \verb{Update Strategies} of the \code{\link[=moead]{moead()}} documentation for
 details. \code{update} must contain a field \code{update$nr}, a positive integer that
 determines the maximum number of copies of each candidate solution.}
 
@@ -51,3 +51,10 @@ the same neighborhood is selected.
 This update routine is intended to be used internally by the main \code{\link[=moead]{moead()}}
 function, and should not be called directly by the user.
 }
+\section{References}{
+
+F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+Decomposition. Journal of Statistical Software \url{doi:10.18637/jss.v092.i06}\cr
+}
+

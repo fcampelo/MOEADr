@@ -15,7 +15,7 @@ See \code{\link[=moead]{moead()}} for details.}
 \item{iter}{iterations counter of the \code{\link[=moead]{moead()}} function.}
 
 \item{...}{other parameters to be passed down to the individual variation
-operators (see documentation of the specific \code{variation_}\strong{xyz}\code{()}
+operators (see documentation of the specific \code{variation_}\strong{xyz}\verb{()}
 functions for details)}
 }
 \value{
@@ -35,3 +35,10 @@ If the \code{localsearch} operator is included, it is executed whenever its
 conditions (period of occurrence or probability of occurrence) are verified.
 See \code{\link[=variation_localsearch]{variation_localsearch()}} for details.
 }
+\section{References}{
+
+F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+Decomposition. Journal of Statistical Software \url{doi:10.18637/jss.v092.i06}\cr
+}
+

@@ -8,11 +8,11 @@ update_population(update, ...)
 }
 \arguments{
 \item{update}{List containing the population update parameters. See
-Section \code{Update Strategies} of the \code{\link[=moead]{moead()}} documentation for
+Section \verb{Update Strategies} of the \code{\link[=moead]{moead()}} documentation for
 details.}
 
 \item{...}{other parameters to be passed down to the specific
-\code{updt_}\strong{xyz}\code{()} routines.}
+\code{updt_}\strong{xyz}\verb{()} routines.}
 }
 \value{
 List object containing the updated values of the population matrix
@@ -28,3 +28,10 @@ This update routine is intended to be used internally by the main \code{\link[=m
 function, and should not be called directly by the user. The list of
 available update methods can be generated using \code{\link[=get_update_methods]{get_update_methods()}}.
 }
+\section{References}{
+
+F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+Decomposition. Journal of Statistical Software \url{doi:10.18637/jss.v092.i06}\cr
+}
+

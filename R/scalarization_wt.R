@@ -16,11 +16,15 @@
 #'
 #' @section References:
 #' Q. Zhang and H. Li, "MOEA/D: A Multiobjective Evolutionary Algorithm
-#   Based on Decomposition", IEEE Trans. Evol. Comp. 11(6): 712-731, 2007.
+#' Based on Decomposition", IEEE Trans. Evol. Comp. 11(6): 712-731, 2007.\cr
 #'
 #' H. Li, Q. Zhang, "Multiobjective Optimization Problems With Complicated
 #' Pareto Sets, MOEA/D and NSGA-II", IEEE. Trans. Evol. Comp. 12(2):284-302,
-#' 2009.
+#' 2009.\cr
+#'
+#' F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+#' Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+#' Decomposition. Journal of Statistical Software <doi:10.18637/jss.v092.i06>\cr
 #'
 #' @examples
 #' W    <- generate_weights(decomp = list(name = "sld", H = 19), m = 2)

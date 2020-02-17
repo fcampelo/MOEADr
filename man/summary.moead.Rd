@@ -4,9 +4,15 @@
 \alias{summary.moead}
 \title{summary.moead}
 \usage{
-\method{summary}{moead}(object, ..., useArchive = FALSE,
-  viol.threshold = 1e-06, ndigits = 3, ref.point = NULL,
-  ref.front = NULL)
+\method{summary}{moead}(
+  object,
+  ...,
+  useArchive = FALSE,
+  viol.threshold = 1e-06,
+  ndigits = 3,
+  ref.point = NULL,
+  ref.front = NULL
+)
 }
 \arguments{
 \item{object}{list object of class \emph{moead}
@@ -26,12 +32,19 @@ determine feasibility of points in \code{object}.}
 (only if package \code{emoa} is available). If \code{NULL} the estimated nadir
 point is used instead.}
 
-\item{ref.front}{\code{Np x Nobj} matrix containing a sample of the true Pareto-optimal
+\item{ref.front}{\verb{Np x Nobj} matrix containing a sample of the true Pareto-optimal
 front, for calculating IGD.}
 }
 \description{
 S3 method for summarizing \emph{moead} objects (the output of \code{\link[=moead]{moead()}}).
 }
+\section{References}{
+
+F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+Decomposition. Journal of Statistical Software \url{doi:10.18637/jss.v092.i06}\cr
+}
+
 \examples{
 problem.1 <- list(name = "example_problem",
                   xmin = rep(-1,30),

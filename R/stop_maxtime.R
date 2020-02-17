@@ -26,6 +26,12 @@
 #' otherwise.
 #'
 #' @export
+#'
+#' @section References:
+#' F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+#' Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+#' Decomposition. Journal of Statistical Software <doi:10.18637/jss.v092.i06>\cr
+#'
 stop_maxtime <- function(stopcrit, iter.times, ...){
   t.pars <- stopcrit[[which(sapply(stopcrit,
                                    function(x)x$name) == "maxtime")]]

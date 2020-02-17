@@ -4,9 +4,18 @@
 \alias{plot.moead}
 \title{plot.moead}
 \usage{
-\method{plot}{moead}(x, ..., useArchive = FALSE, feasible.only = TRUE,
-  viol.threshold = 1e-06, nondominated.only = TRUE, plot.weights = FALSE,
-  which.objectives = NULL, suppress.pause = FALSE, color.by.obj = 1)
+\method{plot}{moead}(
+  x,
+  ...,
+  useArchive = FALSE,
+  feasible.only = TRUE,
+  viol.threshold = 1e-06,
+  nondominated.only = TRUE,
+  plot.weights = FALSE,
+  which.objectives = NULL,
+  suppress.pause = FALSE,
+  color.by.obj = 1
+)
 }
 \arguments{
 \item{x}{list object of class \emph{moead}
@@ -40,6 +49,13 @@ for coloring the parallel coordinates plot.}
 \description{
 S3 method for plotting \emph{moead} objects (the output of \code{\link[=moead]{moead()}}).
 }
+\section{References}{
+
+F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+Decomposition. Journal of Statistical Software \url{doi:10.18637/jss.v092.i06}\cr
+}
+
 \examples{
 problem.1 <- list(name = "example_problem",
                   xmin = rep(-1,30),

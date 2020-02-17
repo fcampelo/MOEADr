@@ -4,9 +4,21 @@
 \alias{moead}
 \title{MOEA/D}
 \usage{
-moead(preset = NULL, problem = NULL, decomp = NULL, aggfun = NULL,
-  neighbors = NULL, variation = NULL, update = NULL, constraint = NULL,
-  scaling = NULL, stopcrit = NULL, showpars = NULL, seed = NULL, ...)
+moead(
+  preset = NULL,
+  problem = NULL,
+  decomp = NULL,
+  aggfun = NULL,
+  neighbors = NULL,
+  variation = NULL,
+  update = NULL,
+  constraint = NULL,
+  scaling = NULL,
+  stopcrit = NULL,
+  showpars = NULL,
+  seed = NULL,
+  ...
+)
 }
 \arguments{
 \item{preset}{List object containing preset values for one or more
@@ -84,7 +96,7 @@ routine that calculates \strong{Y} = \strong{f}(\strong{X});
 }
 
 Besides these fields, \code{problem} should contain any other relevant inputs
-for the routine listed in \code{$name}. \code{problem} may also contain the
+for the routine listed in \verb{$name}. \code{problem} may also contain the
 (optional) field \code{problem$constraints}, which is a list object
 containing information about the problem constraints. If present, this list
 must have the following fields:
@@ -109,7 +121,7 @@ details.
 
 The \code{decomp} parameter is a list that defines the method to be used for the
 generation of the weight vectors. \code{decomp} must have
-at least the \code{$name} parameter. Currently available methods can be
+at least the \verb{$name} parameter. Currently available methods can be
 verified using \code{\link[=get_decomposition_methods]{get_decomposition_methods()}}. Check
 \code{\link[=generate_weights]{generate_weights()}} and the information provided by
 \code{\link[=get_decomposition_methods]{get_decomposition_methods()}} for more details.
@@ -123,10 +135,10 @@ at least three parameters:
 \itemize{
 \item \code{neighbors$name}, name of the strategy used to define the neighborhoods.
 Currently available methods are:
-- \code{$name = "lambda"}: uses the distances between weight vectors.
+- \verb{$name = "lambda"}: uses the distances between weight vectors.
 The calculation is performed only once for the entire run,
 since the weight vectors are assumed static.
-- \code{$name = "x"}: uses the distances between the incumbent solutions
+- \verb{$name = "x"}: uses the distances between the incumbent solutions
 associated with each subproblem. In this case the calculation is
 performed at each iteration, since incumbent solutions may change.
 \item \code{neighbors$T}: defines the neighborhood size. This parameter must receive
@@ -142,17 +154,17 @@ Check \code{\link[=define_neighborhood]{define_neighborhood()}} for more details
 
 The \code{variation} parameter consists of a list vector, in which each
 sublist defines a variation operator to be used as part of the variation
-block. Each sublist must have at least a field \code{$name}, containing the name
+block. Each sublist must have at least a field \verb{$name}, containing the name
 of the \code{i}-th variation operator to be applied. Use
 \code{\link[=get_variation_operators]{get_variation_operators()}} to generate a list of available operators, and
-consult the vignette \code{Variation Stack in the MOEADr Package} for more
+consult the vignette \verb{Variation Stack in the MOEADr Package} for more
 details.
 }
 
 \section{Scalar Aggregation Functions}{
 
 The \code{aggfun} parameter is a list that defines the scalar aggregation function
-to be used. \code{aggfun} must have at least the \code{$name} parameter. Currently
+to be used. \code{aggfun} must have at least the \verb{$name} parameter. Currently
 available methods can be verified using \code{\link[=get_scalarization_methods]{get_scalarization_methods()}}. Check
 \code{\link[=scalarize_values]{scalarize_values()}} and the information provided by
 \code{\link[=get_scalarization_methods]{get_scalarization_methods()}} for more details.
@@ -161,7 +173,7 @@ available methods can be verified using \code{\link[=get_scalarization_methods]{
 \section{Update Methods}{
 
 The \code{update} parameter is a list that defines the population update strategy
-to be used. \code{update} must have at least the \code{$name} parameter. Currently
+to be used. \code{update} must have at least the \verb{$name} parameter. Currently
 available methods can be verified using \code{\link[=get_update_methods]{get_update_methods()}}. Check
 \code{\link[=update_population]{update_population()}} and the information provided by
 \code{\link[=get_update_methods]{get_update_methods()}} for more details.
@@ -179,7 +191,7 @@ certain subproblems (e.g., \code{\link[=constraint_vbr]{constraint_vbr()}} with 
 \section{Constraint Handling Methods}{
 
 The \code{constraint} parameter is a list that defines the constraint-handling
-technique to be used. \code{constraint} must have at least the \code{$name} parameter.
+technique to be used. \code{constraint} must have at least the \verb{$name} parameter.
 Currently available methods can be verified using \code{\link[=get_constraint_methods]{get_constraint_methods()}}.
 Check \code{\link[=update_population]{update_population()}} and the information provided by
 \code{\link[=get_constraint_methods]{get_constraint_methods()}} for more details.
@@ -190,17 +202,17 @@ Check \code{\link[=update_population]{update_population()}} and the information 
 Objective scaling refers to the re-scaling of the objective values at each
 iteration, which is generally considered to prevent problems arising from
 differently-scaled objective functions. \code{scaling} is a list that must have
-at least the \code{$name} parameter. Currently available options are
-\code{$name = "none"}, which does not perform any scaling, and \code{$name = "simple"},
+at least the \verb{$name} parameter. Currently available options are
+\verb{$name = "none"}, which does not perform any scaling, and \verb{$name = "simple"},
 which performs a simple linear scaling of the objectives to the interval
-\code{[0, 1]}.
+\verb{[0, 1]}.
 }
 
 \section{Stop Criteria}{
 
 The \code{stopcrit} parameter consists of a list vector, in which each
 sublist defines a termination criterion to be used for the MOEA/D. Each
-sublist must have at least a field \code{$name}, containing the name of the
+sublist must have at least a field \verb{$name}, containing the name of the
 \code{i}-th criterion to be verified. The iterative cycle of the MOEA/D is
 terminated whenever any criterion is met. Use \code{\link[=get_stop_criteria]{get_stop_criteria()}} to
 generate a list of available criteria, and check the information provided by
@@ -212,18 +224,18 @@ that function for more details.
 The \code{showpars} parameter is a list that defines the echoing options of the
 MOEA/D. \code{showpars} must contain two fields:
 \itemize{
-\item \code{showpars$show.iters}, defining the type of echoing output. \code{$show.iters}
+\item \code{showpars$show.iters}, defining the type of echoing output. \verb{$show.iters}
 can be set as \code{"none"}, \code{"numbers"}, or \code{"dots"}.
 \item \code{showpars$showevery}, defining the period of echoing (in iterations).
-\code{$showevery} must be a positive integer.
+\verb{$showevery} must be a positive integer.
 }
 }
 
 \section{References}{
 
-F. Campelo, L.S. Batista, C. Aranha:
-"The MOEADr Package - A Component-Based Framework for Multiobjective
-Evolutionary Algorithms Based on Decomposition". In preparation, 2017.
+F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+Decomposition. Journal of Statistical Software \url{doi:10.18637/jss.v092.i06}\cr
 }
 
 \examples{

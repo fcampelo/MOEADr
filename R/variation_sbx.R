@@ -24,6 +24,10 @@
 #' Deb, K. and Agrawal, R. B. (1995) Simulated binary crossover for continuous
 #' search space. Complex Systems, 9 115-148 \cr
 #'
+#' F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+#' Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+#' Decomposition. Journal of Statistical Software <doi:10.18637/jss.v092.i06>\cr
+#'
 #' Olaf Mersmann (2012). emoa: Evolutionary Multiobjective
 #' Optimization Algorithms. R package version 0.5-0.\cr
 #' http://CRAN.R-project.org/package=emoa

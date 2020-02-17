@@ -43,3 +43,11 @@ update the population matrix of the MOEA/D.
 This update routine is intended to be used internally by the main \code{\link[=moead]{moead()}}
 function, and should not be called directly by the user.
 }
+\section{References}{
+
+
+F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+Decomposition. Journal of Statistical Software \url{doi:10.18637/jss.v092.i06}\cr
+}
+

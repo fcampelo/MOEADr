@@ -8,7 +8,7 @@ check_stop_criteria(stopcrit, call.env)
 }
 \arguments{
 \item{stopcrit}{list containing the parameters defining the stop
-handling method. See Section \code{Stop Criteria} of the \code{\link[=moead]{moead()}}
+handling method. See Section \verb{Stop Criteria} of the \code{\link[=moead]{moead()}}
 documentation for details.}
 
 \item{call.env}{List vector containing the stop criteria to be used.
@@ -25,3 +25,10 @@ Verifies stop criteria for the MOEADr package.
 This routine is intended to be used internally by \code{\link[=moead]{moead()}},
 and should not be called directly by the user.
 }
+\section{References}{
+
+F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+Decomposition. Journal of Statistical Software \url{doi:10.18637/jss.v092.i06}\cr
+}
+

@@ -10,7 +10,7 @@ evaluate_population(X, problem, nfe)
 \item{X}{Population matrix of the MOEA/D (each row is a candidate solution).}
 
 \item{problem}{list of named problem parameters. See Section
-\code{Problem Description} of the \code{\link[=moead]{moead()}} documentation for details.}
+\verb{Problem Description} of the \code{\link[=moead]{moead()}} documentation for details.}
 
 \item{nfe}{counter of function evaluations from the \code{\link[=moead]{moead()}} routine.}
 }
@@ -32,6 +32,13 @@ candidate solutions to be standardized, i.e., that the variable limits given
 in \code{problem$xmin} and \code{problem$xmax} are mapped to \code{0} and
 \code{1}, respectively.
 }
+\section{References}{
+
+F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+Decomposition. Journal of Statistical Software \url{doi:10.18637/jss.v092.i06}\cr
+}
+
 \examples{
 ex.problem <- list(name = "example_problem",
                    xmin = rep(-1, 5),

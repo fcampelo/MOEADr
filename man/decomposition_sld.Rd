@@ -40,6 +40,10 @@ Simplex-lattice Design.
 I. Das, J. Dennis (1998), "Normal Boundary Intersection - A New Method
 for Generating the Pareto Surface in Nonlinear Multicriteria Optimization
 Problems", SIAM J. Optim., 8(3), 631-657. DOI: 10.1137/S1052623496307510
+
+F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+Decomposition. Journal of Statistical Software \url{doi:10.18637/jss.v092.i06}\cr
 }
 
 \examples{
