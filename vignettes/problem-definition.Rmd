@@ -45,7 +45,7 @@ Besides these fields, `problem` should contain any other relevant inputs for the
 
 Besides these fields, `problem$constraints` should contain any other relevant inputs for the routine listed in `problem$constraints$name`.
 
-To guide us through the steps required to define a problem structure for the MOEADr package, assume that we want to use the MOEADr framework to solve a 10-variable, 2-objective DTLZ1 benchmark function^[http://www.tik.ee.ethz.ch/sop/download/supplementary/testproblems/dtlz1/]. Assume that the feasible space is defined by the interval [0, 1] for all variables, and by $x_1^2 + 2x_2^2 \leq 1.2$ and $x_3x_4 = 0.5$. In this case, the `problem` variable would be defined as:
+To guide us through the steps required to define a problem structure for the MOEADr package, assume that we want to use the MOEADr framework to solve a 10-variable, 2-objective DTLZ1 benchmark function^[https://deap.readthedocs.io/en/master/api/benchmarks.html#deap.benchmarks.dtlz1]. Assume that the feasible space is defined by the interval [0, 1] for all variables, and by $x_1^2 + 2x_2^2 \leq 1.2$ and $x_3x_4 = 0.5$. In this case, the `problem` variable would be defined as:
 
 ```{r, eval = FALSE}
 problem <- list(name        = "moeadr_dtlz1",  # objective function routine

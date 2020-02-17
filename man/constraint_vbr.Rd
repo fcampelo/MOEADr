@@ -106,6 +106,6 @@ IEEE Transactions on Evolutionary Computation4(3):284–294, 2000.\cr
 \verb{[Campelo2017]}  F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr}
 Package: A Component-Based Framework for Multiobjective Evolutionary
 Algorithms Based on Decomposition. Journal of Statistical Software
-\url{doi:10.18637/jss.v092.i06}\cr
+\doi{10.18637/jss.v092.i06}\cr
 }
 

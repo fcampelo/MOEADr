@@ -42,7 +42,7 @@ S3 method for summarizing \emph{moead} objects (the output of \code{\link[=moead
 
 F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
 Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
-Decomposition. Journal of Statistical Software \url{doi:10.18637/jss.v092.i06}\cr
+Decomposition. Journal of Statistical Software \doi{10.18637/jss.v092.i06}\cr
 }
 
 \examples{

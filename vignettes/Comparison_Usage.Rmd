@@ -15,7 +15,7 @@ Using the **irace** package, we automatically assemble and fine-tune a MOEA/D co
 
 ## Fine tuning setup
 
-Ten unconstrained test problems from the CEC2009 competition^[Functions UF1 to UF10 ([http://dces.essex.ac.uk/staff/qzhang/moeacompetition09.htm](http://dces.essex.ac.uk/staff/qzhang/moeacompetition09.htm)), using the standard implementation available in the **smoof** package.] are used, with dimensions ranging from 20 to 60. Dimensions 30, 40 and 50 were 
+Ten unconstrained test problems from the CEC2009 competition^[Functions UF1 to UF10 ([https://web.archive.org/web/20180129060104/https://dces.essex.ac.uk/staff/qzhang/MOEAcompetition/CEC09final](https://web.archive.org/web/20180129060104/https://dces.essex.ac.uk/staff/qzhang/MOEAcompetition/CEC09final/)), using the standard implementation available in the **smoof** package.] are used, with dimensions ranging from 20 to 60. Dimensions 30, 40 and 50 were 
 reserved for testing, while all others were used for the training effort. To 
 quantify the quality of the set of solutions returned by a candidate 
 configuration we use the Inverted Generational Distance (IGD). The number of 
