@@ -32,7 +32,7 @@ update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 1000))
+                       maxeval = 100000000))
 
 
 
@@ -89,7 +89,7 @@ for (j in 83463:(83463 + repetitions)) {
     sampled <- sample(1:3)
     i <- 1
     while (i <= 3) {
-      exit()
+      
       if (sampled[i] == 1) {
         
         moead.RI <- moead(
