@@ -18,7 +18,7 @@ library(plotly)
 require(RColorBrewer)
 library(stringr)
 library(smoof)
-library(tidyverse) # used
+# library(tidyverse) # used
 #library(viridis)
 library(withr)
 
@@ -342,15 +342,15 @@ savePlotData <- function (moea, name, j,wd = '~/dataExp/') {
   }
   
   
-  temp <- moea$plot.paretofront[-1,]
-  temp <- apply(temp, 2, unlist)
-  temp <- as.data.frame(temp)
-  write_feather(temp, paste0(wd, name, j, '_plot.paretofront'))
-  
-  temp <- as.data.frame(moea$plot.resources[-1,])
-  temp <- apply(temp, 2, unlist)
-  temp <- as.data.frame(temp)
-  write_feather(temp, paste0(wd, name, j, '_plot.resources'))
+  # temp <- moea$plot.paretofront[-1,]
+  # temp <- apply(temp, 2, unlist)
+  # temp <- as.data.frame(temp)
+  # write_feather(temp, paste0(wd, name, j, '_plot.paretofront'))
+  # 
+  # temp <- as.data.frame(moea$plot.resources[-1,])
+  # temp <- apply(temp, 2, unlist)
+  # temp <- as.data.frame(temp)
+  # write_feather(temp, paste0(wd, name, j, '_plot.resources'))
   
   # temp <- as.data.frame(moea$plot.paretoset[-1, ])
   # temp <- apply(temp, 2, unlist)
@@ -361,6 +361,11 @@ savePlotData <- function (moea, name, j,wd = '~/dataExp/') {
   temp <- apply(temp, 2, unlist)
   temp <- as.data.frame(temp)
   write_feather(temp, paste0(wd, name, j, '_W'))
+  
+  temp <- as.data.frame(moea$usage)
+  temp <- apply(temp, 2, unlist)
+  temp <- as.data.frame(temp)
+  write_feather(temp, paste0(wd, name, j, '_usage'))
   
   temp <- as.data.frame(moea$nfe)
   temp <- apply(temp, 2, unlist)
@@ -382,11 +387,12 @@ savePlotData <- function (moea, name, j,wd = '~/dataExp/') {
 loadPlotData <- function (name, j,wd='~/dataExp/') {
   X <- read_feather(paste0(wd, name, j, '_X'))
   Y <- read_feather(paste0(wd, name, j, '_Y'))
-  plot.paretofront <-
-    read_feather(paste0(wd, name, j, '_plot.paretofront'))
-  plot.resources <-
-    read_feather(paste0(wd, name, j, '_plot.resources'))
+  # plot.paretofront <-
+  #   read_feather(paste0(wd, name, j, '_plot.paretofront'))
+  # plot.resources <-
+  #   read_feather(paste0(wd, name, j, '_plot.resources'))
   iter <- read_feather(paste0(wd, name, j, '_iter'))
+  usage <- read_feather(paste0(wd, name, j, '_usage'))
   time <- read_feather(paste0(wd, name, j, '_time'))
   W <- read_feather(paste0(wd, name, j, '_W'))
   nfe <- read_feather(paste0(wd, name, j, '_nfe'))
@@ -398,10 +404,11 @@ loadPlotData <- function (name, j,wd='~/dataExp/') {
     nfe         = nfe,
     n.iter      = iter,
     time        = time,
+    usage        = usage,
     #Vmatrix = Vmatrix,
-    plot.paretofront = plot.paretofront,
+    # plot.paretofront = plot.paretofront,
     
-    plot.resources = plot.resources,
+    # plot.resources = plot.resources,
     moead.norm = FALSE
   )
   return(out)

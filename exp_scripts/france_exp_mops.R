@@ -15,7 +15,7 @@ dimension <- 100
 loaded.weights.2objs <-
   data.matrix(
     read.csv(
-      "~/MOEADr/SOBOL-2objs-500wei.ws",
+      "~/MOEADr/SOBOL-2objs-1000wei.ws",
       header = F,
       stringsAsFactors = FALSE,
       sep = " "
@@ -32,7 +32,7 @@ update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 100000000))
+                       maxeval = 1000))
 
 
 
@@ -89,7 +89,7 @@ for (j in 83463:(83463 + repetitions)) {
     sampled <- sample(1:3)
     i <- 1
     while (i <= 3) {
-      
+      exit()
       if (sampled[i] == 1) {
         
         moead.RI <- moead(
@@ -107,7 +107,7 @@ for (j in 83463:(83463 + repetitions)) {
           loaded.weights = loaded.weights.2objs
         )
         savePlotData(moea = moead.RI,
-                     name = paste0(fun, "_moead.RI_", saving_number, "_", lambda),
+                     name = paste0(fun, "_moead.RI_", lambda, "_"),
                      j = saving_number)
       }
       else if (sampled[i] == 3) {
@@ -128,7 +128,7 @@ for (j in 83463:(83463 + repetitions)) {
         
         savePlotData(
           moea = moead.norm,
-          name = paste0(fun, "_moead.norm_", saving_number, "_", lambda),
+          name = paste0(fun, "_moead.norm_", lambda, "_"),
           j = saving_number
         )
       }
@@ -150,7 +150,7 @@ for (j in 83463:(83463 + repetitions)) {
         
         savePlotData(
           moea = moead.random,
-          name = paste0(fun, "_moead.random_", saving_number, "_", lambda),
+          name = paste0(fun, "_moead.random_", lambda, "_"),
           j = saving_number
         )
       }
@@ -245,7 +245,7 @@ for (j in 83463:(83463 + repetitions)) {
           loaded.weights = loaded.weights.3objs
         )
         savePlotData(moea = moead.RI,
-                     name = paste0(fun, "_moead.RI_", saving_number, "_", lambda),
+                     name = paste0(fun, "_moead.RI_", lambda, "_"),
                      j = saving_number)
       }
       else if (sampled[i] == 3) {
@@ -265,7 +265,7 @@ for (j in 83463:(83463 + repetitions)) {
         )
         
         savePlotData(moea = moead.norm,
-                     name = paste0(fun, "_moead.norm_", saving_number, "_", lambda),
+                     name = paste0(fun, "_moead.norm_", lambda, "_"),
                      j = saving_number)
       }
       else if (sampled[i] == 2) {
@@ -285,7 +285,7 @@ for (j in 83463:(83463 + repetitions)) {
         )
         
         savePlotData(moea = moead.norm,
-                     name = paste0(fun, "_moead.random_", saving_number, "_", lambda),
+                     name = paste0(fun, "_moead.random_", lambda, "_"),
                      j = saving_number)
       }
       i <- i + 1
