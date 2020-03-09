@@ -54,8 +54,8 @@ problem.dtlz7 <- list(
 
 
 
-
 print("2 OBJECTIVES")
+fun <- "DTLZ7"
 saving_number <- 1
 for (j in 83463:(83463 + repetitions)) {
   number_subproblems <-
@@ -162,6 +162,7 @@ for (j in 83463:(83463 + repetitions)) {
 
 print("3 OBJECTIVES")
 
+fun <- "DTLZ7"
 problem.smoof.UF <-
   makeUFFunction(dimension = dimension,
                  id = 9)
