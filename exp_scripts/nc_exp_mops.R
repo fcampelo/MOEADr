@@ -8,7 +8,7 @@ library(withr)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
 num_pf <- 11
-begin <- 1
+begin <- 10
 
 repetitions <-  21
 dimension <- 100 # dimenstion <= 40 when using BiBBOB
@@ -18,7 +18,7 @@ variation[[2]]$pm = 1 / dimension
 scaling <- list()
 scaling$name <- "simple"
 subproblems.number <-
-  c(349, 25) #yelds, with sld, to 350 and 351 solutions in 2 and 3 objectives
+  c(359, 25) #yelds, with sld, to 350 and 351 solutions in 2 and 3 objectives
 
 ### I WAS NOT USING ARCHIVE, IM GOING TO DO AFTER CEC
 # update <- preset_moead("moead.de")$update
