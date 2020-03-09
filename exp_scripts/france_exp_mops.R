@@ -15,7 +15,7 @@ dimension <- 100
 loaded.weights.2objs <-
   data.matrix(
     read.csv(
-      "~/Downloads/SOBOL-2objs-500wei.ws",
+      "~/MOEADr/SOBOL-2objs-500wei.ws",
       header = F,
       stringsAsFactors = FALSE,
       sep = " "
@@ -181,7 +181,7 @@ problem.uf9 <- list(
 loaded.weights.3objs <-
   data.matrix(
     read.csv(
-      "~/Downloads/SOBOL-3objs-500wei.ws",
+      "~/MOEADr/SOBOL-3objs-500wei.ws",
       header = F,
       stringsAsFactors = FALSE,
       sep = " "
