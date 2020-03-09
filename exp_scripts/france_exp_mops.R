@@ -5,7 +5,7 @@ library(MOEADr)
 library(emoa)
 library(feather)
 library(withr)
-library(nsga2R)
+# library(nsga2R)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 
 
