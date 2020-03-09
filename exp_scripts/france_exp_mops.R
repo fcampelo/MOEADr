@@ -15,7 +15,7 @@ dimension <- 100
 loaded.weights.2objs <-
   data.matrix(
     read.csv(
-      "~/MOEADr/SOBOL-2objs-1000wei.ws",
+      "~/MOEADr/SOBOL-2objs-500wei.ws",
       header = F,
       stringsAsFactors = FALSE,
       sep = " "
