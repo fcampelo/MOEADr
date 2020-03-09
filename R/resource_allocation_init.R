@@ -1,5 +1,5 @@
 resource_allocation_init <-
-  function(resource.allocation, W, ...) {
+  function(resource.allocation, W, bigZ,...) {
     # ========== Error catching and default value definitions
     assertthat::assert_that(
       "name" %in% names(resource.allocation),

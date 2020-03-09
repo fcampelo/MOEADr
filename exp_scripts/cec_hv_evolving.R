@@ -21,13 +21,13 @@ names <- c(
   "moead.random_fixed.0.1"
 )
 
-strategy <-
-  c("100%",
-    "80%",
-    "60%",
-    "40%",
-    "20%",
-    "10%")
+PS <-
+  c("0.1",
+    "0.2",
+    "0.4",
+    "0.6",
+    "0.8",
+    "1.0")
 
 checkpoints <- (0:40) * 750
 
@@ -107,18 +107,18 @@ for (fun in fun.names1) {
       }
       
       fun_hv <-
-        rbind(fun_hv, cbind(total_hv, strategy = strategy[stg_idx]))
+        rbind(fun_hv, cbind(total_hv, PS = PS[stg_idx]))
       stg_idx <- stg_idx + 1
     }
     
     
     median <-
-      aggregate(fun_hv$hv, median, by = list(fun_hv$strategy, fun_hv$iter))
+      aggregate(fun_hv$hv, median, by = list(fun_hv$PS, fun_hv$iter))
     sd <-
-      aggregate(fun_hv$hv, sd, by = list(fun_hv$strategy, fun_hv$iter))
+      aggregate(fun_hv$hv, sd, by = list(fun_hv$PS, fun_hv$iter))
     plot_data <- (data.frame(median, sd))
     plot_data <- plot_data[,-c(4, 5)]
-    colnames(plot_data) <- c("Strategy", "iter", "median", "sd")
+    colnames(plot_data) <- c("PS", "iter", "median", "sd")
     plot_data$ymax <- plot_data$median + plot_data$sd
     plot_data$ymin <- plot_data$median - plot_data$sd
     
@@ -129,12 +129,12 @@ for (fun in fun.names1) {
                 aes(
                   x = iter,
                   y = median,
-                  group = Strategy,
-                  color = Strategy,
-                  fill = Strategy
+                  group = PS,
+                  color = PS,
+                  fill = PS
                 )) + 
-      geom_point(aes(color = Strategy,fill = Strategy)) + 
-      geom_line(aes(color = Strategy,fill = Strategy)) + 
+      geom_point(aes(color = PS,fill = PS)) + theme_minimal() +
+      geom_line(aes(color = PS,fill = PS)) + 
       geom_ribbon(aes(ymin =ymax, ymax = ymin),alpha = .2, linetype = 0) +
       theme(
         legend.text = element_text(size =
@@ -142,13 +142,13 @@ for (fun in fun.names1) {
         axis.text = element_text(size =
                                    24),
         axis.title =
-          element_text(size = 26, face = "bold")
+          element_text(size = 26)
       )  +
       labs(x = "Number of Function Evalutions", y = "HV") 
     # v <- v + scale_colour_brewer(palette = "Dark2")
     filename = paste0("~/hv_evolving/", fun , "hv_evolution.png")
     ggsave(filename = filename,
-           dpi = 100,
+           dpi = 600,
            width = 9)
     # exit()
   # }

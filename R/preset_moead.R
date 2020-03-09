@@ -138,7 +138,7 @@ preset_moead <- function(name = NULL) {
                             phi      = 0.5),
                        list(name     = "polymut",
                             etam     = 20,
-                            pm       = "n"),
+                            pm       = 0.04),
                        list(name     = "truncate")),
     update      = list(name          = "restricted",
                        nr            = 2,

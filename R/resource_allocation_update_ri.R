@@ -7,15 +7,15 @@ resource_allocation_update_ri <- function(iter,
                                           Y,
                                           dt.Y,
                                           W,
-                                          dt.dm,
+                                          # dt.dm,
                                           X,
                                           dt.X,
-                                          newObj,
-                                          oldObj,
+                                          # newObj,
+                                          # oldObj,
                                           ...) {
   if (iter > resource.allocation$dt) {
     priority.values <-
-      by_RI(dt.bigZ, bigZ, neighbors.T, epsilon = 1e-50)
+      by_RI(dt.bigZ, bigZ, neighbors.T, resource.allocation, epsilon = 1e-50)
   }
   out <- list(priority.values = priority.values)
   return(out)
@@ -23,16 +23,21 @@ resource_allocation_update_ri <- function(iter,
 
 
 
-by_RI <- function(dt.bigZ, bigZ, neighbors.T, epsilon = 1e-50) {
+by_RI <- function(dt.bigZ, bigZ, neighbors.T, resource.allocation, epsilon = 1e-50) {
   # dt <- apply(X = dt.bigZ, MARGIN = 2, sum)
   dt <- dt.bigZ[neighbors.T + 1,]
   z <- bigZ[neighbors.T + 1,]
   u <- (dt - z) / dt
   if (max(u) == 0) {
-    p <- rep(1, length(u))
+    u <- rep(1, length(u))
   }
   else{
-    p <- (u + epsilon) / (max(u) + epsilon)
+    # p <- (u + epsilon) / (max(u) + epsilon)
+    u <- (u - min(u)) / ((max(u) - min(u)) + epsilon)
   }
-  return(p)
+  # print("p")
+  # print(p)
+  # p<-replace(p, p<0, 0)
+  # print(p)
+  return(u)
 }

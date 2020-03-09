@@ -22,101 +22,101 @@ norm_vec2 <- function(x) {
 #   return (sum(p*d)/(norm(d, type="2")^2)*d)
 # }
 
-projection <- function(a, b, epsilon = 1e-50) {
-  return(c(sum(a * b) / sum(a ^ 2) + epsilon) * a)
-}
-
-
-find_indexes <- function(offspring, parent) {
-  # j in eq (3)
-  indexes_j <- list() # offspring
-  # i in eq (3)
-  indexes_i <- list() # parent
-  for (j in 1:nrow(offspring)) {
-    found <- FALSE
-    min.value <- Inf
-    l <- 0
-    # equation (4)
-    
-    for (i in 1:nrow(parent)) {
-      set <- rbind(parent[i, ], offspring[j, ])
-      if (is_maximally_dominated(set)[1]) {
-        if (!found) {
-          indexes_j <- append(indexes_j, j)
-          found <- TRUE
-        }
-        aux <- norm(parent[i, ] - offspring[j, ], type = "2")
-        if (min.value > aux) {
-          # for equation (6) and (5)
-          min.value <- aux
-          l <- i
-        }
-      }
-    }
-    
-    if (l != 0)
-      # i in equation (5)
-      indexes_i <- append(indexes_j, l)
-  }
-  out <- list(i = indexes_i, j = indexes_j)
-  return(out)
-}
-
-
-
-online_diversity <-
-  function(offspring, parent, W, old.dm, epsilon = 1e-50) {
-    out <-
-      find_indexes(apply(offspring, 2, sample), parent)
-    indexes_i <- out$i
-    indexes_j <- out$j
-    # my.out <- rep(.Machine$double.xmin, nrow(offspring))
-    my.out <- rep(.Machine$double.xmin, nrow(offspring))
-    
-    # equation (7)
-    for (i in 1:dim(offspring)[1]) {
-      # max.out <- -Inf
-      if (length(indexes_j) > 0) {
-        for (j in 1:length(indexes_j)) {
-          # diversity measurement: aumount of diversity loss of an ind. solution between 2 generations
-          #condition for eq (7)
-          c.line <- offspring[i, ] - offspring[indexes_j[[j]], ]
-          p.line <- parent[i, ] - parent[indexes_i[[j]], ]
-          
-          if (c.line != 0 && p.line != 0) {
-            #equation (3)
-            d.convs <-
-              (offspring[indexes_j[[j]], ] - parent[indexes_i[[j]], ]) + epsilon
-            # projection calculation
-            proj.c <- projection(c.line, d.convs)
-            proj.p <- projection(p.line, d.convs)
-            
-            # calculate the norm of the vectors: numerator and demoniator of equation (7)
-            a <- norm(p.line - proj.p, type = "2")
-            b <- norm(c.line - proj.c, type = "2")
-            
-            # equation (7)
-            aux <-  a / (b + epsilon)
-            #equation (10)
-            if (aux > my.out[i]) {
-              my.out[i] <- aux
-            }
-          }
-          
-        }
-      }
-      else{
-        my.out[i] <- .Machine$double.xmax
-      }
-    }
-    # p <-  my.out - old.dm
-    p <-  my.out
-    p <- (p - min(p)) / ((max(p) - min(p)) + epsilon)
-    # out <- list(p = 1 - p, dm = my.out)
-    out <- list(p = 1 - p, dm = my.out)
-    return(out)
-  }
-
+# projection <- function(a, b, epsilon = 1e-50) {
+#   return(c(sum(a * b) / sum(a ^ 2) + epsilon) * a)
+# }
+# 
+# 
+# find_indexes <- function(offspring, parent) {
+#   # j in eq (3)
+#   indexes_j <- list() # offspring
+#   # i in eq (3)
+#   indexes_i <- list() # parent
+#   for (j in 1:nrow(offspring)) {
+#     found <- FALSE
+#     min.value <- Inf
+#     l <- 0
+#     # equation (4)
+#     
+#     for (i in 1:nrow(parent)) {
+#       set <- rbind(parent[i, ], offspring[j, ])
+#       if (is_maximally_dominated(set)[1]) {
+#         if (!found) {
+#           indexes_j <- append(indexes_j, j)
+#           found <- TRUE
+#         }
+#         aux <- norm(parent[i, ] - offspring[j, ], type = "2")
+#         if (min.value > aux) {
+#           # for equation (6) and (5)
+#           min.value <- aux
+#           l <- i
+#         }
+#       }
+#     }
+#     
+#     if (l != 0)
+#       # i in equation (5)
+#       indexes_i <- append(indexes_j, l)
+#   }
+#   out <- list(i = indexes_i, j = indexes_j)
+#   return(out)
+# }
+# 
+# 
+# 
+# online_diversity <-
+#   function(offspring, parent, W, old.dm, epsilon = 1e-50) {
+#     out <-
+#       find_indexes(apply(offspring, 2, sample), parent)
+#     indexes_i <- out$i
+#     indexes_j <- out$j
+#     # my.out <- rep(.Machine$double.xmin, nrow(offspring))
+#     my.out <- rep(.Machine$double.xmin, nrow(offspring))
+#     
+#     # equation (7)
+#     for (i in 1:dim(offspring)[1]) {
+#       # max.out <- -Inf
+#       if (length(indexes_j) > 0) {
+#         for (j in 1:length(indexes_j)) {
+#           # diversity measurement: aumount of diversity loss of an ind. solution between 2 generations
+#           #condition for eq (7)
+#           c.line <- offspring[i, ] - offspring[indexes_j[[j]], ]
+#           p.line <- parent[i, ] - parent[indexes_i[[j]], ]
+#           
+#           if (c.line != 0 && p.line != 0) {
+#             #equation (3)
+#             d.convs <-
+#               (offspring[indexes_j[[j]], ] - parent[indexes_i[[j]], ]) + epsilon
+#             # projection calculation
+#             proj.c <- projection(c.line, d.convs)
+#             proj.p <- projection(p.line, d.convs)
+#             
+#             # calculate the norm of the vectors: numerator and demoniator of equation (7)
+#             a <- norm(p.line - proj.p, type = "2")
+#             b <- norm(c.line - proj.c, type = "2")
+#             
+#             # equation (7)
+#             aux <-  a / (b + epsilon)
+#             #equation (10)
+#             if (aux > my.out[i]) {
+#               my.out[i] <- aux
+#             }
+#           }
+#           
+#         }
+#       }
+#       else{
+#         my.out[i] <- .Machine$double.xmax
+#       }
+#     }
+#     # p <-  my.out - old.dm
+#     p <-  my.out
+#     p <- (p - min(p)) / ((max(p) - min(p)) + epsilon)
+#     # out <- list(p = 1 - p, dm = my.out)
+#     out <- list(p = 1 - p, dm = my.out)
+#     return(out)
+#   }
+# 
 
 
 dra <- function(newObj, oldObj, Pi) {

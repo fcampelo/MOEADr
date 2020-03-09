@@ -1,4 +1,4 @@
-resource_allocation_update_random <- function(iter, 
+resource_allocation_update_random <- function(iter,
                                               resource.allocation,
                                               priority.values,
                                               bigZ,
@@ -7,11 +7,10 @@ resource_allocation_update_random <- function(iter,
                                               Y,
                                               dt.Y,
                                               W,
-                                              dt.dm,
                                               X,
                                               dt.X,
-                                              newObj,
-                                              oldObj,
+                                              # newObj,
+                                              # oldObj,
                                               ...) {
   if (iter > resource.allocation$dt) {
     priority.values <- by_random(dim(W)[1])

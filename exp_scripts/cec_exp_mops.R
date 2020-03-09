@@ -18,7 +18,7 @@ variation[[2]]$pm = 1 / dimension
 scaling <- list()
 scaling$name <- "simple"
 subproblems.number <-
-  c(359, 25) #yelds, with sld, to 350 and 351 solutions in 2 and 3 objectives
+  c(349, 25) #yelds, with sld, to 350 and 351 solutions in 2 and 3 objectives
 
 ### I WAS NOT USING ARCHIVE, IM GOING TO DO AFTER CEC
 # update <- preset_moead("moead.de")$update

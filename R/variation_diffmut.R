@@ -37,7 +37,11 @@
 #'
 #' @section References:
 #' K. Price, R.M. Storn, J.A. Lampinen, "Differential Evolution: A
-#' Practical Approach to Global Optimization", Springer 2005
+#' Practical Approach to Global Optimization", Springer 2005\cr
+#'
+#' F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+#' Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+#' Decomposition. Journal of Statistical Software \doi{10.18637/jss.v092.i06}\cr
 #'
 #' D. V. Arnold, “Weighted multirecombination evolution strategies,”
 #' Theoretical Computer Science 361(1):18–37, 2006.
@@ -45,8 +49,9 @@
 #' @export
 
 variation_diffmut <- function(X, P, B, Phi = NULL, basis = 'rand', ...){
+  
   input.pars <- as.list(sys.call())[-1]
-
+  
   # ========== Error catching and default value definitions
   assertthat::assert_that(
     is.numeric(X) && is.matrix(X),
@@ -58,7 +63,7 @@ variation_diffmut <- function(X, P, B, Phi = NULL, basis = 'rand', ...){
     is.null(Phi) || (is.numeric(Phi) && Phi != 0),
     is.element(basis, c('rand', 'mean', 'wgi')))
   # ==========
-
+  
   dimX <- dim(X)
   # Generate replacement indexes for xbasis, x0, x1
   # (Basis is recreated if 'mean' or 'wgi')
@@ -68,13 +73,14 @@ variation_diffmut <- function(X, P, B, Phi = NULL, basis = 'rand', ...){
                              size    = 3,
                              replace = FALSE,
                              prob    = P[, i]) }))
+  
   if (is.null(Phi)) {
     Phi <- matrix(stats::runif(dimX[1]),
                   nrow  = dimX[1],
                   ncol  = dimX[2],
                   byrow = FALSE)
   }
-
+  
   if (basis == "rand"){
     Xb <- X[R[, 1], , drop = FALSE]
   } else if (basis == "mean"){
@@ -92,19 +98,20 @@ variation_diffmut <- function(X, P, B, Phi = NULL, basis = 'rand', ...){
                                W       = input.pars$W,
                                B       = B,
                                aggfun  = input.pars$aggfun)
-
+    
     # Remove the last row, which refers to x_i^{(t-1)}
     bigZ <- t(bigZ[-nrow(bigZ), , drop = FALSE])
-
+    
     # Calculate weights for WGI
     wgi.W <- log(ncol(bigZ) + 0.5) - log(1:ncol(bigZ))
-
+    
     Xb <- t(sapply(1:dimX[1],
                    FUN = function(i){
                      indx <- order(bigZ[i, , drop = FALSE])
                      colSums(wgi.W * X[B[i, indx, drop = FALSE], ])
                    }))
   }
+  
   # Perform mutations and return
   return(Xb + Phi * (X[R[, 2], , drop = FALSE] - X[R[, 3], , drop = FALSE]))
 }

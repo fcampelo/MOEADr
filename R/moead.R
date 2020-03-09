@@ -268,8 +268,11 @@ moead <-
            # List:  echoing behavior
            seed = NULL,
            # Seed for PRNG
-           resource.allocation = list(name = "none", selection = "none", dt = 2),
+           resource.allocation = list(name = "none",
+                                      selection = "none",
+                                      dt = 2),
            # List:  resource
+           loaded.weights = NULL,
            ...)
 
 # other parameters
@@ -281,7 +284,6 @@ moead <-
                 "moead_env.rds")
     }
     # ============================ Set parameters ============================== #
-    
     if (!is.null(preset)) {
       if (is.null(problem))
         problem   = preset$problem
@@ -306,6 +308,7 @@ moead <-
           no = F
         )
     }
+    
     
     
     # ============== Error catching and default value definitions ============== #
@@ -340,17 +343,23 @@ moead <-
     if (is.null(update$UseArchive)) {
       update$UseArchive <- FALSE
     }
+    # Archive2 = list(X = NULL, Y = NULL, V = list(v = NULL, Cmatrix = NULL, Vmatrix = NULL))
     # =========================== End Algorithm setup ========================== #
     
     # =========================== Initial definitions ========================== #
     # Generate weigth vectors
-    W  <- generate_weights(decomp = decomp,
-                           m      = problem$m)
+    if (decomp$name == "loaded") {
+      W <- decomp$W
+    }
+    else{
+      W  <- generate_weights(decomp = decomp,
+                             m      = problem$m)
+    }
+    
     
     # Generate initial population
     X  <- create_population(N       = nrow(W),
                             problem = problem)
-  
     # Evaluate population on objectives
     YV <- evaluate_population(X       = X,
                               problem = problem,
@@ -362,10 +371,11 @@ moead <-
     
     # ========== Initialize Resource Allocation
     init_ra <- resource_allocation_init(resource.allocation, W)
-    
     priority.values <- init_ra$priority.values
-    idx.boundary <- init_ra$idx.boundary
+    # idx.boundary <- init_ra$idx.boundary
     two_step <- init_ra$two_step
+    idx.boundary <- which(loaded.weights %in% c(0, 1))[1:problem$m]
+    
     
     
     # ========================= End Initial definitions ======================== #
@@ -376,9 +386,11 @@ moead <-
     
     # ========== Visualization Tools
     # calculating usage of resource by subproblem and any other visualization infoc
-    usage <- list()
+    # usage <- rep(TRUE, dim(W)[1])
     plot.resources <- list(rep(0, dim(W)[1]))
     plot.paretofront <- list(rep(0, dim(W)[1]))
+    
+    usage <- list()
     
     while (keep.running) {
       # Update iteration counter
@@ -420,15 +432,13 @@ moead <-
       # given indexes select solutions to change
       temp.X <- X
       temp.Y <- Y
-      X <- X[indexes,]
-      Y <- Y[indexes,]
+      # X <- X[indexes,]
       # indexes are used by Resource Allocation methods. if none, it is equal to the vector 1
-      # print(iter)
-      # print(dim(BP$B.variation))
-      B  <- BP$B.variation[indexes, ]
-      # print(dim(B))
-      # indexes ere used by Resource Allocation methods. if none, it is equal to the vector 1
-      P  <- BP$P[indexes, indexes]
+      # B  <- BP$B.variation[indexes, ]
+      B  <- BP$B
+      # indexes are used by Resource Allocation methods. if none, it is equal to the vector 1
+      # P  <- BP$P[indexes, indexes]
+      P  <- BP$P
       # ========== Variation
       # Perform variation
       Xv      <- do.call(perform_variation,
@@ -436,6 +446,8 @@ moead <-
       X       <- Xv$X
       ls.args <- Xv$ls.args
       nfe     <- nfe + Xv$var.nfe
+      X <- X[indexes, ]
+      
       # ========== Evaluation
       # Evaluate offspring population on objectives
       YV <- evaluate_population(X       = X,
@@ -444,13 +456,14 @@ moead <-
       Y   <- YV$Y
       V   <- YV$V
       nfe <- YV$nfe
+      temp.X[indexes, ] <- X
+      X <- temp.X
+      temp.Y[indexes, ] <- Y
+      Y <- temp.Y
       # ========== Resource Allocation - Combine old solutions with the new ones
       # updating the whole pop with the prioritized solutions in X and in Y
       # indexes are used by Resource Allocation methods. if none, it is equal to the vector 1
-      temp.X[indexes,] <- X
-      X <- temp.X
-      temp.Y[indexes,] <- Y
-      Y <- temp.Y
+      # Y <- Y[indexes, ]
       
       # ========== Scalarization
       # Objective scaling and estimation of 'ideal' and 'nadir' points
@@ -463,7 +476,7 @@ moead <-
       # values for the solutions in the neighborhood of one subproblem, plus the
       # scalarized value for the incumbent solution for that subproblem.
       # B  <- BP$B.scalarize[indexes,]
-      B  <- BP$B.scalarize
+      
       bigZ <- scalarize_values(
         normYs  = normYs,
         W       = W,
@@ -476,7 +489,6 @@ moead <-
       # (which takes into account both the performance value and constraint
       # handling policy, if any)
       # B  <- BP$B.order[indexes,]
-      B  <- BP$B.order
       sel.indx <- order_neighborhood(
         bigZ       = bigZ,
         B          = B,
@@ -486,7 +498,6 @@ moead <-
       )
       # ========== Update
       # Update population
-      old.X <- X
       XY <- do.call(update_population,
                     args = as.list(environment()))
       X       <- XY$X
@@ -495,66 +506,86 @@ moead <-
       Archive <- XY$Archive
       # ========== Resource Allocation - Update Priority function values
       # bad workaround with the problem of not having this values at the first iterations!
-      if (iter <= resource.allocation$dt) {
-        dt.Y <- Y
-        dt.X <- X
-        init_ra$dt.bigZ[[length(init_ra$dt.bigZ) + 1]] <- bigZ
-      }
+      
+      # parameters for NORM and Random
+      init_ra$dt.bigZ[[length(init_ra$dt.bigZ) + 1]] <- bigZ
+      
       #parameters for RI
       index <- ((iter - 1) %% resource.allocation$dt) + 1
       dt.bigZ <- init_ra$dt.bigZ[[index]]
+      
+      if (is.null(dt.bigZ)) {
+        # parameters for NORM and Random - dt.bigz is not used
+        if(resource.allocation$name == "random"){
+          dt.Y <- Y
+          dt.X <- X
+        }
+        dt.bigZ <- bigZ
+      }
       neighbors.T <- neighbors$T
       
-      #parameters for DRA
-      newObj <- bigZ[neighbors$T + 1, ]
-      oldObj <- init_ra$oldObj
-      if(is.null(oldObj)) oldObj <- newObj # means is not going to be used ever 
-      #parameters for RAD
-      dt.dm <- init_p(W, 0)
-      updates <- resource_allocation_update(
-        iter,
-        resource.allocation,
-        priority.values,
-        bigZ,
-        dt.bigZ,
-        neighbors.T,
-        Y,
-        dt.Y,
-        W,
-        dt.dm,
-        X,
-        dt.X,
-        newObj,
-        oldObj
-      )
-      oldObj <- newObj
+      ## parameters for DRA
+      # newObj <- bigZ[neighbors$T + 1, ]
+      # oldObj <- init_ra$oldObj
+      # if(is.null(oldObj)) oldObj <- newObj # means it is not going to be used ever
+
+      if (iter > 1 || resource.allocation$name == "random") {
+        updates <- resource_allocation_update(
+          iter,
+          resource.allocation,
+          priority.values,
+          bigZ,
+          dt.bigZ,
+          neighbors.T,
+          Y,
+          dt.Y,
+          W,
+          # dt.dm,
+          X,
+          dt.X,
+          # newObj,
+          # oldObj
+        )
+        priority.values <- updates$priority.values
+      }
+      
       dt.Y <- Y
       dt.X <- X
-    
-      if (iter > resource.allocation$dt) {
+      
+      if (iter > resource.allocation$dt &&
+          resource.allocation$name == "RI") {
         init_ra$dt.bigZ[[index]] <- bigZ
       }
       
-      #returns
-      priority.values <- updates$priority.values
-      old.dm <- updates$dm
+      #archive nsga2
+      # if (nfe %% 100 == 0){
+      #   comb.popX <- rbind(X, Archive$X, Archive2$X)
+      #   comb.popY <- rbind(Y, Archive$Y, Archive2$Y)
+      #
+      #   rankIdxList <- fastNonDominatedSorting(comb.popY)
+      #
+      #   Archive2$X <- comb.popX[rankIdxList[[1]],]
+      #   Archive2$Y <- comb.popY[rankIdxList[[1]],]
+      # }
+      
+      #
       
       # ========== Visualization Tools
       # calculating usage of resource by subproblem and any other visualization info
-      if (nullRA){
+      if (nullRA) {
         usage[[length(usage) + 1]] <- rep(1, dim(W)[1])
       }
       else{
         usage[[length(usage) + 1]] <- as.numeric(iteration_usage)
       }
       
-      paretofront <-
-        cbind(Y, stage = iter)
-      plot.paretofront <- rbind(plot.paretofront, paretofront)
-      resources <-
-        cbind(Reduce("+", usage),
-              stage = iter)
-      plot.resources <- rbind(plot.resources, resources)
+      # paretofront <-
+      #   cbind(Y, stage = iter)
+      # plot.paretofront <- rbind(plot.paretofront, paretofront)
+      # resources <-
+      #   cbind(Reduce("+", iteration_usage),
+      #         stage = iter)
+      # plot.resources <- rbind(plot.resources, resources)
       
       # ========== Stop Criteria
       # Calculate iteration time
@@ -575,6 +606,20 @@ moead <-
       # ========== Print
       # Echo whatever is demanded
       print_progress(iter.times, showpars)
+      
+      #   plot.Y <- data.frame("f1" = Y[,1], "f2" = Y[,2], "was.selected" = as.factor(usage[[length(usage)]]))
+      #   if (resource.allocation$name == "only_3") {
+      #     plot.Y <- data.frame("f1" = Archive2$Y[,1], "f2" = Archive2$Y[,2], "was.selected" = as.factor(usage[[length(usage)]]))
+      #   }
+      #   v <-
+      #     ggplot(plot.Y, aes(f1, f2, label=was.selected)) + geom_point(aes(shape = was.selected, color = was.selected), size = 3)
+      #   v <- v + coord_cartesian(xlim = c(0.5, 3), ylim = c(0.5, 3)) + ggtitle(paste(iter, resource.allocation$name))
+      #   v <- v + geom_text()
+      #
+      #   b <- ggplot(plot.Y, aes(x = 1:dim(W)[1], y = was.selected, shape = was.selected)) + geom_point() +xlab("solution number")+ ggtitle(paste(iter, resource.allocation$name))
+      #   png(filename = paste0("~/Downloads/",iter,"_",problem, "_",resource.allocation$name,".png"), width = 8*480, height = 5*480, res=300)
+      # grid.arrange(v, b, ncol = 2)
+      #   dev.off()
     }
     # =========================== End Iterative cycle ========================== #
     
@@ -592,12 +637,20 @@ moead <-
       colnames(Archive$W) <- paste0("f", 1:ncol(Archive$W))
     }
     
+    # if (!is.null(Archive2)) {
+    #   Archive2$X <-
+    #     denormalize_population(Archive2$X, problem)
+    #   colnames(Archive2$Y) <- paste0("f", 1:ncol(Archive2$Y))
+    #   Archive2$W           <- W
+    #   colnames(Archive2$W) <- paste0("f", 1:ncol(Archive2$W))
+    # }
+    
     # ========== Visualization Tools
     # polishing output names
-    colnames(plot.paretofront) <-
-      c(paste0("f", 1:ncol(Y)), "stage")
-    colnames(plot.resources) <-
-      c("Resources", "stage")
+    # colnames(plot.paretofront) <-
+    #   c(paste0("f", 1:ncol(Y)), "stage")
+    # colnames(plot.resources) <-
+    #   c("Resources", "stage")
     # Output
     out <- list(
       X           = X,
@@ -605,15 +658,16 @@ moead <-
       V           = V,
       W           = W,
       Archive     = Archive,
+      usage       = usage,
       ideal       = apply(Y, 2, min),
       nadir       = apply(Y, 2, max),
       nfe         = nfe,
       n.iter      = iter,
       time        = difftime(Sys.time(), time.start, units = "secs"),
       seed        = seed,
-      inputConfig = moead.input.pars,
-      plot.paretofront = plot.paretofront,
-      plot.resources = plot.resources
+      inputConfig = moead.input.pars#,
+      # plot.paretofront = plot.paretofront,
+      # plot.resources = plot.resources
     )
     class(out) <- c("moead", "list")
     
