@@ -32,7 +32,7 @@ update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 100000000))
+                       maxeval = 1000))
 
 
 
@@ -62,7 +62,6 @@ for (j in 83463:(83463 + repetitions)) {
     c(3, 4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
   
   for (lambda in number_subproblems) {
-    
     resource.allocation.RI <-
       list(
         name = "RI",
@@ -89,9 +88,7 @@ for (j in 83463:(83463 + repetitions)) {
     sampled <- sample(1:3)
     i <- 1
     while (i <= 3) {
-      
       if (sampled[i] == 1) {
-        
         moead.RI <- moead(
           problem  = problem.dtlz7,
           preset   = preset_moead("moead.de"),
@@ -106,12 +103,14 @@ for (j in 83463:(83463 + repetitions)) {
           resource.allocation = resource.allocation.RI,
           loaded.weights = loaded.weights.2objs
         )
-        savePlotData(moea = moead.RI,
-                     name = paste0(fun, "_moead.RI_", lambda, "_"),
-                     j = saving_number)
+        savePlotData(
+          moea = moead.RI,
+          name = paste0(fun, "_moead.RI_", lambda, "_"),
+          j = saving_number,
+          wd = "~/france_data/"
+        )
       }
       else if (sampled[i] == 3) {
-        
         moead.norm <- moead(
           problem  = problem.dtlz7,
           preset   = preset_moead("moead.de"),
@@ -129,11 +128,11 @@ for (j in 83463:(83463 + repetitions)) {
         savePlotData(
           moea = moead.norm,
           name = paste0(fun, "_moead.norm_", lambda, "_"),
-          j = saving_number
+          j = saving_number,
+          wd = "~/france_data/"
         )
       }
       else if (sampled[i] == 2) {
-        
         moead.random <- moead(
           problem  = problem.dtlz7,
           preset   = preset_moead("moead.de"),
@@ -151,7 +150,8 @@ for (j in 83463:(83463 + repetitions)) {
         savePlotData(
           moea = moead.random,
           name = paste0(fun, "_moead.random_", lambda, "_"),
-          j = saving_number
+          j = saving_number,
+          wd = "~/france_data/"
         )
       }
       i <- i + 1
@@ -192,13 +192,10 @@ decomp.loaded.3 <- list(name = "loaded", W = loaded.weights.3objs)
 
 saving_number <- 1
 for (j in 83463:(83463 + repetitions)) {
-  
-  
   number_subproblems <-
     c(3, 4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
   
   for (lambda in number_subproblems) {
-    
     resource.allocation.RI <-
       list(
         name = "RI",
@@ -227,9 +224,7 @@ for (j in 83463:(83463 + repetitions)) {
     sampled <- sample(1:3)
     i <- 1
     while (i <= 3) {
-      
       if (sampled[i] == 1) {
-        
         moead.RI <- moead(
           problem  = problem.uf9,
           preset   = preset_moead("moead.de"),
@@ -244,12 +239,14 @@ for (j in 83463:(83463 + repetitions)) {
           resource.allocation = resource.allocation.RI,
           loaded.weights = loaded.weights.3objs
         )
-        savePlotData(moea = moead.RI,
-                     name = paste0(fun, "_moead.RI_", lambda, "_"),
-                     j = saving_number)
+        savePlotData(
+          moea = moead.RI,
+          name = paste0(fun, "_moead.RI_", lambda, "_"),
+          j = saving_number,
+          wd = "~/france_data/"
+        )
       }
       else if (sampled[i] == 3) {
-        
         moead.norm <- moead(
           problem  = problem.uf9,
           preset   = preset_moead("moead.de"),
@@ -264,12 +261,14 @@ for (j in 83463:(83463 + repetitions)) {
           loaded.weights = loaded.weights.3objs
         )
         
-        savePlotData(moea = moead.norm,
-                     name = paste0(fun, "_moead.norm_", lambda, "_"),
-                     j = saving_number)
+        savePlotData(
+          moea = moead.norm,
+          name = paste0(fun, "_moead.norm_", lambda, "_"),
+          j = saving_number,
+          wd = "~/france_data/"
+        )
       }
       else if (sampled[i] == 2) {
-        
         moead.random <- moead(
           problem  = problem.uf9,
           preset   = preset_moead("moead.de"),
@@ -284,9 +283,12 @@ for (j in 83463:(83463 + repetitions)) {
           loaded.weights = loaded.weights.3objs
         )
         
-        savePlotData(moea = moead.norm,
-                     name = paste0(fun, "_moead.random_", lambda, "_"),
-                     j = saving_number)
+        savePlotData(
+          moea = moead.norm,
+          name = paste0(fun, "_moead.random_", lambda, "_"),
+          j = saving_number,
+          wd = "~/france_data/"
+        )
       }
       i <- i + 1
     }
