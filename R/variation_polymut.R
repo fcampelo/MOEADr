@@ -60,7 +60,8 @@ variation_polymut <- function(X, etam, pm, problem, eps = 1e-6, ...) {
   # ==========
   length = dim(X)[2]
   op <- pm_operator(etam, pm, rep(-2, length),rep(2, length))
-  X = apply(X = X,MARGIN =  1, FUN = op)
+  X = t(apply(X = X,MARGIN =  1, FUN = op))
+  
   return(X)
 }
 
