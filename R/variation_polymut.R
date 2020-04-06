@@ -32,7 +32,7 @@
 #'
 #' @export
 
-variation_polymut <- function(X, etam, pm, problem, eps = 1e-6, ...) {
+element_wise_variation_polymut <- function(X, etam, pm, problem, eps = 1e-6, ...) {
   # ========== Error catching and default value definitions
   assertthat::assert_that(
     is.numeric(X) && is.matrix(X),
@@ -47,6 +47,21 @@ variation_polymut <- function(X, etam, pm, problem, eps = 1e-6, ...) {
       X[i,j] <- op(X[i,j])
     }
   }
+  return(X)
+}
+
+variation_polymut <- function(X, etam, pm, problem, eps = 1e-6, ...) {
+  # ========== Error catching and default value definitions
+  assertthat::assert_that(
+    is.numeric(X) && is.matrix(X),
+    is.numeric(etam) && etam > 0,
+    is.numeric(pm) && is_within(pm, 0, 1, strict = FALSE)
+  )
+  # ==========
+  # op <- pm_operator(etam, pm, min(problem$xmin),max(problem$xmax))
+  length = dim(X)[2]
+  op <- pm_operator(etam, pm, rep(-2, length),rep(2, length))
+  value2 = apply(X = X,MARGIN =  1, FUN = op)
   return(X)
 }
 
