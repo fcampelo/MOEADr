@@ -58,10 +58,9 @@ variation_polymut <- function(X, etam, pm, problem, eps = 1e-6, ...) {
     is.numeric(pm) && is_within(pm, 0, 1, strict = FALSE)
   )
   # ==========
-  # op <- pm_operator(etam, pm, min(problem$xmin),max(problem$xmax))
   length = dim(X)[2]
   op <- pm_operator(etam, pm, rep(-2, length),rep(2, length))
-  value2 = apply(X = X,MARGIN =  1, FUN = op)
+  X = apply(X = X,MARGIN =  1, FUN = op)
   return(X)
 }
 
