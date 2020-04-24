@@ -84,7 +84,7 @@ for (j in 1:repetitions) {
       problem  = problem.uf9,
       preset   = preset_moead("moead.de"),
       neighbors = neighbors,
-      decomp = decomp.loaded.2,
+      decomp = decomp.loaded.3,
       variation = variation,
       stopcrit = stopcrit,
       scaling = scaling,
@@ -92,7 +92,7 @@ for (j in 1:repetitions) {
       # seed = j,
       update = update,
       resource.allocation = resource.allocation.RI,
-      loaded.weights = loaded.weights.2objs
+      loaded.weights = loaded.weights.3objs
     )
     savePlotData(
       moea = moead.RI,

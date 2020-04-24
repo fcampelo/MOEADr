@@ -85,7 +85,7 @@ for (j in 1:repetitions) {
     moead.norm <- moead(
       problem  = problem.uf9,
       preset   = preset_moead("moead.de"),
-      decomp = decomp.loaded.2,
+      decomp = decomp.loaded.3,
       variation = variation,
       stopcrit = stopcrit,
       scaling = scaling,
@@ -93,7 +93,7 @@ for (j in 1:repetitions) {
       # seed = j,
       update = update,
       resource.allocation = resource.allocation.NORM,
-      loaded.weights = loaded.weights.2objs
+      loaded.weights = loaded.weights.3objs
     )
     
     savePlotData(

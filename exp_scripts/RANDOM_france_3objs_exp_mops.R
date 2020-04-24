@@ -12,16 +12,6 @@ enableJIT(1)
 repetitions <-  9
 dimension <- 100
 
-loaded.weights.2objs <-
-  data.matrix(
-    read.csv(
-      "~/MOEADr/SOBOL-2objs-500wei.ws",
-      header = F,
-      stringsAsFactors = FALSE,
-      sep = " "
-    )
-  )
-decomp.loaded.2 <- list(name = "loaded", W = loaded.weights.2objs)
 variation = preset_moead("moead.de")$variation
 variation[[2]]$pm = 1 / dimension
 scaling <- list()
@@ -85,7 +75,7 @@ for (j in 1:repetitions) {
     moead.random <- moead(
       problem  = problem.uf9,
       preset   = preset_moead("moead.de"),
-      decomp = decomp.loaded.2,
+      decomp = decomp.loaded.3,
       variation = variation,
       stopcrit = stopcrit,
       scaling = scaling,
@@ -93,7 +83,7 @@ for (j in 1:repetitions) {
       # seed = j,
       update = update,
       resource.allocation = resource.allocation.RANDOM,
-      loaded.weights = loaded.weights.2objs
+      loaded.weights = loaded.weights.3objs
     )
     
     savePlotData(
