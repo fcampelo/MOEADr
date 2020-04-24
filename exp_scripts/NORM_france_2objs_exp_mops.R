@@ -92,7 +92,6 @@ for (j in 1:repetitions) {
       name = paste0(fun, "_moead.norm_", lambda, "_"),
       j = saving_number,
       wd = "~/france_data/"
-    )d = "~/france_data/"
     )
   }
   
