@@ -71,27 +71,6 @@ for (j in 1:repetitions) {
         n = lambda
       )
     
-    resource.allocation.NORM <-
-      list(
-        name = "norm",
-        dt = 1,
-        selection = "n",
-        n = lambda
-      )
-    
-    resource.allocation.RANDOM <-
-      list(
-        name = "random",
-        dt = 0,
-        selection = "n",
-        n = lambda
-      )
-    sampled <- sample(1:3)
-    i <- 1
-    exit()
-    while (i <= 3) {
-      if (sampled[i] == 1) {
-        print("RI")
         moead.RI <- moead(
           problem  = problem.dtlz7,
           preset   = preset_moead("moead.de"),
@@ -112,55 +91,7 @@ for (j in 1:repetitions) {
           j = saving_number,
           wd = "~/france_data/"
         )
-      }
-      else if (sampled[i] == 3) {
-        print("norm")
-        moead.norm <- moead(
-          problem  = problem.dtlz7,
-          preset   = preset_moead("moead.de"),
-          decomp = decomp.loaded.2,
-          variation = variation,
-          stopcrit = stopcrit,
-          scaling = scaling,
-          showpars = list(show.iters = "none", showevery = 10),
-          # seed = j,
-          update = update,
-          resource.allocation = resource.allocation.NORM,
-          loaded.weights = loaded.weights.2objs
-        )
-        
-        savePlotData(
-          moea = moead.norm,
-          name = paste0(fun, "_moead.norm_", lambda, "_"),
-          j = saving_number,
-          wd = "~/france_data/"
-        )
-      }
-      else if (sampled[i] == 2) {
-        print("random")
-        moead.random <- moead(
-          problem  = problem.dtlz7,
-          preset   = preset_moead("moead.de"),
-          decomp = decomp.loaded.2,
-          variation = variation,
-          stopcrit = stopcrit,
-          scaling = scaling,
-          showpars = list(show.iters = "none", showevery = 10),
-          # seed = j,
-          update = update,
-          resource.allocation = resource.allocation.RANDOM,
-          loaded.weights = loaded.weights.2objs
-        )
-        
-        savePlotData(
-          moea = moead.random,
-          name = paste0(fun, "_moead.random_", lambda, "_"),
-          j = saving_number,
-          wd = "~/france_data/"
-        )
-      }
-      i <- i + 1
     }
-  }
+  
   saving_number <- saving_number + 1
 }
