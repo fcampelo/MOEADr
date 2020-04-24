@@ -5,9 +5,9 @@ library(MOEADr)
 library(emoa)
 library(feather)
 library(withr)
-# library(nsga2R)
+library(compiler)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
-
+enableJIT(1)
 
 repetitions <-  9
 dimension <- 100
