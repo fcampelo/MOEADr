@@ -88,6 +88,7 @@ for (j in 1:repetitions) {
       variation = variation,
       stopcrit = stopcrit,
       scaling = scaling,
+      neighbors = neighbors,
       showpars = list(show.iters = "none", showevery = 100),
       # seed = j,
       update = update,
