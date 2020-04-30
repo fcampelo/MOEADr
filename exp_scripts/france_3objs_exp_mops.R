@@ -32,7 +32,7 @@ update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 10000000))
+                       maxeval = 10000))
 
 n.obj <- 3
 print("3 OBJECTIVES")
@@ -120,7 +120,7 @@ for (j in 1:repetitions) {
           moea = moead.RI,
           name = paste0(fun, "_moead.RI_", lambda, "_"),
           j = saving_number,
-          wd = "~/france_data/"
+          wd = "~/temp/"
         )
       }
       else if (sampled[i] == 3) {
@@ -143,7 +143,7 @@ for (j in 1:repetitions) {
           moea = moead.norm,
           name = paste0(fun, "_moead.norm_", lambda, "_"),
           j = saving_number,
-          wd = "~/france_data/"
+          wd = "~/temp/"
         )
       }
       else if (sampled[i] == 2) {
@@ -166,7 +166,7 @@ for (j in 1:repetitions) {
           moea = moead.norm,
           name = paste0(fun, "_moead.random_", lambda, "_"),
           j = saving_number,
-          wd = "~/france_data/"
+          wd = "~/temp/"
         )
       }
       i <- i + 1
