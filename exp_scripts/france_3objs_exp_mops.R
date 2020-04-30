@@ -32,7 +32,7 @@ update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 10000))
+                       maxeval = 10000000))
 
 n.obj <- 3
 print("3 OBJECTIVES")
@@ -68,7 +68,7 @@ decomp.loaded.3 <- list(name = "loaded", W = loaded.weights.3objs)
 saving_number <- 1
 for (j in 1:repetitions) {
   number_subproblems <-
-    c(3, 4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
+    c(4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
   cat("rep",saving_number,"\n")
   for (lambda in number_subproblems) {
     cat("lambda", lambda, "\n")
@@ -120,7 +120,7 @@ for (j in 1:repetitions) {
           moea = moead.RI,
           name = paste0(fun, "_moead.RI_", lambda, "_"),
           j = saving_number,
-          wd = "~/temp/"
+          wd = "~/france_data/"
         )
       }
       else if (sampled[i] == 3) {
@@ -143,7 +143,7 @@ for (j in 1:repetitions) {
           moea = moead.norm,
           name = paste0(fun, "_moead.norm_", lambda, "_"),
           j = saving_number,
-          wd = "~/temp/"
+          wd = "~/france_data/"
         )
       }
       else if (sampled[i] == 2) {
@@ -166,7 +166,7 @@ for (j in 1:repetitions) {
           moea = moead.norm,
           name = paste0(fun, "_moead.random_", lambda, "_"),
           j = saving_number,
-          wd = "~/temp/"
+          wd = "~/france_data/"
         )
       }
       i <- i + 1

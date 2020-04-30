@@ -32,7 +32,7 @@ update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 10000))
+                       maxeval = 10000000))
 
 
 
@@ -109,7 +109,7 @@ for (j in 1:repetitions) {
           moea = moead.RI,
           name = paste0(fun, "_moead.RI_", lambda, "_"),
           j = saving_number,
-          wd = "~/temp/"
+          wd = "~/france_data/"
         )
       }
       else if (sampled[i] == 3) {
@@ -132,7 +132,7 @@ for (j in 1:repetitions) {
           moea = moead.norm,
           name = paste0(fun, "_moead.norm_", lambda, "_"),
           j = saving_number,
-          wd = "~/temp/"
+          wd = "~/france_data/"
         )
       }
       else if (sampled[i] == 2) {
@@ -155,7 +155,7 @@ for (j in 1:repetitions) {
           moea = moead.random,
           name = paste0(fun, "_moead.random_", lambda, "_"),
           j = saving_number,
-          wd = "~/temp/"
+          wd = "~/france_data/"
         )
       }
       i <- i + 1
