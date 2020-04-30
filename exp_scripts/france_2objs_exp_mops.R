@@ -88,7 +88,6 @@ for (j in 1:repetitions) {
       )
     sampled <- sample(1:3)
     i <- 1
-    exit()
     while (i <= 3) {
       if (sampled[i] == 1) {
         print("RI")
