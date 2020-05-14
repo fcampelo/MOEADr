@@ -49,7 +49,8 @@ perform_variation <- function(variation, X, iter, problem, ...){
     } else {
       ls.args      <- variation[[lsi]]
       valid.types  <- gsub(" ", "", get_localsearch_methods()[,1])
-      
+      valid.types <- c(valid.types, "de_poly")
+      valid.types <- c(valid.types, "all")
       # ========== Error catching and default value definitions
       assertthat::assert_that(
         !is.null(ls.args$tau.ls)  | !is.null(ls.args$gamma.ls))
@@ -111,6 +112,7 @@ perform_variation <- function(variation, X, iter, problem, ...){
       X       <- X$X
     }
   }
+  which.x = 1:dim(X)[1]
   # ============ END VARIATION (EXCEPT LOCAL SEARCH) ============= #
   
   
@@ -120,13 +122,14 @@ perform_variation <- function(variation, X, iter, problem, ...){
     # Flag subproblems that will undergo local search in a given iteration
     # (based on both the LS period and LS probability criteria)
     # (local search never happens in the very first iteration)
-    which.tau   <- ((iter + ls.args$first.ls[ls.args$indexes] - 1) %% ls.args$tau.ls == 0)
+    which.tau   <- ((iter + ls.args$first.ls - 1) %% ls.args$tau.ls == 0)
     which.gamma <- stats::runif(nrow(X)) <= rep(ls.args$gamma.ls,
                                                 times = nrow(X))
     which.x     <-  (which.tau | which.gamma) & (iter != 1)
+    
     if(any(which.x)){
       # Prepare argument list for local search
-      ls.args2          <- c(var.input.pars, ls.args, var.input.pars$iter)
+      ls.args2          <- c(var.input.pars, ls.args)
       ls.args2$which.x  <- which.x
       
       # Perform local search
@@ -146,5 +149,6 @@ perform_variation <- function(variation, X, iter, problem, ...){
   # Output
   return(list (X       = X,
                ls.args = ls.args,
-               var.nfe = var.nfe))
+               var.nfe = var.nfe,
+               which.x = which.x))
 }

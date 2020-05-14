@@ -1,6 +1,5 @@
 resource_allocation_select_n <-
   function(iter, resource.allocation, W, priority.values, problem, idx.boundary, epsilon = 1e-50, ...) {
-    
     iteration_usage <- rep(TRUE, dim(W)[1])
     indexes <- 1:dim(W)[1]
     if (iter > resource.allocation$dt) {

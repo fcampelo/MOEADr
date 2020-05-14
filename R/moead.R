@@ -90,7 +90,7 @@
 #' external solution archive (`TRUE`) or not (`FALSE`). Since it adds to the
 #' computational burden and memory requirements of the algorithm, the use of an
 #' archive population is recommended only in the case of constrained problems
-#' with constraint handling method that can occasionally accept unfeasible
+#' with constraint handling method that can occasionally accept ugasible
 #' solutions, leading to the potential loss of feasible efficient solutions for
 #' certain subproblems (e.g., [constraint_vbr()] with `type` = "sr" or "vt").
 #'
@@ -272,7 +272,7 @@ moead <-
                                       selection = "none",
                                       dt = 2),
            # List:  resource
-           loaded.weights = NULL,
+           # loaded.weights = NULL,
            ...)
 
 # other parameters
@@ -364,7 +364,6 @@ moead <-
     YV <- evaluate_population(X       = X,
                               problem = problem,
                               nfe     = nfe)
-    
     Y   <- YV$Y
     V   <- YV$V
     nfe <- YV$nfe
@@ -374,9 +373,7 @@ moead <-
     priority.values <- init_ra$priority.values
     # idx.boundary <- init_ra$idx.boundary
     two_step <- init_ra$two_step
-    idx.boundary <- which(loaded.weights %in% c(0, 1))[1:problem$m]
-    
-    
+    idx.boundary <- which(W %in% c(0, 1))[1:problem$m]
     
     # ========================= End Initial definitions ======================== #
     
@@ -387,15 +384,55 @@ moead <-
     # ========== Visualization Tools
     # calculating usage of resource by subproblem and any other visualization infoc
     # usage <- rep(TRUE, dim(W)[1])
-    plot.resources <- list(rep(0, dim(W)[1]))
-    plot.paretofront <- list(rep(0, dim(W)[1]))
-    
+    # plot.resources <- list(rep(0, dim(W)[1]))
+    # plot.paretofront <- list(rep(0, dim(W)[1]))
+    # old.nfe = 0
     usage <- list()
+    # my.max.1 <- max(Y[, 1])
+    # my.max.2 <- max(Y[, 2])
+    # mfrow = c(1, 2)
     
+    # plot.Y <-
+    #   data.frame(
+    #     "f1" = Y[, 1] / my.max.1,
+    #     "f2" = Y[, 2] / my.max.2,
+    #     "was.selected" = as.numeric(rep(1, dim(W)[1]))
+    #   )
+    # v <-
+    #   ggplot(plot.Y, aes(f1, f2, label = was.selected)) + geom_point(aes(color = was.selected), size = 3)
+    # v <-
+    #   v + coord_cartesian(xlim = c(0, 1.1), ylim = c(0, 1.1)) + ggtitle(paste(iter, resource.allocation$name))
+    # v <- v + geom_text()
+    # # print(v)
+    #
+    # w <-
+    #   ggplot(plot.Y, aes(f1, f2, label = was.selected)) + geom_point(aes(color = was.selected), size = 3)
+    # w <-
+    #   w + coord_cartesian(xlim = c(0, 1.1), ylim = c(0, 1.1)) + ggtitle(paste(iter, resource.allocation$name))
+    # w <- w + geom_text()
+    # grid.arrange(v, w, ncol = 2)
+    
+    
+    Yref <-
+      as.matrix(read.table(paste0(
+        "../inst/extdata/pf_data/", fun, ".2D.pf"
+      )))
+    # readline(prompt="Go to next iteration: ")
+    idx.parent <- rep(0, nrow(W) + 1)
+    s <- list()
+    spread <- list()
+    pressure.offspring <- list()
+    pet <- list()
+    offspring.count <- rep(0, nrow(W) + 1)
+    # offspring.count <- seq(nrow(W)+1)
     while (keep.running) {
       # Update iteration counter
       iter <- iter + 1
-      #cat("iter",iter, "nfe", nfe)
+      # print("iter")
+      # print(iter)
+      # print("nfe")
+      # print(nfe-old.nfe)
+      # old.nfe = nfe
       if ("save.iters" %in% names(moead.input.pars)) {
         if (moead.input.pars$save.iters == TRUE)
           saveRDS(as.list(environment()),
@@ -447,8 +484,12 @@ moead <-
       X       <- Xv$X
       ls.args <- Xv$ls.args
       nfe     <- nfe + Xv$var.nfe
-      X <- X[indexes, ]
+      var.input.pars <- as.list(sys.call())[-1]
       
+      if (variation[[1]]$name == "localsearch") {
+        indexes = Xv$which.x
+      }
+      X <- X[indexes, ]
       # ========== Evaluation
       # Evaluate offspring population on objectives
       YV <- evaluate_population(X       = X,
@@ -484,6 +525,8 @@ moead <-
         B       = B,
         aggfun  = aggfun
       )
+      fitness <- bigZ[neighbors$T + 1, ]
+      
       # Calculate selection indices
       # sel.indx is an [N x (T+1)] matrix, in which each row contains the indices
       # of one neighborhood (plus incumbent), sorted by their "selection quality"
@@ -505,6 +548,8 @@ moead <-
       Y       <- XY$Y
       V       <- XY$V
       Archive <- XY$Archive
+      offspring.count <- XY$offspring.count
+      # idx.parent <- idx.parent + XY$idx.parent
       # ========== Resource Allocation - Update Priority function values
       # bad workaround with the problem of not having this values at the first iterations!
       
@@ -517,7 +562,7 @@ moead <-
       
       if (is.null(dt.bigZ)) {
         # parameters for NORM and Random - dt.bigz is not used
-        if(resource.allocation$name == "random"){
+        if (resource.allocation$name == "random") {
           dt.Y <- Y
           dt.X <- X
         }
@@ -529,7 +574,7 @@ moead <-
       # newObj <- bigZ[neighbors$T + 1, ]
       # oldObj <- init_ra$oldObj
       # if(is.null(oldObj)) oldObj <- newObj # means it is not going to be used ever
-
+      
       if (iter > 1 || resource.allocation$name == "random") {
         updates <- resource_allocation_update(
           iter,
@@ -541,13 +586,11 @@ moead <-
           Y,
           dt.Y,
           W,
-          # dt.dm,
           X,
-          dt.X,
-          # newObj,
-          # oldObj
+          dt.X
         )
         priority.values <- updates$priority.values
+        
       }
       
       dt.Y <- Y
@@ -570,7 +613,6 @@ moead <-
       # }
       
       #
-      
       # ========== Visualization Tools
       # calculating usage of resource by subproblem and any other visualization info
       if (nullRA) {
@@ -608,19 +650,81 @@ moead <-
       # Echo whatever is demanded
       print_progress(iter.times, showpars)
       
-      #   plot.Y <- data.frame("f1" = Y[,1], "f2" = Y[,2], "was.selected" = as.factor(usage[[length(usage)]]))
-      #   if (resource.allocation$name == "only_3") {
-      #     plot.Y <- data.frame("f1" = Archive2$Y[,1], "f2" = Archive2$Y[,2], "was.selected" = as.factor(usage[[length(usage)]]))
-      #   }
-      #   v <-
-      #     ggplot(plot.Y, aes(f1, f2, label=was.selected)) + geom_point(aes(shape = was.selected, color = was.selected), size = 3)
-      #   v <- v + coord_cartesian(xlim = c(0.5, 3), ylim = c(0.5, 3)) + ggtitle(paste(iter, resource.allocation$name))
-      #   v <- v + geom_text()
+      # simple pressure
+      s[[length(s) + 1]] <- nrow(X) / sum(iter)
+      
+      # complex pressure (offspring + (traits -> fitness))
+      offspring = offspring.count[-1]
+      
+      thresholdOffspring <- median(offspring)
+      thresholdFitness <- median(fitness)
+      
+      if (thresholdOffspring == 0) {
+        thresholdOffspring == 1
+      }
+      
+      A <- 0
+      B <- 0
+      C <- 0
+      D <- 0
+      #   thresholdOffspring?
+      for (i in 1:dim(W)[1]) {
+        if (offspring[i] <= thresholdOffspring) {
+          # Low offspring
+          if (fitness[i] > thresholdFitness) {
+            B = B + 1	# high fitness, low offspring
+          }
+          else{
+            A = A + 1	# low fitness, low offspring
+          }
+        }
+        
+        else {
+          # High offspring
+          if (fitness[i]  > thresholdFitness) {
+            D = D + 1 # high fitness, high offspring
+          }
+          
+          else{
+            C = C + 1 # low fitness, high offspring
+          }
+        }
+      }
+      
+      v1 = choose(A+B, A)*choose(C+D,C)/choose(A+B+C+D, A+C)
+      
+      while(C != 0 && B != 0){
+        A = A + 1
+        D = D + 1
+        B = B - 1
+        C = C - 1
+        # cat(A, B, C, D, "\n")
+      }
+      
+      v2 = fisher.test(matrix(c(A, C, B, D),nrow=2), alternative = "greater")$p
+      
+      pet[[length(pet) + 1]] <- -log10(v1+v2)
+      
+      
+      
+      pressure.offspring[[length(pressure.offspring) + 1]] <-
+        Kendall(offspring, fitness)[1]
+      
+      # delta spread from NSGA-II - diversity in obj space
+      spread[[length(spread) + 1]] <-
+        generalizedSpread(Archive$Y, Yref)
+      
+      # crowding distance from NSGA-II - diversity in obj space
+      # cd <- computeCrowdingDistance(t(Archive$Y))
+      # cd[which(cd == Inf)] <- 100
+      # crowdingDistance[[length(crowdingDistance) + 1]] <- sum(cd)
+      # readline(prompt = "Go to next iteration: ")
       #
       #   b <- ggplot(plot.Y, aes(x = 1:dim(W)[1], y = was.selected, shape = was.selected)) + geom_point() +xlab("solution number")+ ggtitle(paste(iter, resource.allocation$name))
       #   png(filename = paste0("~/Downloads/",iter,"_",problem, "_",resource.allocation$name,".png"), width = 8*480, height = 5*480, res=300)
       # grid.arrange(v, b, ncol = 2)
       #   dev.off()
+      # eixt()
     }
     # =========================== End Iterative cycle ========================== #
     
@@ -652,6 +756,66 @@ moead <-
     #   c(paste0("f", 1:ncol(Y)), "stage")
     # colnames(plot.resources) <-
     #   c("Resources", "stage")
+    
+    # plot.Y <-
+    #   data.frame(
+    #     "f1" = Y[, 1] / my.max.1,
+    #     "f2" = Y[, 2] / my.max.2,
+    #     "was.selected" = as.factor(usage[[length(usage)]])
+    #   )
+    #
+    # # print(which(plot.Y$was.selected==1))
+    # # my.Y <- cbind(plot.Y$f1, plot.Y$f2)
+    # # ndom <- find_nondominated_points(my.Y)
+    # # old.plot.Y <- plot.Y[ndom,]
+    #
+    # plot.Y$was.selected <- factor(plot.Y$was.selected, levels=rev(levels(plot.Y$was.selected)))
+    #
+    # v <-
+    #   ggplot(plot.Y, aes(f1, f2, label = was.selected)) + geom_point(aes(color = was.selected))
+    # v <-
+    #   v + coord_cartesian(xlim = c(0, 1.1), ylim = c(0, 1.1)) + ggtitle(paste("iter", iter, "nfe", nfe, "method", resource.allocation$name))
+    # v <-
+    #   v + geom_text() + annotate(
+    #     "rect",
+    #     xmin =  min(plot.Y$f1),
+    #     xmax = max(plot.Y$f1),
+    #     ymin =  min(plot.Y$f2),
+    #     ymax = max(plot.Y$f2),
+    #     fill = "dark grey",
+    #     alpha = .3
+    #   )
+    #
+    #
+    # new.plot.Y <- plot.Y[which(plot.Y$was.selected == 1), ]
+    
+    
+    
+    # w <-
+    #   ggplot(new.plot.Y, aes(f1, f2, label = was.selected)) + geom_point(aes(color = was.selected), size = 3)
+    # w <-
+    #   w + coord_cartesian(xlim = c(0, 1.1), ylim = c(0, 1.1)) + ggtitle(paste("iter", iter, "nfe", nfe, "method", resource.allocation$name))
+    # w <-
+    #   w + geom_text() + annotate(
+    #     "rect",
+    #     xmin =  min(plot.Y$f1),
+    #     xmax = max(plot.Y$f1),
+    #     ymin =  min(plot.Y$f2),
+    #     ymax = max(plot.Y$f2),
+    #     fill = "dark red",
+    #     alpha = .2
+    #   ) + annotate(
+    #     "rect",
+    #     xmin =  min(new.plot.Y$f1),
+    #     xmax = max(new.plot.Y$f1),
+    #     ymin =  min(new.plot.Y$f2),
+    #     ymax = max(new.plot.Y$f2),
+    #     fill = "dark grey",
+    #     alpha = .5
+    #   )
+    # grid.arrange(v, w, ncol = 2)
+    # dev.off()
+    
     # Output
     out <- list(
       X           = X,
@@ -666,7 +830,12 @@ moead <-
       n.iter      = iter,
       time        = difftime(Sys.time(), time.start, units = "secs"),
       seed        = seed,
-      inputConfig = moead.input.pars#,
+      inputConfig = moead.input.pars,
+      s = s,
+      spread = spread,
+      pressure.offspring = pressure.offspring,
+      pet = pet#,
+      # crowdingDistance = crowdingDistance
       # plot.paretofront = plot.paretofront,
       # plot.resources = plot.resources
     )

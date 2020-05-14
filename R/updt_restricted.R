@@ -33,8 +33,7 @@
 #' constraint value list (`V`).
 #'
 #' @export
-updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, ...){
-
+updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, idx.parent, offspring.count, ...){
   # ========== Error catching and default value definitions
   assertthat::assert_that(
     assertthat::has_name(update,"nr"),
@@ -50,19 +49,28 @@ updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, ...){
   # - XY: matrix of candidate solutions (in variable or objective space)
   # - XYt: matrix of incumbent solutions (in variable or objective space)
   # - B: matrix of neighborhoods
+  
+  ## j aqui e meu k la
+  ## i aqui e meu j la (acho)
+  
   do.update <- function(i, sel.indx, XY, XYt, B){
-    # print(i)
-    # print(sel.indx)
     for (j in sel.indx[i, ]) {               #each element in b_i, in fitness order
       if (j > ncol(B)) return(XYt[i, , drop = FALSE])     # last row = incumbent solution
       else if (used[B[i, j]] < nr)          # tests if the current element is still available
       {
         used[B[i, j]] <<- used[B[i, j]] + 1 # modifies count matrix in parent env
+        
+        if (offspring.count[idx.parent[j+1]+1]>0){
+          offspring.count[idx.parent[j+1]+1] <<- offspring.count[idx.parent[j+1]+1] - 1
+        }
+        offspring.count[i+1] <<- offspring.count[i+1] + 1
+        idx.parent[j+1] <<- i
+        
         return(XY[B[i, j], , drop = FALSE])
       }
     }
   }
-
+  
   # Vector of indices (random permutation), and deshuffling vector
   I  <- sample.int(nrow(X))
   
@@ -81,7 +89,7 @@ updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, ...){
                     B         = B,
                     USE.NAMES = FALSE))
   Xnext <- Xnext[I2, ]
-
+  
   # Update matrix of function values
   used <- rep(0, nrow(Y))
   Ynext <- t(vapply(X         = I,
@@ -128,5 +136,6 @@ updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, ...){
     # Output
   return(list(X = Xnext,
               Y = Ynext,
-              V = Vnext))
+              V = Vnext,
+              offspring.count = offspring.count))
 }
