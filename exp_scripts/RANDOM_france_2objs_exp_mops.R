@@ -60,7 +60,7 @@ fun <- "DTLZ7"
 for (j in 1:repetitions) {
   number_subproblems <-
     c(3, 4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
-  cat("rep",saving_number,"\n")
+  cat("rep",j,"\n")
   for (lambda in number_subproblems) {
     cat("lambda", lambda, "\n")
     
