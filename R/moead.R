@@ -651,68 +651,68 @@ moead <-
       print_progress(iter.times, showpars)
       
       # simple pressure
-      s[[length(s) + 1]] <- nrow(X) / sum(iter)
-      
-      # complex pressure (offspring + (traits -> fitness))
-      offspring = offspring.count[-1]
-      
-      thresholdOffspring <- median(offspring)
-      thresholdFitness <- median(fitness)
-      
-      if (thresholdOffspring == 0) {
-        thresholdOffspring == 1
-      }
-      
-      A <- 0
-      B <- 0
-      C <- 0
-      D <- 0
-      #   thresholdOffspring?
-      for (i in 1:dim(W)[1]) {
-        if (offspring[i] <= thresholdOffspring) {
-          # Low offspring
-          if (fitness[i] > thresholdFitness) {
-            B = B + 1	# high fitness, low offspring
-          }
-          else{
-            A = A + 1	# low fitness, low offspring
-          }
-        }
-        
-        else {
-          # High offspring
-          if (fitness[i]  > thresholdFitness) {
-            D = D + 1 # high fitness, high offspring
-          }
-          
-          else{
-            C = C + 1 # low fitness, high offspring
-          }
-        }
-      }
-      
-      v1 = choose(A+B, A)*choose(C+D,C)/choose(A+B+C+D, A+C)
-      
-      while(C != 0 && B != 0){
-        A = A + 1
-        D = D + 1
-        B = B - 1
-        C = C - 1
-        # cat(A, B, C, D, "\n")
-      }
-      
-      v2 = fisher.test(matrix(c(A, C, B, D),nrow=2), alternative = "greater")$p
-      
-      pet[[length(pet) + 1]] <- -log10(v1+v2)
-      
-      
-      
-      pressure.offspring[[length(pressure.offspring) + 1]] <-
-        Kendall(offspring, fitness)[1]
-      
-      # delta spread from NSGA-II - diversity in obj space
-      spread[[length(spread) + 1]] <-
-        generalizedSpread(Archive$Y, Yref)
+      # s[[length(s) + 1]] <- nrow(X) / sum(iter)
+      # 
+      # # complex pressure (offspring + (traits -> fitness))
+      # offspring = offspring.count[-1]
+      # 
+      # thresholdOffspring <- median(offspring)
+      # thresholdFitness <- median(fitness)
+      # 
+      # if (thresholdOffspring == 0) {
+      #   thresholdOffspring == 1
+      # }
+      # 
+      # A <- 0
+      # B <- 0
+      # C <- 0
+      # D <- 0
+      # #   thresholdOffspring?
+      # for (i in 1:dim(W)[1]) {
+      #   if (offspring[i] <= thresholdOffspring) {
+      #     # Low offspring
+      #     if (fitness[i] > thresholdFitness) {
+      #       B = B + 1	# high fitness, low offspring
+      #     }
+      #     else{
+      #       A = A + 1	# low fitness, low offspring
+      #     }
+      #   }
+      #   
+      #   else {
+      #     # High offspring
+      #     if (fitness[i]  > thresholdFitness) {
+      #       D = D + 1 # high fitness, high offspring
+      #     }
+      #     
+      #     else{
+      #       C = C + 1 # low fitness, high offspring
+      #     }
+      #   }
+      # }
+      # 
+      # v1 = choose(A+B, A)*choose(C+D,C)/choose(A+B+C+D, A+C)
+      # 
+      # while(C != 0 && B != 0){
+      #   A = A + 1
+      #   D = D + 1
+      #   B = B - 1
+      #   C = C - 1
+      #   # cat(A, B, C, D, "\n")
+      # }
+      # 
+      # v2 = fisher.test(matrix(c(A, C, B, D),nrow=2), alternative = "greater")$p
+      # 
+      # pet[[length(pet) + 1]] <- -log10(v1+v2)
+      # 
+      # 
+      # 
+      # pressure.offspring[[length(pressure.offspring) + 1]] <-
+      #   Kendall(offspring, fitness)[1]
+      # 
+      # # delta spread from NSGA-II - diversity in obj space
+      # spread[[length(spread) + 1]] <-
+      #   generalizedSpread(Archive$Y, Yref)
       
       # crowding distance from NSGA-II - diversity in obj space
       # cd <- computeCrowdingDistance(t(Archive$Y))
@@ -831,10 +831,10 @@ moead <-
       time        = difftime(Sys.time(), time.start, units = "secs"),
       seed        = seed,
       inputConfig = moead.input.pars,
-      s = s,
-      spread = spread,
-      pressure.offspring = pressure.offspring,
-      pet = pet#,
+      # s = s,
+      # spread = spread,
+      # pressure.offspring = pressure.offspring,
+      # pet = pet#,
       # crowdingDistance = crowdingDistance
       # plot.paretofront = plot.paretofront,
       # plot.resources = plot.resources
