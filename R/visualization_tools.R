@@ -357,11 +357,11 @@ savePlotData <- function (moea, name, j,wd = '~/dataExp/') {
   # temp <- as.data.frame(temp)
   # write_feather(temp, paste0('~/dataExp/', name, j, '_plot.paretoset'))
   
-  temp <- as.data.frame(moea$W)
-  temp <- apply(temp, 2, unlist)
-  temp <- as.data.frame(temp)
-  write_feather(temp, paste0(wd, name, j, '_W'))
-  
+  # temp <- as.data.frame(moea$W)
+  # temp <- apply(temp, 2, unlist)
+  # temp <- as.data.frame(temp)
+  # write_feather(temp, paste0(wd, name, j, '_W'))
+  # 
   temp <- as.data.frame(moea$usage)
   temp <- apply(temp, 2, unlist)
   temp <- as.data.frame(temp)
@@ -377,10 +377,10 @@ savePlotData <- function (moea, name, j,wd = '~/dataExp/') {
   temp <- as.data.frame(temp)
   write_feather(temp, paste0(wd, name, j, '_iter'))
   
-  temp <- as.data.frame(moea$time)
-  temp <- apply(temp, 2, unlist)
-  temp <- as.data.frame(temp)
-  write_feather(temp, paste0(wd, name, j, '_time'))
+  # temp <- as.data.frame(moea$time)
+  # temp <- apply(temp, 2, unlist)
+  # temp <- as.data.frame(temp)
+  # write_feather(temp, paste0(wd, name, j, '_time'))
   
 }
 
@@ -393,17 +393,17 @@ loadPlotData <- function (name, j,wd='~/dataExp/') {
   #   read_feather(paste0(wd, name, j, '_plot.resources'))
   iter <- read_feather(paste0(wd, name, j, '_iter'))
   usage <- read_feather(paste0(wd, name, j, '_usage'))
-  time <- read_feather(paste0(wd, name, j, '_time'))
-  W <- read_feather(paste0(wd, name, j, '_W'))
+  # time <- read_feather(paste0(wd, name, j, '_time'))
+  # W <- read_feather(paste0(wd, name, j, '_W'))
   nfe <- read_feather(paste0(wd, name, j, '_nfe'))
   
   out <- list(
     X           = X,
     Y           = Y,
-    W           = W,
+    # W           = W,
     nfe         = nfe,
     n.iter      = iter,
-    time        = time,
+    # time        = time,
     usage        = usage,
     #Vmatrix = Vmatrix,
     # plot.paretofront = plot.paretofront,
