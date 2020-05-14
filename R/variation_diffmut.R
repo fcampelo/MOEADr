@@ -87,7 +87,7 @@ variation_diffmut <- function(X, P, B, Phi = NULL, basis = 'rand', ...){
                    FUN = function(i) {
                      apply(X[B[i, , drop = FALSE], ],
                            MARGIN = 2,
-                           FUN    = mean}))
+                           FUN    = mean) }))
   } else if (basis == "wgi"){
     # Calculate scalarized function values for each neighborhood
     normYs <- scale_objectives(Y       = input.pars$Y,
