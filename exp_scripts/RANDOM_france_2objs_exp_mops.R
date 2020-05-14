@@ -64,7 +64,7 @@ for (j in 1:repetitions) {
   for (lambda in number_subproblems) {
     cat("lambda", lambda, "\n")
     
-    resource.allocation.NORM <-
+    resource.allocation.RANDOM <-
       list(
         name = "random",
         dt = 0,
