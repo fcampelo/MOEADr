@@ -58,14 +58,13 @@ print("2 OBJECTIVES")
 fun <- "DTLZ7"
 
 for (j in 1:repetitions) {
-  saving_number <- 1
   number_subproblems <-
     c(3, 4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
   cat("rep",saving_number,"\n")
   for (lambda in number_subproblems) {
     cat("lambda", lambda, "\n")
     
-    resource.allocation.RANDOM <-
+    resource.allocation.NORM <-
       list(
         name = "random",
         dt = 0,
@@ -82,7 +81,7 @@ for (j in 1:repetitions) {
       scaling = scaling,
       neighbors = neighbors,
       showpars = list(show.iters = "numbers", showevery = 100),
-      # seed = j,
+      seed = j,
       update = update,
       resource.allocation = resource.allocation.RANDOM,
       loaded.weights = loaded.weights.2objs
@@ -91,7 +90,7 @@ for (j in 1:repetitions) {
     savePlotData(
       moea = moead.random,
       name = paste0(fun, "_moead.random_", lambda, "_"),
-      j = saving_number,
+      j = j,
       wd = "~/france_data/"
     )
   }
