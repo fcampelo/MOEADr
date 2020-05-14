@@ -51,7 +51,6 @@
 variation_diffmut <- function(X, P, B, Phi = NULL, basis = 'rand', ...){
   
   input.pars <- as.list(sys.call())[-1]
-  
   # ========== Error catching and default value definitions
   assertthat::assert_that(
     is.numeric(X) && is.matrix(X),
@@ -88,7 +87,7 @@ variation_diffmut <- function(X, P, B, Phi = NULL, basis = 'rand', ...){
                    FUN = function(i) {
                      apply(X[B[i, , drop = FALSE], ],
                            MARGIN = 2,
-                           FUN    = mean) }))
+                           FUN    = mean}))
   } else if (basis == "wgi"){
     # Calculate scalarized function values for each neighborhood
     normYs <- scale_objectives(Y       = input.pars$Y,
@@ -109,7 +108,7 @@ variation_diffmut <- function(X, P, B, Phi = NULL, basis = 'rand', ...){
                    FUN = function(i){
                      indx <- order(bigZ[i, , drop = FALSE])
                      colSums(wgi.W * X[B[i, indx, drop = FALSE], ])
-                   }))
+                   }, .parallel=TRUE))
   }
   
   # Perform mutations and return
