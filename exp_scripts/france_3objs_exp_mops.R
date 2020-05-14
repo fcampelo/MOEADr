@@ -32,12 +32,12 @@ update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 10000000))
+                       maxeval = 1000))
 
 n.obj <- 3
 print("3 OBJECTIVES")
 
-fun <- "DTLZ7"
+fun <- "UF9"
 problem.smoof.UF <-
   makeUFFunction(dimension = dimension,
                  id = 9)
@@ -110,7 +110,7 @@ for (j in 1:repetitions) {
           variation = variation,
           stopcrit = stopcrit,
           scaling = scaling,
-          showpars = list(show.iters = "none", showevery = 100),
+          showpars = list(show.iters = "numbers", showevery = 100),
           # seed = j,
           update = update,
           resource.allocation = resource.allocation.RI,
@@ -132,7 +132,7 @@ for (j in 1:repetitions) {
           variation = variation,
           stopcrit = stopcrit,
           scaling = scaling,
-          showpars = list(show.iters = "none", showevery = 10),
+          showpars = list(show.iters = "numbers", showevery = 100),
           # seed = j,
           update = update,
           resource.allocation = resource.allocation.NORM,
@@ -155,7 +155,7 @@ for (j in 1:repetitions) {
           variation = variation,
           stopcrit = stopcrit,
           scaling = scaling,
-          showpars = list(show.iters = "none", showevery = 10),
+          showpars = list(show.iters = "numbers", showevery = 100),
           # seed = j,
           update = update,
           resource.allocation = resource.allocation.RANDOM,
@@ -163,7 +163,7 @@ for (j in 1:repetitions) {
         )
         
         savePlotData(
-          moea = moead.norm,
+          moea = moead.random,
           name = paste0(fun, "_moead.random_", lambda, "_"),
           j = saving_number,
           wd = "~/france_data/"

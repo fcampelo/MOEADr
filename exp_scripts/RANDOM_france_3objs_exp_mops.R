@@ -22,7 +22,7 @@ update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 10000000))
+                       maxeval = 100000))
 
 n.obj <- 3
 print("3 OBJECTIVES")
@@ -56,8 +56,8 @@ loaded.weights.3objs <-
 decomp.loaded.3 <- list(name = "loaded", W = loaded.weights.3objs)
 
 
-saving_number <- 1
 for (j in 1:repetitions) {
+  saving_number <- 1
   number_subproblems <-
     c(3, 4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
   cat("rep",saving_number,"\n")
@@ -80,7 +80,7 @@ for (j in 1:repetitions) {
       stopcrit = stopcrit,
       scaling = scaling,
       neighbors = neighbors,
-      showpars = list(show.iters = "none", showevery = 10),
+      showpars = list(show.iters = "numbers", showevery = 100),
       # seed = j,
       update = update,
       resource.allocation = resource.allocation.RANDOM,
