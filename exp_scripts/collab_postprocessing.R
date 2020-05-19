@@ -60,17 +60,17 @@ for (fun in fun.names1) {
     
       for (lambda in number_subproblems) {
       moead.random <-
-        loadPlotData(name = paste0(fun, "_moead.random_", lambda, "_", wd = "~/france_data/"),
+        loadPlotData(name = paste0(fun, "_moead.random_", lambda, "_"), wd = "~/france_data/",
                      j = j)
       
       
       moead.ds <-
-        loadPlotData(name = paste0(fun, "_moead.norm_", lambda, "_", wd = "~/france_data/"),
+        loadPlotData(name = paste0(fun, "_moead.norm_", lambda, "_"), wd = "~/france_data/",
                      j = j)
       
       
       moead.RI <-
-        loadPlotData(name = paste0(fun, "_moead.RI_", lambda, "_", wd = "~/france_data/"),
+        loadPlotData(name = paste0(fun, "_moead.RI_", lambda, "_"), wd = "~/france_data/",
                      j = j)
       ref1 <-
         rbind(
@@ -87,17 +87,17 @@ for (fun in fun.names1) {
   for (j in 1:repetitions) {
     for (lambda in number_subproblems) {
       moead.random <-
-        loadPlotData(name = paste0(fun, "_moead.random_", lambda, "_", wd = "~/france_data/"),
+        loadPlotData(name = paste0(fun, "_moead.random_", lambda, "_"), wd = "~/france_data/",
                      j = j)
       
       
       moead.ds <-
-        loadPlotData(name = paste0(fun, "_moead.norm_", lambda, "_", wd = "~/france_data/"),
+        loadPlotData(name = paste0(fun, "_moead.norm_", lambda, "_"), wd = "~/france_data/",
                      j = j)
       
       
       moead.RI <-
-        loadPlotData(name = paste0(fun, "_moead.RI_", lambda, "_", wd = "~/france_data/"),
+        loadPlotData(name = paste0(fun, "_moead.RI_", lambda, "_"), wd = "~/france_data/",
                      j = j)
     
     

@@ -103,6 +103,4 @@ for (j in 1:repetitions) {
       wd = "~/france_data/"
     )
   }
-  
-  saving_number <- saving_number + 1
 }
