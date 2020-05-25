@@ -49,22 +49,20 @@ updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, idx.parent
   # - XY: matrix of candidate solutions (in variable or objective space)
   # - XYt: matrix of incumbent solutions (in variable or objective space)
   # - B: matrix of neighborhoods
-  
-  ## j aqui e meu k la
-  ## i aqui e meu j la (acho)
-  
   do.update <- function(i, sel.indx, XY, XYt, B){
     for (j in sel.indx[i, ]) {               #each element in b_i, in fitness order
-      if (j > ncol(B)) return(XYt[i, , drop = FALSE])     # last row = incumbent solution
+      if (j > ncol(B)) {
+        return(XYt[i, , drop = FALSE])     # last row = incumbent solution
+        }
       else if (used[B[i, j]] < nr)          # tests if the current element is still available
       {
         used[B[i, j]] <<- used[B[i, j]] + 1 # modifies count matrix in parent env
         
-        if (offspring.count[idx.parent[j+1]+1]>0){
-          offspring.count[idx.parent[j+1]+1] <<- offspring.count[idx.parent[j+1]+1] - 1
-        }
-        offspring.count[i+1] <<- offspring.count[i+1] + 1
-        idx.parent[j+1] <<- i
+        # if (offspring.count[idx.parent[j+1]+1]>0){
+        #   offspring.count[idx.parent[j+1]+1] <<- offspring.count[idx.parent[j+1]+1] - 1
+        # }
+        # offspring.count[i+1] <<- offspring.count[i+1] + 1
+        # idx.parent[j+1] <<- i
         
         return(XY[B[i, j], , drop = FALSE])
       }

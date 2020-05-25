@@ -27,9 +27,12 @@ resource_allocation_select <-
     iteration_usage <- selected$iteration_usage
     
     # to add the bounderies
-    for (i in 1:length(idx.boundary)){
+    if(length(indexes) != length(priority.values)){
+      for (i in 1:length(idx.boundary)){
         indexes[length(indexes)+i] <- idx.boundary[i]
+      }
     }
+    
     indexes <- sort(indexes)
       
     
