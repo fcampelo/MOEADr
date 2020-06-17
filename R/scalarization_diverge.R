@@ -30,24 +30,38 @@
 #'
 #' @export
 
-scalarization_wt <- function(Y, W, minP, eps = 1e-16, ...){
-
+scalarization_diverge <- function(Y, W, minP, maxP, eps = 1e-16, ...){
+  
   # ========== Error catching and default value definitions
   assertthat::assert_that(
     is.matrix(Y) && is.matrix(W),
     identical(dim(W), dim(Y)),
     length(minP) == ncol(Y))
   # ==========
+  
   # Replicate minP for dimensional consistency
   minP <- matrix(minP,
                  nrow  = nrow(Y),
                  ncol  = ncol(Y),
                  byrow = TRUE)
+  # Replicate maxP for dimensional consistency
+  maxP <- matrix(maxP,
+                 nrow  = nrow(Y),
+                 ncol  = ncol(Y),
+                 byrow = TRUE)
+
+  for (i in 1:dim(W)[1]){
+    for(j in 1:dim(W)[2]){
+      if (W[i,j] < 0){
+        minP[i,j] <- maxP[i,j]
+      }
+    }
+  }
 
   Z <- apply(W * (Y - minP + eps),
              MARGIN = 1,
              FUN    = max)
-
+  
   return(as.numeric(Z))
-
+  
 }

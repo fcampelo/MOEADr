@@ -31,8 +31,13 @@
 #'
 #' @export
 #'
+#' @section References:
+#' F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
+#' Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
+#' Decomposition. Journal of Statistical Software \doi{10.18637/jss.v092.i06}\cr
+#'
 summary.moead <- function(object,
-                                ...,
+                          ...,
                                 scaling.reference = NULL, 
                                 useArchive      = FALSE,
                                 viol.threshold  = 1e-6,
@@ -73,7 +78,7 @@ summary.moead <- function(object,
 
   npts  <- nrow(Y)
   nfeas <- sum(feas.idx)
-  nndom.idx <- find_nondominated_points(Y[feas.idx, ])
+  nndom.idx <- ecr::which.nondominated(t(Y[feas.idx, ]))
   nndom <- sum(nndom.idx)
   
 

@@ -51,7 +51,7 @@
 #' constraint value list (`V`).
 
 updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
-                      normYs, W, BP, constraint, aggfun, ...){
+                      normYs, W, BP, constraint, aggfun, idx.parent, offspring.count, ...){
 
   ## Verify that the necessary parameters exist.
   assertthat::assert_that(
@@ -106,10 +106,19 @@ updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
   # - B: matrix of neighborhoods
   do.update <- function(i, sel.indx, XY, XYt, B){
     for (j in sel.indx[i,]) {               #each element in b_i, in fitness order
-      if (j > ncol(B)) return(XYt[i, , drop = FALSE])     # last row = incumbent solution
+      if (j > ncol(B)) {
+        return(XYt[i, , drop = FALSE])     # last row = incumbent solution
+      }
       else if (used[B[i, j]] < nr)          # tests if the current element is still available
       {
         used[B[i, j]] <<- used[B[i, j]] + 1 # modifies count matrix in parent env
+        
+        # if (offspring.count[idx.parent[j+1]+1]>0){
+        #   offspring.count[idx.parent[j+1]+1] <<- offspring.count[idx.parent[j+1]+1] - 1
+        # }
+        offspring.count[i+1] <<- offspring.count[i+1] + 1
+        # idx.parent[j+1] <<- i
+        
         return(XY[B[i, j], , drop = FALSE])
       }
     }
@@ -179,5 +188,6 @@ updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
   # Output
   return(list(X = Xnext,
               Y = Ynext,
-              V = Vnext))
+              V = Vnext,
+              offspring.count = offspring.count))
 }

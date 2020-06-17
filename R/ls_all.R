@@ -46,9 +46,18 @@
 #'
 #' @export
 
-ls_dvls <- function(Xt, Yt, Vt, B, W, which.x, trunc.x,
-                    problem, scaling, aggfun, constraint, ...){
-  
+ls_all <- function(Xt,
+                       Yt,
+                       Vt,
+                       B,
+                       W,
+                       which.x,
+                       trunc.x,
+                       problem,
+                       scaling,
+                       aggfun,
+                       constraint,
+                       ...) {
   # ========== Error catching and default value definitions
   # All error catching and default value definitions are assumed to have been
   # verified in the calling function perform_variation().
@@ -56,21 +65,30 @@ ls_dvls <- function(Xt, Yt, Vt, B, W, which.x, trunc.x,
   
   # ========== Calculate X+ and X-
   # 1. Draw neighborhood indices
+  var.input.pars <- as.list(sys.call())[-1]
+  
   dimX <- dim(Xt)
   Inds <- do.call(rbind,
-                  lapply(which(which.x),
-                         FUN = function(i, B){sample(x       = B[i, ],
-                                                     size    = 2,
-                                                     replace = FALSE)},
-                         B   = B))
+                  lapply(
+                    which(which.x),
+                    FUN = function(i, B) {
+                      sample(x       = B[i, ],
+                             size    = 2,
+                             replace = FALSE)
+                    },
+                    B   = B
+                  ))
   
   # 2. Calculate multipliers
   nls <- nrow(Inds)
-  ls.Phi <- matrix(stats::rnorm(nls, mean = 0.5, sd = 0.1),
-                   nrow  = nls,
-                   ncol  = dimX[2],
-                   byrow = FALSE)
+  ls.Phi <- matrix(
+    stats::rnorm(nls, mean = 0.5, sd = 0.1),
+    nrow  = nls,
+    ncol  = dimX[2],
+    byrow = FALSE
+  )
   
+  X <- Xt
   # 4. Isolate points for local search
   dvls.B <- matrix(1:nls,
                    ncol = 1)
@@ -78,60 +96,89 @@ ls_dvls <- function(Xt, Yt, Vt, B, W, which.x, trunc.x,
   dvls.Xt <- Xt[which.x, , drop = FALSE]
   dvls.Xo <- dvls.Xt
   dvls.Yt <- Yt[which.x, , drop = FALSE]
+  dvls.X <- Xt[which.x, , drop = FALSE]
   dvls.Vt <- Vt
   
   dvls.Vt$Cmatrix <- dvls.Vt$Cmatrix[which.x, , drop = FALSE]
   dvls.Vt$Vmatrix <- dvls.Vt$Vmatrix[which.x, , drop = FALSE]
   dvls.Vt$v       <- dvls.Vt$v[which.x]
   
-  # ========== Evaluate X+, X-
-  for (phi.m in c(-1, 1)){
-    # 1. Generate candidate. Truncate if required
-    dvls.X  <- dvls.Xo + phi.m * ls.Phi * (Xt[Inds[, 1], , drop = FALSE] - Xt[Inds[, 2], , drop = FALSE])
-    if (trunc.x) dvls.X <- matrix(pmax(0, pmin(dvls.X, 1)),
-                                  nrow  = nrow(dvls.X),
-                                  byrow = FALSE)
+  # 1. Generate candidate. Truncate if required
+  var.input.pars$X <- NULL
+  for (i in seq_along(variation)) {
+    # Assemble function name
+    opname <- paste0("variation_", variation[[i]]$name)
     
-    # 2. Evaluate on objective functions and constraints
-    dvls.YV <- evaluate_population(X       = dvls.X,
-                                   problem = problem,
-                                   nfe     = 0)
+    # Update list of function inputs
+    var.args <-
+      c(var.input.pars, variation[[i]], list(X = X))
     
-    # 3. Objective scaling
-    dvls.normYs <- scale_objectives(Y       = dvls.YV$Y,
-                                    Yt      = dvls.Yt,
-                                    scaling = scaling)
+    # Perform i-th variation operator
+    dvls.X <- do.call(opname,
+                      args = var.args)
     
-    # 4. Scalarization by DVLS neighborhood.
-    dvls.bigZ <- scalarize_values(normYs  = dvls.normYs,
-                                  W       = dvls.W,
-                                  B       = dvls.B,
-                                  aggfun  = aggfun)
-    
-    # Calculate selection indices for DVLS
-    dvls.selin <- order_neighborhood(bigZ       = dvls.bigZ,
-                                     B          = dvls.B,
-                                     V          = dvls.YV$V,
-                                     Vt         = dvls.Vt,
-                                     constraint = constraint)
-    
-    # Update DVLS "incumbent"
-    dvls.out <- updt_standard(X        = dvls.X,
-                              Xt       = dvls.Xt,
-                              Y        = dvls.YV$Y,
-                              Yt       = dvls.Yt,
-                              V        = dvls.YV$V,
-                              Vt       = dvls.Vt,
-                              sel.indx = dvls.selin,
-                              B        = dvls.B)
-    dvls.Xt  <- dvls.out$X
-    dvls.Yt  <- dvls.out$Y
-    dvls.Vt  <- dvls.out$V
+    X <- dvls.X
   }
+  dvls.X <- dvls.X[which.x, , drop = FALSE]
   
-  dvls.X            <- NA * randM(Xt)
-  dvls.X[which.x, ] <- dvls.Xt
+  # 2. Evaluate on objective functions and constraints
+  dvls.YV <- evaluate_population(X       = dvls.X,
+                                 problem = problem,
+                                 nfe     = 0)
+  X <- Xt
+  X[which.x, ] <- dvls.X
+  Y <- Yt
+  Y[which.x, ] <- dvls.YV$Y
   
-  return(list(X   = dvls.X,
-              nfe = 2 * sum(which.x)))
+  temp.B = var.input.pars$B
+  temp.B[which.x, ] <- dvls.B
+  dvls.B = temp.B
+  
+  # 3. Objective scaling
+  dvls.normYs <-
+    scale_objectives(Y       = Y,
+                     Yt      = Yt,
+                     scaling = scaling)
+  
+  # 4. Scalarization by DVLS neighborhood.
+  dvls.bigZ <- scalarize_values(
+    normYs  = dvls.normYs,
+    W       = W,
+    B       = B,
+    aggfun  = aggfun
+  )
+  
+  # Calculate selection indices for DVLS
+  dvls.selin <- order_neighborhood(
+    bigZ       = dvls.bigZ,
+    B          = dvls.B,
+    V          = dvls.YV$V,
+    Vt         = dvls.Vt,
+    constraint = constraint
+  )
+  
+  # adding update for all solutions in the population
+  
+  
+  
+  # Update DVLS "incumbent"
+  dvls.out <- updt_restricted(
+    update   = preset_moead("moead.de")$update,
+    X        = X,
+    Xt       = Xt,
+    Y        = Y,
+    Yt       = Yt,
+    V        = dvls.YV$V,
+    Vt       = dvls.Vt,
+    sel.indx = dvls.selin,
+    B        = dvls.B
+  )
+  dvls.Xt  <- dvls.out$X
+  dvls.Yt  <- dvls.out$Y
+  dvls.Vt  <- dvls.out$V
+  
+  # dvls.X            <- NA * randM(Xt)
+  # dvls.X[which.x, ] <- dvls.Xt
+  return(list(X   = X,
+              nfe = sum(which.x)))
 }

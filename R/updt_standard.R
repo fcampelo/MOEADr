@@ -27,7 +27,7 @@
 #'
 #' @export
 
-updt_standard <- function(X, Xt, Y, Yt, V, Vt, sel.indx, B, ...){
+updt_standard <- function(X, Xt, Y, Yt, V, Vt, sel.indx, B, idx.parent, offspring.count, ...){
   # Solution x_i^{t+1} will receive the best solution from the set:
   # ${x_i^t, {v_j^t \forall j \in N(i)}} | w_i$
   # where $v_j^t$ is the j-th 'offspring' candidate solution, N(i) is the
@@ -45,7 +45,14 @@ updt_standard <- function(X, Xt, Y, Yt, V, Vt, sel.indx, B, ...){
   # - B: matrix of neighborhoods
   do.update <- function(i, sel.indx, XY, XYt, B){
     if (sel.indx[i] > ncol(B)) return(XYt[i, ]) # last row = incumbent solution
-    else return(XY[B[i, sel.indx[i]], ])
+    else {
+      # if (offspring.count[idx.parent[j+1]+1]>0){
+      #   offspring.count[idx.parent[j+1]+1] <<- offspring.count[idx.parent[j+1]+1] - 1
+      # }
+      # offspring.count[i+1] <<- offspring.count[i+1] + 1
+      # idx.parent[j+1] <<- i
+      return(XY[B[i, sel.indx[i]], ])
+    }
   }
 
   # Update matrix of candidate solutions

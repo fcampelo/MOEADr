@@ -243,7 +243,7 @@
 #'               seed    = seed)
 #' plot(out3, suppress.pause = TRUE)
 
-moead <-
+　moead <-
   function(preset = NULL,
            # List:  Set of strategy/components
            problem = NULL,
@@ -352,6 +352,7 @@ moead <-
     
     # =========================== Initial definitions ========================== #
     # Generate weigth vectors
+
     if (decomp$name == "loaded") {
       W <- decomp$W
     }
@@ -359,8 +360,6 @@ moead <-
       W  <- generate_weights(decomp = decomp,
                              m      = problem$m)
     }
-    
-    
     # Generate initial population
     X  <- create_population(N       = nrow(W),
                             problem = problem)
@@ -385,29 +384,28 @@ moead <-
     keep.running  <- TRUE      # stop criteria flag
     iter          <- 0         # counter: iterations
     
-    # ========== Visualization Tools
-    # calculating usage of resource by subproblem and any other visualization infoc
-    usage <- list()
-    plot.resources <- list(rep(0, dim(W)[1]))
-    plot.paretofront <- list(rep(0, dim(W)[1]))
+
+    # Yref <-
+    #   as.matrix(read.table(paste0(
+    #     "../inst/extdata/pf_data/", fun, ".2D.pf"
+    #   )))
     
-    Yref <-
-      as.matrix(read.table(paste0(
-        "../inst/extdata/pf_data/", fun, ".2D.pf"
-      )))
-    # readline(prompt="Go to next iteration: ")
-    # idx.parent <- rep(0, nrow(W) + 1)
-    # s <- list()
-    # spread <- list()
-    # pressure.offspring <- list()
-    # pet <- list()
+    if(resource.allocation$name == "none") div <- nrow(W) else div <- resource.allocation$n
+    
+    # size <- ceiling((stopcrit[[1]]$maxeval - nrow(W)) / div)
+    # pressure.offspring <- rep(NA, ceiling((stopcrit[[1]]$maxeval - nrow(W)) / div))
+    # offspring.count <- rep(0, nrow(W) + 1)
+    # ========== Visualization Tools
+    # calculating usage of resource by subproblem and any other visualization info
+    # usage <- matrix(NA, nrow = size, ncol =nrow(W))
+    # plot.paretofront <- df <- data.frame(f1 = rep(NA,nrow(Y)*size), f2 = rep(NA,nrow(Y)*size), iter = rep(NA,nrow(Y)*size))
+    # plot.paretofront <- data.frame()
     
     
     while (keep.running) {
       # Update iteration counter
       iter <- iter + 1
-      # offspring.count <- rep(0, nrow(W) + 1)
-      # idx.parent <- rep(0, nrow(W) + 1)
+      idx.parent <- rep(0, nrow(W) + 1)
       # print("iter")
       # print(iter)
       # print("nfe")
@@ -452,16 +450,7 @@ moead <-
       Yt <- Y
       Vt <- V
      
-      # indexes are used by Resource Allocation methods. if none, it is equal to the vector 1
-      # Store current population (X) and its objective values (Y)  in temp.X, temp.Y
-      # given indexes select solutions to change
-      
-      # X <- X[indexes,]
-      # indexes are used by Resource Allocation methods. if none, it is equal to the vector 1
-      # B  <- BP$B.variation[indexes, ]
       B  <- BP$B
-      # indexes are used by Resource Allocation methods. if none, it is equal to the vector 1
-      # P  <- BP$P[indexes, indexes]
       P  <- BP$P
       # ========== Variation
       # Perform variation
@@ -478,11 +467,8 @@ moead <-
                                                    lambda = W,
                                                    x      = X),
                                 iter      = iter)
-      # indexes are used by Resource Allocation methods. if none, it is equal to the vector 1
-      # B  <- BP$B.variation[indexes, ]
+
       B  <- BP$B
-      # indexes are used by Resource Allocation methods. if none, it is equal to the vector 1
-      # P  <- BP$P[indexes, indexes]
       P  <- BP$P
       
       X <- X[indexes, ]
@@ -491,6 +477,10 @@ moead <-
       YV <- evaluate_population(X       = X,
                                 problem = problem,
                                 nfe     = nfe)
+      # ========== Resource Allocation - Combine old solutions with the new ones
+      # updating the whole pop with the prioritized solutions in X and in Y
+      # indexes are used by Resource Allocation methods. if none, it is equal to the vector 1
+      # Y <- Y[indexes, ]
       Y   <- YV$Y
       V   <- YV$V
       nfe <- YV$nfe
@@ -498,12 +488,7 @@ moead <-
       X <- temp.X
       temp.Y[indexes, ] <- Y
       Y <- temp.Y
-      
-      # ========== Resource Allocation - Combine old solutions with the new ones
-      # updating the whole pop with the prioritized solutions in X and in Y
-      # indexes are used by Resource Allocation methods. if none, it is equal to the vector 1
-      # Y <- Y[indexes, ]
-      
+
       # ========== Scalarization
       # Objective scaling and estimation of 'ideal' and 'nadir' points
       normYs <- scale_objectives(Y       = Y,
@@ -514,7 +499,6 @@ moead <-
       # bigZ is an [(T+1) x N] matrix, in which each column has the T scalarized
       # values for the solutions in the neighborhood of one subproblem, plus the
       # scalarized value for the incumbent solution for that subproblem.
-      # B  <- BP$B.scalarize[indexes,]
       bigZ <- scalarize_values(
         normYs  = normYs,
         W       = W,
@@ -527,7 +511,6 @@ moead <-
       # of one neighborhood (plus incumbent), sorted by their "selection quality"
       # (which takes into account both the performance value and constraint
       # handling policy, if any)
-      # B  <- BP$B.order[indexes,]
       sel.indx <- order_neighborhood(
         bigZ       = bigZ,
         B          = B,
@@ -546,7 +529,8 @@ moead <-
       V       <- XY$V
       Archive <- XY$Archive
       # offspring.count <- XY$offspring.count
-      # idx.parent <- idx.parent + XY$idx.parent
+      # idx.parent <- XY$idx.parent
+      
       # ========== Resource Allocation - Update Priority function values
       # bad workaround with the problem of not having this values at the first iterations!
       
@@ -587,7 +571,6 @@ moead <-
           dt.X
         )
         priority.values <- updates$priority.values
-        
       }
       
       dt.Y <- Y
@@ -617,19 +600,13 @@ moead <-
       #
       # ========== Visualization Tools
       # calculating usage of resource by subproblem and any other visualization info
-      if (nullRA) {
-        usage[[length(usage) + 1]] <- rep(1, dim(W)[1])
-      }
-      else{
-        usage[[length(usage) + 1]] <- as.numeric(iteration_usage)
-      }
-      paretofront <-
-        cbind(Y, stage = iter)
-      plot.paretofront <- rbind(plot.paretofront, paretofront)
-      resources <-
-        cbind(Reduce("+", usage),
-              stage = iter)
-      plot.resources <- rbind(plot.resources, resources)
+      # if(nullRA) usage[iter,] <- rep(1, dim(W)[1]) else usage[iter,] <- as.numeric(iteration_usage)
+      # if(iter != 1) pad <- 1 else pad <- 0
+
+      # plot.paretofront[((iter-1)*nrow(Y)+pad):(iter*nrow(Y)),1:2] <- Y
+      # plot.paretofront[((iter-1)*nrow(Y)+pad):(iter*nrow(Y)),3] <- iter
+      
+      # plot.paretofront <- rbind(plot.paretofront, cbind(Y, stage = iter))
       
       # ========== Stop Criteria
       # Calculate iteration time
@@ -651,68 +628,17 @@ moead <-
       # Echo whatever is demanded
       print_progress(iter.times, showpars)
       
-      
-      
-      # complex pressure (offspring + (traits -> fitness))
-      # offspring = offspring.count[-1]
-      
-      # thresholdOffspring <- median(offspring)
-      # thresholdFitness <- median(fitness)
-      # 
-      # if (thresholdOffspring == 0) {
-      #   thresholdOffspring == 1
+      # if(var(fitness) == 0 ){
+      #   pressure.offspring[iter] <- 0  
       # }
-      # 
-      # A <- 0
-      # B <- 0
-      # C <- 0
-      # D <- 0
-      # #   thresholdOffspring?
-      # for (i in 1:dim(W)[1]) {
-      #   if (offspring[i] <= thresholdOffspring) {
-      #     # Low offspring
-      #     if (fitness[i] > thresholdFitness) {
-      #       B = B + 1	# high fitness, low offspring
-      #     }
-      #     else{
-      #       A = A + 1	# low fitness, low offspring
-      #     }
-      #   }
-      #   
-      #   else {
-      #     # High offspring
-      #     if (fitness[i]  > thresholdFitness) {
-      #       D = D + 1 # high fitness, high offspring
-      #     }
-      #     
-      #     else{
-      #       C = C + 1 # low fitness, high offspring
-      #     }
-      #   }
+      # else{
+      #   pressure.offspring[iter] <-
+      #     Kendall(offspring.count[-1], fitness)$tau[1]  
       # }
-      # 
-      # v1 = choose(A+B, A)*choose(C+D,C)/choose(A+B+C+D, A+C)
-      # 
-      # while(C != 0 && B != 0){
-      #   A = A + 1
-      #   D = D + 1
-      #   B = B - 1
-      #   C = C - 1
-      # }
-      # 
-      # v2 = fisher.test(matrix(c(A, C, B, D),nrow=2), alternative = "greater")$p
-      # 
-      # pet[[length(pet) + 1]] <- -log10(v1+v2)
-      
-      #p tau
-      # print(offspring)
-      # pressure.offspring[[length(pressure.offspring) + 1]] <-
-      #   Kendall(offspring, fitness)$tau[1]
       # 
       # # delta spread from NSGA-II - diversity in obj space
       # spread[[length(spread) + 1]] <-
       #   generalizedSpread(Archive$Y, Yref)
-
     }
     # =========================== End Iterative cycle ========================== #
     
@@ -741,10 +667,8 @@ moead <-
     
     # ========== Visualization Tools
     # polishing output names
-    colnames(plot.paretofront) <-
-      c(paste0("f", 1:ncol(Y)), "stage")
-    colnames(plot.resources) <-
-      c("Resources", "stage")
+    # colnames(plot.paretofront) <-
+    #   c(paste0("f", 1:ncol(Y)), "stage")
     # Output
     out <- list(
       X           = X,
@@ -752,19 +676,16 @@ moead <-
       V           = V,
       W           = W,
       Archive     = Archive,
-      # Archive2     = Archive2,
-      usage       = usage,
+      # usage       = usage,
       ideal       = apply(Y, 2, min),
       nadir       = apply(Y, 2, max),
       nfe         = nfe,
       n.iter      = iter,
       time        = difftime(Sys.time(), time.start, units = "secs"),
       seed        = seed,
-      inputConfig = moead.input.pars,
-      # spread = spread,
-      # pressure.offspring = pressure.offspring,
-      plot.paretofront = plot.paretofront,
-      plot.resources = plot.resources
+      inputConfig = moead.input.pars#,
+      # pressure.offspring = pressure.offspring#,
+      # plot.paretofront = plot.paretofront
     )
     class(out) <- c("moead", "list")
     

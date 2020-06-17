@@ -57,7 +57,6 @@ updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, idx.parent
       else if (used[B[i, j]] < nr)          # tests if the current element is still available
       {
         used[B[i, j]] <<- used[B[i, j]] + 1 # modifies count matrix in parent env
-        
         # if (offspring.count[idx.parent[j+1]+1]>0){
         #   offspring.count[idx.parent[j+1]+1] <<- offspring.count[idx.parent[j+1]+1] - 1
         # }
@@ -134,6 +133,6 @@ updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, idx.parent
     # Output
   return(list(X = Xnext,
               Y = Ynext,
-              V = Vnext,
-              offspring.count = offspring.count))
+              V = Vnext
+              ))
 }
