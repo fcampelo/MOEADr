@@ -81,7 +81,7 @@ savePlotData <- function (moea, name, j,wd = '~/dataExp/') {
   
 }
 
-loadPlotData <- function (name, j,wd='~/dataExp/') {
+loadPlotData <- function (name, j,wd) {
   X <- read_feather(paste0(wd, name, j, '_X'))
   Y <- read_feather(paste0(wd, name, j, '_Y'))
   # plot.paretofront <-

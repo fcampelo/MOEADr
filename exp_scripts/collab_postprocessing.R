@@ -10,7 +10,7 @@ lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 fun.names1 <- list()
 source("visualization_tools.R")
 number.fun <- 1
-repetitions <- 10
+repetitions <- 9
 
 for (i in 9:9) {
   fun.names1[[length(fun.names1) + 1]] = paste0("UF", i)
@@ -20,7 +20,9 @@ for (i in 7:7) {
   fun.names1[[length(fun.names1) + 1]] = paste0("DTLZ", i) 
 }
 
-number_subproblems <- c(3, 4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
+#number_subproblems <- c(3, 4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
+
+source("../R/summary_moead.R")
 
 results <- data.frame()
 for (fun in fun.names1) {
@@ -36,6 +38,7 @@ for (fun in fun.names1) {
       )))
     colnames(Yref) <- c("f1", "f2")
     ref.point <- c(1, 1)
+    number_subproblems <- c(3, 4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
   }
   else {
     Yref <-
@@ -45,10 +48,12 @@ for (fun in fun.names1) {
     if (as.numeric(number) == 8 || as.numeric(number) == 9 || as.numeric(number) == 10){
       colnames(Yref) <- c("f1", "f2", "f3")
       ref.point <- c(1, 1, 1)
+      number_subproblems <- c(4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
     }
     else{
       colnames(Yref) <- c("f1", "f2")
       ref.point <- c(1, 1)
+      number_subproblems <- c(3, 4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
     }
   }
   
@@ -100,36 +105,40 @@ for (fun in fun.names1) {
         loadPlotData(name = paste0(fun, "_moead.RI_", lambda, "_"), wd = "~/france_data/",
                      j = j)
     
-    
+    print(moead.random)
+    print(moead.RI)
     class(moead.random) <- "moead"
     class(moead.ds) <- "moead"
     class(moead.RI) <- "moead"
     
     random <-
       data.frame(
-        summary(
+        summary.moead(
           moead.random,
           scaling.reference = ref1,
-          ref.point = ref.point
+          ref.point = ref.point,
+  	  ref.front = Yref
         ),
         name = paste0("random_", lambda)
       )
     
     DS <-
       data.frame(
-        summary(
+       	summary.moead(
           moead.ds,
           scaling.reference = ref1,
-          ref.point = ref.point
+          ref.point = ref.point,
+          ref.front = Yref
         ),
         name = paste0("DS_", lambda)
       )
     RI <-
       data.frame(
-        summary(
+        summary.moead(
           moead.RI,
           scaling.reference = ref1,
-          ref.point = ref.point
+          ref.point = ref.point,
+          ref.front = Yref
         ),
         name = paste0("RI_", lambda)
       )

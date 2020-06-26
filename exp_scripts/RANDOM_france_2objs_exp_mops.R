@@ -32,7 +32,7 @@ update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 506))
+                       maxeval = 100000))
 
 
 
@@ -93,6 +93,6 @@ for (j in 1:repetitions) {
       j = j,
       wd = "~/france_data/"
     )
-    exit()
+ #   exit()
   }
 }

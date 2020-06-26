@@ -9,7 +9,7 @@ lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 fun.names1 <- list()
 source("visualization_tools.R")
 number.fun <- 1
-repetitions <- 10
+repetitions <- 9
 
 checkpoints <- (0:40) * 750
 collab_results <- read_feather("collab_results")
@@ -22,8 +22,8 @@ for (i in 7:7) {
   fun.names1[[length(fun.names1) + 1]] = paste0("DTLZ", i)
 }
 
-number_subproblems <-
-  c(3, 4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
+#number_subproblems <-
+#  c(3, 4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
 
 
 strategy <-
@@ -49,6 +49,8 @@ for (fun in fun.names1) {
       )))
     colnames(Yref) <- c("f1", "f2")
     ref.point <- c(1, 1)
+    number_subproblems <-
+     c(3, 4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
   }
   else {
     Yref <-
@@ -59,6 +61,8 @@ for (fun in fun.names1) {
         as.numeric(number) == 9 || as.numeric(number) == 10) {
       colnames(Yref) <- c("f1", "f2", "f3")
       ref.point <- c(1, 1, 1)
+      number_subproblems <-
+       c(4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
     }
     else{
       colnames(Yref) <- c("f1", "f2")
@@ -74,22 +78,25 @@ for (fun in fun.names1) {
     for (lambda in number_subproblems) {
       moead.random <-
         loadPlotData(
-          name = paste0(fun, "_moead.random_", lambda, "_", wd = "~/france_data/"),
-          j = j
+          name = paste0(fun, "_moead.random_", lambda, "_"),
+          j = j,
+	  wd = "~/france_data/"
         )
       
       
       moead.ds <-
         loadPlotData(
-          name = paste0(fun, "_moead.norm_", lambda, "_", wd = "~/france_data/"),
-          j = j
+          name = paste0(fun, "_moead.norm_", lambda, "_"),
+          j = j,
+          wd = "~/france_data/"
         )
       
       
       moead.RI <-
         loadPlotData(
-          name = paste0(fun, "_moead.RI_", lambda, "_", wd = "~/france_data/"),
-          j = j
+          name = paste0(fun, "_moead.RI_", lambda, "_"),
+          j = j,
+          wd = "~/france_data/"
         )
       ref1 <-
         rbind(ref1,
@@ -112,13 +119,15 @@ for (fun in fun.names1) {
       for (lambda in number_subproblems) {
         moea <-
           loadPlotData(
-            name = paste0(fun, "_", name, "_", lambda, "_", wd = "~/france_data/"),
-            j = my_rep
+            name = paste0(fun, "_", name, "_", lambda, "_"),
+            j = my_rep,
+	    wd = "~/france_data/"
           )
         ck_idx <- 1
         n.iter <- as.integer(moea$n.iter) - 1
         my_sum <- 0
         my_hv <- data.frame()
+        print(number)
         for (j in 0:n.iter) {
           idxs <- ((350 * j) + 1):(350 * (j + 1))
           my_sum <-
@@ -137,7 +146,8 @@ for (fun in fun.names1) {
                 cbind(moea$plot.paretofront$f1[idxs],
                       moea$plot.paretofront$f2[idxs])
             }
-            
+            print(head(PF))
+	    print(head(ref1)) 
             colnames(PF) <- colnames(ref1)
             PF <- scaling_Y(PF, ref1)
             hv <- dominated_hypervolume(t(PF), ref = ref.point)

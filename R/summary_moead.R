@@ -78,7 +78,7 @@ summary.moead <- function(object,
 
   npts  <- nrow(Y)
   nfeas <- sum(feas.idx)
-  nndom.idx <- ecr::which.nondominated(t(Y[feas.idx, ]))
+  nndom.idx <- ecr::nondominated(t(Y[feas.idx, ]))
   nndom <- sum(nndom.idx)
   
 
