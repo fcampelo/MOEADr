@@ -23,7 +23,7 @@ update$UseArchive = TRUE
 
 stopcrit  <- list(list(name    = "maxeval",
                      maxeval = 100000))
-
+              
 n.obj <- 3
 print("3 OBJECTIVES")
 
@@ -92,6 +92,9 @@ for (j in 1:repetitions) {
       j = j,
       wd = "~/france_data/"
     )
+<<<<<<< HEAD
     #exit()
+=======
+>>>>>>> 42bed14e1e6bbd88abedf7baeaccbd64ac1a8bc7
   }
 }
