@@ -390,7 +390,7 @@
     # calculating usage of resource by subproblem and any other visualization info
     # usage <- matrix(NA, nrow = size, ncol =nrow(W))
     # plot.paretofront <- df <- data.frame(f1 = rep(NA,nrow(Y)*size), f2 = rep(NA,nrow(Y)*size), iter = rep(NA,nrow(Y)*size))
-    # plot.paretofront <- data.frame()
+    plot.paretofront <- data.frame()
     
     
     while (keep.running) {
@@ -452,7 +452,6 @@
       B  <- BP$B
       P  <- BP$P
       
-      print(Xv$X)
       
       temp.X[indexes, ] <- Xv$X
       X <- temp.X
@@ -589,7 +588,7 @@
       # plot.paretofront[((iter-1)*nrow(Y)+pad):(iter*nrow(Y)),1:2] <- Y
       # plot.paretofront[((iter-1)*nrow(Y)+pad):(iter*nrow(Y)),3] <- iter
       
-      # plot.paretofront <- rbind(plot.paretofront, cbind(Y, stage = iter))
+      plot.paretofront <- rbind(plot.paretofront, cbind(Y, stage = iter))
       
       # ========== Stop Criteria
       # Calculate iteration time
@@ -648,16 +647,14 @@
       V           = V,
       W           = W,
       Archive     = Archive,
-      # usage       = usage,
       ideal       = apply(Y, 2, min),
       nadir       = apply(Y, 2, max),
       nfe         = nfe,
       n.iter      = iter,
       time        = difftime(Sys.time(), time.start, units = "secs"),
       seed        = seed,
-      inputConfig = moead.input.pars#,
-      # pressure.offspring = pressure.offspring#,
-      # plot.paretofront = plot.paretofront
+      inputConfig = moead.input.pars,
+      plot.paretofront = plot.paretofront
     )
     class(out) <- c("moead", "list")
     
