@@ -9,7 +9,7 @@ library(compiler)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 enableJIT(1)
 
-repetitions <-  9
+repetitions <-  10
 dimension <- 100
 
 variation = preset_moead("moead.de")$variation
@@ -22,7 +22,7 @@ update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
 stopcrit  <- list(list(name    = "maxeval",
-                     maxeval = 100000))
+                     maxeval = 10000000))
               
 n.obj <- 3
 print("3 OBJECTIVES")
@@ -92,9 +92,6 @@ for (j in 1:repetitions) {
       j = j,
       wd = "~/france_data/"
     )
-<<<<<<< HEAD
-    #exit()
-=======
->>>>>>> 42bed14e1e6bbd88abedf7baeaccbd64ac1a8bc7
+    rm(moead.random)
   }
 }

@@ -384,17 +384,8 @@
     keep.running  <- TRUE      # stop criteria flag
     iter          <- 0         # counter: iterations
     
-
-    # Yref <-
-    #   as.matrix(read.table(paste0(
-    #     "../inst/extdata/pf_data/", fun, ".2D.pf"
-    #   )))
-    
     if(resource.allocation$name == "none") div <- nrow(W) else div <- resource.allocation$n
-    
-    # size <- ceiling((stopcrit[[1]]$maxeval - nrow(W)) / div)
-    # pressure.offspring <- rep(NA, ceiling((stopcrit[[1]]$maxeval - nrow(W)) / div))
-    # offspring.count <- rep(0, nrow(W) + 1)
+
     # ========== Visualization Tools
     # calculating usage of resource by subproblem and any other visualization info
     # usage <- matrix(NA, nrow = size, ncol =nrow(W))
@@ -406,11 +397,7 @@
       # Update iteration counter
       iter <- iter + 1
       idx.parent <- rep(0, nrow(W) + 1)
-      # print("iter")
-      # print(iter)
-      # print("nfe")
-      # print(nfe-old.nfe)
-      # old.nfe = nfe
+      
       if ("save.iters" %in% names(moead.input.pars)) {
         if (moead.input.pars$save.iters == TRUE)
           saveRDS(as.list(environment()),
@@ -454,9 +441,23 @@
       P  <- BP$P
       # ========== Variation
       # Perform variation
+      P <- P[indexes,]
+      X <- X[indexes,]
+      
+      print(X)
+      
       Xv      <- do.call(perform_variation,
                          args = as.list(environment()))
-      X       <- Xv$X
+      
+      B  <- BP$B
+      P  <- BP$P
+      
+      print(Xv$X)
+      
+      temp.X[indexes, ] <- Xv$X
+      X <- temp.X
+      
+      # X       <- Xv$X
       ls.args <- Xv$ls.args
       nfe     <- nfe + Xv$var.nfe
       var.input.pars <- as.list(sys.call())[-1]
@@ -528,8 +529,6 @@
       Y       <- XY$Y
       V       <- XY$V
       Archive <- XY$Archive
-      # offspring.count <- XY$offspring.count
-      # idx.parent <- XY$idx.parent
       
       # ========== Resource Allocation - Update Priority function values
       # bad workaround with the problem of not having this values at the first iterations!
@@ -582,23 +581,7 @@
         init_ra$dt.bigZ[[index]] <- bigZ
       }
       
-      # #archive nsga2
-      # if (iter %% 100 == 0 && more.pressure == T){
-      #   comb.popX <- rbind(X, Archive$X, Archive2$X)
-      #   comb.popY <- rbind(Y, Archive$Y, Archive2$Y)
-      # 
-      #   rankIdxList <- ecr::doNondominatedSorting(t(comb.popY))$rank
-      #   
-      #   rankIdxList <- ecr::selGreedy(ecr::doNondominatedSorting(t(comb.popY))$rank,nrow(W))
-      #   
-      #   Archive2$X <- comb.popX[rankIdxList,]
-      #   Archive2$Y <- comb.popY[rankIdxList,]
-      #   X <- Archive2$X
-      #   Y <- Archive2$Y
-      # }
       
-      #
-      # ========== Visualization Tools
       # calculating usage of resource by subproblem and any other visualization info
       # if(nullRA) usage[iter,] <- rep(1, dim(W)[1]) else usage[iter,] <- as.numeric(iteration_usage)
       # if(iter != 1) pad <- 1 else pad <- 0
@@ -628,17 +611,6 @@
       # Echo whatever is demanded
       print_progress(iter.times, showpars)
       
-      # if(var(fitness) == 0 ){
-      #   pressure.offspring[iter] <- 0  
-      # }
-      # else{
-      #   pressure.offspring[iter] <-
-      #     Kendall(offspring.count[-1], fitness)$tau[1]  
-      # }
-      # 
-      # # delta spread from NSGA-II - diversity in obj space
-      # spread[[length(spread) + 1]] <-
-      #   generalizedSpread(Archive$Y, Yref)
     }
     # =========================== End Iterative cycle ========================== #
     

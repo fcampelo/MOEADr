@@ -49,8 +49,6 @@ perform_variation <- function(variation, X, iter, problem, ...){
     } else {
       ls.args      <- variation[[lsi]]
       valid.types  <- gsub(" ", "", get_localsearch_methods()[,1])
-      valid.types <- c(valid.types, "de_poly")
-      valid.types <- c(valid.types, "all")
       # ========== Error catching and default value definitions
       assertthat::assert_that(
         !is.null(ls.args$tau.ls)  | !is.null(ls.args$gamma.ls))

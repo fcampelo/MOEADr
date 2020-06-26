@@ -9,7 +9,7 @@ library(compiler)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 enableJIT(1)
 
-repetitions <-  9
+repetitions <-  10
 dimension <- 100
 
 loaded.weights.2objs <-
@@ -32,7 +32,7 @@ update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 100000))
+                       maxeval = 10000000))
 
 n.obj <- 3
 print("3 OBJECTIVES")
@@ -102,5 +102,6 @@ for (j in 1:repetitions) {
       j = j,
       wd = "~/france_data/"
     )
+    rm(moead.norm)
   }
 }
