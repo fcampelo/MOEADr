@@ -444,7 +444,7 @@
       P <- P[indexes,]
       X <- X[indexes,]
       
-      print(X)
+      #_print(X)
       
       Xv      <- do.call(perform_variation,
                          args = as.list(environment()))
