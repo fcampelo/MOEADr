@@ -4,10 +4,10 @@ library(smoof)
 library(MOEADr)
 library(emoa)
 library(feather)
-library(withr)
-library(compiler)
+# library(withr)
+# library(compiler)
 lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
-enableJIT(1)
+# enableJIT(1)
 
 repetitions <-  10
 dimension <- 100
@@ -31,8 +31,11 @@ neighbors$T <- 100
 update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
+# stopcrit  <- list(list(name    = "maxeval",
+#                        maxeval = 10000000))
+
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 10000000))
+                       maxeval = 506))
 
 
 
