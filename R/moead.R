@@ -243,7 +243,7 @@
 #'               seed    = seed)
 #' plot(out3, suppress.pause = TRUE)
 
-　moead <-
+moead <-
   function(preset = NULL,
            # List:  Set of strategy/components
            problem = NULL,
@@ -269,6 +269,7 @@
            seed = NULL,
            # List:  echoing behavior
            more.pressure = NULL,
+           small.update = NULL,
            # Seed for PRNG
            resource.allocation = list(name = "none",
                                       selection = "none",
@@ -303,6 +304,8 @@
         scaling   = preset$scaling
       if (is.null(stopcrit))
         stopcrit  = preset$stopcrit
+      if (is.null(small.update))
+        small.update  = F
       if (is.null(more.pressure))
         more.pressure  = F
       nullRA <-
@@ -352,7 +355,7 @@
     
     # =========================== Initial definitions ========================== #
     # Generate weigth vectors
-
+    
     if (decomp$name == "loaded") {
       W <- decomp$W
     }
@@ -385,7 +388,7 @@
     iter          <- 0         # counter: iterations
     
     if(resource.allocation$name == "none") div <- nrow(W) else div <- resource.allocation$n
-
+    
     # ========== Visualization Tools
     # calculating usage of resource by subproblem and any other visualization info
     # usage <- matrix(NA, nrow = size, ncol =nrow(W))
@@ -436,7 +439,7 @@
       Xt <- X
       Yt <- Y
       Vt <- V
-     
+      
       B  <- BP$B
       P  <- BP$P
       # ========== Variation
@@ -444,8 +447,7 @@
       P <- P[indexes,]
       X <- X[indexes,]
       
-      #_print(X)
-      
+
       Xv      <- do.call(perform_variation,
                          args = as.list(environment()))
       
@@ -460,14 +462,14 @@
       ls.args <- Xv$ls.args
       nfe     <- nfe + Xv$var.nfe
       var.input.pars <- as.list(sys.call())[-1]
-    
+      
       
       BP <- define_neighborhood(neighbors = neighbors,
                                 v.matrix  = switch(neighbors$name,
                                                    lambda = W,
                                                    x      = X),
                                 iter      = iter)
-
+      
       B  <- BP$B
       P  <- BP$P
       
@@ -488,7 +490,7 @@
       X <- temp.X
       temp.Y[indexes, ] <- Y
       Y <- temp.Y
-
+      
       # ========== Scalarization
       # Objective scaling and estimation of 'ideal' and 'nadir' points
       normYs <- scale_objectives(Y       = Y,
@@ -505,7 +507,7 @@
         B       = B,
         aggfun  = aggfun
       )
-      fitness <- bigZ[neighbors$T + 1, ]
+      # fitness <- bigZ[neighbors$T + 1, ]
       # Calculate selection indices
       # sel.indx is an [N x (T+1)] matrix, in which each row contains the indices
       # of one neighborhood (plus incumbent), sorted by their "selection quality"
@@ -520,7 +522,21 @@
       )
       # ========== Update
       # Update population
-     
+      
+      if (!is.null(small.update)){
+        T.temp <- neighbors$T
+        neighbors$T <- 1
+        BP <- define_neighborhood(neighbors = neighbors,
+                                  v.matrix  = switch(neighbors$name,
+                                                     lambda = W,
+                                                     x      = X),
+                                  iter      = iter)
+        
+        B  <- BP$B
+        P  <- BP$P
+        neighbors$T <- T.temp 
+      }
+      
       XY <- do.call(update_population,
                     args = as.list(environment()))
       
@@ -584,12 +600,11 @@
       # calculating usage of resource by subproblem and any other visualization info
       # if(nullRA) usage[iter,] <- rep(1, dim(W)[1]) else usage[iter,] <- as.numeric(iteration_usage)
       # if(iter != 1) pad <- 1 else pad <- 0
-
+      
       # plot.paretofront[((iter-1)*nrow(Y)+pad):(iter*nrow(Y)),1:2] <- Y
       # plot.paretofront[((iter-1)*nrow(Y)+pad):(iter*nrow(Y)),3] <- iter
       
       plot.paretofront <- rbind(plot.paretofront, cbind(Y, stage = iter))
-      
       # ========== Stop Criteria
       # Calculate iteration time
       elapsed.time <- as.numeric(difftime(

@@ -6,9 +6,8 @@ Description: Modular implementation of Multiobjective Evolutionary Algorithms
               <DOI:10.1109/TEVC.2007.892759>] for quick assembling and 
               testing of new algorithmic components, as well as easy 
               replication of published MOEA/D proposals.
-
-Version:  1.2.0
-Date:     2017-10-21
+Version:  1.3
+Date:     2020-7-14
 Imports:  FNN, 
           assertthat
 Suggests: smoof,

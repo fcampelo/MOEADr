@@ -51,7 +51,7 @@
 #' constraint value list (`V`).
 
 updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
-                      normYs, W, BP, constraint, aggfun, idx.parent, offspring.count, ...){
+                      normYs, W, BP, constraint, aggfun, ...){
 
   ## Verify that the necessary parameters exist.
   assertthat::assert_that(
@@ -116,7 +116,7 @@ updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
         # if (offspring.count[idx.parent[j+1]+1]>0){
         #   offspring.count[idx.parent[j+1]+1] <<- offspring.count[idx.parent[j+1]+1] - 1
         # }
-        offspring.count[i+1] <<- offspring.count[i+1] + 1
+        # offspring.count[i+1] <<- offspring.count[i+1] + 1
         # idx.parent[j+1] <<- i
         
         return(XY[B[i, j], , drop = FALSE])
@@ -188,6 +188,5 @@ updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
   # Output
   return(list(X = Xnext,
               Y = Ynext,
-              V = Vnext,
-              offspring.count = offspring.count))
+              V = Vnext))
 }
