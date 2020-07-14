@@ -37,18 +37,14 @@
 #' Decomposition. Journal of Statistical Software \doi{10.18637/jss.v092.i06}\cr
 #'
 summary.moead <- function(object,
-<<<<<<< HEAD
-                                ...,
-=======
                           ...,
->>>>>>> naturalcomputing
-                                scaling.reference = NULL, 
-                                useArchive      = FALSE,
-                                viol.threshold  = 1e-6,
-                                ndigits         = 3,
-                                ref.point       = NULL,
-                                ref.front       = NULL,
-                                show.output     = NULL)
+                          scaling.reference = NULL,
+                          useArchive      = FALSE,
+                          viol.threshold  = 1e-6,
+                          ndigits         = 3,
+                          ref.point       = NULL,
+                          ref.front       = NULL,
+                          show.output     = NULL)
 {
   # Error checking
   nullRP <- is.null(ref.point)
@@ -76,7 +72,7 @@ summary.moead <- function(object,
   }
   hv.scaled <- 0
   igd <- 0
-  
+
   feas.idx <- rep(TRUE, nrow(Y))
   if(!is.null(V)) feas.idx <- (rowSums(V$Vmatrix > viol.threshold) == 0)
 
@@ -84,7 +80,7 @@ summary.moead <- function(object,
   nfeas <- sum(feas.idx)
   nndom.idx <- ecr::nondominated(t(Y[feas.idx, ]))
   nndom <- sum(nndom.idx)
-  
+
 
   ideal.est <- apply(Y[feas.idx, ], 2, min)
   nadir.est <- apply(Y[feas.idx, ], 2, max)
@@ -97,21 +93,14 @@ summary.moead <- function(object,
           using the maximum in each dimension instead.")
       ref.point <- nadir.est
     }
-<<<<<<< HEAD
-    if (!is.null(scaling.reference)) hv <- emoa::dominated_hypervolume(points = t(scaling_Y(Y, scaling.reference)), ref = ref.point)
-    else hv <- emoa::dominated_hypervolume(points = t(Y), ref = ref.point)
-    
-    if (!nullRF) hv.front <- emoa::dominated_hypervolume(points = t(ref.front), ref = ref.point)
-=======
     Y <- Y[which(nndom.idx==T),]
-    
+
     if (!is.null(scaling.reference)) hv <- emoa::dominated_hypervolume(points = t(scaling_Y(Y, scaling.reference)), ref = ref.point)
     else hv <- emoa::dominated_hypervolume(points = t(Y), ref = ref.point)
-    
+
     hv.front <- NULL
-    
+
     if (!nullRF) hv.front <- emoa::dominated_hypervolume(points = t(scaling_Y(Yref, scaling.reference)), ref = ref.point)
->>>>>>> naturalcomputing
     if (!nullRF) hv.scaled <- hv/hv.front
   }
 
@@ -140,11 +129,7 @@ summary.moead <- function(object,
     } else cat("\n\nPlease install package 'emoa' to calculate hypervolume.")
     cat("\n#====================================")
   }
-  
-<<<<<<< HEAD
-  out <- list(hv.scaled = hv.scaled, hv = hv, igd = igd, nndom = nndom, nfeas = nfeas)
-=======
+
   out <- list(hv.scaled = hv.scaled, hv = hv, hv.front = hv.front, igd = igd, nndom = nndom, nfeas = nfeas)
->>>>>>> naturalcomputing
   return(out)
 }

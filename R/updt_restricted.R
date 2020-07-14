@@ -33,7 +33,6 @@
 #' constraint value list (`V`).
 #'
 #' @export
-<<<<<<< HEAD
 #'
 #' @section References:
 #' F. Campelo, L.S. Batista, C. Aranha (2020): The {MOEADr} Package: A
@@ -43,9 +42,6 @@
 
 updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, ...){
 
-=======
-updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, idx.parent, offspring.count, ...){
->>>>>>> naturalcomputing
   # ========== Error catching and default value definitions
   assertthat::assert_that(
     assertthat::has_name(update,"nr"),
@@ -63,26 +59,17 @@ updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, idx.parent
   # - B: matrix of neighborhoods
   do.update <- function(i, sel.indx, XY, XYt, B){
     for (j in sel.indx[i, ]) {               #each element in b_i, in fitness order
-      if (j > ncol(B)) {
-        return(XYt[i, , drop = FALSE])     # last row = incumbent solution
-        }
+      if (j > ncol(B)) return(XYt[i, , drop = FALSE])     # last row = incumbent solution
       else if (used[B[i, j]] < nr)          # tests if the current element is still available
       {
         used[B[i, j]] <<- used[B[i, j]] + 1 # modifies count matrix in parent env
-        # if (offspring.count[idx.parent[j+1]+1]>0){
-        #   offspring.count[idx.parent[j+1]+1] <<- offspring.count[idx.parent[j+1]+1] - 1
-        # }
-        # offspring.count[i+1] <<- offspring.count[i+1] + 1
-        # idx.parent[j+1] <<- i
-        
         return(XY[B[i, j], , drop = FALSE])
       }
     }
   }
-  
+
   # Vector of indices (random permutation), and deshuffling vector
   I  <- sample.int(nrow(X))
-  
   I2 <- order(I)
 
   # Counter of how many time each solution has been used
@@ -98,7 +85,7 @@ updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, idx.parent
                     B         = B,
                     USE.NAMES = FALSE))
   Xnext <- Xnext[I2, ]
-  
+
   # Update matrix of function values
   used <- rep(0, nrow(Y))
   Ynext <- t(vapply(X         = I,
@@ -142,9 +129,8 @@ updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, idx.parent
     Vnext$v <- rowSums(Vnext$Vmatrix)
   }
 
-    # Output
+  # Output
   return(list(X = Xnext,
               Y = Ynext,
-              V = Vnext
-              ))
+              V = Vnext))
 }

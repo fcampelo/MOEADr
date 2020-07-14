@@ -30,22 +30,18 @@
 #' Component-Based Framework for Multiobjective Evolutionary Algorithms Based on
 #' Decomposition. Journal of Statistical Software \doi{10.18637/jss.v092.i06}\cr
 #'
-
-<<<<<<< HEAD
 perform_variation <- function(variation, X, iter, ...){
-=======
-perform_variation <- function(variation, X, iter, problem, ...){
->>>>>>> naturalcomputing
+
   # Get all input parameters
   # var.input.pars <- as.list(environment()) # <------ for debugging
   var.input.pars <- as.list(sys.call())[-1]
-  
+
   # Assert that all elements of "variation" have a "name" field
   .ignore <- lapply(variation,
                     FUN = function(x){
                       assertthat::assert_that(assertthat::has_name(x, "name"))})
-  
-  
+
+
   # ==================== LOCAL SEARCH SETUP ==================== #
   # Check if local search is part of the variation stack,
   # and treat it accordingly
@@ -59,19 +55,15 @@ perform_variation <- function(variation, X, iter, problem, ...){
     } else {
       ls.args      <- variation[[lsi]]
       valid.types  <- gsub(" ", "", get_localsearch_methods()[,1])
-<<<<<<< HEAD
-      
-=======
->>>>>>> naturalcomputing
       # ========== Error catching and default value definitions
       assertthat::assert_that(
         !is.null(ls.args$tau.ls)  | !is.null(ls.args$gamma.ls))
-      
+
       if(is.null(ls.args$tau.ls))   ls.args$tau.ls   <- 1e9
       if(is.null(ls.args$gamma.ls)) ls.args$gamma.ls <- 0
       if(is.null(ls.args$unsync))   ls.args$unsync   <- TRUE
       if(is.null(ls.args$trunc.x))  ls.args$trunc.x  <- TRUE
-      
+
       assertthat::assert_that(
         "iter" %in% names(var.input.pars),
         ls.args$type %in% valid.types,
@@ -80,9 +72,9 @@ perform_variation <- function(variation, X, iter, problem, ...){
         is.logical(ls.args$unsync),
         is.logical(ls.args$trunc.x))
     }
-    
+
     # ==========
-    
+
     # Make the necessary preparations in the first iteration
     if (iter == 1){
       # Define iteration for the first occurrence of local search (if tau.ls is
@@ -93,17 +85,17 @@ perform_variation <- function(variation, X, iter, problem, ...){
                                replace = TRUE)
       } else first.ls <- rep(ls.args$tau.ls,
                              times = nrow(X))
-      
+
       ls.args$name     <- NULL
       ls.args$first.ls <- first.ls
     }
-    
+
     # remove local search from the general operator stack
     variation.nols <- variation[-lsi]
   }
   # ================== END LOCAL SEARCH SETUP ================== #
-  
-  
+
+
   # ========= PERFORM VARIATION (EXCEPT LOCAL SEARCH) ========== #
   var.nfe          <- 0
   X                <- var.input.pars$X
@@ -111,14 +103,14 @@ perform_variation <- function(variation, X, iter, problem, ...){
   for (i in seq_along(variation.nols)){
     # Assemble function name
     opname <- paste0("variation_", variation.nols[[i]]$name)
-    
+
     # Update list of function inputs
     var.args <- c(var.input.pars, variation.nols[[i]], list(X = X))
-    
+
     # Perform i-th variation operator
     X <- do.call(opname,
                  args = var.args)
-    
+
     if (is.list(X)){
       var.nfe <- var.nfe + X$nfe
       X       <- X$X
@@ -126,11 +118,11 @@ perform_variation <- function(variation, X, iter, problem, ...){
   }
   which.x = 1:dim(X)[1]
   # ============ END VARIATION (EXCEPT LOCAL SEARCH) ============= #
-  
-  
+
+
   # ======================= LOCAL SEARCH ========================= #
   if (length(lsi) > 0){
-    
+
     # Flag subproblems that will undergo local search in a given iteration
     # (based on both the LS period and LS probability criteria)
     # (local search never happens in the very first iteration)
@@ -138,29 +130,25 @@ perform_variation <- function(variation, X, iter, problem, ...){
     which.gamma <- stats::runif(nrow(X)) <= rep(ls.args$gamma.ls,
                                                 times = nrow(X))
     which.x     <-  (which.tau | which.gamma) & (iter != 1)
-<<<<<<< HEAD
-=======
-    
->>>>>>> naturalcomputing
     if(any(which.x)){
       # Prepare argument list for local search
       ls.args2          <- c(var.input.pars, ls.args, var.input.pars$iter)
       ls.args2$which.x  <- which.x
-      
+
       # Perform local search
       Xls <- do.call("variation_localsearch",
                      args = ls.args2)
-      
+
       if (is.list(Xls)){
         var.nfe <- var.nfe + Xls$nfe
         Xls     <- Xls$X
       }
-      
+
       # Replace points that underwent local search
       X[which.x, ] <- Xls[which.x, ]
     }
   }
-  
+
   # Output
   return(list (X       = X,
                ls.args = ls.args,
