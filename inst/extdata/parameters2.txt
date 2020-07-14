@@ -1,0 +1,4 @@
+### Parameter file
+# name		      switch	type	values [conditions (using R syntax)]
+number.instances      " "     i     (2,25)
+num.iter.bet      " "     i     (2,25)

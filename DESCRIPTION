@@ -7,9 +7,9 @@ Description: Modular implementation of Multiobjective Evolutionary Algorithms
               testing of new algorithmic components, as well as easy 
               replication of published MOEA/D proposals. The full framework is
               documented in a paper published in the Journal of Statistical 
-              Software [<doi:10.18637/jss.v092.i06>].
-Version: 1.1.1
-Date: 2020-02-17
+              Software [<doi:10.18637/jss.v092.i06>]. replication of published MOEA/D proposals.
+Version:  1.2.0
+Date:     2017-10-21
 Imports:  FNN, 
           assertthat
 Suggests: smoof,
@@ -23,7 +23,7 @@ Suggests: smoof,
           emoa,
           ggplot2,
           reshape2,
-          pkgdown
+	  lhs
 Depends: R (>= 3.4.0)
 Authors@R: c(person("Felipe", "Campelo",
     email   = "fcampelo@ufmg.br",
@@ -44,5 +44,4 @@ Encoding: UTF-8
 RoxygenNote: 7.0.2
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
-URL: https://fcampelo.github.io/MOEADr/
-BugReports: https://github.com/fcampelo/MOEADr/issues
+URL: https://github.com/fcampelo/MOEADr

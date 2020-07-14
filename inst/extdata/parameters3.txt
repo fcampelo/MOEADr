@@ -1,0 +1,10 @@
+### Parameter file
+# name		      switch	type	values [conditions (using R syntax)]
+T               " "     i     (10,40)
+delta.p         " "     r     (0.1,1)
+UseArchive      " "     i     (0,1)
+nr              " "     i     (1,10)
+polymut.eta    " "     r     (1,100)
+polymut.pm     " "     r     (0,1)
+sbx.eta        " "     r     (1,100)
+sbx.pc         " "     r     (0,1)
