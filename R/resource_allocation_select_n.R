@@ -32,7 +32,7 @@ resource_allocation_select_n <-
       aux.boundary <- which(candidates.idx %in% idx.boundary)
       candidates.idx <- candidates.idx[-aux.boundary]
       priority.values <- priority.values[-aux.boundary]
-      indexes <- sample(x = candidates.idx, resource.allocation$n - problem$m, prob = priority.values + epsilon)
+      indexes <- sample(x = candidates.idx, size = resource.allocation$n - problem$m, prob = priority.values + epsilon)
       # indexes <- sample(x = candidates.idx, resource.allocation$n, prob = priority.values + epsilon)
       iteration_usage[indexes] <- TRUE
       iteration_usage[aux.boundary] <- TRUE

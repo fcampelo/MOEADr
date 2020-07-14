@@ -26,6 +26,7 @@ resource_allocation_select <-
            resource.allocation,
            W,
            priority.values,
+           problem,
            idx.boundary = NULL,
            ...) {
     # ========== Error catching and default value definitions
@@ -33,9 +34,7 @@ resource_allocation_select <-
       is.numeric(iter),
       "selection" %in% names(resource.allocation),
       length(priority.values) == dim(W)[1],
-      is.matrix(W),
-      # is.null(idx.boundary),
-      is.null(two_step))
+      is.matrix(W))
 
     # ========== Call specific resource allocation strategy
     # to add the bounderies

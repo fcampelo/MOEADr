@@ -60,7 +60,7 @@ define_neighborhood <- function(neighbors, v.matrix, iter){
     BP$fullB <- cbind(1:nrow(v.matrix),
                       FNN::get.knn(data      = v.matrix,
                                    k         = nrow(v.matrix) - 1)$nn.index)
-    BP$B <- as.maatrix(BP$fullB[, 1:neighbors$T])
+    BP$B <- as.matrix(BP$fullB[, 1:neighbors$T])
     np  <- nrow(v.matrix)
     if (np > neighbors$T){
       BP$P   <- matrix((1 - neighbors$delta.p) / (np - neighbors$T),

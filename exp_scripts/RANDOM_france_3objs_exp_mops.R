@@ -1,16 +1,18 @@
-rm(list = ls(all = TRUE))
-setwd("~/MOEADr/R/")
+# rm(list = ls(all = TRUE))
+# setwd("~/MOEADr/R/")
 library(smoof)
-library(MOEADr)
-library(emoa)
+# library(MOEADr)
+# library(emoa)
 library(feather)
-library(withr)
-library(compiler)
-lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
-enableJIT(1)
+# # library(withr)
+# # library(compiler)
+# lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
+# # enableJIT(1)
+
+library(MOEADps)
 
 repetitions <-  10
-dimension <- 100
+dimension <- 30
 
 variation = preset_moead("moead.de")$variation
 variation[[2]]$pm = 1 / dimension
