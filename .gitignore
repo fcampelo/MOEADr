@@ -1,7 +1,6 @@
 # History files
 .Rhistory
 .Rapp.history
-
 # Session Data files
 .RData
 # Example code in package build process
@@ -24,7 +23,11 @@
 # Rprof temporary files
 Rprof.out
 inst/doc
+<<<<<<< HEAD
 doc
 Meta
 MOEADr.Rproj
 R/DB
+MOEADr.Rproj
+R/DB
+dataExp/*

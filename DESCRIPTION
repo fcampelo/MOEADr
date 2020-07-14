@@ -5,11 +5,17 @@ Description: Modular implementation of Multiobjective Evolutionary Algorithms
               based on Decomposition (MOEA/D) [Zhang and Li (2007), 
               <DOI:10.1109/TEVC.2007.892759>] for quick assembling and 
               testing of new algorithmic components, as well as easy 
+<<<<<<< HEAD
               replication of published MOEA/D proposals. The full framework is
               documented in a paper published in the Journal of Statistical 
               Software [<doi:10.18637/jss.v092.i06>]. replication of published MOEA/D proposals.
 Version:  1.2.0
 Date:     2017-10-21
+=======
+              replication of published MOEA/D proposals.
+Version:  1.3
+Date:     2020-7-14
+>>>>>>> naturalcomputing
 Imports:  FNN, 
           assertthat
 Suggests: smoof,
@@ -44,4 +50,8 @@ Encoding: UTF-8
 RoxygenNote: 7.0.2
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
+<<<<<<< HEAD
 URL: https://github.com/fcampelo/MOEADr
+=======
+URL: https://github.com/fcampelo/MOEADr
+>>>>>>> naturalcomputing

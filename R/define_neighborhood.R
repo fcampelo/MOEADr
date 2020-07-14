@@ -40,7 +40,12 @@
 #' Decomposition. Journal of Statistical Software \doi{10.18637/jss.v092.i06}\cr
 #'
 
+<<<<<<< HEAD
 define_neighborhood <- function(neighbors, v.matrix, iter) {
+=======
+define_neighborhood <- function(neighbors, v.matrix, iter){
+  
+>>>>>>> naturalcomputing
   # ========== Error catching and default value definitions
   valid.methods <- c("lambda", "x")
   assertthat::assert_that(
@@ -50,6 +55,7 @@ define_neighborhood <- function(neighbors, v.matrix, iter) {
     neighbors$T <= nrow(v.matrix),
     is.numeric(neighbors$delta.p),
     length(neighbors$delta.p) == 1,
+<<<<<<< HEAD
     is_within(neighbors$delta.p, 0, 1, strict = FALSE)
   )
   if (iter == 1 || neighbors$name != "lambda") {
@@ -59,11 +65,23 @@ define_neighborhood <- function(neighbors, v.matrix, iter) {
       fullB = NULL,
       fullP = NULL
     )
+=======
+    is_within(neighbors$delta.p, 0, 1, strict = FALSE))
+  
+  if (iter == 1 || neighbors$name != "lambda"){
+    BP <- list(B = NULL, P = NULL, fullB = NULL, fullP = NULL)
+    
+>>>>>>> naturalcomputing
     # Calculate neighborhood matrix
     BP$fullB <- cbind(1:nrow(v.matrix),
                       FNN::get.knn(data      = v.matrix,
                                    k         = nrow(v.matrix) - 1)$nn.index)
+<<<<<<< HEAD
     BP$B.variation <- BP$fullB[, 1:neighbors$T]
+=======
+    # BP$B <- as.matrix(BP$fullB[, 1:neighbors$T])
+    BP$B <- as.matrix(BP$fullB[, 1:neighbors$T])
+>>>>>>> naturalcomputing
     np  <- nrow(v.matrix)
     if (np > neighbors$T) {
       BP$P   <- matrix((1 - neighbors$delta.p) / (np - neighbors$T),
@@ -89,7 +107,11 @@ define_neighborhood <- function(neighbors, v.matrix, iter) {
                        ncol = np)
     }
     BP$fullP <- BP$P
+<<<<<<< HEAD
     BP$fullP[,] <- 1 / ncol(BP$fullP)
+=======
+    BP$fullP[, ] <- 1 / ncol(BP$fullP)
+>>>>>>> naturalcomputing
     
   } else {
     # just get the existing matrix
@@ -97,7 +119,11 @@ define_neighborhood <- function(neighbors, v.matrix, iter) {
     assertthat::assert_that("BP" %in% names(call.env))
     BP <- call.env$BP
   }
+<<<<<<< HEAD
   BP$B.order <- BP$B.variation
   BP$B.scalarize <- BP$B.variation
+=======
+  
+>>>>>>> naturalcomputing
   return(BP)
 }

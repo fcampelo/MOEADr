@@ -31,7 +31,11 @@
 #' Decomposition. Journal of Statistical Software \doi{10.18637/jss.v092.i06}\cr
 #'
 
+<<<<<<< HEAD
 perform_variation <- function(variation, X, iter, ...){
+=======
+perform_variation <- function(variation, X, iter, problem, ...){
+>>>>>>> naturalcomputing
   # Get all input parameters
   # var.input.pars <- as.list(environment()) # <------ for debugging
   var.input.pars <- as.list(sys.call())[-1]
@@ -55,7 +59,10 @@ perform_variation <- function(variation, X, iter, ...){
     } else {
       ls.args      <- variation[[lsi]]
       valid.types  <- gsub(" ", "", get_localsearch_methods()[,1])
+<<<<<<< HEAD
       
+=======
+>>>>>>> naturalcomputing
       # ========== Error catching and default value definitions
       assertthat::assert_that(
         !is.null(ls.args$tau.ls)  | !is.null(ls.args$gamma.ls))
@@ -117,6 +124,7 @@ perform_variation <- function(variation, X, iter, ...){
       X       <- X$X
     }
   }
+  which.x = 1:dim(X)[1]
   # ============ END VARIATION (EXCEPT LOCAL SEARCH) ============= #
   
   
@@ -130,6 +138,10 @@ perform_variation <- function(variation, X, iter, ...){
     which.gamma <- stats::runif(nrow(X)) <= rep(ls.args$gamma.ls,
                                                 times = nrow(X))
     which.x     <-  (which.tau | which.gamma) & (iter != 1)
+<<<<<<< HEAD
+=======
+    
+>>>>>>> naturalcomputing
     if(any(which.x)){
       # Prepare argument list for local search
       ls.args2          <- c(var.input.pars, ls.args, var.input.pars$iter)
@@ -152,5 +164,6 @@ perform_variation <- function(variation, X, iter, ...){
   # Output
   return(list (X       = X,
                ls.args = ls.args,
-               var.nfe = var.nfe))
+               var.nfe = var.nfe,
+               which.x = which.x))
 }

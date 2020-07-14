@@ -22,6 +22,7 @@ norm_vec2 <- function(x) {
 #   return (sum(p*d)/(norm(d, type="2")^2)*d)
 # }
 
+<<<<<<< HEAD
 projection <- function(a, b, epsilon = 1e-50) {
   return(c(sum(a * b) / sum(a ^ 2) + epsilon) * a)
 }
@@ -141,6 +142,103 @@ online_diversity <-
     return(out)
   }
 
+=======
+# projection <- function(a, b, epsilon = 1e-50) {
+#   return(c(sum(a * b) / sum(a ^ 2) + epsilon) * a)
+# }
+# 
+# 
+# find_indexes <- function(offspring, parent) {
+#   # j in eq (3)
+#   indexes_j <- list() # offspring
+#   # i in eq (3)
+#   indexes_i <- list() # parent
+#   for (j in 1:nrow(offspring)) {
+#     found <- FALSE
+#     min.value <- Inf
+#     l <- 0
+#     # equation (4)
+#     
+#     for (i in 1:nrow(parent)) {
+#       set <- rbind(parent[i, ], offspring[j, ])
+#       if (is_maximally_dominated(set)[1]) {
+#         if (!found) {
+#           indexes_j <- append(indexes_j, j)
+#           found <- TRUE
+#         }
+#         aux <- norm(parent[i, ] - offspring[j, ], type = "2")
+#         if (min.value > aux) {
+#           # for equation (6) and (5)
+#           min.value <- aux
+#           l <- i
+#         }
+#       }
+#     }
+#     
+#     if (l != 0)
+#       # i in equation (5)
+#       indexes_i <- append(indexes_j, l)
+#   }
+#   out <- list(i = indexes_i, j = indexes_j)
+#   return(out)
+# }
+# 
+# 
+# 
+# online_diversity <-
+#   function(offspring, parent, W, old.dm, epsilon = 1e-50) {
+#     out <-
+#       find_indexes(apply(offspring, 2, sample), parent)
+#     indexes_i <- out$i
+#     indexes_j <- out$j
+#     # my.out <- rep(.Machine$double.xmin, nrow(offspring))
+#     my.out <- rep(.Machine$double.xmin, nrow(offspring))
+#     
+#     # equation (7)
+#     for (i in 1:dim(offspring)[1]) {
+#       # max.out <- -Inf
+#       if (length(indexes_j) > 0) {
+#         for (j in 1:length(indexes_j)) {
+#           # diversity measurement: aumount of diversity loss of an ind. solution between 2 generations
+#           #condition for eq (7)
+#           c.line <- offspring[i, ] - offspring[indexes_j[[j]], ]
+#           p.line <- parent[i, ] - parent[indexes_i[[j]], ]
+#           
+#           if (c.line != 0 && p.line != 0) {
+#             #equation (3)
+#             d.convs <-
+#               (offspring[indexes_j[[j]], ] - parent[indexes_i[[j]], ]) + epsilon
+#             # projection calculation
+#             proj.c <- projection(c.line, d.convs)
+#             proj.p <- projection(p.line, d.convs)
+#             
+#             # calculate the norm of the vectors: numerator and demoniator of equation (7)
+#             a <- norm(p.line - proj.p, type = "2")
+#             b <- norm(c.line - proj.c, type = "2")
+#             
+#             # equation (7)
+#             aux <-  a / (b + epsilon)
+#             #equation (10)
+#             if (aux > my.out[i]) {
+#               my.out[i] <- aux
+#             }
+#           }
+#           
+#         }
+#       }
+#       else{
+#         my.out[i] <- .Machine$double.xmax
+#       }
+#     }
+#     # p <-  my.out - old.dm
+#     p <-  my.out
+#     p <- (p - min(p)) / ((max(p) - min(p)) + epsilon)
+#     # out <- list(p = 1 - p, dm = my.out)
+#     out <- list(p = 1 - p, dm = my.out)
+#     return(out)
+#   }
+# 
+>>>>>>> naturalcomputing
 
 
 dra <- function(newObj, oldObj, Pi) {
@@ -199,6 +297,7 @@ init_dra <- function(neighbors, aggfun, X, W, Y, scaling) {
   ))
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 init_gra <- function(neighbors, aggfun, X, W, Y) {
   # for GRA - do not this hardcoded
@@ -274,6 +373,9 @@ by_jacobian <- function(problem, offspring, epsilon = 1e-50) {
 =======
 #this is a alternative to the decomp methods
 >>>>>>> bbob
+=======
+#this is a alternative to the decomp methods
+>>>>>>> naturalcomputing
 ws_transformation <- function(W, epsilon = 1e-50) {
   temp <- t(apply(W, 1, function(W) {
     1 / (W + epsilon)
@@ -286,6 +388,7 @@ ws_transformation <- function(W, epsilon = 1e-50) {
 
 
 
+<<<<<<< HEAD
 by_norm <- function(parent_x, offspring_x, epsilon = 1e-50) {
   u <- apply(offspring_x - parent_x, 1, norm, type = "2")
   u <- (u - min(u)) / ((max(u) - min(u)) + epsilon)
@@ -320,6 +423,26 @@ calculate_DRA <- function(resource.allocation, neighbors, aggfun, X, W, Y, prese
 }
 >>>>>>> bbob
 =======
+=======
+# by_norm <- function(parent_x, offspring_x, epsilon = 1e-50) {
+#   u <- apply(offspring_x - parent_x, 1, norm, type = "2")
+#   u <- (u - min(u)) / ((max(u) - min(u)) + epsilon)
+#   return (u)
+# }
+# 
+# by_random <- function(len) {
+#   return(runif(len))
+# }
+# 
+# by_jacobian <- function(problem, offspring, epsilon = 1e-50) {
+#   u <- apply(jacobian(problem, offspring), 2, sum)
+#   u <- (u - min(u)) / ((max(u) - min(u)) + epsilon)
+#   return (u)
+# }
+
+
+
+>>>>>>> naturalcomputing
 calculate_DRA <-
   function(resource.allocation,
            neighbors,
@@ -378,7 +501,10 @@ calc_idx <-
       }
       
       else if (resource.allocation$selection == "tour") {
+<<<<<<< HEAD
         # print(Pi)
+=======
+>>>>>>> naturalcomputing
         found <- 0
         size <- ceiling(dim(W)[1] * resource.allocation$size)
         k <- ceiling(dim(W)[1] * resource.allocation$k)
@@ -397,10 +523,14 @@ calc_idx <-
             found <- found + length(indexes)
           }
         }
+<<<<<<< HEAD
         # print(indexes)
         iteration_usage[-indexes] <- FALSE
         # print(iteration_usage[indexes])
         # print(iteration_usage[-indexes])
+=======
+        iteration_usage[-indexes] <- FALSE
+>>>>>>> naturalcomputing
       }
       }
     }else{
@@ -409,10 +539,15 @@ calc_idx <-
         
         iteration_usage <- init_p(W, 0)
         iteration_usage[indexes] <- 1
+<<<<<<< HEAD
         # iteration_usage <- (rand.seq <= Pi)
       }
       else{
         # if (sum(two_step$parentY[1,] - Y[1,]) < 0.1 || sum(two_step$parentY[dim(W)[1],] - Y[dim(W)[1],]) < 0.1){
+=======
+      }
+      else{
+>>>>>>> naturalcomputing
           two_step <- NULL
           rand.seq <- runif(length(Pi))
           indexes <- which(rand.seq <= Pi)
@@ -421,12 +556,15 @@ calc_idx <-
             indexes <- which(rand.seq <= 1)
             iteration_usage <- (rand.seq <= Pi)
           }
+<<<<<<< HEAD
         # }
         # else {
         #   indexes <- c(1, dim(W)[1], round(dim(W)[1]/2))  
         #   iteration_usage <- init_p(W, 0)
         #   iteration_usage[indexes] <- 1
         # }
+=======
+>>>>>>> naturalcomputing
       }
     }
     
@@ -444,6 +582,7 @@ calc_idx <-
         iteration_usage = iteration_usage
       )
 <<<<<<< HEAD
+<<<<<<< HEAD
     #print(iteration_usage)
 =======
      
@@ -454,3 +593,8 @@ calc_idx <-
 >>>>>>> ready for exp norm inverse and tournament
 =======
 >>>>>>> exp DTLZ
+=======
+     
+    return(out)
+  }
+>>>>>>> naturalcomputing

@@ -42,6 +42,7 @@ make_vectorized_smoof <- function(prob.name, ...){
 
     myfun <- do.call(utils::getFromNamespace(x = paste0("make",
                                                         toupper(prob.name),
+                                                        # (prob.name),
                                                         "Function"),
                                              ns = "smoof"),
                      args = my.args)

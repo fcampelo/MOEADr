@@ -47,13 +47,18 @@
 #' @export
 
 ls_dvls <- function(Xt, Yt, Vt, B, W, which.x, trunc.x,
+<<<<<<< HEAD
                     problem, scaling, aggfun, constraint, indexes, iter, my.file.n, ...){
   print("ls_dvls")
+=======
+                    problem, scaling, aggfun, constraint, ...){
+  
+>>>>>>> naturalcomputing
   # ========== Error catching and default value definitions
   # All error catching and default value definitions are assumed to have been
   # verified in the calling function perform_variation().
   # ==========
-
+  
   # ========== Calculate X+ and X-
   # 1. Draw neighborhood indices
   # dimX <- dim(Xt)
@@ -72,13 +77,17 @@ ls_dvls <- function(Xt, Yt, Vt, B, W, which.x, trunc.x,
                            }
                            },
                          B   = B))
+<<<<<<< HEAD
+=======
+  
+>>>>>>> naturalcomputing
   # 2. Calculate multipliers
   nls <- nrow(Inds)
   ls.Phi <- matrix(stats::rnorm(nls, mean = 0.5, sd = 0.1),
-                nrow  = nls,
-                ncol  = dimX[2],
-                byrow = FALSE)
-
+                   nrow  = nls,
+                   ncol  = dimX[2],
+                   byrow = FALSE)
+  
   # 4. Isolate points for local search
   dvls.B <- matrix(1:nls,
                    ncol = 1)
@@ -87,11 +96,11 @@ ls_dvls <- function(Xt, Yt, Vt, B, W, which.x, trunc.x,
   dvls.Xo <- dvls.Xt
   dvls.Yt <- Yt[which.x, , drop = FALSE]
   dvls.Vt <- Vt
-
+  
   dvls.Vt$Cmatrix <- dvls.Vt$Cmatrix[which.x, , drop = FALSE]
   dvls.Vt$Vmatrix <- dvls.Vt$Vmatrix[which.x, , drop = FALSE]
   dvls.Vt$v       <- dvls.Vt$v[which.x]
-
+  
   # ========== Evaluate X+, X-
   W <- temp.W
   for (phi.m in c(-1, 1)){
@@ -101,32 +110,37 @@ ls_dvls <- function(Xt, Yt, Vt, B, W, which.x, trunc.x,
     if (trunc.x) dvls.X <- matrix(pmax(0, pmin(dvls.X, 1)),
                                   nrow  = nrow(dvls.X),
                                   byrow = FALSE)
-
+    
     # 2. Evaluate on objective functions and constraints
     dvls.YV <- evaluate_population(X       = dvls.X,
                                    problem = problem,
+<<<<<<< HEAD
                                    nfe     = 0,
                                    iter = iter,
                                    my.file.n = my.file.n)
 
+=======
+                                   nfe     = 0)
+    
+>>>>>>> naturalcomputing
     # 3. Objective scaling
     dvls.normYs <- scale_objectives(Y       = dvls.YV$Y,
                                     Yt      = dvls.Yt,
                                     scaling = scaling)
-
+    
     # 4. Scalarization by DVLS neighborhood.
     dvls.bigZ <- scalarize_values(normYs  = dvls.normYs,
                                   W       = dvls.W,
                                   B       = dvls.B,
                                   aggfun  = aggfun)
-
+    
     # Calculate selection indices for DVLS
     dvls.selin <- order_neighborhood(bigZ       = dvls.bigZ,
                                      B          = dvls.B,
                                      V          = dvls.YV$V,
                                      Vt         = dvls.Vt,
                                      constraint = constraint)
-
+    
     # Update DVLS "incumbent"
     dvls.out <- updt_standard(X        = dvls.X,
                               Xt       = dvls.Xt,
@@ -140,10 +154,10 @@ ls_dvls <- function(Xt, Yt, Vt, B, W, which.x, trunc.x,
     dvls.Yt  <- dvls.out$Y
     dvls.Vt  <- dvls.out$V
   }
-
+  
   dvls.X            <- NA * randM(Xt)
   dvls.X[which.x, ] <- dvls.Xt
-
+  
   return(list(X   = dvls.X,
               nfe = 2 * sum(which.x)))
 }
