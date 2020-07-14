@@ -7,7 +7,7 @@ library(feather)
 # # library(withr)
 # # library(compiler)
 # lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
-# # enableJIT(1)
+enableJIT(1)
 
 library(MOEADps)
 
