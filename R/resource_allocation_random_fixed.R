@@ -1,4 +1,5 @@
-resource_allocation_update_random_fixed <- function(iter, 
+#' @export
+resource_allocation_update_random_fixed <- function(iter,
                                               resource.allocation,
                                               priority.values,
                                               bigZ,
