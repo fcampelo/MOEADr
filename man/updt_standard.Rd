@@ -4,7 +4,19 @@
 \alias{updt_standard}
 \title{Standard Neighborhood Replacement Update for MOEA/D}
 \usage{
-updt_standard(X, Xt, Y, Yt, V, Vt, sel.indx, B, ...)
+updt_standard(
+  X,
+  Xt,
+  Y,
+  Yt,
+  V,
+  Vt,
+  sel.indx,
+  B,
+  idx.parent,
+  offspring.count,
+  ...
+)
 }
 \arguments{
 \item{X}{Matrix of candidate solutions}

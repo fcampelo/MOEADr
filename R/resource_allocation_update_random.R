@@ -1,6 +1,6 @@
-#' Resource Allocation norm
+#' Resource Allocation random
 #'
-#' Proxy Resource Allocation norm - DS
+#' Proxy Resource Allocation random - random
 #'
 #' Returns a vector with indexes of each subproblem that will receive resource
 #'

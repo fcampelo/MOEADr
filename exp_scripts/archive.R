@@ -1,20 +1,31 @@
-# rm(list = ls(all = TRUE))
-setwd("~/MOEADr/R/")
+rm(list = ls(all = TRUE))
+# setwd("~/MOEADr/R/")
 library(smoof)
-library(MOEADr)
+# library(MOEADr)
 library(emoa)
 library(feather)
-library(withr)
+# library(withr)
 library(compiler)
 library(ggplot2)
-source("~/MOEADr/R/moead.R")
-lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
+# source("~/MOEADr/R/utils.R")
+# lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 enableJIT(1)
+
+library(MOEADps)
+
+
+source("~/MOEADr/R/savePlotData.R")
+# source("~/MOEADr/R/moead.R")
+source("~/MOEADr/R/utils.R")
 
 repetitions <-  10
 dimension <- 100
 
-decomp <- list(name = "sld", H = 2, .nobj = 2)
+
+n.obj <- 2
+lambda <- 40
+decomp <- list(name = "sld", H = 49, .nobj = n.obj)
+decomp2 <- list(name = "sld", H = 499, .nobj = n.obj)
 loaded.weights.2objs <-
   data.matrix(
     read.csv(
@@ -25,6 +36,7 @@ loaded.weights.2objs <-
     )
   )
 decomp.loaded.2 <- list(name = "loaded", W = loaded.weights.2objs)
+
 variation = preset_moead("moead.de")$variation
 variation[[2]]$pm = 1 / dimension
 scaling <- list()
@@ -32,46 +44,27 @@ scaling$name <- "simple"
 neighbors <- preset_moead("moead.de")$neighbors
 neighbors$T <- 100
 neighbors3 <- preset_moead("moead.de")$neighbors
-neighbors3$T <- 3
+neighbors3$T <- 10
 update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 60000))
+                       maxeval = 100000))
 
 
 
-n.obj <- 2
-# problem <-
-#   load.UF.function(fun = "UF2", d = dimension)
-problem <-
-load.DTLZ.function("DTLZ3", dimension = dimension, n.obj = n.obj)
-problem.smoof.DTLZ <- problem$fn
-problem.DTLZ <- function(X) {
-  t(apply(X, MARGIN = 1,
-          FUN = problem.smoof.DTLZ))
-}
-par.set = ParamHelpers::getParamSet(problem.smoof.DTLZ)
-problem.dtlz7 <- list(
-  name       = "problem.DTLZ",
-  xmin       = as.numeric(getLower(par.set)),
-  xmax       = as.numeric(getUpper(par.set)),
-  m          = n.obj
-)
+
 
 
 
 print("2 OBJECTIVES")
-
-problem.to.solve <- c("DTLZ7", "DTLZ3", "UF2")
-i <- 1
-for (j in 4:6) {
-  fun <- problem.to.solve[i]
+problem.to.solve <- c("DTLZ3")
+for (fun in problem.to.solve) {
   problem <-
-    load.DTLZ.function(problem.to.solve[i], dimension = dimension, n.obj = n.obj)
+    load.DTLZ.function(fun, dimension = dimension, n.obj = n.obj)
   problem.smoof.DTLZ <- problem$fn
   problem.DTLZ <- function(X) {
-    t(apply(X, MARGIN = 1,
+    t(-apply(X, MARGIN = 1,
             FUN = problem.smoof.DTLZ))
   }
   par.set = ParamHelpers::getParamSet(problem.smoof.DTLZ)
@@ -81,14 +74,8 @@ for (j in 4:6) {
     xmax       = as.numeric(getUpper(par.set)),
     m          = n.obj
   )
-  
-  # number_subproblems <-
-  #   c(3, 4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
-  number_subproblems <-
-    c(3)
-  cat("rep",j,"\n")
-  for (lambda in number_subproblems) {
-    cat("lambda", lambda, "\n")
+  for (j in 1:repetitions) {
+    cat("rep", j, "\n")
     
     resource.allocation.RANDOM <-
       list(
@@ -98,35 +85,67 @@ for (j in 4:6) {
         n = lambda
       )
     
+    # update$nr <- 1
+    # moead.smallT <- moead(
+    #   problem  = problem.dtlz7,
+    #   preset   = preset_moead("moead.de"),
+    #   decomp = decomp.loaded.2,
+    #   variation = variation,
+    #   stopcrit = stopcrit,
+    #   scaling = scaling,
+    #   neighbors = neighbors,
+    #   showpars = list(show.iters = "none", showevery = 1000),
+    #   seed = j + 422,
+    #   update = update,
+    #   resource.allocation = resource.allocation.RANDOM,
+    #   small.update = TRUE
+    # )
+    # 
+    # savePlotData(
+    #   moea = moead.smallT,
+    #   name = paste0(fun, "_moead.smallT_", lambda, "_"),
+    #   j = j,
+    #   wd = "~/jsec_2020_50/"
+    # )
+    # rm(moead.smallT)
     
-    moead.smallT <- moead(
+    # update$nr <- 2
+    moead.random.500 <- moead(
       problem  = problem.dtlz7,
       preset   = preset_moead("moead.de"),
-      decomp = decomp.loaded.2,
+      decomp = decomp2,
       variation = variation,
       stopcrit = stopcrit,
       scaling = scaling,
       neighbors = neighbors,
       showpars = list(show.iters = "none", showevery = 1000),
-      seed = j+42,
-      update = update,
-      resource.allocation = resource.allocation.RANDOM,
-      small.update = TRUE
-    )
-    
-    moead.random <- moead(
-      problem  = problem.dtlz7,
-      preset   = preset_moead("moead.de"),
-      decomp = decomp.loaded.2,
-      variation = variation,
-      stopcrit = stopcrit,
-      scaling = scaling,
-      neighbors = neighbors,
-      showpars = list(show.iters = "none", showevery = 1000),
-      seed = j+42,
+      seed = j + 4212,
       update = update,
       resource.allocation = resource.allocation.RANDOM
     )
+    
+    
+    moead.random.3 <- moead(
+      problem  = problem.dtlz7,
+      preset   = preset_moead("moead.de"),
+      decomp = decomp2,
+      variation = variation,
+      stopcrit = stopcrit,
+      scaling = scaling,
+      neighbors = neighbors3,
+      showpars = list(show.iters = "none", showevery = 1000),
+      seed = j + 4212,
+      update = update,
+      resource.allocation = resource.allocation.RANDOM
+    )
+    
+    # savePlotData(
+    #   moea = moead.random,
+    #   name = paste0(fun, "_moead.random_", lambda, "_"),
+    #   j = j,
+    #   wd = "~/jsec_2020_50/"
+    # )
+    # rm(moead.random)
     
     moead.3 <- moead(
       problem  = problem.dtlz7,
@@ -137,71 +156,98 @@ for (j in 4:6) {
       scaling = scaling,
       neighbors = neighbors3,
       showpars = list(show.iters = "none", showevery = 1000),
-      seed = j+42,
+      seed = j + 4212,
       update = update
     )
+    
+    # savePlotData(
+    #   moea = moead.3,
+    #   name = paste0(fun, "_moead.3_", lambda, "_"),
+    #   j = j,
+    #   wd = "~/jsec_2020_50/"
+    # )
+    # rm(moead.3)
+    
     
     moead500 <- moead(
       problem  = problem.dtlz7,
       preset   = preset_moead("moead.de"),
-      decomp = decomp.loaded.2,
+      decomp = decomp2,
       variation = variation,
       stopcrit = stopcrit,
       scaling = scaling,
       neighbors = neighbors,
       showpars = list(show.iters = "none", showevery = 1000),
-      seed = j+42,
+      seed = j + 4212,
       update = update
     )
     
-  
-  # exit()
+    # savePlotData(
+    #   moea = moead500,
+    #   name = paste0(fun, "_moead500_", lambda, "_"),
+    #   j = j,
+    #   wd = "~/jsec_2020_50/"
+    # )
+    # rm(moead500)
     
-    ecr::nondominated(t(moead.random$Archive$Y))
+    Yref <-
+      as.matrix(read.table(paste0(
+        "~/MOEADr/inst/extdata/pf_data/", fun, ".3D.pf"
+      )))
     
-    ref.front <- rbind(moead.random$Archive$Y, moead.3$Archive$Y, moead500$Archive$Y, moead.smallT$Archive$Y)
-    ref.point <- c(1,1)
+    colnames(Yref) <- c("f1", "f2")
     plot.data3 <-
       rbind(
-        data.frame(moead.3$Archive$Y[ecr::nondominated(t(moead.3$Archive$Y)),], Strategy = "MOEA/D Pop = 3"),
-        data.frame(moead500$Archive$Y[ecr::nondominated(t(moead500$Archive$Y)),], Strategy = "MOEA/D"),
-        data.frame(moead.random$Archive$Y[ecr::nondominated(t(moead.random$Archive$Y)),], Strategy = "PS = 3"),
-        data.frame(moead.smallT$Archive$Y[ecr::nondominated(t(moead.random$Archive$Y)),], Strategy = "MOEA/D T = 1")
+        data.frame(moead.3$Archive$Y[ecr::nondominated(t(moead.3$Archive$Y)),], Strategy = "Small pop"),
+        data.frame(moead500$Archive$Y[ecr::nondominated(t(moead500$Archive$Y)),], Strategy = "Big pop"),
+        data.frame(
+          moead.random.500$Archive$Y[ecr::nondominated(t(moead.random.500$Archive$Y)),],
+          Strategy = paste0("MOEA/D PS=", lambda, "pop=",dim(moead.random.500$W)[1])
+        ),
+        data.frame(Yref, Strategy = "Ref Front")
+        # data.frame(Yref, Strategy = "MOEA/D PS=5, pop=50")
       )
-    print(ggplot(plot.data3, aes(f1, f2)) +
-            # geom_line(aes(color = Strategy), alpha = 1) +
-            geom_point(aes(color = Strategy, shape = Strategy), alpha = 1) + ggtitle(
-      paste0(
-        fun,
-        ". HV (MOEAD Pop = 3): ",
-        round(emoa::dominated_hypervolume(
-          points = t(scaling_Y(moead.3$Archive$Y, ref.front)), ref = ref.point
-        ), 2),
-        ". HV (PS = 3): ",
-        round(emoa::dominated_hypervolume(
-          points = t(scaling_Y(moead.random$Archive$Y, ref.front)), ref = ref.point
-        ), 2),
-        ". HV of (MOEAD Pop = 500): ",
-        round(emoa::dominated_hypervolume(
-          points = t(scaling_Y(moead500$Archive$Y, ref.front)), ref = ref.point
-        ), 2),
-        ". HV of (MOEAD T.update = 1): ",
-        round(emoa::dominated_hypervolume(
-          points = t(scaling_Y(moead.smallT$Archive$Y, ref.front)), ref = ref.point
-        ), 2)
-      )
+    plot <- ggplot(plot.data3, aes(f1, f2, size = 18)) +
+      geom_point(aes(color = Strategy, shape = Strategy), alpha = 0.5) +
+      theme_minimal(base_size = 26) #+ scale_colour_hc()
+    plot <- plot +  theme(axis.text = element_text(size =24), legend.background = element_rect(size=0.5, linetype="solid"))
+    print(plot + theme(legend.position = "bottom", legend.title = element_blank())+guides(size = FALSE, shape = guide_legend(override.aes = list(size = 5))
     ))
+    filename = paste0("~/jsec_2020_50/PFs/playing",fun,".eps")
+    ggsave(
+      filename = filename,
+      dpi = 1200,
+      width = 12,
+      height = 12
+    )
     
-    filename = paste0("~/Desktop/", j, "_", fun , "_pf_archive.png")
-    ggsave(filename = filename,
-           dpi = 600,
-           width = 9)
+    
+    ref1 <- rbind(moead.3$Archive$Y, moead500$Archive$Y, moead.random.3$Archive$Y, moead.random.500$Archive$Y)
+    ref.point <- rep(1, n.obj)
+    moead.3$scaledY <- scaling_Y(moead.3$Archive$Y[ecr::nondominated(t(moead.3$Archive$Y)), ], ref1)
+    dominated_hypervolume(t(moead.3$scaledY), ref = ref.point)
+    
+    moead500$scaledY <- scaling_Y(moead500$Archive$Y[ecr::nondominated(t(moead500$Archive$Y)), ], ref1)
+    dominated_hypervolume(t(moead500$scaledY), ref = ref.point)
+    
+    moead.random.500$scaledY <- scaling_Y(moead.random.500$Archive$Y[ecr::nondominated(t(moead.random.500$Archive$Y)), ], ref1)
+    dominated_hypervolume(t(moead.random.500$scaledY), ref = ref.point)
+    
+    # moead.random.3$scaledY <- scaling_Y(moead.random.3$Archive$Y[ecr::nondominated(t(moead.random.3$Archive$Y)), ], ref1)
+    # dominated_hypervolume(t(moead.random.3$scaledY), ref = ref.point)
     
     
-    i <- i + 1
-    rm(moead.random)
-    rm(moead500)
-    rm(moead.smallT)
-    rm(moead.3)
+    sum(ecr::nondominated(t(moead.3$Archive$Y[ecr::nondominated(t(moead.3$Archive$Y)), ])))
+    sum(ecr::nondominated(t(moead500$Archive$Y[ecr::nondominated(t(moead500$Archive$Y)), ])))
+    sum(ecr::nondominated(t(moead.random.500$Archive$Y[ecr::nondominated(t(moead.random.500$Archive$Y)), ])))
+    # sum(ecr::nondominated(t(moead.random.3$Archive$Y[ecr::nondominated(t(moead.random.3$Archive$Y)), ])))
+    
+    
+    
+    
+    
+    exit()
   }
 }
+
+

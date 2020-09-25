@@ -12,7 +12,7 @@ enableJIT(1)
 library(MOEADps)
 
 repetitions <-  10
-dimension <- 30
+dimension <- 100
 
 loaded.weights.2objs <-
   data.matrix(
@@ -34,7 +34,7 @@ update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 10000000))
+                       maxeval = 100000))
 
 n.obj <- 3
 print("3 OBJECTIVES")

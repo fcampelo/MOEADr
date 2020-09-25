@@ -1,6 +1,6 @@
-#' Resource Allocation norm
+#' Resource Allocation RI
 #'
-#' Proxy Resource Allocation norm - DS
+#' Proxy Resource Allocation RI - Relative imprvoement 
 #'
 #' Returns a vector with indexes of each subproblem that will receive resource
 #'
@@ -56,6 +56,7 @@ resource_allocation_update_ri <- function(iter,
 by_RI <- function(dt.bigZ, bigZ, neighbors.T, resource.allocation, epsilon = 1e-50) {
   # dt <- apply(X = dt.bigZ, MARGIN = 2, sum)
   dt <- dt.bigZ[neighbors.T + 1,]
+  
   z <- bigZ[neighbors.T + 1,]
   u <- (dt - z) / dt
   if (max(u) == 0) {

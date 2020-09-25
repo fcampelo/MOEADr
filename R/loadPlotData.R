@@ -18,11 +18,17 @@
 #'
 #' @export
 
-loadPlotData <- function (name, j,wd) {
+loadPlotData <- function (name, j, wd, extra = T) {
   X <- read_feather(paste0(wd, name, j, '_X'))
   Y <- read_feather(paste0(wd, name, j, '_Y'))
-  plot.paretofront <-
-    read_feather(paste0(wd, name, j, '_plot.paretofront'))
+  if (isTRUE(extra)) {
+    plot.paretofront <-
+      read_feather(paste0(wd, name, j, '_plot.paretofront'))
+  }
+  else{
+    plot.paretofront <- NULL
+  }
+  
   # plot.resources <-
   #   read_feather(paste0(wd, name, j, '_plot.resources'))
   iter <- read_feather(paste0(wd, name, j, '_iter'))
@@ -30,7 +36,7 @@ loadPlotData <- function (name, j,wd) {
   # time <- read_feather(paste0(wd, name, j, '_time'))
   # W <- read_feather(paste0(wd, name, j, '_W'))
   nfe <- read_feather(paste0(wd, name, j, '_nfe'))
-
+  
   out <- list(
     X           = X,
     Y           = Y,
@@ -41,12 +47,12 @@ loadPlotData <- function (name, j,wd) {
     # usage        = usage,
     #Vmatrix = Vmatrix,
     plot.paretofront = plot.paretofront,
-
+    
     # plot.resources = plot.resources,
     moead.norm = FALSE
   )
   return(out)
-
+  
 }
 
 # plot_eaf_eafdiff <-

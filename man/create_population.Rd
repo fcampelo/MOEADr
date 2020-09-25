@@ -4,7 +4,7 @@
 \alias{create_population}
 \title{Create population}
 \usage{
-create_population(N, problem)
+create_population(N, problem, increments = NULL)
 }
 \arguments{
 \item{N}{population size}

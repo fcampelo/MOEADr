@@ -4,7 +4,7 @@
 \alias{evaluate_population}
 \title{Evaluate population}
 \usage{
-evaluate_population(X, problem, nfe)
+evaluate_population(X, problem, nfe, cons = NULL)
 }
 \arguments{
 \item{X}{Population matrix of the MOEA/D (each row is a candidate solution).}
