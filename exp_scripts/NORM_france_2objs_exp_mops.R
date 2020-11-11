@@ -1,5 +1,6 @@
 rm(list = ls(all = TRUE))
 
+library(parallel)
 library(smoof)
 library(emoa)
 library(feather)
@@ -7,6 +8,9 @@ library(compiler)
 enableJIT(1)
 source("~/MOEADr/R/load.DTLZ.function.R")
 library(MOEADps)
+
+library(parallel)cores <-  32
+cl <- makeCluster(cores)
 
 repetitions <-  10
 dimension <- 100
@@ -31,30 +35,66 @@ update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 5000))
+                       maxeval = 100000))
 
 
 
 n.obj <- 2
-problem.to.solve <- c("DTLZ1")
-  # c("DTLZ1", "DTLZ2", "DTLZ3", "DTLZ4", "DTLZ5", "DTLZ6")
+problem.to.solve <-
+  c(
+    "DTLZ1",
+    "DTLZ2",
+    "DTLZ3",
+    "DTLZ4",
+    "DTLZ5",
+    "DTLZ6",
+    "UF1",
+    "UF2",
+    "UF3",
+    "UF4",
+    "UF5",
+    "UF6"
+  )
 for (fun in problem.to.solve) {
   print(fun)
-  problem <-
-    load.DTLZ.function(fun, dimensions = dimension, n.obj = n.obj)
-  problem.smoof.DTLZ <- problem$fn
-  problem.DTLZ <- function(X) {
-    t(apply(X, MARGIN = 1,
-            FUN = problem.smoof.DTLZ))
+  benchmark <- strsplit(fun, "[0-9]")[[1]][1]
+  number <- as.integer(strsplit(fun, "[A-Z]")[[1]][3])
+  if(benchmark == "DTLZ")
+  {
+    problem <-
+      load.DTLZ.function(fun, dimensions = dimension, n.obj = n.obj)
+    problem.smoof.DTLZ <- problem$fn
+    problem.DTLZ <- function(X) {
+      t(apply(X, MARGIN = 1,
+              FUN = problem.smoof.DTLZ))
+    }
+    par.set = ParamHelpers::getParamSet(problem.smoof.DTLZ)
+    problem.dtlzX <- list(
+      name       = "problem.DTLZ",
+      xmin       = as.numeric(getLower(par.set)),
+      xmax       = as.numeric(getUpper(par.set)),
+      m          = n.obj
+    )
+    problem.solving <- problem.dtlzX
+  } 
+  else{
+    problem.smoof.UF <-
+      makeUFFunction(dimensions = dimension,
+                     id = number)
+    problem.UF <- function(X) {
+      t(apply(X, MARGIN = 1,
+              FUN = problem.smoof.UF))
+    }
+    
+    par.set = ParamHelpers::getParamSet(problem.smoof.UF)
+    problem.ufX <- list(
+      name       = "problem.UF",
+      xmin       = as.numeric(getLower(par.set)),
+      xmax       = as.numeric(getUpper(par.set)),
+      m          = n.obj
+    )
+    problem.solving <- problem.ufX
   }
-  par.set = ParamHelpers::getParamSet(problem.smoof.DTLZ)
-  problem.dtlzX <- list(
-    name       = "problem.DTLZ",
-    xmin       = as.numeric(getLower(par.set)),
-    xmax       = as.numeric(getUpper(par.set)),
-    m          = n.obj
-  )
-  
   
   
   print("2 OBJECTIVES")
@@ -76,12 +116,19 @@ for (fun in problem.to.solve) {
           n = lambda
         )
       
-      dir.name <- paste0("~/tec/moead.norm_", j, "/lambda_", lambda ,"/")
+      dir.name <-
+        paste0("~/france_data/",
+               fun,
+               "_moead.norm_",
+               j,
+               "/lambda_",
+               lambda ,
+               "/")
       if (!dir.exists(dir.name))
         dir.create(dir.name)
       
       moead.norm <- moeadps(
-        problem  = problem.dtlzX,
+        problem  = problem.solving,
         preset   = preset_moead("moead.de"),
         decomp = decomp.loaded.2,
         variation = variation,
