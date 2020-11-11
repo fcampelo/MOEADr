@@ -17,7 +17,7 @@
 #' @export
 
 get_stop_criteria <- function(){
-
+  
   # Get only functions with "stop_" in the name (except for
   # "get_stop_criteria"
   stop.list <- ls("package:MOEADr")

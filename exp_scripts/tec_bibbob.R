@@ -4,16 +4,13 @@ library(smoof)
 library(emoa)
 library(mco)
 library(feather)
-library(compiler)
-library(ggplot2)
-library(eaf)
+# library(eaf)
 library(MOEADps)
-library(R.matlab)
-library(plotly)
 
 source("~/MOEADr/R/utils.R")
+source("~/MOEADr/R/load.DTLZ.function.R")
 
-repetitions <-  1
+repetitions <-  10
 dimensions <- 40
 lambda <- 50
 
@@ -62,7 +59,7 @@ resource.allocation.1 <-
     name = "random",
     dt = 0,
     selection = "n",
-    n = 1
+    n = 1 + n.obj
   )
 
 resource.allocation.50 <-
@@ -70,7 +67,7 @@ resource.allocation.50 <-
     name = "random",
     dt = 0,
     selection = "n",
-    n = 50
+    n = 50 + n.obj
   )
 
 
@@ -79,10 +76,10 @@ print("2 OBJECTIVES")
 problem.to.solve <- (1:55)
 for (fun in problem.to.solve) {
   problem <-
-    smoof::makeBiObjBBOBFunction(dimension = dimensions,
+    smoof::makeBiObjBBOBFunction(dimensions = dimensions,
                                  fid = fun,
                                  iid = 1)
-    problem.BiBBOB <- function(X) {
+  problem.BiBBOB <- function(X) {
     t(apply(X, MARGIN = 1,
             FUN = problem))
   }
@@ -96,30 +93,19 @@ for (fun in problem.to.solve) {
   )
   
   
+  
+  
   for (j in 1:repetitions) {
     cat("rep", j, "\n")
     
+    seed <- sample(1:1000)[1]
+  
     
+    dir.name <- paste0("~/tec/moead50_", j, "/")
+    if (!dir.exists(dir.name))
+      dir.create(dir.name)
     
-    nsga.2 <- nsga2(problem, idim = dimensions, odim = 2, generations=stopcrit[[1]]$maxeval/500,
-                 lower.bounds=rep(as.numeric(getLower(par.set)), dimensions), upper.bounds= rep(as.numeric(getUpper(par.set)), dimensions), popsize = 500)
-
-    nsga.2$X <- nsga.2$par
-    nsga.2$Y <- nsga.2$value
-    nsga.2$nfe <- stopcrit[[1]]$maxeval
-    nsga.2$n.iter <- stopcrit[[1]]$maxeval/500
-    colnames(nsga.2$Y) <- c("f1", "f2")
-      
-    savePlotData(
-      moea = nsga.2,
-      name = paste0(paste0("bibbob_", fun), "_nsga.2_", lambda, "_"),
-      j = j,
-      wd = "~/",
-      extra = F
-    )
-    rm(nsga.2)
-    
-    moead50 <- moead(
+    moead50 <- moeadps(
       problem  = problem.bibbob,
       preset   = preset_moead("moead.de"),
       decomp = decomp50,
@@ -128,20 +114,18 @@ for (fun in problem.to.solve) {
       scaling = scaling,
       neighbors = neighbors.50,
       showpars = list(show.iters = "none", showevery = 1000),
-      seed = j + 422,
-      update = update
+      seed = seed,
+      update = update,
+      saving.dir = dir.name
     )
     
-    savePlotData(
-      moea = moead50,
-      name = paste0(paste0("bibbob_", fun), "_moead50_", lambda, "_"),
-      j = j,
-      wd = "~/tec/"
-    )
     rm(moead50)
     
+    dir.name <- paste0("~/tec/moead500_", j, "/")
+    if (!dir.exists(dir.name))
+      dir.create(dir.name)
     
-    moead500 <- moead(
+    moead500 <- moeadps(
       problem  = problem.bibbob,
       preset   = preset_moead("moead.de"),
       decomp = decomp500,
@@ -150,21 +134,18 @@ for (fun in problem.to.solve) {
       scaling = scaling,
       neighbors = neighbors.500,
       showpars = list(show.iters = "none", showevery = 1000),
-      seed = j + 422,
-      update = update
+      seed = seed,
+      update = update,
+      saving.dir = dir.name
     )
     
-    savePlotData(
-      moea = moead500,
-      name = paste0(paste0("bibbob_", fun), "_moead500_", lambda, "_"),
-      j = j,
-      wd = "~/tec/"
-    )
     rm(moead500)
     
+    dir.name <- paste0("~/tec/moead.ps.1_", j, "/")
+    if (!dir.exists(dir.name))
+      dir.create(dir.name)
     
-    
-    moead.ps.1 <- moead(
+    moead.ps.1 <- moeadps(
       problem  = problem.bibbob,
       preset   = preset_moead("moead.de"),
       decomp = decomp500,
@@ -174,17 +155,17 @@ for (fun in problem.to.solve) {
       neighbors = neighbors.500,
       showpars = list(show.iters = "none", showevery = 1000),
       update = update,
-      resource.allocation = resource.allocation.1
-    )
-    savePlotData(
-      moea = moead.1,
-      name = paste0(paste0("bibbob_", fun), "_moead.ps.1_", lambda, "_"),
-      j = j,
-      wd = "~/tec/"
+      resource.allocation = resource.allocation.1,
+      seed = seed,
+      saving.dir = dir.name
     )
     rm(moead.1)
     
-    moead.ps.50 <- moead(
+    dir.name <- paste0("~/tec/moead.ps.50_", j, "/")
+    if (!dir.exists(dir.name))
+      dir.create(dir.name)
+    
+    moead.ps.50 <- moeadps(
       problem  = problem.bibbob,
       preset   = preset_moead("moead.de"),
       decomp = decomp500,
@@ -194,19 +175,15 @@ for (fun in problem.to.solve) {
       neighbors = neighbors.500,
       showpars = list(show.iters = "none", showevery = 1000),
       update = update,
-      resource.allocation = resource.allocation.50
+      resource.allocation = resource.allocation.50,
+      seed = seed,
+      saving.dir = dir.name
     )
-    savePlotData(
-      moea = moead.ps.50,
-      name = paste0(paste0("bibbob_", fun), "_moead.ps.50_", lambda, "_"),
-      j = j,
-      wd = "~/tec/"
-    )
-    rm(moead.random)
+    
+    rm(moead.ps.50)
     
     
     
   }
   
 }
-

@@ -265,17 +265,13 @@ moeadps <-
            stopcrit = NULL,
            # List:  stop criteria
            showpars = NULL,
-           # List:  echoing behavior
+           # Seed
            seed = NULL,
-           # List:  echoing behavior
-           more.pressure = NULL,
-           small.update = NULL,
-           # Seed for PRNG
            resource.allocation = list(name = "none",
                                       selection = "none",
                                       dt = 2),
-           # List:  resource
-           # loaded.weights = NULL,
+           # List:  echoing behavior,
+           saving.dir = NULL,
            ...)
 
 # other parameters
@@ -304,10 +300,6 @@ moeadps <-
         scaling   = preset$scaling
       if (is.null(stopcrit))
         stopcrit  = preset$stopcrit
-      if (is.null(small.update))
-        small.update  = F
-      if (is.null(more.pressure))
-        more.pressure  = F
       nullRA <-
         ifelse(
           test = is.null(resource.allocation$name),
@@ -348,7 +340,6 @@ moeadps <-
     if (is.null(update$UseArchive)) {
       update$UseArchive <- FALSE
     }
-    # Archive2 = list(X = NULL, Y = NULL, V = list(v = NULL, Cmatrix = NULL, Vmatrix = NULL))
     # =========================== End Algorithm setup ========================== #
     
     # =========================== Initial definitions ========================== #
@@ -375,28 +366,11 @@ moeadps <-
     # ========== Initialize Resource Allocation
     init_ra <- resource_allocation_init(resource.allocation, W)
     priority.values <- init_ra$priority.values
-    # idx.boundary <- init_ra$idx.boundary
     two_step <- init_ra$two_step
-    # idx.boundary <- which(W %in% c(0, 1))[1:problem$m]
     idx.boundary <- apply(W, 2, which.max)
     
-    # dt.hv <- 100
-    # hc.counter <- 0
-    # old.hv <- rep(-1, dt.hv)
-    
-    # Yref <-
-    #   as.matrix(read.table(paste0(
-    #     "~/MOEADr/inst/extdata/pf_data/DTLZ4.2D.pf"
-    #   )))
-    # ref1 <- Y
-    # ref.points <- c(1,1)
     if(resource.allocation$name == "none") div <- nrow(W) else div <- resource.allocation$n
     
-    # ========== Visualization Tools
-    # calculating usage of resource by subproblem and any other visualization info
-    # usage <- matrix(NA, nrow = size, ncol =nrow(W))
-    # plot.paretofront <- df <- data.frame(f1 = rep(NA,nrow(Y)*size), f2 = rep(NA,nrow(Y)*size), iter = rep(NA,nrow(Y)*size))
-    plot.paretofront <- data.frame()
     # ========================= End Initial definitions ======================== #
     
     # ============================= Iterative cycle ============================ #
@@ -406,6 +380,7 @@ moeadps <-
     while (keep.running) {
       # Update iteration counter
       iter <- iter + 1
+      
       idx.parent <- rep(0, nrow(W) + 1)
       
       if ("save.iters" %in% names(moead.input.pars)) {
@@ -454,7 +429,7 @@ moeadps <-
       P <- P[indexes,]
       X <- X[indexes,]
       
-
+      
       Xv      <- do.call(perform_variation,
                          args = as.list(environment()))
       
@@ -465,7 +440,6 @@ moeadps <-
       temp.X[indexes, ] <- Xv$X
       X <- temp.X
       
-      # X       <- Xv$X
       ls.args <- Xv$ls.args
       nfe     <- nfe + Xv$var.nfe
       var.input.pars <- as.list(sys.call())[-1]
@@ -530,20 +504,6 @@ moeadps <-
       # ========== Update
       # Update population
       
-        if (isTRUE(small.update)){
-        T.temp <- neighbors$T
-        neighbors$T <- 1
-        BP <- define_neighborhood(neighbors = neighbors,
-                                  v.matrix  = switch(neighbors$name,
-                                                     lambda = W,
-                                                     x      = X),
-                                  iter      = iter)
-        
-        B  <- BP$B
-        P  <- BP$P
-        neighbors$T <- T.temp 
-      }
-      
       XY <- do.call(update_population,
                     args = as.list(environment()))
       
@@ -553,8 +513,6 @@ moeadps <-
       Archive <- XY$Archive
       
       # ========== Resource Allocation - Update Priority function values
-      # bad workaround with the problem of not having this values at the first iterations!
-      
       # parameters for NORM and Random
       init_ra$dt.bigZ[[length(init_ra$dt.bigZ) + 1]] <- bigZ
       
@@ -571,11 +529,6 @@ moeadps <-
         dt.bigZ <- bigZ
       }
       neighbors.T <- neighbors$T
-      
-      ## parameters for DRA
-      # newObj <- bigZ[neighbors$T + 1, ]
-      # oldObj <- init_ra$oldObj
-      # if(is.null(oldObj)) oldObj <- newObj # means it is not going to be used ever
       
       if (iter > 1 || resource.allocation$name == "random") {
         updates <- resource_allocation_update(
@@ -603,15 +556,8 @@ moeadps <-
         init_ra$dt.bigZ[[index]] <- bigZ
       }
       
-      
-      # calculating usage of resource by subproblem and any other visualization info
-      # if(nullRA) usage[iter,] <- rep(1, dim(W)[1]) else usage[iter,] <- as.numeric(iteration_usage)
-      # if(iter != 1) pad <- 1 else pad <- 0
-      
-      # plot.paretofront[((iter-1)*nrow(Y)+pad):(iter*nrow(Y)),1:2] <- Y
-      # plot.paretofront[((iter-1)*nrow(Y)+pad):(iter*nrow(Y)),3] <- iter
-      
-      plot.paretofront <- rbind(plot.paretofront, cbind(Y, stage = iter))
+      # saving data for analysis
+      write_feather(data.frame(X = Archive$X, Y = Archive$Y, iter = iter), paste0(saving.dir, "iter_",iter))
       # ========== Stop Criteria
       # Calculate iteration time
       elapsed.time <- as.numeric(difftime(
@@ -627,24 +573,7 @@ moeadps <-
       # # Verify stop criteria
       keep.running <- check_stop_criteria(stopcrit = stopcrit,
                                           call.env = environment())
-      # keep.running <- T
-      # ref1 <- rbind(ref1, Y)
-      # hv <- hypervolume(scaling_Y(Y, ref1), reference = ref.points)
-      # # hv <- igd(Y, Yref)
-      # if(round(1/hv,4) == round(1/old.hv[iter %% dt.hv+1],4)){
-      #   hc.counter <- hc.counter + 1
-      #   if(hc.counter == dt.hv) {
-      #     keep.running <- F 
-      #     print("hv, old.hv")
-      #     print(hv)
-      #     print(old.hv)
-      #   }
-      # }
-      # else{
-      #   old.hv[iter %% dt.hv+1] <- hv
-      #   hc.counter <- 0
-      # }
-      
+
       # ========== Print
       # Echo whatever is demanded
       print_progress(iter.times, showpars)
@@ -679,8 +608,7 @@ moeadps <-
       n.iter      = iter,
       time        = difftime(Sys.time(), time.start, units = "secs"),
       seed        = seed,
-      inputConfig = moead.input.pars,
-      plot.paretofront = plot.paretofront
+      inputConfig = moead.input.pars
     )
     class(out) <- c("moead", "list")
     

@@ -98,10 +98,10 @@ summary.moeadps <- function(object,
     if (!is.null(scaling.reference)) hv <- emoa::dominated_hypervolume(points = t(scaling_Y(Y, scaling.reference)), ref = ref.point)
     else hv <- emoa::dominated_hypervolume(points = t(Y), ref = ref.point)
 
-    hv.front <- NULL
+    # hv.front <- NULL
 
-    if (!nullRF) hv.front <- emoa::dominated_hypervolume(points = t(scaling_Y(Yref, scaling.reference)), ref = ref.point)
-    if (!nullRF) hv.scaled <- hv/hv.front
+    # if (!nullRF) hv.front <- emoa::dominated_hypervolume(points = t(scaling_Y(Yref, scaling.reference)), ref = ref.point)
+    # if (!nullRF) hv.scaled <- hv/hv.front
   }
 
 
@@ -124,12 +124,12 @@ summary.moeadps <- function(object,
     if(!nullRF) cat("\nEstimated IGD: ", igd)
     if("emoa" %in% rownames(utils::installed.packages())) {
       cat("\nEstimated HV: ", hv)
-      cat("\nEstimated HV (HV(Y)/HV(ref.front): ", hv.scaled)
+      # cat("\nEstimated HV (HV(Y)/HV(ref.front): ", hv.scaled)
       cat("\nRef point used for HV: ", ref.point)
     } else cat("\n\nPlease install package 'emoa' to calculate hypervolume.")
     cat("\n#====================================")
   }
 
-  out <- list(hv.scaled = hv.scaled, hv = hv, hv.front = hv.front, igd = igd, nndom = nndom, nfeas = nfeas)
+  out <- list(hv = hv, igd = igd, nndom = nndom, nfeas = nfeas)
   return(out)
 }

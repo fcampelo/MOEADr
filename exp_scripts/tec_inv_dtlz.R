@@ -8,12 +8,12 @@ library(compiler)
 library(ggplot2)
 library(eaf)
 library(MOEADps)
-library(R.matlab)
 library(plotly)
 
 source("~/MOEADr/R/utils.R")
+source("~/MOEADr/R/load.DTLZ.function.R")
 
-repetitions <-  1
+repetitions <-  10
 dimensions <- 40
 lambda <- 50
 
@@ -62,7 +62,7 @@ resource.allocation.1 <-
     name = "random",
     dt = 0,
     selection = "n",
-    n = 1
+    n = 1 + n.obj
   )
 
 resource.allocation.50 <-
@@ -70,7 +70,7 @@ resource.allocation.50 <-
     name = "random",
     dt = 0,
     selection = "n",
-    n = 50
+    n = 50 + n.obj
   )
 
 
@@ -96,25 +96,25 @@ for (fun in problem.to.solve) {
     
     
     
-    nsga.2 <- nsga2(problem.smoof.DTLZ, idim = dimensions, odim = 2, generations=stopcrit[[1]]$maxeval/500,
-                    lower.bounds=rep(as.numeric(getLower(par.set)), dimensions), upper.bounds= rep(as.numeric(getUpper(par.set)), dimensions), popsize = 500)
-    
-    nsga.2$X <- nsga.2$par
-    nsga.2$Y <- nsga.2$value
-    nsga.2$nfe <- stopcrit[[1]]$maxeval
-    nsga.2$n.iter <- stopcrit[[1]]$maxeval/500
-    
-    colnames(nsga.2$Y) <- c("f1", "f2")
-    
-    
-    savePlotData(
-      moea = nsga.2,
-      name = paste0(paste0("bibbob_", fun), "_nsga.2_", lambda, "_"),
-      j = j,
-      wd = "~/",
-      extra = F
-    )
-    rm(nsga.2)
+    # nsga.2 <- nsga2(problem.smoof.DTLZ, idim = dimensions, odim = 2, generations=stopcrit[[1]]$maxeval/500,
+    #                 lower.bounds=rep(as.numeric(getLower(par.set)), dimensions), upper.bounds= rep(as.numeric(getUpper(par.set)), dimensions), popsize = 500)
+    # 
+    # nsga.2$X <- nsga.2$par
+    # nsga.2$Y <- nsga.2$value
+    # nsga.2$nfe <- stopcrit[[1]]$maxeval
+    # nsga.2$n.iter <- stopcrit[[1]]$maxeval/500
+    # 
+    # colnames(nsga.2$Y) <- c("f1", "f2")
+    # 
+    # 
+    # savePlotData(
+    #   moea = nsga.2,
+    #   name = paste0(fun, "_nsga.2_", lambda, "_"),
+    #   j = j,
+    #   wd = "~/",
+    #   extra = F
+    # )
+    # rm(nsga.2)
     
     moead50 <- moeadps(
       problem  = problem.dtlz7,
@@ -131,7 +131,7 @@ for (fun in problem.to.solve) {
     
     savePlotData(
       moea = moead50,
-      name = paste0(paste0("bibbob_", fun), "_moead50_", lambda, "_"),
+      name = paste0(fun, "_moead50_", lambda, "_"),
       j = j,
       wd = "~/tec/"
     )
@@ -153,7 +153,7 @@ for (fun in problem.to.solve) {
     
     savePlotData(
       moea = moead500,
-      name = paste0(paste0("bibbob_", fun), "_moead500_", lambda, "_"),
+      name = paste0(fun, "_moead500_", lambda, "_"),
       j = j,
       wd = "~/tec/"
     )
@@ -175,7 +175,7 @@ for (fun in problem.to.solve) {
     )
     savePlotData(
       moea = moead.1,
-      name = paste0(paste0("bibbob_", fun), "_moead.ps.1_", lambda, "_"),
+      name = paste0(fun, "_moead.ps.1_", lambda, "_"),
       j = j,
       wd = "~/tec/"
     )
@@ -195,7 +195,7 @@ for (fun in problem.to.solve) {
     )
     savePlotData(
       moea = moead.ps.50,
-      name = paste0(paste0("bibbob_", fun), "_moead.ps.50_", lambda, "_"),
+      name = paste0(fun, "_moead.ps.50_", lambda, "_"),
       j = j,
       wd = "~/tec/"
     )

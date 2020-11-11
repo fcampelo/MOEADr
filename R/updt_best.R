@@ -77,7 +77,7 @@ updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
 
   # Find the problem in which each CANDIDATE solution (not incumbent) performs
   # best
-  best.indx <- apply(X      = fullZ[1:(nrow(fullZ) - 1), , drop = FALSE],
+  best.indx <- parApply(cl,X      = fullZ[1:(nrow(fullZ) - 1), , drop = FALSE],
                      MARGIN = 1,
                      FUN    = which.min)
 
@@ -139,7 +139,7 @@ updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
   used <- rep(0, nrow(X))
 
   # Update matrix of candidate solutions
-  Xnext <- t(vapply(X         = I,
+  Xnext <- t(parSapply(cl,X         = I,
                     FUN       = do.update,
                     FUN.VALUE = numeric(ncol(X)),
                     sel.indx  = best.sel.indx,
@@ -151,7 +151,7 @@ updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
 
   # Update matrix of function values
   used  <- rep(0, nrow(Y))
-  Ynext <- t(vapply(X         = I,
+  Ynext <- t(parSapply(cl,X         = I,
                     FUN       = do.update,
                     FUN.VALUE = numeric(ncol(Y)),
                     sel.indx  = best.sel.indx,
@@ -169,7 +169,7 @@ updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
 
     ## 1: Cmatrix
     used <- rep(0, nrow(Y))
-    Vnext$Cmatrix <- t(vapply(X         = I,
+    Vnext$Cmatrix <- t(parSapply(cl,X         = I,
                               FUN       = do.update,
                               FUN.VALUE = numeric(ncol(V$Cmatrix)),
                               sel.indx  = best.sel.indx,
@@ -179,7 +179,7 @@ updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
                               USE.NAMES = FALSE))
     ## 2: Vmatrix
     used <- rep(0, nrow(Y))
-    Vnext$Vmatrix <- t(vapply(X         = I,
+    Vnext$Vmatrix <- t(parSapply(cl,X         = I,
                               FUN       = do.update,
                               FUN.VALUE = numeric(ncol(V$Vmatrix)),
                               sel.indx  = best.sel.indx,

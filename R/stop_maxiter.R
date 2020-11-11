@@ -32,6 +32,6 @@ stop_maxiter <- function(stopcrit, iter, ...){
                             function(x) x$name) == "maxiter")
   maxiter   <- stopcrit[[maxiter.i]]$maxiter
   assertthat::assert_that(assertthat::is.count(maxiter))
-
+  
   return(iter >= maxiter)
 }

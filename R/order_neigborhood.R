@@ -39,22 +39,24 @@
 
 order_neighborhood <- function(bigZ, B, V, Vt, constraint)
 {
-
   # ========== Assert that moead.env has all necessary variables
-  assertthat::assert_that(
-    nrow(bigZ) == ncol(B) + 1,
-    ncol(bigZ) == nrow(B))
+  assertthat::assert_that(nrow(bigZ) == ncol(B) + 1,
+                          ncol(bigZ) == nrow(B))
   # ==========
-
+  
   # If we don't have constraints, just sort indexes by bigZ
   if (is.null(V))
   {
     # Get the selection matrix for all neighborhoods using only bigZ
-    sel.indx <- t(apply(bigZ,
-                        MARGIN = 2,
-                        FUN    = function (X) {
-                          unlist(as.matrix(sort.int(X,
-                                                    index.return = TRUE))[2])}))
+    sel.indx <- t(parApply(
+      cl,
+      bigZ,
+      MARGIN = 2,
+      FUN    = function (X) {
+        unlist(as.matrix(sort.int(X,
+                                  index.return = TRUE))[2])
+      }
+    ))
     # Code snipped for getting vector of sorting indexes from
     # https://joelgranados.com/2011/03/01/r-finding-the-ordering-index-vector/
   }
@@ -63,13 +65,13 @@ order_neighborhood <- function(bigZ, B, V, Vt, constraint)
     # calculate the penalty matrix of the neighborhoods and incumbent solution,
     # using the same process used to calculate bigZ (see scalarize_values)
     
-    bigV <- t(cbind(matrix(V$v[B],
-                           dim(B)),
-                    Vt$v))
-    # bigV <- t(cbind(matrix(V[B],
+    # bigV <- t(cbind(matrix(V$v[B],
     #                        dim(B)),
-    #                 Vt))
-
+    #                 Vt$v))
+    bigV <- t(cbind(matrix(V[B],
+                           dim(B)),
+                    Vt))
+    
     # use constraint handler function to calculate selection matrix
     
     opname       <- paste0("constraint_", constraint$name)
@@ -82,7 +84,7 @@ order_neighborhood <- function(bigZ, B, V, Vt, constraint)
     ord.args$bigV <- bigV
     ord.args$V    <- V
     ord.args$Vt   <- Vt
-
+    
     # call constraint handling method
     sel.indx <- do.call(opname,
                         args = ord.args)

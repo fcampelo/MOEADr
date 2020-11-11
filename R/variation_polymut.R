@@ -36,35 +36,17 @@
 #'
 #' @export
 
-variation_polymut <- function(X, etam, pm, eps = 1e-6, ...) {
-
-  # ========== Error catching and default value definitions
-  assertthat::assert_that(
-    is.numeric(X) && is.matrix(X),
-    is.numeric(etam) && etam > 0,
-    is.numeric(pm) && is_within(pm, 0, 1, strict = FALSE)
-  )
-  # ==========
-  op <- pm_operator(etam, pm, -2,2)
-  for (i in 1:dim(X)[1]) {
-    for (j in 1:dim(X)[2]) {
-      X[i,j] <- op(X[i,j])
-    }
-  }
-  return(X)
-}
-
-variation_polymut_original <- function(X, etam, pm, eps = 1e-6, ...){
-
+variation_polymut <- function(X, etam, pm, eps = 1e-6, ...){
+  
   # ========== Error catching and default value definitions
   if (identical(tolower(pm), "n")) pm <- 1 / ncol(X)
-
+  
   assertthat::assert_that(
     is.numeric(X) && is.matrix(X),
     is.numeric(etam) && etam > 0,
     is.numeric(pm) && is_within(pm, 0, 1, strict = FALSE))
   # ==========
-
+  
   nflag <- FALSE
   if(!is_within(X, 0, 1, strict = FALSE)){
     # Standardize population matrix
@@ -80,16 +62,16 @@ variation_polymut_original <- function(X, etam, pm, eps = 1e-6, ...){
     X <- (X - minP) / (maxP - minP + eps)
     nflag <- TRUE
   }
-
+  
   # Define positions that will be mutated
   R <- randM(X) <= pm
-
+  
   # Calculate Delta_q values
   Deltaq <- calc_Deltaq(X, etam)
-
+  
   # Update mutated population
-  Xp <- X * (!R) + (X * Deltaq) * R
-
+  Xp <- X * (!R) + (X + Deltaq) * R
+  
   # Return (de-standardized, if needed) results
   if (nflag){
     return(minP + Xp * (maxP - minP + eps))

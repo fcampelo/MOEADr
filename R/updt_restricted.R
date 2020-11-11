@@ -76,7 +76,7 @@ updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, ...){
   used <- rep(0, nrow(X))
 
   # Update matrix of candidate solutions
-  Xnext <- t(vapply(X         = I,
+  Xnext <- t(parSapply(cl,X         = I,
                     FUN       = do.update,
                     FUN.VALUE = numeric(ncol(X)),
                     sel.indx  = rest.sel.indx,
@@ -88,7 +88,7 @@ updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, ...){
 
   # Update matrix of function values
   used <- rep(0, nrow(Y))
-  Ynext <- t(vapply(X         = I,
+  Ynext <- t(parSapply(clX         = I,
                     FUN       = do.update,
                     FUN.VALUE = numeric(ncol(Y)),
                     sel.indx  = rest.sel.indx,
@@ -106,7 +106,7 @@ updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, ...){
 
     ## 1: Cmatrix
     used <- rep(0, nrow(Y))
-    Vnext$Cmatrix <- t(vapply(X         = I,
+    Vnext$Cmatrix <- t(parSapply(cl,X         = I,
                               FUN       = do.update,
                               FUN.VALUE = numeric(ncol(V$Cmatrix)),
                               sel.indx  = rest.sel.indx,
@@ -116,7 +116,7 @@ updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, ...){
                               USE.NAMES = FALSE))
     ## 2: Vmatrix
     used <- rep(0, nrow(Y))
-    Vnext$Vmatrix <- t(vapply(X         = I,
+    Vnext$Vmatrix <- t(parSapply(cl,X         = I,
                               FUN       = do.update,
                               FUN.VALUE = numeric(ncol(V$Vmatrix)),
                               sel.indx  = rest.sel.indx,

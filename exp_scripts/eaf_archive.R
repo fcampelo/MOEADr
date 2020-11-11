@@ -24,7 +24,7 @@ for (i in 1:7) {
 
 # number_subproblems <-
 #  c(3, 4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
-source("~/MOEADr/R/summary_moead.R")
+source("~/MOEADr/R/summary_moeadps.R")
 source("~/MOEADr/R/utils.R")
 source("~/MOEADr/R/loadPlotData.R")
 

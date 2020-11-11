@@ -44,7 +44,7 @@ resource_allocation_select <-
     selected       <- do.call(function_name,
                              args = updt.args)
     indexes <- selected$indexes
-    iteration_usage <- selected$iteration_usage
+    # iteration_usage <- selected$iteration_usage
 
     # to add the bounderies
     if(length(indexes) != length(priority.values)){
@@ -58,8 +58,8 @@ resource_allocation_select <-
 
     out <-
       list(
-        indexes = indexes,
-        iteration_usage = iteration_usage
+        indexes = indexes#,
+        # iteration_usage = iteration_usage
       )
 
     return(out)

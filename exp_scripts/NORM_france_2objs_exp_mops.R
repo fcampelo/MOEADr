@@ -1,14 +1,11 @@
 rm(list = ls(all = TRUE))
-# setwd("~/MOEADr/R/")
+
 library(smoof)
-# library(MOEADr)
 library(emoa)
 library(feather)
-# # library(withr)
 library(compiler)
-# lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 enableJIT(1)
-
+source("~/MOEADr/R/load.DTLZ.function.R")
 library(MOEADps)
 
 repetitions <-  10
@@ -34,68 +31,71 @@ update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 100000))
+                       maxeval = 5000))
 
 
 
 n.obj <- 2
-problem <-
-  load.DTLZ.function("DTLZ7", dimension = dimension, n.obj = n.obj)
-problem.smoof.DTLZ <- problem$fn
-problem.DTLZ <- function(X) {
-  t(apply(X, MARGIN = 1,
-          FUN = problem.smoof.DTLZ))
-}
-par.set = ParamHelpers::getParamSet(problem.smoof.DTLZ)
-problem.dtlz7 <- list(
-  name       = "problem.DTLZ",
-  xmin       = as.numeric(getLower(par.set)),
-  xmax       = as.numeric(getUpper(par.set)),
-  m          = n.obj
-)
-
-
-
-print("2 OBJECTIVES")
-fun <- "DTLZ7"
-
-for (j in 1:repetitions) {
-  number_subproblems <-
-    c(3, 4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
-  cat("rep",j,"\n")
-  for (lambda in number_subproblems) {
-    cat("lambda", lambda, "\n")
-    
-    resource.allocation.NORM <-
-      list(
-        name = "norm",
-        dt = 1,
-        selection = "n",
-        n = lambda
+problem.to.solve <- c("DTLZ1")
+  # c("DTLZ1", "DTLZ2", "DTLZ3", "DTLZ4", "DTLZ5", "DTLZ6")
+for (fun in problem.to.solve) {
+  print(fun)
+  problem <-
+    load.DTLZ.function(fun, dimensions = dimension, n.obj = n.obj)
+  problem.smoof.DTLZ <- problem$fn
+  problem.DTLZ <- function(X) {
+    t(apply(X, MARGIN = 1,
+            FUN = problem.smoof.DTLZ))
+  }
+  par.set = ParamHelpers::getParamSet(problem.smoof.DTLZ)
+  problem.dtlzX <- list(
+    name       = "problem.DTLZ",
+    xmin       = as.numeric(getLower(par.set)),
+    xmax       = as.numeric(getUpper(par.set)),
+    m          = n.obj
+  )
+  
+  
+  
+  print("2 OBJECTIVES")
+  
+  for (j in 1:repetitions) {
+    number_subproblems <-
+      c(3, 4, 6, 8, 10, 30, 50, 100, 150, 250)
+    cat("rep", j, "\n")
+    for (lambda in number_subproblems) {
+      cat("lambda", lambda, "\n")
+      
+      seed <- sample(1:1000)[1]
+      
+      resource.allocation.NORM <-
+        list(
+          name = "norm",
+          dt = 1,
+          selection = "n",
+          n = lambda
+        )
+      
+      dir.name <- paste0("~/tec/moead.norm_", j, "/lambda_", lambda ,"/")
+      if (!dir.exists(dir.name))
+        dir.create(dir.name)
+      
+      moead.norm <- moeadps(
+        problem  = problem.dtlzX,
+        preset   = preset_moead("moead.de"),
+        decomp = decomp.loaded.2,
+        variation = variation,
+        stopcrit = stopcrit,
+        scaling = scaling,
+        neighbors = neighbors,
+        showpars = list(show.iters = "none", showevery = 1000),
+        update = update,
+        resource.allocation = resource.allocation.NORM,
+        seed = seed,
+        saving.dir = dir.name
       )
-    
-    
-    moead.norm <- moead(
-      problem  = problem.dtlz7,
-      preset   = preset_moead("moead.de"),
-      decomp = decomp.loaded.2,
-      variation = variation,
-      stopcrit = stopcrit,
-      scaling = scaling,
-      neighbors = neighbors,
-      showpars = list(show.iters = "numbers", showevery = 100),
-      seed = j,
-      update = update,
-      resource.allocation = resource.allocation.NORM,
-      loaded.weights = loaded.weights.2objs
-    )
-
-    savePlotData(
-      moea = moead.norm,
-      name = paste0(fun, "_moead.norm_", lambda, "_"),
-      j = j,
-      wd = "~/france_data/"
-    )
-    rm(moead.norm)
+      
+      
+    }
   }
 }
