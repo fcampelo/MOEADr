@@ -134,3 +134,5 @@ for (fun in problem.to.solve) {
     }
   }
 }
+
+stopCluster(cl)

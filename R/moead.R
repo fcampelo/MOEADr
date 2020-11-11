@@ -355,6 +355,7 @@ moeadps <-
     # Generate initial population
     X  <- create_population(N       = nrow(W),
                             problem = problem)
+
     # Evaluate population on objectives
     YV <- evaluate_population(X       = X,
                               problem = problem,
@@ -426,9 +427,8 @@ moeadps <-
       P  <- BP$P
       # ========== Variation
       # Perform variation
-      P <- P[indexes,]
+      P <- P[indexes,indexes]
       X <- X[indexes,]
-      
       
       Xv      <- do.call(perform_variation,
                          args = as.list(environment()))
@@ -477,6 +477,7 @@ moeadps <-
       normYs <- scale_objectives(Y       = Y,
                                  Yt      = Yt,
                                  scaling = scaling)
+
       
       # Scalarization by neighborhood.
       # bigZ is an [(T+1) x N] matrix, in which each column has the T scalarized

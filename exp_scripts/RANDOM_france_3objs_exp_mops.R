@@ -116,7 +116,7 @@ for (fun in problem.to.solve) {
       if (!dir.exists(dir.name))
         dir.create(dir.name, recursive = T)
       
-      moead.norm <- moeadps(
+      moead.random <- moeadps(
         problem  = problem.solving,
         preset   = preset_moead("moead.de"),
         decomp = decomp.loaded.3,
@@ -134,3 +134,5 @@ for (fun in problem.to.solve) {
     }
   }
 }
+
+stopCluster(cl)

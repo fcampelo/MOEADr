@@ -59,51 +59,51 @@
 
 updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
                       normYs, W, BP, constraint, aggfun, ...){
-
+  
   ## Verify that the necessary parameters exist.
   assertthat::assert_that(
     all(assertthat::has_name(update, c("nr", "Tr"))),
     assertthat::is.count(update$nr),
     assertthat::is.count(update$Tr))
-
+  
   nr <- update$nr
   Tr <- update$Tr
-
+  
   # Calculate scalarized performance of all individuals for all subproblems
   fullZ   <- scalarize_values(normYs = normYs,
                               W      = W,
                               B      = BP$fullB,
                               aggfun = aggfun)
-
+  
   # Find the problem in which each CANDIDATE solution (not incumbent) performs
   # best
-  best.indx <- parApply(cl,X      = fullZ[1:(nrow(fullZ) - 1), , drop = FALSE],
+  best.indx <- apply(X      = fullZ[1:(nrow(fullZ) - 1), , drop = FALSE],
                      MARGIN = 1,
                      FUN    = which.min)
-
+  
   best.subprob <- mapply(FUN      = function(i, j, B){B[i, j]},
                          i        = 1:nrow(BP$fullB),
                          j        = best.indx,
                          MoreArgs = list(B = BP$fullB))
-
+  
   # Define restricted neighborhoods for best update (that is, the update
   # neighborhood of subproblem i is set as the neighborhood of best.subprob[i])
   bestB    <- BP$fullB[best.subprob, 1:Tr, drop = FALSE]
-
+  
   # Assemble bigZ matrix according to neighborhood bestB
   bestZ <- scalarize_values(normYs = normYs,
                             W      = W,
                             B      = bestB,
                             aggfun = aggfun)
-
+  
   best.sel.indx <- order_neighborhood(bigZ       = bestZ,
                                       B          = bestB,
                                       V          = V,
                                       Vt         = Vt,
                                       constraint = constraint)
-
+  
   # ========= Code below here should be identical to updt_restricted =========#
-
+  
   # Function for returning the selected solution (variable or objectives space)
   # for a subproblem:
   # - i: subproblem index
@@ -113,33 +113,24 @@ updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
   # - B: matrix of neighborhoods
   do.update <- function(i, sel.indx, XY, XYt, B){
     for (j in sel.indx[i,]) {               #each element in b_i, in fitness order
-      if (j > ncol(B)) {
-        return(XYt[i, , drop = FALSE])     # last row = incumbent solution
-      }
+      if (j > ncol(B)) return(XYt[i, , drop = FALSE])     # last row = incumbent solution
       else if (used[B[i, j]] < nr)          # tests if the current element is still available
       {
         used[B[i, j]] <<- used[B[i, j]] + 1 # modifies count matrix in parent env
-        
-        # if (offspring.count[idx.parent[j+1]+1]>0){
-        #   offspring.count[idx.parent[j+1]+1] <<- offspring.count[idx.parent[j+1]+1] - 1
-        # }
-        # offspring.count[i+1] <<- offspring.count[i+1] + 1
-        # idx.parent[j+1] <<- i
-        
         return(XY[B[i, j], , drop = FALSE])
       }
     }
   }
-
+  
   # Vector of indices (random permutation), and deshuffling vector
   I  <- sample.int(nrow(X))
   I2 <- order(I)
-
+  
   # Counter of how many time each solution has been used
   used <- rep(0, nrow(X))
-
+  
   # Update matrix of candidate solutions
-  Xnext <- t(parSapply(cl,X         = I,
+  Xnext <- t(vapply(X         = I,
                     FUN       = do.update,
                     FUN.VALUE = numeric(ncol(X)),
                     sel.indx  = best.sel.indx,
@@ -148,10 +139,10 @@ updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
                     B         = bestB,
                     USE.NAMES = FALSE))
   Xnext <- Xnext[I2, ]
-
+  
   # Update matrix of function values
   used  <- rep(0, nrow(Y))
-  Ynext <- t(parSapply(cl,X         = I,
+  Ynext <- t(vapply(X         = I,
                     FUN       = do.update,
                     FUN.VALUE = numeric(ncol(Y)),
                     sel.indx  = best.sel.indx,
@@ -160,16 +151,16 @@ updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
                     B         = bestB,
                     USE.NAMES = FALSE))
   Ynext <- Ynext[I2, ]
-
+  
   # Update list of constraint values
   if(is.null(V)){
     Vnext <- NULL
   } else{
     Vnext <- list(Cmatrix = NULL, Vmatrix = NULL, v = NULL)
-
+    
     ## 1: Cmatrix
     used <- rep(0, nrow(Y))
-    Vnext$Cmatrix <- t(parSapply(cl,X         = I,
+    Vnext$Cmatrix <- t(vapply(X         = I,
                               FUN       = do.update,
                               FUN.VALUE = numeric(ncol(V$Cmatrix)),
                               sel.indx  = best.sel.indx,
@@ -179,7 +170,7 @@ updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
                               USE.NAMES = FALSE))
     ## 2: Vmatrix
     used <- rep(0, nrow(Y))
-    Vnext$Vmatrix <- t(parSapply(cl,X         = I,
+    Vnext$Vmatrix <- t(vapply(X         = I,
                               FUN       = do.update,
                               FUN.VALUE = numeric(ncol(V$Vmatrix)),
                               sel.indx  = best.sel.indx,
@@ -187,11 +178,11 @@ updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
                               XYt       = Vt$Vmatrix,
                               B         = bestB,
                               USE.NAMES = FALSE))
-
+    
     ## 3: v
     Vnext$v <- rowSums(Vnext$Vmatrix)
   }
-
+  
   # Output
   return(list(X = Xnext,
               Y = Ynext,

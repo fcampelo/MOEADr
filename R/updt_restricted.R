@@ -41,15 +41,15 @@
 #'
 
 updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, ...){
-
+  
   # ========== Error catching and default value definitions
   assertthat::assert_that(
     assertthat::has_name(update,"nr"),
     assertthat::is.count(update$nr))
-
+  
   nr            <- update$nr
   rest.sel.indx <- sel.indx
-
+  
   # Function for returning the selected solution (variable or objectives space)
   # for a subproblem:
   # - i: subproblem index
@@ -67,16 +67,16 @@ updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, ...){
       }
     }
   }
-
+  
   # Vector of indices (random permutation), and deshuffling vector
   I  <- sample.int(nrow(X))
   I2 <- order(I)
-
+  
   # Counter of how many time each solution has been used
   used <- rep(0, nrow(X))
-
+  
   # Update matrix of candidate solutions
-  Xnext <- t(parSapply(cl,X         = I,
+  Xnext <- t(vapply(X         = I,
                     FUN       = do.update,
                     FUN.VALUE = numeric(ncol(X)),
                     sel.indx  = rest.sel.indx,
@@ -85,10 +85,10 @@ updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, ...){
                     B         = B,
                     USE.NAMES = FALSE))
   Xnext <- Xnext[I2, ]
-
+  
   # Update matrix of function values
   used <- rep(0, nrow(Y))
-  Ynext <- t(parSapply(clX         = I,
+  Ynext <- t(vapply(X         = I,
                     FUN       = do.update,
                     FUN.VALUE = numeric(ncol(Y)),
                     sel.indx  = rest.sel.indx,
@@ -97,16 +97,16 @@ updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, ...){
                     B         = B,
                     USE.NAMES = FALSE))
   Ynext <- Ynext[I2, ]
-
+  
   # Update list of constraint values
   if(is.null(V)){
     Vnext <- NULL
   } else{
     Vnext <- list(Cmatrix = NULL, Vmatrix = NULL, v = NULL)
-
+    
     ## 1: Cmatrix
     used <- rep(0, nrow(Y))
-    Vnext$Cmatrix <- t(parSapply(cl,X         = I,
+    Vnext$Cmatrix <- t(vapply(X         = I,
                               FUN       = do.update,
                               FUN.VALUE = numeric(ncol(V$Cmatrix)),
                               sel.indx  = rest.sel.indx,
@@ -116,7 +116,7 @@ updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, ...){
                               USE.NAMES = FALSE))
     ## 2: Vmatrix
     used <- rep(0, nrow(Y))
-    Vnext$Vmatrix <- t(parSapply(cl,X         = I,
+    Vnext$Vmatrix <- t(vapply(X         = I,
                               FUN       = do.update,
                               FUN.VALUE = numeric(ncol(V$Vmatrix)),
                               sel.indx  = rest.sel.indx,
@@ -124,11 +124,11 @@ updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, ...){
                               XYt       = Vt$Vmatrix,
                               B         = B,
                               USE.NAMES = FALSE))
-
+    
     ## 3: v
     Vnext$v <- rowSums(Vnext$Vmatrix)
   }
-
+  
   # Output
   return(list(X = Xnext,
               Y = Ynext,

@@ -9,7 +9,7 @@ enableJIT(1)
 source("~/MOEADr/R/load.DTLZ.function.R")
 library(MOEADps)
 
-cores <-  32
+cores <-  2
 cl <- makeCluster(cores)
 
 repetitions <-  10
@@ -128,7 +128,7 @@ for (fun in problem.to.solve) {
       if (!dir.exists(dir.name))
         dir.create(dir.name, recursive = T)
       
-      moead.norm <- moeadps(
+      moead.random <- moeadps(
         problem  = problem.solving,
         preset   = preset_moead("moead.de"),
         decomp = decomp.loaded.2,
@@ -147,3 +147,5 @@ for (fun in problem.to.solve) {
     }
   }
 }
+
+stopCluster(cl)
