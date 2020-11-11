@@ -41,9 +41,8 @@ n.obj <- 3
 print("3 OBJECTIVES")
 
 problem.to.solve <-
-  c("UF7",
-    "UF8",
-    "UF9")
+  c("UF10",
+    "UF8")
 
 for (fun in problem.to.solve) {
   print(fun)

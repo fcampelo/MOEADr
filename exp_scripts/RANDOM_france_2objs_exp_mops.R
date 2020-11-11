@@ -53,6 +53,7 @@ problem.to.solve <-
     "UF3",
     "UF4",
     "UF5",
+    "UF7",
     "UF6"
   )
 for (fun in problem.to.solve) {
