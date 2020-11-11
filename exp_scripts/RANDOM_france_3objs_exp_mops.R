@@ -114,7 +114,7 @@ for (fun in problem.to.solve) {
                lambda ,
                "/")
       if (!dir.exists(dir.name))
-        dir.create(dir.name)
+        dir.create(dir.name, recursive = T)
       
       moead.norm <- moeadps(
         problem  = problem.solving,
