@@ -1,15 +1,16 @@
 rm(list = ls(all = TRUE))
-# setwd("~/MOEADr/R/")
+
+library(parallel)
 library(smoof)
-# library(MOEADr)
 library(emoa)
 library(feather)
-# # library(withr)
 library(compiler)
-# lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
 enableJIT(1)
-
+source("~/MOEADr/R/load.DTLZ.function.R")
 library(MOEADps)
+
+cores <-  32
+cl <- makeCluster(cores)
 
 repetitions <-  10
 dimension <- 100

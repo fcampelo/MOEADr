@@ -1,15 +1,17 @@
 rm(list = ls(all = TRUE))
-# setwd("~/MOEADr/R/")
+
+library(parallel)
 library(smoof)
-# library(MOEADr)
 library(emoa)
 library(feather)
-# # library(withr)
 library(compiler)
-# lapply(list.files(pattern = "[.]R$", recursive = TRUE), source)
-enableJIT(1)
-
 library(MOEADps)
+source("~/MOEADr/R/load.DTLZ.function.R")
+source("~/MOEADr/R/define_neighborhood.R")
+
+
+cores <-  3
+cl <- makeCluster(cores)
 
 repetitions <-  10
 dimension <- 100
@@ -86,8 +88,6 @@ for (fun in problem.to.solve) {
   }
   
   
-  print("2 OBJECTIVES")
-  
   for (j in 1:repetitions) {
     number_subproblems <-
       c(4, 5, 6, 7, 8, 9, 10, 30, 50, 100, 150, 250)
@@ -115,7 +115,7 @@ for (fun in problem.to.solve) {
                "/")
       if (!dir.exists(dir.name))
         dir.create(dir.name, recursive = T)
-      e()
+      
       moead.RI <- moeadps(
         problem  = problem.solving,
         preset   = preset_moead("moead.de"),

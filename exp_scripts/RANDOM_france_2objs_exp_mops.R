@@ -9,7 +9,7 @@ enableJIT(1)
 source("~/MOEADr/R/load.DTLZ.function.R")
 library(MOEADps)
 
-library(parallel)cores <-  32
+cores <-  32
 cl <- makeCluster(cores)
 
 repetitions <-  10
