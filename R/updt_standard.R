@@ -52,11 +52,6 @@ updt_standard <- function(X, Xt, Y, Yt, V, Vt, sel.indx, B, idx.parent, offsprin
   do.update <- function(i, sel.indx, XY, XYt, B){
     if (sel.indx[i] > ncol(B)) return(XYt[i, ]) # last row = incumbent solution
     else {
-      # if (offspring.count[idx.parent[j+1]+1]>0){
-      #   offspring.count[idx.parent[j+1]+1] <<- offspring.count[idx.parent[j+1]+1] - 1
-      # }
-      # offspring.count[i+1] <<- offspring.count[i+1] + 1
-      # idx.parent[j+1] <<- i
       return(XY[B[i, sel.indx[i]], ])
     }
   }

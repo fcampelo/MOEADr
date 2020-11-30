@@ -50,7 +50,6 @@ evaluate_population <- function(X, problem, nfe, cons = NULL)
   )
   
   # ==========
-  
   # Denormalize population
   X <- denormalize_population(X, problem)
   #Prepare arguments for function call
@@ -80,21 +79,21 @@ evaluate_population <- function(X, problem, nfe, cons = NULL)
   if ("constraints" %in% names(problem))
   {
     con <- problem$constraints
-    if (is.null(con$epsilon))
-      con$epsilon <- 0
+    if (is.null(con$epsilon)) con$epsilon <- 0
     
     # Prepare arguments for function call
     vfun.args <- as.list(formals(con$name))
     
-    my.args  <- sapply(names(fun.args),
-                       FUN      = function(argname, pars, args){
-                         if(argname %in% names(pars)) {
-                           args[argname] <- pars[argname]
-                         }
-                         return(args[[argname]])},
-                       pars     = problem,
-                       args     = fun.args,
-                       simplify = FALSE)
+    my.vargs  <- parSapply(
+      cl,names(vfun.args),
+                        FUN      = function(argname, pars, args){
+                          if(argname %in% names(pars)) {
+                            args[argname] <- pars[argname]
+                          }
+                          return(args[[argname]])},
+                        pars     = con,
+                        args     = vfun.args,
+                        simplify = FALSE)
     
     my.vargs[[grep("[x|X]",
                    names(my.vargs))]] <- X

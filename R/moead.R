@@ -272,6 +272,7 @@ moeadps <-
                                       dt = 2),
            # List:  echoing behavior,
            saving.dir = NULL,
+           X = NULL,
            ...)
 
 # other parameters
@@ -307,7 +308,6 @@ moeadps <-
           no = F
         )
     }
-    
     # ============== Error catching and default value definitions ============== #
     # "problem"     checked in "create_population(...)"
     # "decomp"      checked in "decompose_problem(...)"
@@ -353,8 +353,10 @@ moeadps <-
                              m      = problem$m)
     }
     # Generate initial population
-    X  <- create_population(N       = nrow(W),
-                            problem = problem)
+    if(is.null(X)){
+      X  <- create_population(N       = nrow(W),
+                              problem = problem)  
+    }
 
     # Evaluate population on objectives
     YV <- evaluate_population(X       = X,
@@ -370,6 +372,7 @@ moeadps <-
     two_step <- init_ra$two_step
     idx.boundary <- apply(W, 2, which.max)
     
+    
     if(resource.allocation$name == "none") div <- nrow(W) else div <- resource.allocation$n
     
     # ========================= End Initial definitions ======================== #
@@ -379,6 +382,9 @@ moeadps <-
     iter          <- 0         # counter: iterations
     
     while (keep.running) {
+      # saving data for analysis
+      write_feather(data.frame(X = X, Y = Y, iter = iter), paste0(saving.dir, "iter_",iter))
+      
       # Update iteration counter
       iter <- iter + 1
       
@@ -408,6 +414,14 @@ moeadps <-
       
       temp.X <- X
       temp.Y <- Y
+      temp.V <- V
+      
+      
+      # ========== Variation
+      # Store current population
+      Xt <- X
+      Yt <- Y
+      Vt <- V
       
       # ========== Neighborhoods
       # Define/update neighborhood probability matrix
@@ -417,26 +431,19 @@ moeadps <-
                                                    lambda = W,
                                                    x      = X),
                                 iter      = iter)
-      # ========== Variation
-      # Store current popula tion
-      Xt <- X
-      Yt <- Y
-      Vt <- V
-      
       B  <- BP$B
       P  <- BP$P
       # ========== Variation
       # Perform variation
       P <- P[indexes,indexes]
       X <- X[indexes,]
+      V$Cmatrix <- V$Cmatrix[indexes,]
+      V$Vmatrix <- V$Vmatrix[indexes,]
+      V$v <- V$v[indexes]
       
       Xv      <- do.call(perform_variation,
                          args = as.list(environment()))
-      
-      B  <- BP$B
-      P  <- BP$P
-      
-      
+
       temp.X[indexes, ] <- Xv$X
       X <- temp.X
       
@@ -445,12 +452,15 @@ moeadps <-
       var.input.pars <- as.list(sys.call())[-1]
       
       
+      # ========== Neighborhoods
+      # Define/update neighborhood probability matrix
+
       BP <- define_neighborhood(neighbors = neighbors,
                                 v.matrix  = switch(neighbors$name,
                                                    lambda = W,
                                                    x      = X),
                                 iter      = iter)
-      
+
       B  <- BP$B
       P  <- BP$P
       
@@ -471,6 +481,13 @@ moeadps <-
       X <- temp.X
       temp.Y[indexes, ] <- Y
       Y <- temp.Y
+      
+      temp.V$Cmatrix[indexes,] <- V$Cmatrix
+      V$Cmatrix <- temp.V$Cmatrix
+      temp.V$Vmatrix[indexes,] <- V$Vmatrix
+      V$Vmatrix <- temp.V$Vmatrix
+      temp.V$v[indexes] <- V$v
+      V$v <- temp.V$v
       
       # ========== Scalarization
       # Objective scaling and estimation of 'ideal' and 'nadir' points
@@ -557,8 +574,7 @@ moeadps <-
         init_ra$dt.bigZ[[index]] <- bigZ
       }
       
-      # saving data for analysis
-      write_feather(data.frame(X = Archive$X, Y = Archive$Y, iter = iter), paste0(saving.dir, "iter_",iter))
+      
       # ========== Stop Criteria
       # Calculate iteration time
       elapsed.time <- as.numeric(difftime(
@@ -571,15 +587,15 @@ moeadps <-
         yes = as.numeric(elapsed.time),
         no  = as.numeric(elapsed.time) - sum(iter.times)
       )
-      # # Verify stop criteria
+      # Verify stop criteria
       keep.running <- check_stop_criteria(stopcrit = stopcrit,
                                           call.env = environment())
 
       # ========== Print
       # Echo whatever is demanded
       print_progress(iter.times, showpars)
-      
     }
+    write_feather(data.frame(X = X, Y = Y, iter = iter), paste0(saving.dir, "iter_",iter))
     # =========================== End Iterative cycle ========================== #
     
     # ================================== Output ================================ #

@@ -65,12 +65,9 @@ order_neighborhood <- function(bigZ, B, V, Vt, constraint)
     # calculate the penalty matrix of the neighborhoods and incumbent solution,
     # using the same process used to calculate bigZ (see scalarize_values)
     
-    # bigV <- t(cbind(matrix(V$v[B],
-    #                        dim(B)),
-    #                 Vt$v))
-    bigV <- t(cbind(matrix(V[B],
+    bigV <- t(cbind(matrix(V$v[B],
                            dim(B)),
-                    Vt))
+                    Vt$v))
     
     # use constraint handler function to calculate selection matrix
     

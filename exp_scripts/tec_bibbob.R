@@ -13,37 +13,24 @@ source("~/MOEADr/R/load.DTLZ.function.R")
 repetitions <-  10
 dimensions <- 40
 lambda <- 50
+pop.size <- 250
 
-loaded.weights.50 <-
-  data.matrix(
-    read.csv(
-      "~/MOEADr/weights-sobol/SOBOL-2objs-50wei.ws",
-      header = F,
-      stringsAsFactors = FALSE,
-      sep = " "
-    )
-  )
-decomp50 <- list(name = "loaded", W = loaded.weights.50)
 
-loaded.weights.500 <-
-  data.matrix(
-    read.csv(
-      "~/MOEADr/weights-sobol/SOBOL-2objs-500wei.ws",
-      header = F,
-      stringsAsFactors = FALSE,
-      sep = " "
-    )
-  )
-decomp500 <- list(name = "loaded", W = loaded.weights.500)
+decomp.small    <-
+  list(name       = "sld", H = pop.size/10-1)
+
+
+decomp.big    <-
+  list(name       = "sld", H = pop.size - 1 )
 
 variation = preset_moead("moead.de")$variation
 variation[[2]]$pm = 1 / dimensions
 scaling <- list()
 scaling$name <- "simple"
-neighbors.500 <- preset_moead("moead.de")$neighbors
-neighbors.500$T <- 100
-neighbors.50 <- preset_moead("moead.de")$neighbors
-neighbors.50$T <- 10
+neighbors.big <- preset_moead("moead.de")$neighbors
+neighbors.big$T <- pop.size * 0.2
+neighbors.small <- preset_moead("moead.de")$neighbors
+neighbors.small$T <- (pop.size /10) * 0.2
 update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
@@ -62,12 +49,12 @@ resource.allocation.1 <-
     n = 1 + n.obj
   )
 
-resource.allocation.50 <-
+resource.allocation.small <-
   list(
     name = "random",
     dt = 0,
     selection = "n",
-    n = 50 + n.obj
+    n = (pop.size /10) - n.obj
   )
 
 
@@ -85,7 +72,7 @@ for (fun in problem.to.solve) {
   }
   
   par.set = ParamHelpers::getParamSet(problem)
-  problem.bibbob <- list(
+  fun <- list(
     name       = "problem.BiBBOB",
     xmin       = as.numeric(getLower(par.set)),
     xmax       = as.numeric(getUpper(par.set)),
@@ -101,86 +88,86 @@ for (fun in problem.to.solve) {
     seed <- sample(1:1000)[1]
   
     
-    dir.name <- paste0("~/tec/moead50_", j, "/")
+    dir.name <- paste0("~/tec/fun/moead_small_", j, "/")
     if (!dir.exists(dir.name))
       dir.create(dir.name)
     
-    moead50 <- moeadps(
-      problem  = problem.bibbob,
+    moead.small <- moeadps(
+      problem  = fun,
       preset   = preset_moead("moead.de"),
-      decomp = decomp50,
+      decomp = decomp.small,
       variation = variation,
       stopcrit = stopcrit,
       scaling = scaling,
-      neighbors = neighbors.50,
+      neighbors = neighbors.small,
       showpars = list(show.iters = "none", showevery = 1000),
       seed = seed,
       update = update,
       saving.dir = dir.name
     )
     
-    rm(moead50)
+    rm(moead.small)
     
-    dir.name <- paste0("~/tec/moead500_", j, "/")
+    dir.name <- paste0("~/tec/fun/moead_big_", j, "/")
     if (!dir.exists(dir.name))
       dir.create(dir.name)
     
-    moead500 <- moeadps(
-      problem  = problem.bibbob,
+    moead.big <- moeadps(
+      problem  = fun,
       preset   = preset_moead("moead.de"),
-      decomp = decomp500,
+      decomp = decomp.big,
       variation = variation,
       stopcrit = stopcrit,
       scaling = scaling,
-      neighbors = neighbors.500,
+      neighbors = neighbors.big,
       showpars = list(show.iters = "none", showevery = 1000),
       seed = seed,
       update = update,
       saving.dir = dir.name
     )
     
-    rm(moead500)
+    rm(moead.big)
     
-    dir.name <- paste0("~/tec/moead.ps.1_", j, "/")
+    dir.name <- paste0("~/tec/fun/moead_ps_1_", j, "/")
     if (!dir.exists(dir.name))
       dir.create(dir.name)
     
     moead.ps.1 <- moeadps(
-      problem  = problem.bibbob,
+      problem  = fun,
       preset   = preset_moead("moead.de"),
-      decomp = decomp500,
+      decomp = decomp.big,
       variation = variation,
       stopcrit = stopcrit,
       scaling = scaling,
-      neighbors = neighbors.500,
+      neighbors = neighbors.big,
       showpars = list(show.iters = "none", showevery = 1000),
       update = update,
       resource.allocation = resource.allocation.1,
       seed = seed,
       saving.dir = dir.name
     )
-    rm(moead.1)
+    rm(moead.ps.1)
     
-    dir.name <- paste0("~/tec/moead.ps.50_", j, "/")
+    dir.name <- paste0("~/tec/fun/moead_ps_small_", j, "/")
     if (!dir.exists(dir.name))
       dir.create(dir.name)
     
-    moead.ps.50 <- moeadps(
-      problem  = problem.bibbob,
+    moead.ps.small <- moeadps(
+      problem  = fun,
       preset   = preset_moead("moead.de"),
-      decomp = decomp500,
+      decomp = decomp.big,
       variation = variation,
       stopcrit = stopcrit,
       scaling = scaling,
-      neighbors = neighbors.500,
+      neighbors = neighbors.big,
       showpars = list(show.iters = "none", showevery = 1000),
       update = update,
-      resource.allocation = resource.allocation.50,
+      resource.allocation = resource.allocation.small,
       seed = seed,
       saving.dir = dir.name
     )
     
-    rm(moead.ps.50)
+    rm(moead.ps.small)
     
     
     

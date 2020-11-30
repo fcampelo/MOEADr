@@ -99,7 +99,7 @@ for (fun in problem.to.solve) {
   
   
   print("2 OBJECTIVES")
-  
+  e()
   for (j in 1:repetitions) {
     number_subproblems <-
       c(3, 4, 6, 8, 10, 30, 50, 100, 150, 250)

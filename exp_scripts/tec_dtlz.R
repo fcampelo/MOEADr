@@ -4,11 +4,8 @@ library(smoof)
 library(emoa)
 library(mco)
 library(feather)
-library(compiler)
-library(ggplot2)
-library(eaf)
+# library(eaf)
 library(MOEADps)
-library(plotly)
 
 source("~/MOEADr/R/utils.R")
 source("~/MOEADr/R/load.DTLZ.function.R")
@@ -16,37 +13,24 @@ source("~/MOEADr/R/load.DTLZ.function.R")
 repetitions <-  10
 dimensions <- 40
 lambda <- 50
+pop.size <- 250
 
-loaded.weights.50 <-
-  data.matrix(
-    read.csv(
-      "~/MOEADr/weights-sobol/SOBOL-2objs-50wei.ws",
-      header = F,
-      stringsAsFactors = FALSE,
-      sep = " "
-    )
-  )
-decomp50 <- list(name = "loaded", W = loaded.weights.50)
 
-loaded.weights.500 <-
-  data.matrix(
-    read.csv(
-      "~/MOEADr/weights-sobol/SOBOL-2objs-500wei.ws",
-      header = F,
-      stringsAsFactors = FALSE,
-      sep = " "
-    )
-  )
-decomp500 <- list(name = "loaded", W = loaded.weights.500)
+decomp.small    <-
+  list(name       = "sld", H = pop.size/10-1)
+
+
+decomp.big    <-
+  list(name       = "sld", H = pop.size - 1 )
 
 variation = preset_moead("moead.de")$variation
 variation[[2]]$pm = 1 / dimensions
 scaling <- list()
 scaling$name <- "simple"
-neighbors.500 <- preset_moead("moead.de")$neighbors
-neighbors.500$T <- 100
-neighbors.50 <- preset_moead("moead.de")$neighbors
-neighbors.50$T <- 10
+neighbors.big <- preset_moead("moead.de")$neighbors
+neighbors.big$T <- pop.size * 0.2
+neighbors.small <- preset_moead("moead.de")$neighbors
+neighbors.small$T <- (pop.size /10) * 0.2
 update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
@@ -65,13 +49,14 @@ resource.allocation.1 <-
     n = 1 + n.obj
   )
 
-resource.allocation.50 <-
+resource.allocation.small <-
   list(
     name = "random",
     dt = 0,
     selection = "n",
-    n = 50 + n.obj
+    n = (pop.size /10) - n.obj
   )
+
 
 
 problem.to.solve <- c("DTLZ1", "DTLZ2", "DTLZ3", "DTLZ4", "DTLZ5", "DTLZ6", "DTLZ7")
@@ -84,7 +69,7 @@ for (fun in problem.to.solve) {
              FUN = problem.smoof.DTLZ))
   }
   par.set = ParamHelpers::getParamSet(problem.smoof.DTLZ)
-  problem.dtlz7 <- list(
+  fun <- list(
     name       = "problem.DTLZ",
     xmin       = as.numeric(getLower(par.set)),
     xmax       = as.numeric(getUpper(par.set)),
@@ -94,116 +79,95 @@ for (fun in problem.to.solve) {
   for (j in 1:repetitions) {
     cat("rep", j, "\n")
     
+    seed <- sample(1:1000)[1]
     
     
-    # nsga.2 <- nsga2(problem.smoof.DTLZ, idim = dimensions, odim = 2, generations=stopcrit[[1]]$maxeval/500,
-    #                 lower.bounds=rep(as.numeric(getLower(par.set)), dimensions), upper.bounds= rep(as.numeric(getUpper(par.set)), dimensions), popsize = 500)
-    # 
-    # nsga.2$X <- nsga.2$par
-    # nsga.2$Y <- nsga.2$value
-    # nsga.2$nfe <- stopcrit[[1]]$maxeval
-    # nsga.2$n.iter <- stopcrit[[1]]$maxeval/500
-    # 
-    # colnames(nsga.2$Y) <- c("f1", "f2")
-    # 
-    # 
-    # savePlotData(
-    #   moea = nsga.2,
-    #   name = paste0(paste0("bibbob_", fun), "_nsga.2_", lambda, "_"),
-    #   j = j,
-    #   wd = "~/",
-    #   extra = F
-    # )
-    # rm(nsga.2)
+    dir.name <- paste0("~/tec/fun/moead_small_", j, "/")
+    if (!dir.exists(dir.name))
+      dir.create(dir.name)
     
-    moead50 <- moeadps(
-      problem  = problem.dtlz7,
+    moead.small <- moeadps(
+      problem  = fun,
       preset   = preset_moead("moead.de"),
-      decomp = decomp50,
+      decomp = decomp.small,
       variation = variation,
       stopcrit = stopcrit,
       scaling = scaling,
-      neighbors = neighbors.50,
+      neighbors = neighbors.small,
       showpars = list(show.iters = "none", showevery = 1000),
-      seed = j + 422,
-      update = update
+      seed = seed,
+      update = update,
+      saving.dir = dir.name
     )
     
-    savePlotData(
-      moea = moead50,
-      name = paste0(fun, "_moead50_", lambda, "_"),
-      j = j,
-      wd = "~/tec/"
-    )
-    rm(moead50)
+    rm(moead.small)
     
+    dir.name <- paste0("~/tec/fun/moead_big_", j, "/")
+    if (!dir.exists(dir.name))
+      dir.create(dir.name)
     
-    moead500 <- moeadps(
-      problem  = problem.dtlz7,
+    moead.big <- moeadps(
+      problem  = fun,
       preset   = preset_moead("moead.de"),
-      decomp = decomp500,
+      decomp = decomp.big,
       variation = variation,
       stopcrit = stopcrit,
       scaling = scaling,
-      neighbors = neighbors.500,
+      neighbors = neighbors.big,
       showpars = list(show.iters = "none", showevery = 1000),
-      seed = j + 422,
-      update = update
+      seed = seed,
+      update = update,
+      saving.dir = dir.name
     )
     
-    savePlotData(
-      moea = moead500,
-      name = paste0(fun, "_moead500_", lambda, "_"),
-      j = j,
-      wd = "~/tec/"
-    )
-    rm(moead500)
+    rm(moead.big)
     
-    
+    dir.name <- paste0("~/tec/fun/moead_ps_1_", j, "/")
+    if (!dir.exists(dir.name))
+      dir.create(dir.name)
     
     moead.ps.1 <- moeadps(
-      problem  = problem.dtlz7,
+      problem  = fun,
       preset   = preset_moead("moead.de"),
-      decomp = decomp500,
+      decomp = decomp.big,
       variation = variation,
       stopcrit = stopcrit,
       scaling = scaling,
-      neighbors = neighbors.500,
+      neighbors = neighbors.big,
       showpars = list(show.iters = "none", showevery = 1000),
       update = update,
-      resource.allocation = resource.allocation.1
+      resource.allocation = resource.allocation.1,
+      seed = seed,
+      saving.dir = dir.name
     )
-    savePlotData(
-      moea = moead.1,
-      name = paste0(fun, "_moead.ps.1_", lambda, "_"),
-      j = j,
-      wd = "~/tec/"
-    )
-    rm(moead.1)
+    rm(moead.ps.1)
     
-    moead.ps.50 <- moeadps(
-      problem  = problem.dtlz7,
+    dir.name <- paste0("~/tec/fun/moead_ps_small_", j, "/")
+    if (!dir.exists(dir.name))
+      dir.create(dir.name)
+    
+    moead.ps.small <- moeadps(
+      problem  = fun,
       preset   = preset_moead("moead.de"),
-      decomp = decomp500,
+      decomp = decomp.big,
       variation = variation,
       stopcrit = stopcrit,
       scaling = scaling,
-      neighbors = neighbors.500,
+      neighbors = neighbors.big,
       showpars = list(show.iters = "none", showevery = 1000),
       update = update,
-      resource.allocation = resource.allocation.50
+      resource.allocation = resource.allocation.small,
+      seed = seed,
+      saving.dir = dir.name
     )
-    savePlotData(
-      moea = moead.ps.50,
-      name = paste0(fun, "_moead.ps.50_", lambda, "_"),
-      j = j,
-      wd = "~/tec/"
-    )
-    rm(moead.ps.50)
+    
+    rm(moead.ps.small)
     
     
     
   }
   
+}
+
 }
 
