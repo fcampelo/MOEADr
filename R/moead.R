@@ -269,7 +269,8 @@ moeadps <-
            seed = NULL,
            resource.allocation = list(name = "none",
                                       selection = "none",
-                                      dt = 2),
+                                      dt = 2,
+                                      period = -1),
            # List:  echoing behavior,
            saving.dir = NULL,
            X = NULL,
@@ -357,13 +358,14 @@ moeadps <-
       X  <- create_population(N       = nrow(W),
                               problem = problem)  
     }
-
+    
     # Evaluate population on objectives
     YV <- evaluate_population(X       = X,
                               problem = problem,
                               nfe     = nfe)
     Y   <- YV$Y
     V   <- YV$V
+    
     nfe <- YV$nfe
     
     # ========== Initialize Resource Allocation
@@ -380,16 +382,20 @@ moeadps <-
     # ============================= Iterative cycle ============================ #
     keep.running  <- TRUE      # stop criteria flag
     iter          <- 0         # counter: iterations
-    
+
+    # print(Y[1,])    
+    # ex()
+    # print(dim(X[which(V$v == 0),]))
+    # print(dim(Y[which(V$v == 0),]))
+    # e()
+    write_feather(data.frame(X = X, Y = Y, iter = iter, v = V$v), paste0(saving.dir, "iter_",iter))
     while (keep.running) {
       # saving data for analysis
-      write_feather(data.frame(X = X, Y = Y, iter = iter), paste0(saving.dir, "iter_",iter))
+      
       
       # Update iteration counter
       iter <- iter + 1
-      
-      idx.parent <- rep(0, nrow(W) + 1)
-      
+
       if ("save.iters" %in% names(moead.input.pars)) {
         if (moead.input.pars$save.iters == TRUE)
           saveRDS(as.list(environment()),
@@ -410,6 +416,7 @@ moeadps <-
       
       # indexes are used by Resource Allocation methods. if none, it is equal to the vector 1
       indexes <- select_solutions$indexes
+      
       iteration_usage = select_solutions$iteration_usage
       
       temp.X <- X
@@ -443,7 +450,7 @@ moeadps <-
       
       Xv      <- do.call(perform_variation,
                          args = as.list(environment()))
-
+      
       temp.X[indexes, ] <- Xv$X
       X <- temp.X
       
@@ -454,13 +461,13 @@ moeadps <-
       
       # ========== Neighborhoods
       # Define/update neighborhood probability matrix
-
+      
       BP <- define_neighborhood(neighbors = neighbors,
                                 v.matrix  = switch(neighbors$name,
                                                    lambda = W,
                                                    x      = X),
                                 iter      = iter)
-
+      
       B  <- BP$B
       P  <- BP$P
       
@@ -474,6 +481,7 @@ moeadps <-
       # updating the whole pop with the prioritized solutions in X and in Y
       # indexes are used by Resource Allocation methods. if none, it is equal to the vector 1
       # Y <- Y[indexes, ]
+      
       Y   <- YV$Y
       V   <- YV$V
       nfe <- YV$nfe
@@ -494,7 +502,7 @@ moeadps <-
       normYs <- scale_objectives(Y       = Y,
                                  Yt      = Yt,
                                  scaling = scaling)
-
+      
       
       # Scalarization by neighborhood.
       # bigZ is an [(T+1) x N] matrix, in which each column has the T scalarized
@@ -521,7 +529,6 @@ moeadps <-
       )
       # ========== Update
       # Update population
-      
       XY <- do.call(update_population,
                     args = as.list(environment()))
       
@@ -529,7 +536,7 @@ moeadps <-
       Y       <- XY$Y
       V       <- XY$V
       Archive <- XY$Archive
-      
+
       # ========== Resource Allocation - Update Priority function values
       # parameters for NORM and Random
       init_ra$dt.bigZ[[length(init_ra$dt.bigZ) + 1]] <- bigZ
@@ -574,6 +581,26 @@ moeadps <-
         init_ra$dt.bigZ[[index]] <- bigZ
       }
       
+
+      if (resource.allocation$period > 0 &&
+          iter %% resource.allocation$period == 0) {
+        temp <- neighbors
+        temp$T <- dim(W)[1]
+        BP <- define_neighborhood(neighbors = temp,
+                                   v.matrix  = switch(temp$name,
+                                                      lambda = W,
+                                                      x      = X),
+                                   iter      = iter)
+        Xt <- X
+        Yt <- Y
+        Vt <- V
+        XY <- do.call(update_population,
+                      args = as.list(environment()))
+        X       <- XY$X
+        Y       <- XY$Y
+        V       <- XY$V
+        Archive <- XY$Archive
+      }
       
       # ========== Stop Criteria
       # Calculate iteration time
@@ -590,12 +617,13 @@ moeadps <-
       # Verify stop criteria
       keep.running <- check_stop_criteria(stopcrit = stopcrit,
                                           call.env = environment())
-
+      
       # ========== Print
       # Echo whatever is demanded
       print_progress(iter.times, showpars)
+      write_feather(data.frame(X =  Archive$X, Y = Archive$Y, iter = iter, v = Archive$V$v), paste0(saving.dir, "iter_",iter))
     }
-    write_feather(data.frame(X = X, Y = Y, iter = iter), paste0(saving.dir, "iter_",iter))
+    
     # =========================== End Iterative cycle ========================== #
     
     # ================================== Output ================================ #

@@ -80,7 +80,7 @@ updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
   best.indx <- apply(X      = fullZ[1:(nrow(fullZ) - 1), , drop = FALSE],
                      MARGIN = 1,
                      FUN    = which.min)
-
+  
   best.subprob <- mapply(FUN      = function(i, j, B){B[i, j]},
                          i        = 1:nrow(BP$fullB),
                          j        = best.indx,
@@ -182,10 +182,6 @@ updt_best <- function(update, X, Xt, Y, Yt, V, Vt,
     ## 3: v
     Vnext$v <- rowSums(Vnext$Vmatrix)
   }
-  # #Yaux constains the value of the objective functions in the first m columms and a bolean for the violations in the last one
-  # Yaux = matrix(c(Ynext[,1:n_objectives], ifelse(Vnext$v>0,0,1)), nrow = nrow(Ynext), ncol = n_objectives+1)
-  # write(t(Yaux),file = paste(getwd(), sprintf("output/MyArchive%d.txt",i), sep="/"), ncolumns = n_objectives+1, sep = " ", append = TRUE)
-  
   
   # Output
   return(list(X = Xnext,

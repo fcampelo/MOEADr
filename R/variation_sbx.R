@@ -68,6 +68,7 @@ variation_sbx <- function(X, P, etax, pc = 1, eps = 1e-6, ...){
   # Draw crossover pairs: for the i-th candidate solution, get two mutually
   # exclusive points according to the probabilities given in P[i, ].
   np <- nrow(X)
+  P <- P + 1e-16
   Inds <- do.call(rbind,
                   lapply(1:np,
                          FUN = function(i, p){sample.int(n    = nrow(p),

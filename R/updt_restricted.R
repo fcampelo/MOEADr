@@ -97,7 +97,6 @@ updt_restricted <- function(update, X, Xt, Y, Yt, V, Vt, sel.indx, B, ...){
                     B         = B,
                     USE.NAMES = FALSE))
   Ynext <- Ynext[I2, ]
-  
   # Update list of constraint values
   if(is.null(V)){
     Vnext <- NULL

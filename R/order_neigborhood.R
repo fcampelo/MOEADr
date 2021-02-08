@@ -48,8 +48,7 @@ order_neighborhood <- function(bigZ, B, V, Vt, constraint)
   if (is.null(V))
   {
     # Get the selection matrix for all neighborhoods using only bigZ
-    sel.indx <- t(parApply(
-      cl,
+    sel.indx <- t(apply(
       bigZ,
       MARGIN = 2,
       FUN    = function (X) {
@@ -68,7 +67,6 @@ order_neighborhood <- function(bigZ, B, V, Vt, constraint)
     bigV <- t(cbind(matrix(V$v[B],
                            dim(B)),
                     Vt$v))
-    
     # use constraint handler function to calculate selection matrix
     
     opname       <- paste0("constraint_", constraint$name)

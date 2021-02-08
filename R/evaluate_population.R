@@ -56,8 +56,7 @@ evaluate_population <- function(X, problem, nfe, cons = NULL)
   ## resource allocation
   fun.args <- as.list(formals(problem$name))
   
-  my.args  <- parSapply(
-    cl,
+  my.args  <- sapply(
     names(fun.args),
     FUN      = function(argname, pars, args) {
       if (argname %in% names(pars)) {
@@ -79,21 +78,24 @@ evaluate_population <- function(X, problem, nfe, cons = NULL)
   if ("constraints" %in% names(problem))
   {
     con <- problem$constraints
-    if (is.null(con$epsilon)) con$epsilon <- 0
+    if (is.null(con$epsilon))
+      con$epsilon <- 0
     
     # Prepare arguments for function call
     vfun.args <- as.list(formals(con$name))
     
-    my.vargs  <- parSapply(
-      cl,names(vfun.args),
-                        FUN      = function(argname, pars, args){
-                          if(argname %in% names(pars)) {
-                            args[argname] <- pars[argname]
-                          }
-                          return(args[[argname]])},
-                        pars     = con,
-                        args     = vfun.args,
-                        simplify = FALSE)
+    my.vargs  <- sapply(
+      names(vfun.args),
+      FUN      = function(argname, pars, args) {
+        if (argname %in% names(pars)) {
+          args[argname] <- pars[argname]
+        }
+        return(args[[argname]])
+      },
+      pars     = con,
+      args     = vfun.args,
+      simplify = FALSE
+    )
     
     my.vargs[[grep("[x|X]",
                    names(my.vargs))]] <- X

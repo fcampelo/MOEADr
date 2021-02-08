@@ -1,5 +1,6 @@
 # Objecive Function for the number of continuous shade days
 ContinuousShadeDays <- function(X){
+  
   write(X,file = paste(getwd(), "evaluate/pop_vars_eval.txt", sep="/"), ncolumns = n_variables, sep = "\t")
   system(paste(paste(getwd(), "moon_mop", sep = "/"), paste(getwd(), "evaluate/", sep = "/"), sep = " "), ignore.stdout = TRUE)
   objectives <- scan(paste(getwd(), "evaluate/pop_objs_eval.txt", sep = "/"), quiet = TRUE)
@@ -62,7 +63,7 @@ my_constraints <- function(X)
   g1 <- function(X){
     
     write(X,file = paste(getwd(), "evaluate/pop_vars_eval.txt", sep="/"), ncolumns = n_variables, sep = "\t")
-    system(paste(paste(getwd(), "moon_mop", sep = "/"), paste(getwd(), "../evaluate/", sep = "/"), sep = " "), ignore.stdout = TRUE)
+    system(paste(paste(getwd(), "moon_mop", sep = "/"), paste(getwd(), "evaluate/", sep = "/"), sep = " "), ignore.stdout = TRUE)
     constraints <- scan(paste(getwd(), "evaluate/pop_cons_eval.txt", sep = "/"), quiet = TRUE)
     constraints <- matrix(constraints, ncol = n_constraints, byrow = TRUE)
     return(constraints)

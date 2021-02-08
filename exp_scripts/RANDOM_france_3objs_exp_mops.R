@@ -9,8 +9,12 @@ enableJIT(1)
 source("~/MOEADr/R/load.DTLZ.function.R")
 library(MOEADps)
 
-cores <-  32
+cores <-  16
 cl <- makeCluster(cores)
+
+enableJIT(3)
+moeadps <- cmpfun(moeadps)
+
 
 repetitions <-  10
 dimension <- 100
@@ -42,6 +46,7 @@ print("3 OBJECTIVES")
 
 problem.to.solve <-
   c("UF10",
+    "UF9",
     "UF8")
 
 for (fun in problem.to.solve) {
@@ -106,7 +111,7 @@ for (fun in problem.to.solve) {
         )
       
       dir.name <-
-        paste0("~/france_data/",
+        paste0("~/france_data/3obj_",
                fun,
                "_moead.random_",
                j,

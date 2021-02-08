@@ -4,7 +4,7 @@ library(smoof)
 library(emoa)
 library(mco)
 library(feather)
-# library(eaf)
+library(parallel)
 library(MOEADps)
 
 source("~/MOEADr/R/utils.R")
@@ -14,6 +14,9 @@ repetitions <-  10
 dimensions <- 40
 lambda <- 50
 pop.size <- 250
+cores <- 16
+cl <- makeCluster(cores)
+maxevals <- 100000
 
 
 decomp.small    <-
@@ -35,7 +38,7 @@ update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 100000))
+                       maxeval = maxevals))
 
 
 
@@ -46,7 +49,7 @@ resource.allocation.1 <-
     name = "random",
     dt = 0,
     selection = "n",
-    n = 1 + n.obj
+    n = 1
   )
 
 resource.allocation.small <-
@@ -59,9 +62,9 @@ resource.allocation.small <-
 
 
 problem.to.solve <- c("DTLZ1", "DTLZ2", "DTLZ3", "DTLZ4")
-for (fun in problem.to.solve) {
+for (fun_name in problem.to.solve) {
   problem <-
-    load.DTLZ.function(fun, dimension = dimensions, n.obj = n.obj)
+    load.DTLZ.function(fun_name, dimension = dimensions, n.obj = n.obj)
   problem.smoof.DTLZ <- problem$fn
   problem.DTLZ <- function(X) {
     t(-apply(X, MARGIN = 1,
@@ -75,100 +78,100 @@ for (fun in problem.to.solve) {
     m          = n.obj
   )
 
+  dir.name <- paste0("~/tec/inv_",fun_name, "/")
+  if (!dir.exists(dir.name))
+    dir.create(dir.name)
   
+  
+  for (j in 1:repetitions) {
+    cat("rep", j, "\n")
     
-    for (j in 1:repetitions) {
-      cat("rep", j, "\n")
-      
-      seed <- sample(1:1000)[1]
-      
-      
-      dir.name <- paste0("~/tec/fun/moead_small_", j, "/")
-      if (!dir.exists(dir.name))
-        dir.create(dir.name)
-      
-      moead.small <- moeadps(
-        problem  = fun,
-        preset   = preset_moead("moead.de"),
-        decomp = decomp.small,
-        variation = variation,
-        stopcrit = stopcrit,
-        scaling = scaling,
-        neighbors = neighbors.small,
-        showpars = list(show.iters = "none", showevery = 1000),
-        seed = seed,
-        update = update,
-        saving.dir = dir.name
-      )
-      
-      rm(moead.small)
-      
-      dir.name <- paste0("~/tec/fun/moead_big_", j, "/")
-      if (!dir.exists(dir.name))
-        dir.create(dir.name)
-      
-      moead.big <- moeadps(
-        problem  = fun,
-        preset   = preset_moead("moead.de"),
-        decomp = decomp.big,
-        variation = variation,
-        stopcrit = stopcrit,
-        scaling = scaling,
-        neighbors = neighbors.big,
-        showpars = list(show.iters = "none", showevery = 1000),
-        seed = seed,
-        update = update,
-        saving.dir = dir.name
-      )
-      
-      rm(moead.big)
-      
-      dir.name <- paste0("~/tec/fun/moead_ps_1_", j, "/")
-      if (!dir.exists(dir.name))
-        dir.create(dir.name)
-      
-      moead.ps.1 <- moeadps(
-        problem  = fun,
-        preset   = preset_moead("moead.de"),
-        decomp = decomp.big,
-        variation = variation,
-        stopcrit = stopcrit,
-        scaling = scaling,
-        neighbors = neighbors.big,
-        showpars = list(show.iters = "none", showevery = 1000),
-        update = update,
-        resource.allocation = resource.allocation.1,
-        seed = seed,
-        saving.dir = dir.name
-      )
-      rm(moead.ps.1)
-      
-      dir.name <- paste0("~/tec/fun/moead_ps_small_", j, "/")
-      if (!dir.exists(dir.name))
-        dir.create(dir.name)
-      
-      moead.ps.small <- moeadps(
-        problem  = fun,
-        preset   = preset_moead("moead.de"),
-        decomp = decomp.big,
-        variation = variation,
-        stopcrit = stopcrit,
-        scaling = scaling,
-        neighbors = neighbors.big,
-        showpars = list(show.iters = "none", showevery = 1000),
-        update = update,
-        resource.allocation = resource.allocation.small,
-        seed = seed,
-        saving.dir = dir.name
-      )
-      
-      rm(moead.ps.small)
-      
-      
-      
-    }
+    seed <- sample(1:1000)[1]
+    
+    dir.name <- paste0("~/tec/inv_",fun_name,"/moead_small_iter_",j,"/")
+    if (!dir.exists(dir.name))
+      dir.create(dir.name)
+    
+    moead.small <- moeadps(
+      problem  = fun,
+      preset   = preset_moead("moead.de"),
+      decomp = decomp.small,
+      variation = variation,
+      stopcrit = stopcrit,
+      scaling = scaling,
+      neighbors = neighbors.small,
+      showpars = list(show.iters = "none", showevery = 1000),
+      seed = seed,
+      update = update,
+      saving.dir = dir.name
+    )
+    
+    rm(moead.small)
+    
+    dir.name <- paste0("~/tec/inv_",fun_name,"/moead_big_iter_",j,"/")
+    if (!dir.exists(dir.name))
+      dir.create(dir.name)
+    
+    moead.big <- moeadps(
+      problem  = fun,
+      preset   = preset_moead("moead.de"),
+      decomp = decomp.big,
+      variation = variation,
+      stopcrit = stopcrit,
+      scaling = scaling,
+      neighbors = neighbors.big,
+      showpars = list(show.iters = "none", showevery = 1000),
+      seed = seed,
+      update = update,
+      saving.dir = dir.name
+    )
+    
+    rm(moead.big)
+    
+    dir.name <- paste0("~/tec/inv_",fun_name,"/moead_steady_iter_",j,"/")
+    if (!dir.exists(dir.name))
+      dir.create(dir.name)
+    
+    moead.ps.1 <- moeadps(
+      problem  = fun,
+      preset   = preset_moead("moead.de"),
+      decomp = decomp.big,
+      variation = variation,
+      stopcrit = stopcrit,
+      scaling = scaling,
+      neighbors = neighbors.big,
+      showpars = list(show.iters = "none", showevery = 1000),
+      update = update,
+      resource.allocation = resource.allocation.1,
+      seed = seed,
+      saving.dir = dir.name
+    )
+    rm(moead.ps.1)
+    
+    dir.name <- paste0("~/tec/inv_",fun_name,"/moead_ps_25_iter_",j,"/")
+    if (!dir.exists(dir.name))
+      dir.create(dir.name)
+    
+    moead.ps.small <- moeadps(
+      problem  = fun,
+      preset   = preset_moead("moead.de"),
+      decomp = decomp.big,
+      variation = variation,
+      stopcrit = stopcrit,
+      scaling = scaling,
+      neighbors = neighbors.big,
+      showpars = list(show.iters = "none", showevery = 1000),
+      update = update,
+      resource.allocation = resource.allocation.small,
+      seed = seed,
+      saving.dir = dir.name
+    )
+    
+    rm(moead.ps.small)
+    
+    
     
   }
   
+  
 }
-

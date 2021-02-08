@@ -4,17 +4,18 @@ library(smoof)
 library(emoa)
 library(mco)
 library(feather)
-# library(eaf)
+library(parallel)
 library(MOEADps)
 
 source("~/MOEADr/R/utils.R")
-source("~/MOEADr/R/load.DTLZ.function.R")
 
 repetitions <-  10
 dimensions <- 40
 lambda <- 50
 pop.size <- 250
-
+cores <-  16
+cl <- makeCluster(cores)
+maxevals <- 100000
 
 decomp.small    <-
   list(name       = "sld", H = pop.size/10-1)
@@ -35,7 +36,7 @@ update <- preset_moead("moead.de")$update
 update$UseArchive = TRUE
 
 stopcrit  <- list(list(name    = "maxeval",
-                       maxeval = 100000))
+                       maxeval = maxevals))
 
 
 
@@ -46,7 +47,7 @@ resource.allocation.1 <-
     name = "random",
     dt = 0,
     selection = "n",
-    n = 1 + n.obj
+    n = 1 
   )
 
 resource.allocation.small <-
@@ -60,9 +61,9 @@ resource.allocation.small <-
 
 
 problem.to.solve <- c("DTLZ1", "DTLZ2", "DTLZ3", "DTLZ4", "DTLZ5", "DTLZ6", "DTLZ7")
-for (fun in problem.to.solve) {
+for (fun_name in problem.to.solve) {
   problem <-
-    load.DTLZ.function(fun, dimension = dimensions, n.obj = n.obj)
+    load.DTLZ.function(fun_name, dimension = dimensions, n.obj = n.obj)
   problem.smoof.DTLZ <- problem$fn
   problem.DTLZ <- function(X) {
     t(apply(X, MARGIN = 1,
@@ -76,13 +77,19 @@ for (fun in problem.to.solve) {
     m          = n.obj
   )
   
+  
+  dir.name <- paste0("~/tec/",fun_name, "/")
+  if (!dir.exists(dir.name))
+    dir.create(dir.name)
+  
+  
   for (j in 1:repetitions) {
     cat("rep", j, "\n")
     
     seed <- sample(1:1000)[1]
     
     
-    dir.name <- paste0("~/tec/fun/moead_small_", j, "/")
+    dir.name <- paste0("~/tec/",fun_name,"/moead_small_iter_",j,"/")
     if (!dir.exists(dir.name))
       dir.create(dir.name)
     
@@ -102,7 +109,7 @@ for (fun in problem.to.solve) {
     
     rm(moead.small)
     
-    dir.name <- paste0("~/tec/fun/moead_big_", j, "/")
+    dir.name <- paste0("~/tec/",fun_name,"/moead_big_iter_",j,"/")
     if (!dir.exists(dir.name))
       dir.create(dir.name)
     
@@ -122,7 +129,7 @@ for (fun in problem.to.solve) {
     
     rm(moead.big)
     
-    dir.name <- paste0("~/tec/fun/moead_ps_1_", j, "/")
+    dir.name <- paste0("~/tec/",fun_name,"/moead_steady_iter_",j,"/")
     if (!dir.exists(dir.name))
       dir.create(dir.name)
     
@@ -142,7 +149,7 @@ for (fun in problem.to.solve) {
     )
     rm(moead.ps.1)
     
-    dir.name <- paste0("~/tec/fun/moead_ps_small_", j, "/")
+    dir.name <- paste0("~/tec/",fun_name,"/moead_ps_25_iter_",j,"/")
     if (!dir.exists(dir.name))
       dir.create(dir.name)
     
@@ -167,7 +174,5 @@ for (fun in problem.to.solve) {
     
   }
   
+  
 }
-
-}
-

@@ -5,12 +5,17 @@ library(smoof)
 library(emoa)
 library(feather)
 library(compiler)
-enableJIT(1)
+enableJIT(3)
+
 source("~/MOEADr/R/load.DTLZ.function.R")
 library(MOEADps)
 
-cores <-  2
+cores <-  16
 cl <- makeCluster(cores)
+
+enableJIT(3)
+moeadps <- cmpfun(moeadps)
+
 
 repetitions <-  10
 dimension <- 100
@@ -46,8 +51,9 @@ problem.to.solve <-
     "DTLZ2",
     "DTLZ3",
     "DTLZ4",
-    "DTLZ5",
+    # "DTLZ5",
     "DTLZ6",
+    "DTLZ7",
     "UF1",
     "UF2",
     "UF3",
@@ -99,7 +105,7 @@ for (fun in problem.to.solve) {
   
   
   print("2 OBJECTIVES")
-  e()
+  
   for (j in 1:repetitions) {
     number_subproblems <-
       c(3, 4, 6, 8, 10, 30, 50, 100, 150, 250)
@@ -118,7 +124,7 @@ for (fun in problem.to.solve) {
         )
       
       dir.name <-
-        paste0("~/france_data/",
+        paste0("~/france_data/2obj_",
                fun,
                "_moead.random_",
                j,

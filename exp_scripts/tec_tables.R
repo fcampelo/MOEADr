@@ -14,16 +14,23 @@ data.k <- data.frame()
 for (fun in unique(tec_results$fun)){
   data.hv2 <- tec_results[tec_results$fun == fun,]
   data.hv.median <- aggregate(data.hv2$hv, mean, by = list(data.hv2$name, data.hv2$fun))
+  data.hv.median$x <- round(data.hv.median$x, 2)
   data.hv.median <- as.data.frame(t(data.hv.median[,c(1,3)]))
-  # data.hv.median$FUN <- fun
-  data.k <- rbind(data.k, data.hv.median[2,])
   
+  
+  data.hv.sd <- aggregate(data.hv2$hv, sd, by = list(data.hv2$name, data.hv2$fun))
+  data.hv.sd$x <- round(data.hv.sd$x, 2)
+  data.hv.sd <- as.data.frame(t(data.hv.sd[,c(1,3)]))
+  
+  
+  data.k <- rbind(data.k, cbind("HV"= data.hv.median[2,], "SD"= data.hv.sd[2,]))
 }
 
 
 
+
 rownames(data.k) <- unique(tec_results$fun)
-data.k <- data.k[,c(3,2,1)]
+data.k <- data.k[,c(3,2,1, 6, 5, 4)]
 colnames(data.k) <- c("MOEA/D-PS = 50", "MOEA/D - Big pop.","MOEA/D - small pop.")
 # data.k <- data.k[,c(3,2,1)]
 kbl(data.k, booktabs = T, format = "latex")
@@ -41,17 +48,42 @@ tec_results$nndom <- round(tec_results$nndom, 2)
 data.k <- data.frame()
 for (fun in unique(tec_results$fun)){
   data.hv2 <- tec_results[tec_results$fun == fun,]
-  data.hv.median <- aggregate(data.hv2$nndom, mean, by = list(data.hv2$name, data.hv2$fun))
-  data.hv.median$x <- data.hv.median$x/500
-  data.hv.median[2,] <- data.hv.median[2,]
+  data.hv.median <- aggregate(data.hv2$nndom/500, mean, by = list(data.hv2$name, data.hv2$fun))
+  data.hv.median$x <- round(data.hv.median$x, 2)
   data.hv.median <- as.data.frame(t(data.hv.median[,c(1,3)]))
-  # data.hv.median$FUN <- fun
-  data.k <- rbind(data.k, data.hv.median[2,])
+  
+  data.hv.sd <- aggregate(data.hv2$nndom/500, sd, by = list(data.hv2$name, data.hv2$fun))
+  data.hv.sd$x <- round(data.hv.sd$x, 2)
+  data.hv.sd <- as.data.frame(t(data.hv.sd[,c(1,3)]))
+  
+  data.k <- rbind(data.k, cbind("HV"= data.hv.median[2,], "SD"= data.hv.sd[2,]))
 }
 
 
 rownames(data.k) <- unique(tec_results$fun)
-data.k <- data.k[,c(3,2,1)]
+data.k <- data.k[,c(3,2,1, 6, 5, 4)]
 colnames(data.k) <- c("MOEA/D-PS = 50", "MOEA/D - Big pop.","MOEA/D - small pop.")
 # data.k <- data.k[,c(3,2,1)]
 kbl(data.k, booktabs = T, format = "latex")
+
+stats <- data.frame()
+for (fun in unique(tec_results$fun)){
+  benchmark <- strsplit(fun, "[0-9]")[[1]][1]
+  if (benchmark != "f"){
+    data.hv2 <- tec_results[tec_results$fun == fun,]
+    data.hv.median <- aggregate(data.hv2$hv, mean, by = list(data.hv2$name))
+    
+    colnames(data.hv.median) <- c("name", "hv")
+    stats <- rbind(stats, cbind(data.hv.median, "fun" = benchmark))
+  }
+}
+
+stats2 <- stats[stats$name != "smallpop_50",]
+
+pairwise.wilcox.test(stats$hv, stats$name, p.adjust.method = "hommel")
+
+
+
+
+
+

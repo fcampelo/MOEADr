@@ -67,7 +67,7 @@ variation_diffmut <- function(X, P, B, Phi = NULL, basis = 'rand', ...){
   dimX <- dim(X)
   # Generate replacement indexes for xbasis, x0, x1
   # (Basis is recreated if 'mean' or 'wgi')
-  R <- t(parSapply(cl,1:dimX[1],
+  R <- t(sapply(1:dimX[1],
                 FUN = function(i) {
                   sample.int(dimX[1],
                              size    = 3,
@@ -83,8 +83,9 @@ variation_diffmut <- function(X, P, B, Phi = NULL, basis = 'rand', ...){
   
   if (basis == "rand"){
     Xb <- X[R[, 1], , drop = FALSE]
+
   } else if (basis == "mean"){
-    Xb <- t(parSapply(cl,1:nrow(X),
+    Xb <- t(apply(1:nrow(X),
                    FUN = function(i) {
                      apply(X[B[i, , drop = FALSE], ],
                            MARGIN = 2,
@@ -105,7 +106,7 @@ variation_diffmut <- function(X, P, B, Phi = NULL, basis = 'rand', ...){
     # Calculate weights for WGI
     wgi.W <- log(ncol(bigZ) + 0.5) - log(1:ncol(bigZ))
     
-    Xb <- t(parSapply(cl,1:dimX[1],
+    Xb <- t(sapply(1:dimX[1],
                    FUN = function(i){
                      indx <- order(bigZ[i, , drop = FALSE])
                      colSums(wgi.W * X[B[i, indx, drop = FALSE], ])
