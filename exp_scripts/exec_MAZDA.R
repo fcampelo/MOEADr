@@ -158,29 +158,12 @@ resource.allocation.RANDOM <-
     period = -1
   )
 
-resource.allocation.updates <-
-  list(
-    name = "none",
-    dt = 100000000,
-    selection = "n",
-    n = 297,
-    period = 100
-  )
-
-resource.allocation.RANDOM.updates <-
-  list(
-    name = "random",
-    dt = 0,
-    selection = "n",
-    n = 27,
-    period = 100
-  )
 
 ## 10 - Execution
 
 for (i in 1:n_runs) {
   print("iter")
-  dir.name <- paste0("~/gecco2021/mazda_random_iter_", i, "/")
+  dir.name <- paste0("~/gecco2021/mazda_ps_iter_", i, "/")
   if (!dir.exists(dir.name))
     dir.create(dir.name)
   
@@ -199,24 +182,7 @@ for (i in 1:n_runs) {
     saving.dir = dir.name
   )
   
-  dir.name <- paste0("~/gecco2021/mazda_random_updates_iter_", i, "/")
-  if (!dir.exists(dir.name))
-    dir.create(dir.name)
   
-  moead.random.updates <- moeadps_compiled(
-    problem  = problem.1,
-    decomp = decomp,
-    neighbors = neighbors,
-    aggfun = aggfun,
-    scaling = scaling,
-    constraint = constraint,
-    stopcrit = stopcrit,
-    update = update,
-    variation = variation,
-    showpars = showpars,
-    resource.allocation = resource.allocation.RANDOM.updates,
-    saving.dir = dir.name
-  )
   
   dir.name <- paste0("~/gecco2021/mazda_moead_iter_", i, "/")
   if (!dir.exists(dir.name))
@@ -235,23 +201,6 @@ for (i in 1:n_runs) {
     saving.dir = dir.name
   )
   
-  dir.name <- paste0("~/gecco2021/mazda_moead.updates_iter_", i, "/")
-  if (!dir.exists(dir.name))
-    dir.create(dir.name)
-  moead.updates <- moeadps_compiled(
-    problem  = problem.1,
-    decomp = decomp,
-    neighbors = neighbors,
-    aggfun = aggfun,
-    scaling = scaling,
-    constraint = constraint,
-    stopcrit = stopcrit,
-    update = update,
-    variation = variation,
-    showpars = showpars,
-    saving.dir = dir.name,
-    resource.allocation = resource.allocation.updates,
-  )
 
   
   

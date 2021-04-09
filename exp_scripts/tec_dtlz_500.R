@@ -13,6 +13,8 @@ cl <- makeCluster(cores)
 source("~/MOEADr/R/utils.R")
 source("~/MOEADr/R/moead_500.R")
 source("~/MOEADr/R/load.DTLZ.function.R")
+source("~/MOEADr/R/variation_diffmut_500.R")
+source("~/MOEADr/R/perform_variation_500.R")
 
 repetitions <-  10
 dimensions <- 40
@@ -39,7 +41,7 @@ loaded.weights.500 <-
     )
   )
 decomp500 <- list(name = "loaded", W = loaded.weights.500)
-
+#print(loaded.weights.500)
 variation = preset_moead("moead.de")$variation
 variation[[2]]$pm = 1 / dimensions
 scaling <- list()
@@ -71,7 +73,7 @@ resource.allocation.50 <-
     name = "random",
     dt = 0,
     selection = "n",
-    n = 48
+    n = 50
   )
 
 
@@ -116,7 +118,6 @@ for (fun in problem.to.solve) {
     #   extra = F
     # )
     # rm(nsga.2)
-    
     moead50 <- moeadps_500(
       problem  = problem.dtlz7,
       preset   = preset_moead("moead.de"),
@@ -131,12 +132,11 @@ for (fun in problem.to.solve) {
     
     savePlotData(
       moea = moead50,
-      name = paste0(paste0("bibbob_", fun), "_moead50_", lambda, "_"),
+      name = paste0(paste0(fun), "_moead50_", lambda, "_"),
       j = j,
       wd = "~/tec/"
     )
     rm(moead50)
-    
     
     moead500 <- moeadps_500(
       problem  = problem.dtlz7,
@@ -152,7 +152,7 @@ for (fun in problem.to.solve) {
     
     savePlotData(
       moea = moead500,
-      name = paste0(paste0("bibbob_", fun), "_moead500_", lambda, "_"),
+      name = paste0(paste0(fun), "_moead500_", lambda, "_"),
       j = j,
       wd = "~/tec/"
     )
@@ -179,7 +179,7 @@ for (fun in problem.to.solve) {
     #   wd = "~/tec/"
     # )
     # rm(moead.1)
-    
+ 
     moead.ps.50 <- moeadps_500(
       problem  = problem.dtlz7,
       preset   = preset_moead("moead.de"),
@@ -194,7 +194,7 @@ for (fun in problem.to.solve) {
     )
     savePlotData(
       moea = moead.ps.50,
-      name = paste0(paste0("bibbob_", fun), "_moead.ps.50_", lambda, "_"),
+      name = paste0(paste0(fun), "_moead.ps.50_", lambda, "_"),
       j = j,
       wd = "~/tec/"
     )
@@ -205,4 +205,5 @@ for (fun in problem.to.solve) {
   }
   
 }
+
 

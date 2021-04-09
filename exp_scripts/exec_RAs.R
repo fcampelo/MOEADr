@@ -5,7 +5,7 @@ library(emoa)
 library(mco)
 library(feather)
 library(nsga2R)
-library(parallel)
+#library(parallel)
 library(MOEADps)
 
 source("~/MOEADr/R/utils.R")
@@ -20,8 +20,8 @@ source('~/MaOEA/R/functions.R')
 source('~/MaOEA/R/nsga2.RA.R') # based on nsga2R
 source('~/MaOEA/R/R2mtch.R')
 
-cores <-  1
-cl <- makeCluster(cores)
+#cores <-  1
+#cl <- makeCluster(cores)
 
 # which bbob function
 instance <- 1
@@ -269,3 +269,4 @@ for (fun in problem.to.solve) {
 }
 
 stopCluster(cl)
+

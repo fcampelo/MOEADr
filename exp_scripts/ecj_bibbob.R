@@ -14,6 +14,10 @@ cl <- makeCluster(cores)
 source("~/MOEADr/R/utils.R")
 source("~/MOEADr/R/moead_500.R")
 
+source("~/MOEADr/R/variation_diffmut_500.R")
+source("~/MOEADr/R/perform_variation_500.R")
+
+
 repetitions <-  10
 dimensions <- 40
 lambda <- 50
@@ -77,7 +81,7 @@ resource.allocation.50 <-
 
 
 print("2 OBJECTIVES")
-problem.to.solve <- (1:55)
+problem.to.solve <- (55:55)
 for (fun in problem.to.solve) {
   problem <-
     smoof::makeBiObjBBOBFunction(dimension = dimensions,
@@ -135,7 +139,7 @@ for (fun in problem.to.solve) {
     
     savePlotData(
       moea = moead50,
-      name = paste0(paste0("bibbob_500_", fun), "_moead50_", lambda, "_"),
+      name = paste0(paste0(fun), "_moead50_", lambda, "_"),
       j = j,
       wd = "~/tec/"
     )
@@ -157,7 +161,7 @@ for (fun in problem.to.solve) {
     
     savePlotData(
       moea = moead500,
-      name = paste0(paste0("bibbob_500_", fun), "_moead500_", lambda, "_"),
+      name = paste0(paste0(fun), "_moead500_", lambda, "_"),
       j = j,
       wd = "~/tec/"
     )
@@ -199,7 +203,7 @@ for (fun in problem.to.solve) {
     )
     savePlotData(
       moea = moead.ps.50,
-      name = paste0(paste0("bibbob_500_", fun), "_moead.ps.50_", lambda, "_"),
+      name = paste0(paste0(fun), "_moead.ps.50_", lambda, "_"),
       j = j,
       wd = "~/tec/"
     )
@@ -210,4 +214,5 @@ for (fun in problem.to.solve) {
   }
   
 }
+
 

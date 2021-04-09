@@ -388,7 +388,13 @@ moeadps <-
     # print(dim(X[which(V$v == 0),]))
     # print(dim(Y[which(V$v == 0),]))
     # e()
-    write_feather(data.frame(X = X, Y = Y, iter = iter, v = V$v), paste0(saving.dir, "iter_",iter))
+    if(is.null(V$v)){
+      write_feather(data.frame(X = X, Y = Y, iter = iter), paste0(saving.dir, "iter_",iter))  
+    }
+    else{
+      write_feather(data.frame(X = X, Y = Y, iter = iter, v = V$v), paste0(saving.dir, "iter_",iter))
+    }
+    
     while (keep.running) {
       # saving data for analysis
       
@@ -621,7 +627,13 @@ moeadps <-
       # ========== Print
       # Echo whatever is demanded
       print_progress(iter.times, showpars)
-      write_feather(data.frame(X =  Archive$X, Y = Archive$Y, iter = iter, v = Archive$V$v), paste0(saving.dir, "iter_",iter))
+      if (is.null(Archive$V$v)){
+        write_feather(data.frame(X =  Archive$X, Y = Archive$Y, iter = iter), paste0(saving.dir, "iter_",iter))  
+      }
+      else{
+        write_feather(data.frame(X =  Archive$X, Y = Archive$Y, iter = iter, v = Archive$V$v), paste0(saving.dir, "iter_",iter))
+      }
+      
     }
     
     # =========================== End Iterative cycle ========================== #

@@ -6,14 +6,15 @@ library(mco)
 library(feather)
 library(eaf)
 library(MOEADps)
-library(parallel)
-cores <- 1
-cl <- makeCluster(cores)
+#:library(parallel)
+#cores <- 1
+#cl <- makeCluster(cores)
 
 source("~/MOEADr/R/utils.R")
 source("~/MOEADr/R/moead_500.R")
-
-
+source("~/MOEADr/R/load.DTLZ.function.R")
+source("~/MOEADr/R/variation_diffmut_500.R")
+source("~/MOEADr/R/perform_variation_500.R")
 repetitions <-  10
 dimensions <- 40
 lambda <- 50
@@ -75,69 +76,37 @@ resource.allocation.50 <-
   )
 
 
-problem.to.solve <- c("UF1", "UF2","UF3", "UF4", "UF5", "UF6", "UF7", "UF8", "UF9", "UF10")
+problem.to.solve <- c("DTLZ1", "DTLZ2", "DTLZ3", "DTLZ4")
 for (fun in problem.to.solve) {
-  benchmark <- strsplit(fun, "[0-9]")[[1]][1]
-  number <- as.integer(strsplit(fun, "[A-Z]")[[1]][3])
-  problem.smoof.UF <-
-    makeUFFunction(dimension = dimensions,
-                   id = number)
-  problem.UF <- function(X) {
-    t(apply(X, MARGIN = 1,
-            FUN = problem.smoof.UF))
+  problem <-
+    load.DTLZ.function(fun, dimension = dimensions, n.obj = n.obj)
+  problem.smoof.DTLZ <- problem$fn
+  problem.DTLZ <- function(X) {
+    t(-apply(X, MARGIN = 1,
+             FUN = problem.smoof.DTLZ))
   }
-  if (number <= 7){
-    n.obj <- 2
-  }else{
-    n.obj <- 3
-    loaded.weights.50 <-
-      data.matrix(
-        read.csv(
-          "~/MOEADr/weights-sobol/SOBOL-3objs-50wei.ws",
-          header = F,
-          stringsAsFactors = FALSE,
-          sep = " "
-        )
-      )
-    decomp50 <- list(name = "loaded", W = loaded.weights.50)
-    
-    loaded.weights.500 <-
-      data.matrix(
-        read.csv(
-          "~/MOEADr/weights-sobol/SOBOL-3objs-500wei.ws",
-          header = F,
-          stringsAsFactors = FALSE,
-          sep = " "
-        )
-      )
-    decomp500 <- list(name = "loaded", W = loaded.weights.500)
-  }
-  par.set = ParamHelpers::getParamSet(problem.smoof.UF)
-  problem.uf <- list(
-    name       = "problem.UF",
+  par.set = ParamHelpers::getParamSet(problem.smoof.DTLZ)
+  problem.dtlz7 <- list(
+    name       = "problem.DTLZ",
     xmin       = as.numeric(getLower(par.set)),
     xmax       = as.numeric(getUpper(par.set)),
     m          = n.obj
   )
-  print(paste0(n.obj, " OBJECTIVES"))
   
   for (j in 1:repetitions) {
     cat("rep", j, "\n")
     
     
-    # nsga.2 <- nsga2(problem.smoof.UF, idim = dimensions, odim = 2, generations=stopcrit[[1]]$maxeval/500,
+    
+    # nsga.2 <- nsga2(problem.smoof.DTLZ, idim = dimensions, odim = 2, generations=stopcrit[[1]]$maxeval/500,
     #                 lower.bounds=rep(as.numeric(getLower(par.set)), dimensions), upper.bounds= rep(as.numeric(getUpper(par.set)), dimensions), popsize = 500)
-    # 
     # 
     # nsga.2$X <- nsga.2$par
     # nsga.2$Y <- nsga.2$value
     # nsga.2$nfe <- stopcrit[[1]]$maxeval
     # nsga.2$n.iter <- stopcrit[[1]]$maxeval/500
-    # if (number <= 7){
-    #   colnames(nsga.2$Y) <- c("f1", "f2")
-    # }else{
-    #   colnames(nsga.2$Y) <- c("f1", "f2", "f3")
-    # }
+    # 
+    # colnames(nsga.2$Y) <- c("f1", "f2")
     # 
     # 
     # savePlotData(
@@ -150,7 +119,7 @@ for (fun in problem.to.solve) {
     # rm(nsga.2)
     
     moead50 <- moeadps_500(
-      problem  = problem.uf,
+      problem  = problem.dtlz7,
       preset   = preset_moead("moead.de"),
       decomp = decomp50,
       variation = variation,
@@ -158,12 +127,13 @@ for (fun in problem.to.solve) {
       scaling = scaling,
       neighbors = neighbors.50,
       showpars = list(show.iters = "none", showevery = 1000),
+      seed = j + 422,
       update = update
     )
     
     savePlotData(
       moea = moead50,
-      name = paste0(paste0("bibbob_", fun), "_moead50_", lambda, "_"),
+      name = paste0(paste0("inv_", fun), "_moead50_", lambda, "_"),
       j = j,
       wd = "~/tec/"
     )
@@ -171,7 +141,7 @@ for (fun in problem.to.solve) {
     
     
     moead500 <- moeadps_500(
-      problem  = problem.uf,
+      problem  = problem.dtlz7,
       preset   = preset_moead("moead.de"),
       decomp = decomp500,
       variation = variation,
@@ -185,7 +155,7 @@ for (fun in problem.to.solve) {
     
     savePlotData(
       moea = moead500,
-      name = paste0(paste0("bibbob_", fun), "_moead500_", lambda, "_"),
+      name = paste0(paste0("inv_", fun), "_moead500_", lambda, "_"),
       j = j,
       wd = "~/tec/"
     )
@@ -194,7 +164,7 @@ for (fun in problem.to.solve) {
     
     
     # moead.ps.1 <- moeadps_500(
-    #   problem  = problem.uf,
+    #   problem  = problem.dtlz7,
     #   preset   = preset_moead("moead.de"),
     #   decomp = decomp500,
     #   variation = variation,
@@ -214,7 +184,7 @@ for (fun in problem.to.solve) {
     # rm(moead.1)
     
     moead.ps.50 <- moeadps_500(
-      problem  = problem.uf,
+      problem  = problem.dtlz7,
       preset   = preset_moead("moead.de"),
       decomp = decomp500,
       variation = variation,
@@ -225,10 +195,9 @@ for (fun in problem.to.solve) {
       update = update,
       resource.allocation = resource.allocation.50
     )
-    
     savePlotData(
       moea = moead.ps.50,
-      name = paste0(paste0("bibbob_", fun), "_moead.ps.50_", lambda, "_"),
+      name = paste0(paste0("inv_", fun), "_moead.ps.50_", lambda, "_"),
       j = j,
       wd = "~/tec/"
     )
@@ -239,4 +208,5 @@ for (fun in problem.to.solve) {
   }
   
 }
+
 
