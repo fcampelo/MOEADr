@@ -6,9 +6,6 @@ library(mco)
 library(feather)
 library(eaf)
 library(MOEADps)
-#:library(parallel)
-#cores <- 1
-#cl <- makeCluster(cores)
 
 source("~/MOEADr/R/utils.R")
 source("~/MOEADr/R/moead_500.R")

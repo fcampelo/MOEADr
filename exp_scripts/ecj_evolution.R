@@ -7,35 +7,38 @@ library(ggplot2)
 library(ggthemes)
 library(MOEADps)
 library(eaf)
+options(kableExtra.latex.load_packages = T)
+library(kableExtra)
 
 source("~/MOEADr/R/utils.R")
 
 number.fun <- 1
 repetitions <- 10
 
-checkpoints <- (0:10) * 1000
+checkpoints <- (0:20) * 5000
+# checkpoints <- (0:2) * 50000
 checkpoints[1] <- 500
 
 
 fun.names1 <- list()
 
-for (i in 53:53) {
+for (i in 1:55) {
   fun.names1[[length(fun.names1) + 1]] = paste0(i)
 }
 #
-# for (i in 1:10) {
-#   fun.names1[[length(fun.names1) + 1]] = paste0("UF", i)
-# }
-# 
-# 
-# for (i in 1:4) {
-#   fun.names1[[length(fun.names1) + 1]] = paste0("DTLZ", i)
-# }
-# #
-# #
-# for (i in 1:4) {
-#   fun.names1[[length(fun.names1) + 1]] = paste0("inv_DTLZ", i)
-# }
+for (i in 1:10) {
+  fun.names1[[length(fun.names1) + 1]] = paste0("UF", i)
+}
+
+
+for (i in 1:4) {
+  fun.names1[[length(fun.names1) + 1]] = paste0("DTLZ", i)
+}
+#
+#
+for (i in 1:4) {
+  fun.names1[[length(fun.names1) + 1]] = paste0("inv_DTLZ", i)
+}
 
 
 
@@ -57,6 +60,7 @@ lambda <- 50
 
 fun_hv <- data.frame()
 results <- data.frame()
+stats0 <- data.frame()
 
 for (fun in fun.names1) {
   ref1 <- data.frame()
@@ -81,7 +85,7 @@ for (fun in fun.names1) {
       loadPlotData(
         name = paste0(fun, "_moead50_", lambda, "_"),
         j = j,
-        wd = "~/tec/"
+        wd = "~/../../../Volumes/LACIE SHARE/biman/tec/"
       )
     moead50$n.iter <- as.integer(moead50$n.iter)
     tmp1 <- data.frame()
@@ -127,7 +131,7 @@ for (fun in fun.names1) {
       loadPlotData(
         name = paste0(fun, "_moead500_", lambda, "_"),
         j = j,
-        wd = "~/tec/"
+        wd = "~/../../../Volumes/LACIE SHARE/biman/tec/"
       )
     moead500$n.iter <- as.integer(moead500$n.iter)
     tmp2 <- data.frame()
@@ -176,7 +180,7 @@ for (fun in fun.names1) {
       loadPlotData(
         name = paste0(fun, "_moead.ps.50_", lambda, "_"),
         j = j,
-        wd = "~/tec/"
+        wd = "~/../../../Volumes/LACIE SHARE/biman/tec/"
       )
     moead.ps.50$n.iter <- as.integer(moead.ps.50$n.iter)
     tmp3 <- data.frame()
@@ -246,7 +250,7 @@ for (fun in fun.names1) {
         loadPlotData(
           name = paste0(fun, "_", name, "_", lambda, "_"),
           j = my_rep,
-          wd = "~/tec/"
+          wd = "~/../../../Volumes/LACIE SHARE/biman/tec/"
         )
       moea$n.iter <- as.integer(moea$n.iter)
       
@@ -350,74 +354,74 @@ for (fun in fun.names1) {
         
         ck_idx <- ck_idx + 1
       }
+      
+      
     }
-    
+    stats0 <- rbind(stats0, my_hv)
     total_hv <- rbind(total_hv, my_hv)
     stg_idx <- stg_idx + 1
   }
   
+  total_hv$hv <- as.numeric(as.character(total_hv$hv))
+  median <-
+    aggregate(total_hv$hv, mean, by = list(total_hv$Strategy, total_hv$iter))
+  sd <-
+    aggregate(total_hv$hv, sd, by = list(total_hv$Strategy, total_hv$iter))
+  plot_data <- (data.frame(median, sd))
+  plot_data <- plot_data[,-c(4, 5)]
+  colnames(plot_data) <- c("Strategy", "iter", "median", "sd")
+  plot_data$ymax <- plot_data$median + plot_data$sd
+  plot_data$ymin <- plot_data$median - plot_data$sd
   
-#   total_hv$hv <- as.numeric(as.character(total_hv$hv))
-#   mean <-
-#     aggregate(total_hv$hv,
-#               mean,
-#               by = list(total_hv$Strategy, total_hv$iter))
-#   sd <-
-#     aggregate(total_hv$hv, sd, by = list(total_hv$Strategy, total_hv$iter))
-#   plot_data <- (data.frame(mean, sd))
-#   plot_data <- plot_data[,-c(4, 5)]
-#   colnames(plot_data) <- c("Strategy", "iter", "mean", "sd")
-#   plot_data$ymax <- plot_data$mean + plot_data$sd
-#   plot_data$ymin <- plot_data$mean - plot_data$sd
-#   
-#   v <- ggplot(data = plot_data,
-#               aes(
-#                 x = iter,
-#                 y = mean,
-#                 group = Strategy,
-#                 color = Strategy,
-#                 fill = Strategy
-#               )) +
-#     guides(colour = guide_legend(override.aes = list(size = 3, linetype = 0))) +
-#     geom_ribbon(aes(ymin = ymax, ymax = ymin),
-#                 alpha = .2,
-#                 linetype = 0) +
-#     geom_line(aes(color = Strategy)) +
-#     geom_point(aes(
-#       color = Strategy,
-#       shape = Strategy,
-#       size = 2
-#     )) +
-#     theme_minimal(base_size = 26) +
-#     labs(x = "Number of Function Evalutions", y = "HV") + theme_minimal(base_size = 26) +
-#     scale_fill_discrete(guide = FALSE)
-#   v <-
-#     v +  theme(
-#       axis.text = element_text(size = 24),
-#       legend.background = element_rect(size = 0.5, linetype = "solid")
-#     )
-#   v <-
-#     v + theme(axis.text.x = element_text(
-#       angle = 90,
-#       vjust = 0.5,
-#       hjust = 1
-#     ))
-#   print(v + theme(legend.position = "bottom", legend.title = element_blank())) #+
-#   # guides(size = FALSE, shape = guide_legend(override.aes = list(size = 5))))
-#   
-#   
-#   filename = paste0("~/tec/hv_evolution/", fun , "hv_evolution.png")
-#   ggsave(
-#     filename = filename,
-#     dpi = 300,
-#     width = 12,
-#     height = 12
+  
+  v <- ggplot(data = plot_data,
+              aes(
+                x = iter,
+                y = median,
+                group = Strategy,
+                color = Strategy,
+                fill = Strategy
+              )) +
+    geom_ribbon(aes(ymin = ymax, ymax = ymin),
+                alpha = .2,
+                linetype = 0) +
+    geom_line(aes(color = Strategy)) +
+    theme_minimal(base_size = 26) +
+    labs(x = "Number of Function Evalutions", y = "HV") + theme_minimal(base_size = 26) +
+    scale_fill_discrete(guide = FALSE)
+  v <-
+    v +  theme(
+      axis.text = element_text(size = 24),
+      legend.background = element_rect(size = 0.5, linetype = "solid")
+    )
+  v <-
+    v + theme(axis.text.x = element_text(
+      angle = 90,
+      vjust = 0.5,
+      hjust = 1
+    ))
+  print(
+    v + theme(legend.position = "bottom", legend.title = element_blank()) +
+      guides(size = FALSE, shape = guide_legend(override.aes = list(size = 5)))
+  )
+  
+  
+  # filename = paste0("~/tec/hv_evolution/", fun , "hv_evolution.png")
+  # ggsave(
+  #   filename = filename,
+  #   dpi = 300,
+  #   width = 12,
+  #   height = 12
   # )
+  
+  
 }
 
-# results <- total_hv
-print(results)
-write_feather(results, "~/tec/tec_results")
+write_feather(results, "~/tec/ecj_stats")
 
-results$hv <- as.numeric(levels(results$hv))[results$hv]
-print(aggregate(results$hv, median, by = list(results$name, results$fun)))
+
+
+stats0$hv <- as.numeric(levels(stats0$hv))[stats0$hv]
+
+write_feather(stats0, "~/tec/ecj_stats")
+

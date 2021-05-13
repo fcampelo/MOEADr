@@ -11,11 +11,11 @@ cores <- 1
 cl <- makeCluster(cores)
 
 
-source("~/MOEADr/R/utils.R")
+
 source("~/MOEADr/R/moead_500.R")
 
-source("~/MOEADr/R/variation_diffmut_500.R")
-source("~/MOEADr/R/perform_variation_500.R")
+# source("~/MOEADr/R/variation_diffmut_500.R")
+# source("~/MOEADr/R/perform_variation_500.R")
 
 
 repetitions <-  10
@@ -104,27 +104,9 @@ for (fun in problem.to.solve) {
   for (j in 1:repetitions) {
     cat("rep", j, "\n")
     
+  
     
-    
-    # nsga.2 <- nsga2(problem, idim = dimensions, odim = 2, generations=stopcrit[[1]]$maxeval/500,
-    #                 lower.bounds=rep(as.numeric(getLower(par.set)), dimensions), upper.bounds= rep(as.numeric(getUpper(par.set)), dimensions), popsize = 500)
-    # 
-    # nsga.2$X <- nsga.2$par
-    # nsga.2$Y <- nsga.2$value
-    # nsga.2$nfe <- stopcrit[[1]]$maxeval
-    # nsga.2$n.iter <- stopcrit[[1]]$maxeval/500
-    # colnames(nsga.2$Y) <- c("f1", "f2")
-    # 
-    # savePlotData(
-    #   moea = nsga.2,
-    #   name = paste0(paste0("bibbob_500_", fun), "_nsga.2_", lambda, "_"),
-    #   j = j,
-    #   wd = "~/",
-    #   extra = F
-    # )
-    # rm(nsga.2)
-    
-    moead50 <- moeadps_500(
+    moead50 <- moeadps(
       problem  = problem.bibbob,
       preset   = preset_moead("moead.de"),
       decomp = decomp50,
@@ -146,7 +128,7 @@ for (fun in problem.to.solve) {
     rm(moead50)
     
     
-    moead500 <- moeadps_500(
+    moead500 <- moeadps(
       problem  = problem.bibbob,
       preset   = preset_moead("moead.de"),
       decomp = decomp500,

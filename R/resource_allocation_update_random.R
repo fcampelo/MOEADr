@@ -39,16 +39,14 @@ resource_allocation_update_random <- function(iter,
                                               W,
                                               X,
                                               dt.X,
-                                              # newObj,
-                                              # oldObj,
                                               ...) {
   if (iter > resource.allocation$dt) {
-    priority.values <- by_random(dim(W)[1])
+    priority.values <- by_random_fixed(dim(W)[1], resource.allocation)
   }
   out <- list(priority.values = priority.values)
   return(out)
 }
 
-by_random <- function(len) {
-  return(runif(len))
+by_random <- function(len, resource.allocation) {
+  return(rep(resource.allocation$fixed_value, len))
 }

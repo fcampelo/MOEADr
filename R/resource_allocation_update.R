@@ -48,10 +48,12 @@ resource_allocation_update <-
       length(priority.values) == dim(W)[1],
       is.matrix(bigZ) && is.matrix(dt.bigZ),
       is.numeric(neighbors.T),
-      is.matrix(Y) && is.matrix(dt.Y),
+      # is.matrix(Y) && is.matrix(dt.Y),
+      is.matrix(Y),
       is.matrix(W),
       # length(dt.dm) == dim(W)[1],
-      is.matrix(X) && is.matrix(dt.X)#,
+      # is.matrix(X) && is.matrix(dt.X)#,
+      is.matrix(X)
       # is.numeric(newObj) && is.numeric(oldObj)
     )
     # ========== Call specific resource allocation strategy

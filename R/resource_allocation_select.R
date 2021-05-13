@@ -27,7 +27,7 @@ resource_allocation_select <-
            W,
            priority.values,
            problem,
-           idx.boundary = NULL,
+           # idx.boundary = NULL,
            ...) {
     # ========== Error catching and default value definitions
     assertthat::assert_that(
@@ -47,11 +47,11 @@ resource_allocation_select <-
     # iteration_usage <- selected$iteration_usage
 
     # to add the bounderies
-    if(length(indexes) != length(priority.values)){
-      for (i in 1:length(idx.boundary)){
-        indexes[length(indexes)+i] <- idx.boundary[i]
-      }
-    }
+    # if(length(indexes) != length(priority.values)){
+    #   for (i in 1:length(idx.boundary)){
+    #     indexes[length(indexes)+i] <- idx.boundary[i]
+    #   }
+    # }
 
     indexes <- sort(indexes)
 

@@ -55,6 +55,22 @@ loadPlotData <- function (name, j, wd, extra = T) {
   
 }
 
+loadPlotData2 <- function (name, j, wd, dimensions = 12, n.obj = 3) {
+  
+  data <- read_feather(paste0(wd, name, j))
+  data <- as.data.frame(data)
+  
+  colnames(data) <- c(paste0("X",1:dimensions),paste0("Y",1:n.obj), "iter")
+  
+  out <- list(
+    X           = data[,1:dimensions],
+    Y           = data[,(dimensions+1):((dimensions)+n.obj)],
+    n.iter      = data[, ncol(data)]
+  )
+  return(out)
+  
+}
+
 # plot_eaf_eafdiff <-
 #   function(data1, data2, n, name1, name2, fun, wd = "~/Desktop/") {
 #     out <- savefile_create_fixs(name1)

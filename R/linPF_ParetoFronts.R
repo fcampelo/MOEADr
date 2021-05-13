@@ -38,8 +38,8 @@ linPF1 <- function() {
   Y <- matrix(c(f1, f2, f3), ncol = 3)
   colnames(Y) <- c("f1", "f2", "f3")
   
-  gerate_graph(Y)
-  
+  # # gerate_graph(Y) 
+  Y
 }
 
 linPF2 <- function() {
@@ -64,8 +64,8 @@ linPF2 <- function() {
   Y <- matrix(c(f1, f2, f3), ncol = 3)
   colnames(Y) <- c("f1", "f2", "f3")
   
-  gerate_graph(Y)
-  
+  # gerate_graph(Y) 
+  Y
 }
 
 linPF3 <- function() {
@@ -86,8 +86,8 @@ linPF3 <- function() {
   Y <- matrix(c(f1, f2, f3), ncol = 3)
   colnames(Y) <- c("f1", "f2", "f3")
   
-  gerate_graph(Y)
-  
+  # gerate_graph(Y) 
+  Y
 }
 
 linPF4 <- function() {
@@ -108,8 +108,8 @@ linPF4 <- function() {
   Y <- matrix(c(f1, f2, f3), ncol = 3)
   colnames(Y) <- c("f1", "f2", "f3")
   
-  gerate_graph(Y)
-  
+  # gerate_graph(Y) 
+  Y
 }
 
 linPF5 <- function() {
@@ -139,8 +139,8 @@ linPF5 <- function() {
   Y <- matrix(c(f1, f2, f3), ncol = 3)
   colnames(Y) <- c("f1", "f2", "f3")
   
-  gerate_graph(Y)
-  
+  # gerate_graph(Y) 
+  Y
 }
 
 linPF6 <- function() {
@@ -165,16 +165,9 @@ linPF6 <- function() {
   Y <- matrix(c(f1, f2, f3), ncol = 3)
   colnames(Y) <- c("f1", "f2", "f3")
   
-  gerate_graph(Y)
-  
+  # gerate_graph(Y) 
+  Y
 }
 
 
-
-linPF1()
-linPF2()
-linPF3()
-linPF4()
-linPF5()
-linPF6()
 

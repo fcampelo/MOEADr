@@ -372,36 +372,25 @@ moeadps <-
     init_ra <- resource_allocation_init(resource.allocation, W)
     priority.values <- init_ra$priority.values
     two_step <- init_ra$two_step
-    idx.boundary <- apply(W, 2, which.max)
+    # idx.boundary <- apply(W, 2, which.max)
     
-    
-    if(resource.allocation$name == "none") div <- nrow(W) else div <- resource.allocation$n
     
     # ========================= End Initial definitions ======================== #
     
     # ============================= Iterative cycle ============================ #
     keep.running  <- TRUE      # stop criteria flag
     iter          <- 0         # counter: iterations
-
-    # print(Y[1,])    
-    # ex()
-    # print(dim(X[which(V$v == 0),]))
-    # print(dim(Y[which(V$v == 0),]))
-    # e()
-    if(is.null(V$v)){
-      write_feather(data.frame(X = X, Y = Y, iter = iter), paste0(saving.dir, "iter_",iter))  
-    }
-    else{
-      write_feather(data.frame(X = X, Y = Y, iter = iter, v = V$v), paste0(saving.dir, "iter_",iter))
-    }
     
+    if (!is.null(saving.dir)){
+      write_feather(data.frame(X = X, Y = Y, iter = iter), paste0(saving.dir, "iter_",iter))
+    }
     while (keep.running) {
       # saving data for analysis
       
       
       # Update iteration counter
       iter <- iter + 1
-
+      
       if ("save.iters" %in% names(moead.input.pars)) {
         if (moead.input.pars$save.iters == TRUE)
           saveRDS(as.list(environment()),
@@ -415,7 +404,7 @@ moeadps <-
         resource.allocation = resource.allocation,
         W = W,
         priority.values = priority.values,
-        idx.boundary = idx.boundary,
+        # idx.boundary = idx.boundary,
         two_step = two_step,
         problem = problem
       )
@@ -446,6 +435,7 @@ moeadps <-
                                 iter      = iter)
       B  <- BP$B
       P  <- BP$P
+      
       # ========== Variation
       # Perform variation
       P <- P[indexes,indexes]
@@ -453,7 +443,6 @@ moeadps <-
       V$Cmatrix <- V$Cmatrix[indexes,]
       V$Vmatrix <- V$Vmatrix[indexes,]
       V$v <- V$v[indexes]
-      
       Xv      <- do.call(perform_variation,
                          args = as.list(environment()))
       
@@ -542,7 +531,7 @@ moeadps <-
       Y       <- XY$Y
       V       <- XY$V
       Archive <- XY$Archive
-
+      
       # ========== Resource Allocation - Update Priority function values
       # parameters for NORM and Random
       init_ra$dt.bigZ[[length(init_ra$dt.bigZ) + 1]] <- bigZ
@@ -561,7 +550,8 @@ moeadps <-
       }
       neighbors.T <- neighbors$T
       
-      if (iter > 1 || resource.allocation$name == "random") {
+      # if (iter > 1 || resource.allocation$name == "random") {
+      if (iter >  resource.allocation$dt || resource.allocation$name == "random") {
         updates <- resource_allocation_update(
           iter,
           resource.allocation,
@@ -587,26 +577,26 @@ moeadps <-
         init_ra$dt.bigZ[[index]] <- bigZ
       }
       
-
-      if (resource.allocation$period > 0 &&
-          iter %% resource.allocation$period == 0) {
-        temp <- neighbors
-        temp$T <- dim(W)[1]
-        BP <- define_neighborhood(neighbors = temp,
-                                   v.matrix  = switch(temp$name,
-                                                      lambda = W,
-                                                      x      = X),
-                                   iter      = iter)
-        Xt <- X
-        Yt <- Y
-        Vt <- V
-        XY <- do.call(update_population,
-                      args = as.list(environment()))
-        X       <- XY$X
-        Y       <- XY$Y
-        V       <- XY$V
-        Archive <- XY$Archive
-      }
+      
+      # if (resource.allocation$period > 0 &&
+      #     iter %% resource.allocation$period == 0) {
+      #   temp <- neighbors
+      #   temp$T <- dim(W)[1]
+      #   BP <- define_neighborhood(neighbors = temp,
+      #                             v.matrix  = switch(temp$name,
+      #                                                lambda = W,
+      #                                                x      = X),
+      #                             iter      = iter)
+      #   Xt <- X
+      #   Yt <- Y
+      #   Vt <- V
+      #   XY <- do.call(update_population,
+      #                 args = as.list(environment()))
+      #   X       <- XY$X
+      #   Y       <- XY$Y
+      #   V       <- XY$V
+      #   Archive <- XY$Archive
+      # }
       
       # ========== Stop Criteria
       # Calculate iteration time
@@ -627,13 +617,9 @@ moeadps <-
       # ========== Print
       # Echo whatever is demanded
       print_progress(iter.times, showpars)
-      if (is.null(Archive$V$v)){
-        write_feather(data.frame(X =  Archive$X, Y = Archive$Y, iter = iter), paste0(saving.dir, "iter_",iter))  
+      if (!is.null(saving.dir)){
+        write_feather(data.frame(X =  Archive$X, Y = Archive$Y, iter = iter), paste0(saving.dir, "iter_",iter))
       }
-      else{
-        write_feather(data.frame(X =  Archive$X, Y = Archive$Y, iter = iter, v = Archive$V$v), paste0(saving.dir, "iter_",iter))
-      }
-      
     }
     
     # =========================== End Iterative cycle ========================== #
