@@ -1,3 +1,7 @@
+# MOEADr 1.1.2
+* Maintenance update: 
+  * Minor change in vignette to account for a change in dependence package "irace".
+
 # MOEADr 1.1.1
 * Maintenance update: 
   * Minor update in `variation_polymut()` to allow probability of mutation as 

@@ -8,9 +8,9 @@ Description: Modular implementation of Multiobjective Evolutionary Algorithms
               replication of published MOEA/D proposals. The full framework is
               documented in a paper published in the Journal of Statistical 
               Software [<doi:10.18637/jss.v092.i06>].
-Version: 1.1.1
-Date: 2020-02-17
-Imports:  FNN, 
+Version: 1.1.2
+Date: 2022-11-05
+Imports: FNN, 
           assertthat
 Suggests: smoof,
           scatterplot3d, 
@@ -41,7 +41,7 @@ Maintainer: Felipe Campelo <fcampelo@ufmg.br>
 License: GPL-2
 LazyData: TRUE
 Encoding: UTF-8
-RoxygenNote: 7.0.2
+RoxygenNote: 7.2.1
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
 URL: https://fcampelo.github.io/MOEADr/

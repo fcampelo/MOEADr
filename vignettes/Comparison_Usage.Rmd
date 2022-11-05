@@ -291,10 +291,10 @@ values returned for the numeric parameters.
 |Decomposition|SLD      | 1.00        |
 |Aggregation Function | AWT | 1.00 |
 |Objective Scaling | simple | Fixed |
-|Neighborhood | by $x$<br>$T = 11$<br>$\delta_p = 0.909$ | 1.00<br>see Figure<br>see Figure |
+|Neighborhood | by $x$<br>$T = 11$<br>$\delta_p = 0.909$ | 1.00 |
 |Variation Stack (1) | Differential Mutation<br>$basis = "rand"$<br>$\phi \sim U(0,1)$ | 1.00<br>1.00<br>Fixed |
-|Variation Stack (2) | Binomial Recombination<br>$\rho_1 = 0.495$ | <br>1.00<br>see Figure |
-|Variation Stack (3) | Binomial Recombination<br>$\rho_2 = 0.899$ | <br>1.00<br>see Figure |
+|Variation Stack (2) | Binomial Recombination<br>$\rho_1 = 0.495$ | <br>1.00 |
+|Variation Stack (3) | Binomial Recombination<br>$\rho_2 = 0.899$ | <br>1.00 |
 |Variation Stack (4) | Truncate | Fixed |
 |Update | Restricted<br>$nr=1$ | 1.00<br>1.00 |
 
@@ -310,8 +310,8 @@ mypars <- iraceResults$parameters
 mypars$names      <- c("T", "delta.p", "binrec.rho2", "binrec.rho3")
 mypars$nbVariable <- 4
 
-### Plot
-irace::parameterFrequency(finalConfs, mypars, cols = 2)
+### Plot (install from https://github.com/auto-optimization/iraceplot to generate plot)
+# iraceplot::parameterFrequency(finalConfs, mypars, cols = 2)
 ```
 
 A feature that may seem surprising at first glance is the two sequential

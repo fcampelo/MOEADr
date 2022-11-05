@@ -1,5 +1,5 @@
-pandoc: 2.3.1
-pkgdown: 1.4.1
+pandoc: '2.18'
+pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   Basic_Usage: Basic_Usage.html
@@ -7,4 +7,5 @@ articles:
   Modification_Usage: Modification_Usage.html
   problem-definition: problem-definition.html
   writing-functions-for-moeadr: writing-functions-for-moeadr.html
+last_built: 2022-11-05T22:43Z
 
