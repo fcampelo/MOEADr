@@ -39,7 +39,6 @@ Author: Felipe Campelo [aut, cre],
   Claus Aranha [aut]
 Maintainer: Felipe Campelo <fcampelo@ufmg.br>
 License: GPL-2
-LazyData: TRUE
 Encoding: UTF-8
 RoxygenNote: 7.2.1
 Roxygen: list(markdown = TRUE)
