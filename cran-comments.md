@@ -1,6 +1,8 @@
 ## Changes and notes
+* Package got archived before my earlier fix got through. Re-submitting to revive it.
 * Maintenance update: Minor change in vignette to account for a change in 
-dependence package "irace".
+dependence "irace".
+
 
 ## Test environments
 * win-builder, using `devtools::check_win_devel()` and  `devtools::check_win_release()`
