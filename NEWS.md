@@ -1,4 +1,4 @@
-# MOEADr 1.1.2
+# MOEADr 1.1.3ß
 * Maintenance update: 
   * Minor change in vignette to account for a change in dependence package "irace".
 
