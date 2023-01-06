@@ -73,7 +73,7 @@ The *moead()* function requires a problem definition (discussed in the previous
 section) and an algorithm configuration (in this case, an algorithm preset, and optional changes to the preset), logging parameters, and a seed. The *preset_moead()*  function can output a number of
 different presets based on combinations found on the literature. In this
 example, *preset_moead("original")* returns the original MOEA/D configuration, as
-proposed by Zhang and Li (2007)^[[IEEE Trans. Evol. Comp. 11(6): 712-731, 2007](http://ieeexplore.ieee.org/document/4358754/).]. You can get a list of available presets by running:
+proposed by Zhang and Li (2007)^[[IEEE Trans. Evol. Comp. 11(6): 712-731, 2007](https://doi.org/10.1109/TEVC.2007.892759).]. You can get a list of available presets by running:
 
 ```{r, collapse = TRUE, comment = "#>"}
 preset_moead()
