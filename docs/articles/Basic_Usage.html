@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MOEADr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.3</span>
       </span>
     </div>
 
@@ -94,7 +94,7 @@
                         <h4 data-toc-skip class="author">Claus Aranha,
 Felipe Campelo</h4>
             
-            <h4 data-toc-skip class="date">2022-11-05</h4>
+            <h4 data-toc-skip class="date">2023-01-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/fcampelo/MOEADr/blob/HEAD/vignettes/Basic_Usage.Rmd" class="external-link"><code>vignettes/Basic_Usage.Rmd</code></a></small>
       <div class="hidden name"><code>Basic_Usage.Rmd</code></div>
@@ -193,9 +193,7 @@ nadir values (when available), and (optionally) the IDR and hypervolume
 yielded by the feasible, nondominated set.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: reference point not provided:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;           using the maximum in each dimension instead.</span></span>
 <span><span class="co">#&gt; Summary of MOEA/D run</span></span>
 <span><span class="co">#&gt; #====================================</span></span>
 <span><span class="co">#&gt; Total function evaluations:  20100</span></span>
@@ -205,8 +203,8 @@ yielded by the feasible, nondominated set.</p>
 <span><span class="co">#&gt; Nondominated points found:  100 (100% of total)</span></span>
 <span><span class="co">#&gt; Estimated ideal point:  33.383 125.323</span></span>
 <span><span class="co">#&gt; Estimated nadir point:  82.107 450.632</span></span>
-<span><span class="co">#&gt; Estimated HV:  11894.41</span></span>
-<span><span class="co">#&gt; Ref point used for HV:  82.10675 450.6322</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Please install package 'emoa' to calculate hypervolume.</span></span>
 <span><span class="co">#&gt; #====================================</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">results</span>, suppress.pause <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Basic_Usage_files/figure-html/unnamed-chunk-6-1.png" width="576" style="display: block; margin: auto;"></p>
@@ -224,9 +222,7 @@ generates a MOP with five objective functions from
 <em>moead()</em>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jakobbossek/smoof" class="external-link">smoof</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: package 'smoof' was built under R version 4.2.2</span></span>
 <span><span class="co">#&gt; Loading required package: ParamHelpers</span></span>
-<span><span class="co">#&gt; Warning: package 'ParamHelpers' was built under R version 4.2.2</span></span>
 <span><span class="co">#&gt; Loading required package: checkmate</span></span>
 <span><span class="va">DTLZ2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_vectorized_smoof.html">make_vectorized_smoof</a></span><span class="op">(</span>prob.name  <span class="op">=</span> <span class="st">"DTLZ2"</span>,</span>
 <span>                               dimensions <span class="op">=</span> <span class="fl">20</span>,</span>
@@ -253,9 +249,7 @@ information when the number of objectives in a problem is greater than
 2:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">results.dtlz</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: reference point not provided:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;           using the maximum in each dimension instead.</span></span>
 <span><span class="co">#&gt; Summary of MOEA/D run</span></span>
 <span><span class="co">#&gt; #====================================</span></span>
 <span><span class="co">#&gt; Total function evaluations:  99495</span></span>
@@ -265,8 +259,8 @@ information when the number of objectives in a problem is greater than
 <span><span class="co">#&gt; Nondominated points found:  272 (54.9% of total)</span></span>
 <span><span class="co">#&gt; Estimated ideal point:  0 0 0 0 0</span></span>
 <span><span class="co">#&gt; Estimated nadir point:  1.073 1.038 1.025 1.355 1.735</span></span>
-<span><span class="co">#&gt; Estimated HV:  1.930944</span></span>
-<span><span class="co">#&gt; Ref point used for HV:  1.073331 1.037972 1.024785 1.35537 1.734524</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Please install package 'emoa' to calculate hypervolume.</span></span>
 <span><span class="co">#&gt; #====================================</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">results.dtlz</span>, suppress.pause <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Basic_Usage_files/figure-html/unnamed-chunk-9-1.png" width="576" style="display: block; margin: auto;"><img src="Basic_Usage_files/figure-html/unnamed-chunk-9-2.png" width="576" style="display: block; margin: auto;"></p>
@@ -282,8 +276,8 @@ task semi-automatically.</p>
 <div class="footnotes footnotes-end-of-document">
 <hr>
 <ol>
-<li id="fn1"><p><a href="http://ieeexplore.ieee.org/document/4358754/" class="external-link">IEEE Trans. Evol.
-Comp. 11(6): 712-731, 2007</a>.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn1"><p><a href="https://doi.org/10.1109/TEVC.2007.892759" class="external-link">IEEE
+Trans. Evol. Comp. 11(6): 712-731, 2007</a>.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
 <li id="fn2"><p><a href="https://CRAN.R-project.org/package=smoof" class="external-link">https://CRAN.R-project.org/package=smoof</a><a href="#fnref2" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>

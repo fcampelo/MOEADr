@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MOEADr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.3</span>
       </span>
     </div>
 
@@ -95,7 +95,7 @@ Package</h1>
                         <h4 data-toc-skip class="author">Claus
 Aranha</h4>
             
-            <h4 data-toc-skip class="date">2022-11-05</h4>
+            <h4 data-toc-skip class="date">2023-01-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/fcampelo/MOEADr/blob/HEAD/vignettes/Modification_Usage.Rmd" class="external-link"><code>vignettes/Modification_Usage.Rmd</code></a></small>
       <div class="hidden name"><code>Modification_Usage.Rmd</code></div>
@@ -176,11 +176,9 @@ and test it on a standard benchmark function (performing a qualitative
 graphical comparison against the original MOEA/D just for fun):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fcampelo.github.io/MOEADr/" class="external-link">MOEADr</a></span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jakobbossek/smoof" class="external-link">smoof</a></span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning: package 'smoof' was built under R version 4.2.2</span></span></code></pre>
-<pre><code><span><span class="co">## Warning: package 'ParamHelpers' was built under R version 4.2.2</span></span></code></pre>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ZDT1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_vectorized_smoof.html">make_vectorized_smoof</a></span><span class="op">(</span>prob.name  <span class="op">=</span> <span class="st">"ZDT1"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jakobbossek/smoof" class="external-link">smoof</a></span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ZDT1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_vectorized_smoof.html">make_vectorized_smoof</a></span><span class="op">(</span>prob.name  <span class="op">=</span> <span class="st">"ZDT1"</span>,</span>
 <span>                              dimensions <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
 <span><span class="va">problem.zdt1</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>name       <span class="op">=</span> <span class="st">"ZDT1"</span>,</span>
 <span>                      xmin       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">30</span><span class="op">)</span>,</span>
@@ -209,10 +207,10 @@ variation stack. The figures below show the final Pareto front for both
 the standard MOEA/D and the MOEA/D with a Gaussian Mutation operator.
 From these images, it seems (rather unsurprisingly) that the new
 operator still needs some work.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">results.orig</span>, suppress.pause <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Modification_Usage_files/figure-html/unnamed-chunk-3-1.png" width="528" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">results.myvar</span>, suppress.pause <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Modification_Usage_files/figure-html/unnamed-chunk-3-2.png" width="528" style="display: block; margin: auto;"></p>
 <p>We welcome new contributions to <strong>MOEADr</strong>’s component
