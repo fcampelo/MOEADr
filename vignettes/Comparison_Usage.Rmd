@@ -10,8 +10,9 @@ vignette: >
 ---
 
 For this example, we adapt the tuning protocol proposed by Bezerra _et al._ 
-(2016)^[Lecture Notes in Computer Science 9018:48–63, 2016.], employing the *Iterated Racing* procedure by Lopez-Ibanez _et al._ (2016)^[Operations Research Perspectives 3:43-58, 2016].
-Using the **irace** package, we automatically assemble and fine-tune a MOEA/D configuration based on the components available in the **MOEADr** package.
+(2016)^[L. C. T. Bezerra, M. López-Ibáñez, and T. Stützle. Automatic Component-Wise Design of Multi-Objective Evolutionary Algorithms. IEEE Transactions on Evolutionary Computation, 20(3):403–417, 2016. doi: [10.1109/TEVC.2015.2474158](https://doi.org/10.1109/TEVC.2015.2474158)], employing the *Iterated Racing* procedure by Lopez-Ibanez _et al._ (2016)^[
+M. López-Ibáñez, J. Dubois-Lacoste, L. Pérez Cáceres, T. Stützle, and M. Birattari. The irace package: Iterated Racing for Automatic Algorithm Configuration. Operations Research Perspectives, 3:43–58, 2016. doi: [10.1016/j.orp.2016.09.002](https://doi.org/10.1016/j.orp.2016.09.002)].
+Using the [**irace**](https://mlopez-ibanez.github.io/irace/) package, we automatically assemble and fine-tune a MOEA/D configuration based on the components available in the **MOEADr** package.
 
 ## Fine tuning setup
 
@@ -52,9 +53,7 @@ for each position in the variation stack.
 ## **irace** configuration
 
 Here we describe the necessary setup to run the experiment above. First, loading 
-the necessary packages and basic configuration of *irace*. (*parameters.txt*, 
-*forbidden.txt* and other files are only included in the source version of the 
-*MOEADr* package)
+the necessary packages and basic configuration of **irace**.
 
 ```{r, eval = FALSE} 
 suppressPackageStartupMessages(library(irace))
@@ -62,20 +61,20 @@ suppressPackageStartupMessages(library(parallel))
 suppressPackageStartupMessages(library(smoof))
 suppressPackageStartupMessages(library(MOEADr))
 
-scenario                <- irace::defaultScenario()
-scenario$seed           <- 123456 # Seed for the experiment
-scenario$targetRunner   <- "target.runner" # Runner function (def. below)
-scenario$forbiddenFile  <- "../inst/extdata/forbidden.txt" # forbidden configs
-scenario$debugLevel     <- 1
-scenario$maxExperiments <- 20000 # Tuning budget
-scenario$testNbElites   <- 7     # test all final elite configurations
-
 # Number of cores to be used by irace (set with caution!)
 nc                      <- parallel::detectCores() - 1
-scenario$parallel       <- nc
 
-# Read tunable parameter list from file
-parameters <- readParameters("../inst/extdata/parameters.txt")
+scenario <- list(
+  seed           = 123456, # Seed for the experiment
+  targetRunner   = "target.runner", # Runner function (def. below)
+  debugLevel     = 1,
+  maxExperiments = 20000, # Tuning budget
+  testNbElites   = 7,     # test all final elite configurations
+  parallel       = nc
+)
+
+# Read tunable parameters (
+parameters <- readParameters(system.file(package="MOEADr", file.path("extdata", "parameters.txt"), mustWork = FALSE))
 ```
 
 Second, it is necessary to generate the training instances 
@@ -241,7 +240,7 @@ test problems:
 
 ```{r, reshape2, ggplot2, echo = FALSE, fig.width = 7, fig.height = 3}
 ### Loading results
-load("../inst/extdata/irace-testing.Rdata")
+iraceResults <- irace::read_logfile("../inst/extdata/irace-testing.Rdata")
 
 ### Precondition results
 results <- iraceResults$testing$experiments
