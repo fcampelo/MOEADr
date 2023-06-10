@@ -34,3 +34,6 @@ sbx.pc2         " "     r     (0,1) | varop2 == "sbx"
 sbx.pc3         " "     r     (0,1) | varop3 == "sbx"
 ls.type         " "     c     (tpqa,dvls) | varop4 == "localsearch"
 gamma.ls        " "     r     (0,.5) | varop4 == "localsearch"
+
+[forbidden]
+(update.name == "best") & (Tr > T)
