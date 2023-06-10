@@ -10,7 +10,7 @@ vignette: >
 ---
 
 For this example, we adapt the tuning protocol proposed by Bezerra _et al._ 
-(2016)^[Lecture Notes in Computer Science 9018:48–63, 2016.], employing the *Iterated Racing* procedure by Lopez-Ibanez _et al._ (2016)^[
+(2016)^[L. C. T. Bezerra, M. López-Ibáñez, and T. Stützle. Automatic Component-Wise Design of Multi-Objective Evolutionary Algorithms. IEEE Transactions on Evolutionary Computation, 20(3):403–417, 2016. doi: [10.1109/TEVC.2015.2474158](https://doi.org/10.1109/TEVC.2015.2474158)], employing the *Iterated Racing* procedure by Lopez-Ibanez _et al._ (2016)^[
 M. López-Ibáñez, J. Dubois-Lacoste, L. Pérez Cáceres, T. Stützle, and M. Birattari. The irace package: Iterated Racing for Automatic Algorithm Configuration. Operations Research Perspectives, 3:43–58, 2016. doi: [10.1016/j.orp.2016.09.002](https://doi.org/10.1016/j.orp.2016.09.002)].
 Using the [**irace**](https://mlopez-ibanez.github.io/irace/) package, we automatically assemble and fine-tune a MOEA/D configuration based on the components available in the **MOEADr** package.
 
